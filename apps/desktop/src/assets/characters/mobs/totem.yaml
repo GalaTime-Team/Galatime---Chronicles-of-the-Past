@@ -1,0 +1,129 @@
+﻿id: totem
+name: Totem
+rarity: common
+height: "110 cm"
+weight: "45 kg"
+description: >
+  A carved relic left in forgotten shrines. The totem's body is made of
+  cracked wood, but its core glows mending its cracks.
+
+age: null
+birthday: null
+origin: Atlaria
+starting_relationships:
+  liking: 0
+  trust: 0
+
+
+ai:
+  personality: support
+  conditions:
+    - condition: low_hp
+      threshold: 0.4
+      action: heal_self
+      priority: 90
+    - condition: default
+      action: strongest_attack
+      priority: 50
+
+elements:
+  - lux
+
+base_stats:
+  hp: 260
+  max_hp: 260
+  mana: 36
+  max_mana: 36
+  stamina: 10
+  max_stamina: 10
+  physical_attack: 8
+  magical_attack: 39
+  physical_defense: 22
+  magical_defense: 46
+  speed: 14
+
+skills:
+  - id: light_ball
+    name: Light Ball
+    element: lux
+    damage_type: magical
+    target: individual
+    power: 20
+    mana_cost: 4
+
+  - id: light_energy
+    name: Light Energy
+    element: lux
+    damage_type: magical
+    target: all
+    power: 25
+    mana_cost: 7
+    effects:
+      - effect_id: light_energy
+        status_effect: Light Energy
+        apply_to: enemies_all
+        turns: 2
+        debuff:
+          magical_defense: 8
+        apply_chance: 0.5
+
+  - id: light_heal
+    name: Light Heal
+    element: lux
+    damage_type: status
+    target: self
+    power: 0
+    mana_cost: 8
+    effects:
+      - effect_id: light_heal
+        status_effect: Light Heal
+        apply_to: self
+        resource_regen:
+          hp: 18
+        regen_variance: [0.8, 1.2]
+
+weapon:
+  id: radiant_core
+  name: Radiant Core
+  element: lux
+  damage_type: magical
+  target: individual
+  power: 12
+  stamina_cost: 1
+  damage_variance: [0.9, 1.1]
+
+loot:
+  - item_id: gold_coin
+    quantity: 1
+    chance: 0.4
+  - item_id: barrier_scroll
+    quantity: 1
+    chance: 0.15
+  - item_id: focus_incense
+    quantity: 1
+    chance: 0.2
+
+abilities:
+  - ability_name: Sanctified Glow
+    condition:
+      type: on_turn
+      interval: 3
+    action:
+      type: heal
+      percent: 0.08
+    keep_triggered_after_once: true
+    activation_message: "The Totem glows softly and repairs its cracks."
+
+  - ability_name: Gleaming Ward
+    condition:
+      type: on_hit
+      damage_type: magical
+    action:
+      type: buff_self
+      buff:
+        magical_defense: 8
+        physical_defense: 4
+      duration: 2
+    keep_triggered_after_once: true
+    activation_message: "A bright ward forms around the Totem."
+

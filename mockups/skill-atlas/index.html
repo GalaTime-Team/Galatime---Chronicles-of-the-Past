@@ -1,0 +1,2355 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+  <title>Skill Atlas Map</title>
+  <link href="./assets/theme.css" rel="stylesheet">
+</head>
+
+<body>
+  <main class="app">
+    <header class="toolbar">
+      <div class="toolbar-left">
+        <div class="col">
+          <label for="elementSelect">Element</label>
+          <select id="elementSelect"></select>
+        </div>
+        <div class="col">
+          <label for="tooltipModeToggle">ToolTip</label>
+          <select id="tooltipModeToggle">
+            <option value="descriptive" selected>Descriptive</option>
+            <option value="yaml">YAML</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="toolbar-center">
+        <!-- File path and status moved to map bottom-right -->
+      </div>
+
+      <div class="toolbar-right">
+        <input id="folderInput" type="file" accept=".yaml,.yml" multiple style="display:none">
+        <button class="btn icon toolbar-icon" id="loadFolderBtn" type="button" title="Load skills files"><span
+            class="material-icons">folder_open</span></button>
+        <button class="btn icon toolbar-icon" id="resetViewBtn" type="button" title="Reset view"><span
+            class="material-icons">refresh</span></button>
+        <button class="btn icon toolbar-icon" id="copyBtn" type="button" title="Copy YAML"><span
+            class="material-icons">content_copy</span></button>
+        <button class="btn icon toolbar-icon" id="downloadBtn" type="button" title="Download"><span
+            class="material-icons">download</span></button>
+        <button class="btn icon" id="openDrawerBtn" type="button" title="Add skill"><span
+            class="material-icons">add</span></button>
+        <button class="btn icon toolbar-icon" id="editSelectedBtn" type="button" title="Edit skill"
+          style="display:none"><span class="material-icons">edit</span></button>
+        <button class="btn icon toolbar-icon delete-btn" id="deleteSelectedBtn" type="button"
+          title="Delete selected skill" style="display:none"><span class="material-icons">delete</span></button>
+      </div>
+    </header>
+
+    <section class="workspace">
+      <div class="map-shell" id="mapShell">
+        <div id="errorArea"
+          style="display:none; color:#ff4d4f; background:rgba(255,0,0,0.08); border-radius:8px; padding:8px 14px; margin:10px 0 8px 0; font-weight:600;">
+        </div>
+        <svg id="graph" aria-label="Skill dependency map">
+          <defs>
+            <linearGradient id="badgeGradientPower" x1="0%" y1="0%" x2="100%" y2="100%">
+              <stop offset="0%" stop-color="#071815" stop-opacity="0.16"></stop>
+              <stop offset="50%" stop-color="#11E4B5" stop-opacity="0.08"></stop>
+              <stop offset="100%" stop-color="#B9FFF1" stop-opacity="0.18"></stop>
+            </linearGradient>
+            <linearGradient id="badgeStrokePower" x1="0%" y1="0%" x2="100%" y2="100%">
+              <stop offset="0%" stop-color="#15F0C5"></stop>
+              <stop offset="100%" stop-color="#9DFFF1"></stop>
+            </linearGradient>
+            <linearGradient id="badgeGradientType" x1="0%" y1="0%" x2="100%" y2="100%">
+              <stop offset="0%" stop-color="#220A18" stop-opacity="0.16"></stop>
+              <stop offset="50%" stop-color="#FF5FA2" stop-opacity="0.08"></stop>
+              <stop offset="100%" stop-color="#FFC1DC" stop-opacity="0.18"></stop>
+            </linearGradient>
+            <linearGradient id="badgeStrokeType" x1="0%" y1="0%" x2="100%" y2="100%">
+              <stop offset="0%" stop-color="#FF5FA2"></stop>
+              <stop offset="100%" stop-color="#FFC0D9"></stop>
+            </linearGradient>
+            <linearGradient id="badgeGradientSp" x1="0%" y1="0%" x2="100%" y2="100%">
+              <stop offset="0%" stop-color="#0A1228" stop-opacity="0.16"></stop>
+              <stop offset="50%" stop-color="#6E7BFF" stop-opacity="0.08"></stop>
+              <stop offset="100%" stop-color="#CDD4FF" stop-opacity="0.18"></stop>
+            </linearGradient>
+            <linearGradient id="badgeStrokeSp" x1="0%" y1="0%" x2="100%" y2="100%">
+              <stop offset="0%" stop-color="#7A88FF"></stop>
+              <stop offset="100%" stop-color="#D7DCFF"></stop>
+            </linearGradient>
+            <!-- Damage type specific gradients -->
+            <linearGradient id="badgeGradientMagical" x1="0%" y1="0%" x2="100%" y2="100%">
+              <stop offset="0%" stop-color="#171428" stop-opacity="0.16"></stop>
+              <stop offset="50%" stop-color="#6D72CA" stop-opacity="0.08"></stop>
+              <stop offset="100%" stop-color="#C5B4E9" stop-opacity="0.18"></stop>
+            </linearGradient>
+            <linearGradient id="badgeStrokeMagical" x1="0%" y1="0%" x2="100%" y2="100%">
+              <stop offset="0%" stop-color="#6D72CA"></stop>
+              <stop offset="100%" stop-color="#C5B4E9"></stop>
+            </linearGradient>
+
+            <linearGradient id="badgeGradientPhysical" x1="0%" y1="0%" x2="100%" y2="100%">
+              <stop offset="0%" stop-color="#0B0B0B" stop-opacity="0.14"></stop>
+              <stop offset="50%" stop-color="#9E9E9E" stop-opacity="0.08"></stop>
+              <stop offset="100%" stop-color="#EDEDED" stop-opacity="0.18"></stop>
+            </linearGradient>
+            <linearGradient id="badgeStrokePhysical" x1="0%" y1="0%" x2="100%" y2="100%">
+              <stop offset="0%" stop-color="#A6A6A6"></stop>
+              <stop offset="100%" stop-color="#FFFFFF"></stop>
+            </linearGradient>
+
+            <linearGradient id="badgeGradientStatus" x1="0%" y1="0%" x2="100%" y2="100%">
+              <stop offset="0%" stop-color="#281200" stop-opacity="0.16"></stop>
+              <stop offset="50%" stop-color="#FFB86B" stop-opacity="0.08"></stop>
+              <stop offset="100%" stop-color="#FFE6C9" stop-opacity="0.18"></stop>
+            </linearGradient>
+            <linearGradient id="badgeStrokeStatus" x1="0%" y1="0%" x2="100%" y2="100%">
+              <stop offset="0%" stop-color="#FFB86B"></stop>
+              <stop offset="100%" stop-color="#FFD9A9"></stop>
+            </linearGradient>
+          </defs>
+          <g id="viewport">
+            <g id="edges"></g>
+            <g id="nodes"></g>
+          </g>
+        </svg>
+
+        <div class="map-controls">
+          <button class="btn icon" id="zoomInBtn" type="button" title="Zoom in"><span
+              class="material-icons">zoom_in</span></button>
+          <button class="btn icon" id="zoomOutBtn" type="button" title="Zoom out"><span
+              class="material-icons">zoom_out</span></button>
+        </div>
+
+        <aside class="yaml-preview">
+          <details>
+            <summary>YAML preview</summary>
+            <pre id="yamlPreview"></pre>
+          </details>
+        </aside>
+
+        <div class="map-info" id="mapInfo">
+          <div class="path-pill" id="filePath">data/combat/skills/ignis.yaml</div>
+          <div class="status-pill" id="status">Ready</div>
+        </div>
+
+        <div class="drawer-scrim" id="drawerScrim"></div>
+      </div>
+
+      <aside class="drawer" id="drawer">
+        <div class="drawer-head">
+          <strong id="drawerTitle">Add skill</strong>
+          <button class="btn" id="closeDrawerBtn" type="button">Close</button>
+        </div>
+
+        <div class="drawer-body">
+          <p class="hint" id="drawerHint">Create a new attack in the selected element. The map stays fixed while this
+            panel is open.</p>
+
+          <div class="field">
+            <label for="skillId">ID</label>
+            <input id="skillId" placeholder="fireball">
+          </div>
+
+          <div class="field">
+            <label for="skillName">Name</label>
+            <input id="skillName" placeholder="Fireball">
+          </div>
+
+          <div class="row">
+            <div class="field">
+              <label for="damageType">Damage type</label>
+              <select id="damageType">
+                <option value="physical">physical</option>
+                <option value="magical" selected>magical</option>
+                <option value="status">status</option>
+              </select>
+            </div>
+            <div class="field">
+              <label class="label-with-help" for="target">Target
+                <button class="help-icon-btn" type="button" aria-label="Target field help" data-help-key="target">
+                  <span class="material-icons">info</span>
+                </button>
+              </label>
+              <select id="target">
+                <option value="individual" selected>individual</option>
+                <option value="all">all</option>
+                <option value="self">self</option>
+                <option value="ally_one">ally_one</option>
+                <option value="allies_all">allies_all</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="row">
+            <div class="field">
+              <label for="power">Power</label>
+              <input id="power" type="number" value="10" min="0" step="1">
+            </div>
+            <div class="field">
+              <label class="label-with-help" for="accuracy">Accuracy
+                <button class="help-icon-btn" type="button" aria-label="Accuracy field help" data-help-key="accuracy">
+                  <span class="material-icons">info</span>
+                </button>
+              </label>
+              <input id="accuracy" type="number" value="1" min="0" max="1" step="0.01">
+            </div>
+          </div>
+
+          <div class="row">
+            <div class="field">
+              <label for="manaCost">Mana cost</label>
+              <input id="manaCost" type="number" value="4" min="0" step="1">
+            </div>
+            <div class="field">
+              <label for="staminaCost">Stamina cost</label>
+              <input id="staminaCost" type="number" value="0" min="0" step="1">
+            </div>
+          </div>
+
+          <div class="row">
+            <div class="field">
+              <label class="label-with-help" for="hits">Hits
+                <button class="help-icon-btn" type="button" aria-label="Hits field help" data-help-key="hits">
+                  <span class="material-icons">info</span>
+                </button>
+              </label>
+              <input id="hits" type="number" value="1" min="1" step="1">
+            </div>
+            <div class="field">
+              <label class="label-with-help" for="hitChance">Hit chance
+                <button class="help-icon-btn" type="button" aria-label="Hit chance field help"
+                  data-help-key="hit_chance">
+                  <span class="material-icons">info</span>
+                </button>
+              </label>
+              <input id="hitChance" type="number" value="1" min="0" max="1" step="0.01">
+            </div>
+          </div>
+
+          <div class="field">
+            <label class="label-with-help" for="spCost">Skill points cost
+              <button class="help-icon-btn" type="button" aria-label="Skill points cost field help"
+                data-help-key="skill_points_cost">
+                <span class="material-icons">info</span>
+              </button>
+            </label>
+            <input id="spCost" type="number" value="1" min="0" step="1">
+          </div>
+
+          <div class="field">
+            <div class="field-inline">
+              <label class="label-with-help" for="prerequisiteInput">Prerequisites
+                <button class="help-icon-btn" type="button" aria-label="Prerequisites field help"
+                  data-help-key="prerequisites">
+                  <span class="material-icons">info</span>
+                </button>
+              </label>
+              <span class="hint">Each prerequisite is added separately.</span>
+            </div>
+            <div class="prereq-entry">
+              <input id="prerequisiteInput" placeholder="flame">
+              <button class="btn" id="addPrerequisiteBtn" type="button">Add</button>
+            </div>
+            <div class="prereq-list" id="prerequisiteList"></div>
+          </div>
+
+          <div class="section-card">
+            <div class="section-head">
+              <label class="label-with-help">Effect
+                <button class="help-icon-btn" type="button" aria-label="Effect section help"
+                  data-help-key="effect_overview">
+                  <span class="material-icons">info</span>
+                </button>
+              </label>
+              <button class="btn effect-toggle" id="toggleEffectBtn" type="button" title="Add effect"
+                aria-label="Add effect">
+                <span class="material-icons" id="toggleEffectIcon">add</span>
+              </button>
+            </div>
+
+            <div class="effect-fields hidden" id="effectFields">
+              <div class="row">
+                <div class="field">
+                  <label class="label-with-help" for="effectId">Effect ID
+                    <button class="help-icon-btn" type="button" aria-label="Effect ID field help"
+                      data-help-key="effect_id">
+                      <span class="material-icons">info</span>
+                    </button>
+                  </label>
+                  <input id="effectId" placeholder="frost">
+                </div>
+                <div class="field">
+                  <label class="label-with-help" for="statusEffect">Status effect
+                    <button class="help-icon-btn" type="button" aria-label="Status effect field help"
+                      data-help-key="status_effect">
+                      <span class="material-icons">info</span>
+                    </button>
+                  </label>
+                  <input id="statusEffect" placeholder="Frost">
+                </div>
+              </div>
+
+              <div class="row">
+                <div class="field">
+                  <label class="label-with-help" for="effectApplyTo">Apply to
+                    <button class="help-icon-btn" type="button" aria-label="Effect apply to field help"
+                      data-help-key="effect_apply_to">
+                      <span class="material-icons">info</span>
+                    </button>
+                  </label>
+                  <select id="effectApplyTo">
+                    <option value="enemy_one" selected>enemy_one</option>
+                    <option value="enemies_all">enemies_all</option>
+                    <option value="self">self</option>
+                    <option value="ally_one">ally_one</option>
+                    <option value="allies_all">allies_all</option>
+                  </select>
+                </div>
+                <div class="field">
+                  <label class="label-with-help" for="effectTurns">Turns (optional)
+                    <button class="help-icon-btn" type="button" aria-label="Effect turns field help"
+                      data-help-key="effect_turns">
+                      <span class="material-icons">info</span>
+                    </button>
+                  </label>
+                  <input id="effectTurns" type="number" value="0" min="0" step="1">
+                </div>
+              </div>
+
+              <div class="row">
+                <div class="field">
+                  <label class="label-with-help" for="effectDamage">Tick damage
+                    <button class="help-icon-btn" type="button" aria-label="Effect tick damage field help"
+                      data-help-key="effect_damage">
+                      <span class="material-icons">info</span>
+                    </button>
+                  </label>
+                  <input id="effectDamage" type="number" value="0" min="0" step="1">
+                </div>
+                <div class="field">
+                  <label class="label-with-help" for="effectApplyChance">Apply chance
+                    <button class="help-icon-btn" type="button" aria-label="Effect apply chance field help"
+                      data-help-key="effect_apply_chance">
+                      <span class="material-icons">info</span>
+                    </button>
+                  </label>
+                  <input id="effectApplyChance" type="number" value="1" min="0" max="1" step="0.01">
+                </div>
+              </div>
+
+              <div class="hint">Regen is instant when turns = 0 and over-time when turns &gt; 0.</div>
+              <div class="row">
+                <div class="field">
+                  <label class="label-with-help" for="effectRegenHp">Regen HP
+                    <button class="help-icon-btn" type="button" aria-label="Effect regen hp field help"
+                      data-help-key="effect_regen_hp">
+                      <span class="material-icons">info</span>
+                    </button>
+                  </label>
+                  <input id="effectRegenHp" type="number" value="0" min="0" step="1">
+                </div>
+                <div class="field">
+                  <label class="label-with-help" for="effectRegenMana">Regen mana
+                    <button class="help-icon-btn" type="button" aria-label="Effect regen mana field help"
+                      data-help-key="effect_regen_mana">
+                      <span class="material-icons">info</span>
+                    </button>
+                  </label>
+                  <input id="effectRegenMana" type="number" value="0" min="0" step="1">
+                </div>
+              </div>
+
+              <div class="field">
+                <label class="label-with-help" for="effectRegenStamina">Regen stamina
+                  <button class="help-icon-btn" type="button" aria-label="Effect regen stamina field help"
+                    data-help-key="effect_regen_stamina">
+                    <span class="material-icons">info</span>
+                  </button>
+                </label>
+                <input id="effectRegenStamina" type="number" value="0" min="0" step="1">
+              </div>
+            </div>
+          </div>
+
+          <div class="field">
+            <label for="description">Description</label>
+            <textarea id="description" rows="2" placeholder="Description"></textarea>
+          </div>
+
+          <div class="field">
+            <label for="notes">Extra notes (optional)</label>
+            <textarea id="notes" rows="3" placeholder="author notes"></textarea>
+          </div>
+        </div>
+
+        <div class="drawer-foot">
+          <button class="btn" id="clearFormBtn" type="button">Clear</button>
+          <button class="btn success" id="saveSkillBtn" type="button">Save skill</button>
+        </div>
+      </aside>
+
+      <div class="modal-scrim" id="modalScrim"></div>
+      <div class="confirm-modal" id="deleteModal">
+        <div class="confirm-card">
+          <h3 id="deleteModalTitle">Delete selected skill?</h3>
+          <p id="deleteModalMessage">Choose whether to remove only the selected skill or also every dependent skill that
+            requires it.</p>
+          <div class="confirm-actions">
+            <button class="btn" id="cancelDeleteBtn" type="button">Cancel</button>
+            <button class="btn" id="deleteOnlyBtn" type="button">Delete selected only</button>
+            <button class="btn danger" id="deleteCascadeBtn" type="button">Delete cascade</button>
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <div class="tooltip" id="tooltip">
+    <h3 id="tooltipTitle"></h3>
+    <div class="tooltip-body" id="tooltipBody"></div>
+  </div>
+
+  <div class="field-tooltip" id="fieldTooltip" role="tooltip" aria-hidden="true">
+    <h4 id="fieldTooltipTitle"></h4>
+    <p id="fieldTooltipBody"></p>
+  </div>
+
+  <script src="./data/atlas-visuals.js"></script>
+  <script src="./data/atlas-help.js"></script>
+  <script src="./data/atlas-content.js"></script>
+  <script>
+    // #region App bootstrap and shared state
+    const atlasVisuals = window.SkillAtlasVisuals || {};
+    const atlasHelp = window.SkillAtlasHelp || {};
+    const atlasContent = window.SkillAtlasContent || {};
+
+    const {
+      LAYOUT = {},
+      ELEMENT_COLORS: ELEMENT_COLORS_JS = {},
+      DAMAGE_TYPE_LABELS = {},
+      TARGET_LABELS = {},
+      DAMAGE_TYPE_COLORS = {},
+      TARGET_COLORS = {},
+      ELEMENT_KEYS = [],
+    } = atlasVisuals;
+    const { FIELD_HELP_CONTENT = {} } = atlasHelp;
+    const {
+      FALLBACK_FILES = {},
+      FORM_DEFAULTS = {},
+      PROTECTED_SKILL_IDS: PROTECTED_SKILL_ID_LIST = [],
+    } = atlasContent;
+    const {
+      NODE_WIDTH = 188,
+      NODE_HEIGHT = 94,
+      H_GAP = 240,
+      V_GAP = 170,
+    } = LAYOUT;
+    const PROTECTED_SKILL_IDS = new Set(PROTECTED_SKILL_ID_LIST);
+
+    const state = {
+      filesByElement: {},
+      fileHandlesByElement: {},
+      directoryHandle: null,
+      currentElement: "",
+      selectedSkillId: null,
+      warnings: [],
+      graph: null,
+      transform: { x: 0, y: 0, k: 1 },
+      dragging: null,
+      drawerOpen: false,
+      drawerMode: "create",
+      formPrerequisites: [],
+      highlightedSkillId: null,
+      tooltipMode: "descriptive",
+      lastTooltip: null,
+      pendingDeleteSkillId: null,
+    };
+
+    const ui = {
+      elementSelect: document.getElementById("elementSelect"),
+      filePath: document.getElementById("filePath"),
+      status: document.getElementById("status"),
+      selectionActions: document.getElementById("selectionActions"),
+      selectedSkillLabel: document.getElementById("selectedSkillLabel"),
+      editSelectedBtn: document.getElementById("editSelectedBtn"),
+      deleteSelectedBtn: document.getElementById("deleteSelectedBtn"),
+      graph: document.getElementById("graph"),
+      viewport: document.getElementById("viewport"),
+      edges: document.getElementById("edges"),
+      nodes: document.getElementById("nodes"),
+      mapShell: document.getElementById("mapShell"),
+      zoomInBtn: document.getElementById("zoomInBtn"),
+      zoomOutBtn: document.getElementById("zoomOutBtn"),
+      resetViewBtn: document.getElementById("resetViewBtn"),
+      copyBtn: document.getElementById("copyBtn"),
+      downloadBtn: document.getElementById("downloadBtn"),
+      yamlPreview: document.getElementById("yamlPreview"),
+      tooltip: document.getElementById("tooltip"),
+      tooltipTitle: document.getElementById("tooltipTitle"),
+      tooltipBody: document.getElementById("tooltipBody"),
+      fieldTooltip: document.getElementById("fieldTooltip"),
+      fieldTooltipTitle: document.getElementById("fieldTooltipTitle"),
+      fieldTooltipBody: document.getElementById("fieldTooltipBody"),
+      tooltipModeToggle: document.getElementById("tooltipModeToggle"),
+      openDrawerBtn: document.getElementById("openDrawerBtn"),
+      closeDrawerBtn: document.getElementById("closeDrawerBtn"),
+      drawerTitle: document.getElementById("drawerTitle"),
+      drawerHint: document.getElementById("drawerHint"),
+      drawer: document.getElementById("drawer"),
+      drawerScrim: document.getElementById("drawerScrim"),
+      skillId: document.getElementById("skillId"),
+      skillName: document.getElementById("skillName"),
+      damageType: document.getElementById("damageType"),
+      target: document.getElementById("target"),
+      power: document.getElementById("power"),
+      accuracy: document.getElementById("accuracy"),
+      manaCost: document.getElementById("manaCost"),
+      staminaCost: document.getElementById("staminaCost"),
+      hits: document.getElementById("hits"),
+      hitChance: document.getElementById("hitChance"),
+      spCost: document.getElementById("spCost"),
+      prerequisiteInput: document.getElementById("prerequisiteInput"),
+      addPrerequisiteBtn: document.getElementById("addPrerequisiteBtn"),
+      prerequisiteList: document.getElementById("prerequisiteList"),
+      toggleEffectBtn: document.getElementById("toggleEffectBtn"),
+      toggleEffectIcon: document.getElementById("toggleEffectIcon"),
+      effectFields: document.getElementById("effectFields"),
+      effectId: document.getElementById("effectId"),
+      statusEffect: document.getElementById("statusEffect"),
+      effectApplyTo: document.getElementById("effectApplyTo"),
+      effectTurns: document.getElementById("effectTurns"),
+      effectDamage: document.getElementById("effectDamage"),
+      effectApplyChance: document.getElementById("effectApplyChance"),
+      effectRegenHp: document.getElementById("effectRegenHp"),
+      effectRegenMana: document.getElementById("effectRegenMana"),
+      effectRegenStamina: document.getElementById("effectRegenStamina"),
+      description: document.getElementById("description"),
+      notes: document.getElementById("notes"),
+      saveSkillBtn: document.getElementById("saveSkillBtn"),
+      clearFormBtn: document.getElementById("clearFormBtn"),
+      loadFolderBtn: document.getElementById("loadFolderBtn"),
+      folderInput: document.getElementById("folderInput"),
+      modalScrim: document.getElementById("modalScrim"),
+      deleteModal: document.getElementById("deleteModal"),
+      deleteModalTitle: document.getElementById("deleteModalTitle"),
+      deleteModalMessage: document.getElementById("deleteModalMessage"),
+      cancelDeleteBtn: document.getElementById("cancelDeleteBtn"),
+      deleteOnlyBtn: document.getElementById("deleteOnlyBtn"),
+      deleteCascadeBtn: document.getElementById("deleteCascadeBtn"),
+      drawerBody: document.querySelector(".drawer-body"),
+    };
+    // #endregion
+
+    // #region Core utilities and YAML parsing
+    function numberValue(value, fallback = 0) {
+      const n = Number(value);
+      return Number.isFinite(n) ? n : fallback;
+    }
+
+    function clamp01(value, fallback = 1) {
+      const n = numberValue(value, fallback);
+      if (n < 0) return 0;
+      if (n > 1) return 1;
+      return n;
+    }
+
+    function cleanScalar(text) {
+      const raw = String(text || "").trim();
+      if (!raw) return "";
+      if ((raw.startsWith("\"") && raw.endsWith("\"")) || (raw.startsWith("'") && raw.endsWith("'"))) {
+        return raw.slice(1, -1);
+      }
+      return raw;
+    }
+
+    function parseScalar(text) {
+      const raw = cleanScalar(text);
+      if (raw === "") return "";
+      if (raw === "[]") return [];
+      if (raw === "true") return true;
+      if (raw === "false") return false;
+      if (/^-?\d+(\.\d+)?$/.test(raw)) return Number(raw);
+      if (raw.startsWith("[") && raw.endsWith("]")) {
+        const inside = raw.slice(1, -1).trim();
+        if (!inside) return [];
+        return inside.split(",").map((item) => cleanScalar(item));
+      }
+      return raw;
+    }
+
+    function parseSkillsYaml(text) {
+      const lines = String(text || "").replace(/\t/g, "  ").split(/\r?\n/);
+      let element = "";
+      const skills = [];
+      let i = 0;
+
+      function parseNestedMap(startIndex, indent) {
+        const map = {};
+        let cursor = startIndex;
+        while (cursor < lines.length) {
+          const mapMatch = lines[cursor].match(new RegExp(`^\\s{${indent}}([a-zA-Z0-9_]+):\\s*(.*)$`));
+          if (!mapMatch) break;
+          map[mapMatch[1]] = parseScalar(mapMatch[2]);
+          cursor += 1;
+        }
+        return { map, nextIndex: cursor };
+      }
+
+      while (i < lines.length) {
+        const line = lines[i];
+        const elementMatch = line.match(/^element:\s*(.+)$/);
+        if (elementMatch) {
+          element = cleanScalar(elementMatch[1]);
+          i += 1;
+          continue;
+        }
+
+        const startSkill = line.match(/^\s{2}-\s+id:\s*(.+)$/);
+        if (startSkill) {
+          const skill = {
+            id: cleanScalar(startSkill[1]),
+            name: "",
+            element: "",
+            damage_type: "magical",
+            target: "individual",
+            power: 0,
+            accuracy: 1,
+            mana_cost: 0,
+            stamina_cost: 0,
+            hits: 1,
+            hit_chance: 1,
+            skill_points_cost: 0,
+            prerequisites: [],
+            effects: [],
+            extra: {},
+          };
+          i += 1;
+
+          while (i < lines.length) {
+            const entry = lines[i];
+            if (/^\s{2}-\s+id:/.test(entry)) break;
+            if (!entry.trim()) {
+              i += 1;
+              continue;
+            }
+            const pair = entry.match(/^\s{4}([a-zA-Z0-9_]+):\s*(.*)$/);
+            if (!pair) {
+              i += 1;
+              continue;
+            }
+
+            const key = pair[1];
+            const rawValue = pair[2];
+            if (key === "prerequisites") {
+              if (!rawValue) {
+                const prereqs = [];
+                i += 1;
+                while (i < lines.length) {
+                  const itemMatch = lines[i].match(/^\s{6}-\s*(.+)$/);
+                  if (!itemMatch) break;
+                  prereqs.push(cleanScalar(itemMatch[1]));
+                  i += 1;
+                }
+                skill.prerequisites = prereqs;
+                continue;
+              }
+              const parsed = parseScalar(rawValue);
+              if (Array.isArray(parsed)) skill.prerequisites = parsed.map((v) => cleanScalar(v));
+              else if (parsed) skill.prerequisites = [cleanScalar(parsed)];
+              i += 1;
+              continue;
+            }
+
+            if (key === "effects") {
+              const effects = [];
+              i += 1;
+              while (i < lines.length) {
+                const effectStart = lines[i].match(/^\s{6}-\s+([a-zA-Z0-9_]+):\s*(.*)$/);
+                if (!effectStart) break;
+
+                const effect = {
+                  [effectStart[1]]: parseScalar(effectStart[2]),
+                };
+                i += 1;
+
+                while (i < lines.length) {
+                  const effectPair = lines[i].match(/^\s{8}([a-zA-Z0-9_]+):\s*(.*)$/);
+                  if (!effectPair) break;
+
+                  const effectKey = effectPair[1];
+                  const effectRawValue = effectPair[2];
+                  if ((effectKey === "resource_regen" || effectKey === "buff" || effectKey === "debuff") && !effectRawValue) {
+                    const { map, nextIndex } = parseNestedMap(i + 1, 10);
+                    effect[effectKey] = map;
+                    i = nextIndex;
+                    continue;
+                  }
+
+                  effect[effectKey] = parseScalar(effectRawValue);
+                  i += 1;
+                }
+
+                effects.push(effect);
+              }
+              skill.effects = effects;
+              continue;
+            }
+
+            const value = parseScalar(rawValue);
+            skill[key] = value;
+            i += 1;
+          }
+
+          if (!skill.name) skill.name = prettifyId(skill.id);
+          if (!skill.element) skill.element = element;
+          if (!Array.isArray(skill.prerequisites)) skill.prerequisites = [];
+          if (!Array.isArray(skill.effects)) skill.effects = [];
+          skills.push(skill);
+          continue;
+        }
+
+        i += 1;
+      }
+
+      return {
+        element: element || "unknown",
+        fileName: `${element || "unknown"}.yaml`,
+        skills,
+      };
+    }
+
+    function prettifyId(id) {
+      return String(id || "")
+        .split("_")
+        .filter(Boolean)
+        .map((part) => part.charAt(0).toUpperCase() + part.slice(1))
+        .join(" ");
+    }
+
+    // Small YAML serializer used by the preview and export actions.
+    function yamlScalar(value) {
+      if (value === null || value === undefined) return "\"\"";
+      if (typeof value === "number") {
+        return Number.isInteger(value) ? String(value) : String(+value.toFixed(2));
+      }
+      if (typeof value === "boolean") return value ? "true" : "false";
+      const text = String(value);
+      if (text === "") return "\"\"";
+      if (/^[a-zA-Z0-9_\-]+$/.test(text)) return text;
+      return JSON.stringify(text);
+    }
+
+    // #endregion
+
+    // #region Visual helpers, badges, and tooltip rendering
+    function escapeHtml(value) {
+      return String(value ?? "").replace(/[&<>"']/g, (character) => {
+        switch (character) {
+          case "&": return "&amp;";
+          case "<": return "&lt;";
+          case ">": return "&gt;";
+          case '"': return "&quot;";
+          case "'": return "&#39;";
+          default: return character;
+        }
+      });
+    }
+
+    function hexToRgb(hex) {
+      const normalized = String(hex || "").replace("#", "");
+      if (normalized.length !== 6) return { r: 109, g: 114, b: 202 };
+      return {
+        r: Number.parseInt(normalized.slice(0, 2), 16),
+        g: Number.parseInt(normalized.slice(2, 4), 16),
+        b: Number.parseInt(normalized.slice(4, 6), 16),
+      };
+    }
+
+    function rgba(hex, alpha) {
+      const { r, g, b } = hexToRgb(hex);
+      return `rgba(${r}, ${g}, ${b}, ${Number.isFinite(alpha) ? alpha : 1})`;
+    }
+
+    function relativeLuminance(hex) {
+      const { r, g, b } = hexToRgb(hex);
+      const channels = [r, g, b].map((channel) => {
+        const normalized = channel / 255;
+        return normalized <= 0.03928 ? normalized / 12.92 : ((normalized + 0.055) / 1.055) ** 2.4;
+      });
+      return 0.2126 * channels[0] + 0.7152 * channels[1] + 0.0722 * channels[2];
+    }
+
+    function contrastTextColor(hexList) {
+      const colors = Array.isArray(hexList) ? hexList : [hexList];
+      const average = colors.reduce((sum, color) => sum + relativeLuminance(color), 0) / Math.max(colors.length, 1);
+      return average > 0.42 ? "#14141B" : "#FFFFFF";
+    }
+
+    function elementBadgeStyle(elementKey) {
+      const entry = ELEMENT_COLORS_JS[String(elementKey || "").toLowerCase()];
+      if (!entry) {
+        const start = "#6D72CA";
+        const end = "#C5B4E9";
+        return {
+          background: `linear-gradient(90deg, ${rgba(start, 0.16)} 0%, ${rgba(start, 0.08)} 50%, ${rgba(end, 0.18)} 100%)`,
+          color: "#FFFFFF",
+          borderColor: rgba(end, 0.9),
+        };
+      }
+
+      if (entry.type === "gradient") {
+        const start = entry.start;
+        const end = entry.end;
+        return {
+          background: `linear-gradient(90deg, ${rgba(start, 0.16)} 0%, ${rgba(start, 0.08)} 50%, ${rgba(end, 0.18)} 100%)`,
+          color: "#FFFFFF",
+          borderColor: rgba(end, 0.9),
+        };
+      }
+
+      const color = entry.color;
+      return {
+        background: `linear-gradient(90deg, ${rgba(color, 0.16)} 0%, ${rgba(color, 0.08)} 50%, ${rgba(color, 0.18)} 100%)`,
+        color: "#FFFFFF",
+        borderColor: rgba(color, 0.9),
+      };
+    }
+
+    function damageTypeBadgeStyle(value) {
+      const key = String(value || "").toLowerCase();
+      const color = DAMAGE_TYPE_COLORS[key];
+      const fallback = "#6D72CA";
+      const hex = color || fallback;
+      return {
+        background: `linear-gradient(90deg, ${rgba(hex, 0.16)} 0%, ${rgba(hex, 0.08)} 50%, ${rgba(hex, 0.18)} 100%)`,
+        color: "#FFFFFF",
+        borderColor: rgba(hex, 0.9),
+      };
+    }
+
+    function targetBadgeStyle(value) {
+      const key = String(value || "").toLowerCase();
+      const color = TARGET_COLORS[key];
+      const fallback = "#6BAA75";
+      const hex = color || fallback;
+      return {
+        background: `linear-gradient(90deg, ${rgba(hex, 0.16)} 0%, ${rgba(hex, 0.08)} 50%, ${rgba(hex, 0.18)} 100%)`,
+        color: "#FFFFFF",
+        borderColor: rgba(hex, 0.9),
+      };
+    }
+
+    function labelForDamageType(value) {
+      return DAMAGE_TYPE_LABELS[String(value || "").toLowerCase()] || prettifyId(value);
+    }
+
+    function labelForTarget(value) {
+      return TARGET_LABELS[String(value || "").toLowerCase()] || prettifyId(value);
+    }
+
+    function badgeHtml(text, className, style = "") {
+      let safeStyleStr = String(style || "").trim();
+      if (safeStyleStr && !safeStyleStr.endsWith(";")) safeStyleStr += ";";
+      if (!/\bcolor\s*:/i.test(safeStyleStr)) {
+        safeStyleStr += "color:#FFFFFF;";
+      }
+      const safeStyle = safeStyleStr ? ` style="${safeStyleStr}"` : "";
+      return `<span class="badge ${className}"${safeStyle}>${escapeHtml(text)}</span>`;
+    }
+
+    function createSvgBadge(label, x, y, palette) {
+      const badge = document.createElementNS("http://www.w3.org/2000/svg", "g");
+      badge.setAttribute("transform", `translate(${x} ${y})`);
+
+      const badgeText = String(label || "");
+      const width = Math.max(44, Math.min(90, badgeText.length * 7 + 18));
+
+      const rect = document.createElementNS("http://www.w3.org/2000/svg", "rect");
+      rect.setAttribute("width", String(width));
+      rect.setAttribute("height", "24");
+      rect.setAttribute("rx", "12");
+      rect.setAttribute("ry", "12");
+      rect.setAttribute("fill", `url(#${palette.gradientId})`);
+      rect.setAttribute("stroke", `url(#${palette.strokeGradientId})`);
+      rect.setAttribute("stroke-width", "1.25");
+      badge.appendChild(rect);
+
+      // top shine path removed per request
+
+      const text = document.createElementNS("http://www.w3.org/2000/svg", "text");
+      text.setAttribute("x", String(width / 2));
+      text.setAttribute("y", "15.5");
+      text.setAttribute("text-anchor", "middle");
+      text.setAttribute("font-size", "10.5");
+      text.setAttribute("font-weight", "700");
+      text.setAttribute("letter-spacing", "0.05em");
+      text.setAttribute("fill", palette.text);
+      // also set inline style to ensure CSS rules don't override palette text
+      text.setAttribute("style", `fill: ${palette.text};`);
+      text.textContent = badgeText;
+      badge.appendChild(text);
+
+      return { badge, width };
+    }
+
+    function appendSkillBadges(group, skill) {
+      const damageKey = String(skill.damage_type || "magical").toLowerCase();
+      const damagePalettes = {
+        physical: {
+          gradientId: "badgeGradientPhysical",
+          strokeGradientId: "badgeStrokePhysical",
+          shine: "#E6E6E6",
+          text: "#FFFFFF",
+        },
+        magical: {
+          gradientId: "badgeGradientMagical",
+          strokeGradientId: "badgeStrokeMagical",
+          shine: "#FFE2EF",
+          text: "#FFFFFF",
+        },
+        status: {
+          gradientId: "badgeGradientStatus",
+          strokeGradientId: "badgeStrokeStatus",
+          shine: "#FFF0E0",
+          text: "#FFFFFF",
+        },
+      };
+      const damagePalette = damagePalettes[damageKey] || damagePalettes.magical;
+
+      const badgeConfigs = [
+        {
+          label: `PW ${numberValue(skill.power, 0)}`,
+          palette: {
+            gradientId: "badgeGradientPower",
+            strokeGradientId: "badgeStrokePower",
+            shine: "#D8FFF7",
+            text: "#ECFFFA",
+          },
+        },
+        {
+          label: labelForDamageType(skill.damage_type),
+          palette: damagePalette,
+        },
+        {
+          label: `SP ${numberValue(skill.skill_points_cost, 0)}`,
+          palette: {
+            gradientId: "badgeGradientSp",
+            strokeGradientId: "badgeStrokeSp",
+            shine: "#E5E8FF",
+            text: "#F3F5FF",
+          },
+        },
+      ];
+
+      const spacing = 8;
+      const badges = badgeConfigs.map((config) => createSvgBadge(config.label, 0, 0, config.palette));
+      const totalWidth = badges.reduce((sum, item) => sum + item.width, 0) + spacing * (badges.length - 1);
+      let currentX = (NODE_WIDTH - totalWidth) / 2;
+
+      badges.forEach((item) => {
+        item.badge.setAttribute("transform", `translate(${currentX} 40)`);
+        group.appendChild(item.badge);
+        currentX += item.width + spacing;
+      });
+    }
+
+    function formatTooltipYaml(skill) {
+      return toYaml({
+        element: skill.element || state.currentElement,
+        fileName: `${skill.element || state.currentElement}.yaml`,
+        skills: [skill],
+      });
+    }
+
+    function renderDescriptiveTooltip(skill, missingPrereqs) {
+      const element = String(skill.element || state.currentElement || "unknown");
+      const elementStyle = elementBadgeStyle(element);
+      const damageTypeStyle = damageTypeBadgeStyle(skill.damage_type);
+      const targetStyle = targetBadgeStyle(skill.target);
+      const prereqs = Array.isArray(skill.prerequisites) ? skill.prerequisites : [];
+      const prereqBadges = prereqs.length
+        ? prereqs.map((prereq) => badgeHtml(prereq, "note")).join("")
+        : `<span class="hint">none</span>`;
+      const effectCount = Array.isArray(skill.effects) ? skill.effects.length : 0;
+      const missingHtml = missingPrereqs && missingPrereqs.length
+        ? `<div class="tooltip-section"><div class="tooltip-label">Missing prerequisites</div><div class="tooltip-badges">${missingPrereqs.map((prereq) => badgeHtml(prereq, "note")).join("")}</div></div>`
+        : "";
+
+      const elementInline = `background:${elementStyle.background};color:${elementStyle.color};border-color:${elementStyle.borderColor};`;
+      const damageInline = `background:${damageTypeStyle.background};color:${damageTypeStyle.color};border-color:${damageTypeStyle.borderColor};`;
+      const targetInline = `background:${targetStyle.background};color:${targetStyle.color};border-color:${targetStyle.borderColor};`;
+
+      return `
+        <div class="tooltip-section">
+          <div class="tooltip-badges">
+            ${badgeHtml(element.toUpperCase(), "element", elementInline)}
+            ${badgeHtml(labelForDamageType(skill.damage_type), "type", damageInline)}
+            ${badgeHtml(labelForTarget(skill.target), "target", targetInline)}
+          </div>
+        </div>
+        <div class="tooltip-grid">
+          <div class="tooltip-stat"><span>Power</span><strong>${escapeHtml(numberValue(skill.power, 0))}</strong></div>
+          <div class="tooltip-stat"><span>Accuracy</span><strong>${escapeHtml(numberValue(skill.accuracy, 1))}</strong></div>
+          <div class="tooltip-stat"><span>Mana cost</span><strong>${escapeHtml(numberValue(skill.mana_cost, 0))}</strong></div>
+          <div class="tooltip-stat"><span>Stamina cost</span><strong>${escapeHtml(numberValue(skill.stamina_cost, 0))}</strong></div>
+          <div class="tooltip-stat"><span>Hits</span><strong>${escapeHtml(Math.max(1, Math.floor(numberValue(skill.hits, 1))))}</strong></div>
+          <div class="tooltip-stat"><span>Hit chance</span><strong>${escapeHtml(numberValue(skill.hit_chance, 1))}</strong></div>
+          <div class="tooltip-stat"><span>Skill points</span><strong>${escapeHtml(Math.max(0, Math.floor(numberValue(skill.skill_points_cost, 0))))}</strong></div>
+          <div class="tooltip-stat"><span>Effects</span><strong>${escapeHtml(effectCount)}</strong></div>
+        </div>
+        <div class="tooltip-section">
+          <div class="tooltip-label">Prerequisites</div>
+          <div class="tooltip-badges">${prereqBadges}</div>
+        </div>
+        ${missingHtml}
+      `;
+    }
+
+    function renderYamlTooltip(skill) {
+      const yaml = formatTooltipYaml(skill);
+      return `<pre class="tooltip-yaml">${escapeHtml(yaml)}</pre>`;
+    }
+
+    function renderTooltip(skill, missingPrereqs, x, y) {
+      state.lastTooltip = { skill, missingPrereqs: Array.isArray(missingPrereqs) ? [...missingPrereqs] : [], x, y };
+      ui.tooltipTitle.textContent = `${skill.name || prettifyId(skill.id)} (${skill.id})`;
+      ui.tooltipBody.innerHTML = state.tooltipMode === "yaml"
+        ? renderYamlTooltip(skill)
+        : renderDescriptiveTooltip(skill, missingPrereqs);
+      ui.tooltip.style.display = "block";
+      moveTooltip(x, y);
+    }
+
+    function toYaml(elementData) {
+      const lines = [];
+      lines.push(`element: ${yamlScalar(elementData.element)}`);
+      lines.push("skills:");
+
+      const objectKeys = ["resource_regen", "buff", "debuff"];
+
+      function pushObjectWithIndent(obj, indentSize) {
+        const entries = Object.entries(obj || {}).filter(([, value]) => value !== undefined && value !== null && value !== "");
+        const indent = " ".repeat(indentSize);
+        for (const [key, value] of entries) {
+          lines.push(`${indent}${key}: ${yamlScalar(value)}`);
+        }
+      }
+
+      if (!Array.isArray(elementData.skills) || !elementData.skills.length) {
+        lines.push("  # no skills defined for this element yet");
+      } else {
+        for (const skill of elementData.skills) {
+          lines.push(`  - id: ${yamlScalar(skill.id)}`);
+          lines.push(`    name: ${yamlScalar(skill.name || prettifyId(skill.id))}`);
+          lines.push(`    element: ${yamlScalar(skill.element || elementData.element)}`);
+          lines.push(`    damage_type: ${yamlScalar(skill.damage_type || "magical")}`);
+          lines.push(`    target: ${yamlScalar(skill.target || "individual")}`);
+          lines.push(`    power: ${yamlScalar(numberValue(skill.power, 0))}`);
+          lines.push(`    accuracy: ${yamlScalar(numberValue(skill.accuracy, 1))}`);
+          lines.push(`    mana_cost: ${yamlScalar(numberValue(skill.mana_cost, 0))}`);
+          lines.push(`    stamina_cost: ${yamlScalar(numberValue(skill.stamina_cost, 0))}`);
+          lines.push(`    hits: ${yamlScalar(Math.max(1, Math.floor(numberValue(skill.hits, 1))))}`);
+          lines.push(`    hit_chance: ${yamlScalar(numberValue(skill.hit_chance, 1))}`);
+          lines.push(`    skill_points_cost: ${yamlScalar(Math.max(0, Math.floor(numberValue(skill.skill_points_cost, 0))))}`);
+
+          const prereqs = Array.isArray(skill.prerequisites) ? skill.prerequisites.filter(Boolean) : [];
+          if (!prereqs.length) {
+            lines.push("    prerequisites: []");
+          } else {
+            lines.push("    prerequisites:");
+            for (const prereq of prereqs) {
+              lines.push(`      - ${yamlScalar(prereq)}`);
+            }
+          }
+
+          const effects = Array.isArray(skill.effects) ? skill.effects.filter((effect) => effect && typeof effect === "object") : [];
+          if (effects.length) {
+            lines.push("    effects:");
+            for (const effect of effects) {
+              const effectId = String(effect.effect_id || "").trim() || "effect";
+              lines.push(`      - effect_id: ${yamlScalar(effectId)}`);
+              for (const [key, value] of Object.entries(effect)) {
+                if (key === "effect_id") continue;
+                if (value === undefined || value === null || value === "") continue;
+                if (objectKeys.includes(key) && typeof value === "object" && !Array.isArray(value)) {
+                  const nestedEntries = Object.entries(value).filter(([, nestedValue]) => nestedValue !== undefined && nestedValue !== null && nestedValue !== "");
+                  if (!nestedEntries.length) continue;
+                  lines.push(`        ${key}:`);
+                  pushObjectWithIndent(value, 10);
+                  continue;
+                }
+                lines.push(`        ${key}: ${yamlScalar(value)}`);
+              }
+            }
+          }
+
+          if (skill.extra && typeof skill.extra === "object" && Object.keys(skill.extra).length) {
+            lines.push("    extra:");
+            for (const [key, value] of Object.entries(skill.extra)) {
+              lines.push(`      ${key}: ${yamlScalar(value)}`);
+            }
+          }
+
+          lines.push("");
+        }
+
+      }
+      return lines.join("\n").trim() + "\n";
+    }
+    // #endregion
+
+    // #region Data loading and element state
+    function initData() {
+      state.filesByElement = {};
+      // Load built-in fallback YAML samples first so the atlas has something to display immediately.
+      for (const content of Object.values(FALLBACK_FILES)) {
+        const parsed = parseSkillsYaml(content);
+        state.filesByElement[parsed.element] = parsed;
+      }
+      // Ensure every element from ELEMENT_KEYS is present (empty placeholder if no sample)
+      for (const el of ELEMENT_KEYS) {
+        if (!state.filesByElement[el]) {
+          state.filesByElement[el] = { element: el, fileName: `${el}.yaml`, skills: [] };
+        }
+      }
+      state.currentElement = Object.keys(state.filesByElement)[0] || "";
+    }
+
+    function refreshElementSelect() {
+      const elements = Object.keys(state.filesByElement).sort();
+      ui.elementSelect.innerHTML = "";
+      for (const element of elements) {
+        const opt = document.createElement("option");
+        opt.value = element;
+        opt.textContent = element;
+        ui.elementSelect.appendChild(opt);
+      }
+      if (!elements.includes(state.currentElement)) {
+        state.currentElement = elements[0] || "";
+      }
+      ui.elementSelect.value = state.currentElement;
+    }
+
+    function currentData() {
+      return state.filesByElement[state.currentElement] || { element: state.currentElement, fileName: `${state.currentElement}.yaml`, skills: [] };
+    }
+
+    function getAccessibleSkillCatalog(elementName) {
+      const normalizedElement = String(elementName || "").trim().toLowerCase() || state.currentElement;
+      const baseData = state.filesByElement[normalizedElement] || currentData();
+      const accessibleSkills = Array.isArray(baseData.skills) ? [...baseData.skills] : [];
+      const seen = new Set(accessibleSkills.map((skill) => `${String(skill.element || normalizedElement).toLowerCase()}:${String(skill.id || "").trim()}`));
+
+      ["corporis", "magic", "vetus"].forEach((universalElement) => {
+        const catalog = state.filesByElement[universalElement];
+        if (!catalog || !Array.isArray(catalog.skills)) return;
+
+        catalog.skills.forEach((skill) => {
+          const key = `${String(skill.element || universalElement).toLowerCase()}:${String(skill.id || "").trim()}`;
+          if (!seen.has(key)) {
+            accessibleSkills.push(skill);
+            seen.add(key);
+          }
+        });
+      });
+
+      return {
+        element: baseData.element || normalizedElement,
+        fileName: baseData.fileName || `${normalizedElement}.yaml`,
+        skills: accessibleSkills,
+      };
+    }
+
+    function currentSkill() {
+      return currentData().skills.find((skill) => skill.id === state.selectedSkillId) || null;
+    }
+
+    function isProtectedSkillId(skillId) {
+      return PROTECTED_SKILL_IDS.has(String(skillId || "").trim().toLowerCase());
+    }
+
+    function updateSelectionUi() {
+      const skill = currentSkill && typeof currentSkill === 'function' ? currentSkill() : null;
+      if (skill) {
+        ui.editSelectedBtn.style.display = "inline-flex";
+        ui.deleteSelectedBtn.style.display = "inline-flex";
+        ui.editSelectedBtn.disabled = false;
+        ui.deleteSelectedBtn.disabled = isProtectedSkillId(skill.id);
+        ui.deleteSelectedBtn.title = isProtectedSkillId(skill.id)
+          ? "This runtime-critical skill should not be deleted from the atlas."
+          : "Delete selected skill";
+      } else {
+        ui.editSelectedBtn.style.display = "none";
+        ui.deleteSelectedBtn.style.display = "none";
+        ui.editSelectedBtn.disabled = true;
+        ui.deleteSelectedBtn.disabled = true;
+      }
+    }
+
+    // #endregion
+
+    // #region Skill form, effect handling, and draft creation
+    function renderPrerequisiteList() {
+      ui.prerequisiteList.innerHTML = "";
+      if (!state.formPrerequisites.length) {
+        const empty = document.createElement("span");
+        empty.className = "prereq-empty";
+        empty.textContent = "No prerequisites";
+        ui.prerequisiteList.appendChild(empty);
+        return;
+      }
+
+      state.formPrerequisites.forEach((prerequisite) => {
+        const chip = document.createElement("span");
+        chip.className = "prereq-chip";
+        chip.textContent = prerequisite;
+
+        const removeBtn = document.createElement("button");
+        removeBtn.type = "button";
+        removeBtn.setAttribute("aria-label", `Remove prerequisite ${prerequisite}`);
+        removeBtn.textContent = "×";
+        removeBtn.addEventListener("click", () => {
+          state.formPrerequisites = state.formPrerequisites.filter((item) => item !== prerequisite);
+          renderPrerequisiteList();
+        });
+
+        chip.appendChild(removeBtn);
+        ui.prerequisiteList.appendChild(chip);
+      });
+    }
+
+    function updateDrawerUi() {
+      const editing = state.drawerMode === "edit";
+      ui.drawerTitle.textContent = editing ? "Edit skill" : "Add skill";
+      ui.drawerHint.textContent = editing
+        ? "Update the selected attack. The id stays locked to avoid breaking references."
+        : "Create a new attack in the selected element. The map stays fixed while this panel is open.";
+      ui.skillId.disabled = editing;
+      ui.clearFormBtn.textContent = editing ? "Reset" : "Clear";
+      ui.saveSkillBtn.textContent = editing ? "Update skill" : "Save skill";
+      ui.openDrawerBtn.title = editing ? "Add skill" : "Add skill";
+    }
+
+    function addPrerequisite(value) {
+      const prerequisite = String(value || "").trim();
+      if (!prerequisite) return;
+
+      const lockedId = state.drawerMode === "edit"
+        ? (currentSkill() ? currentSkill().id : "")
+        : ui.skillId.value.trim();
+      if (lockedId && prerequisite === lockedId) {
+        setStatus("A skill cannot require itself", true);
+        return;
+      }
+
+      if (state.formPrerequisites.includes(prerequisite)) {
+        setStatus(`Prerequisite already added: ${prerequisite}`, true);
+        return;
+      }
+
+      state.formPrerequisites.push(prerequisite);
+      state.formPrerequisites.sort();
+      renderPrerequisiteList();
+      ui.prerequisiteInput.value = "";
+      ui.prerequisiteInput.focus();
+    }
+
+    function setEffectExpanded(expanded) {
+      ui.effectFields.classList.toggle("hidden", !expanded);
+      ui.toggleEffectIcon.textContent = expanded ? "remove" : "add";
+      ui.toggleEffectBtn.title = expanded ? "Remove effect" : "Add effect";
+      ui.toggleEffectBtn.setAttribute("aria-label", expanded ? "Remove effect" : "Add effect");
+    }
+
+    function updateHitChanceAvailability() {
+      const hits = Math.max(1, Math.floor(numberValue(ui.hits.value, 1)));
+      const isMultiHit = hits > 1;
+      ui.hitChance.disabled = !isMultiHit;
+      if (!isMultiHit) {
+        ui.hitChance.value = "1";
+      }
+    }
+
+    function collectEffectDraft(existingSkill = null) {
+      if (ui.effectFields.classList.contains("hidden")) {
+        return [];
+      }
+
+      const effectId = ui.effectId.value.trim();
+      const turns = Math.max(0, Math.floor(numberValue(ui.effectTurns.value, 0)));
+      const damage = Math.max(0, Math.floor(numberValue(ui.effectDamage.value, 0)));
+      const applyChance = clamp01(ui.effectApplyChance.value, 1);
+      const regenHp = Math.max(0, Math.floor(numberValue(ui.effectRegenHp.value, 0)));
+      const regenMana = Math.max(0, Math.floor(numberValue(ui.effectRegenMana.value, 0)));
+      const regenStamina = Math.max(0, Math.floor(numberValue(ui.effectRegenStamina.value, 0)));
+
+      if (!effectId && damage <= 0 && regenHp <= 0 && regenMana <= 0 && regenStamina <= 0 && turns <= 0 && applyChance >= 1) {
+        return [];
+      }
+
+      if (!effectId) {
+        setStatus("Effect ID is required when effect is enabled", true);
+        ui.effectId.focus();
+        return null;
+      }
+
+      if (damage <= 0 && regenHp <= 0 && regenMana <= 0 && regenStamina <= 0) {
+        setStatus("Effect requires tick damage or at least one regen value", true);
+        ui.effectDamage.focus();
+        return null;
+      }
+
+      const effect = {
+        effect_id: effectId,
+        status_effect: ui.statusEffect.value.trim() || prettifyId(effectId),
+        apply_to: ui.effectApplyTo.value,
+      };
+
+      if (turns > 0) effect.turns = turns;
+      if (damage > 0) effect.damage = damage;
+      if (applyChance < 1) effect.apply_chance = applyChance;
+
+      const resourceRegen = {};
+      if (regenHp > 0) resourceRegen.hp = regenHp;
+      if (regenMana > 0) resourceRegen.mana = regenMana;
+      if (regenStamina > 0) resourceRegen.stamina = regenStamina;
+      if (Object.keys(resourceRegen).length) effect.resource_regen = resourceRegen;
+      return [effect];
+    }
+
+    function setFormFromSkill(skill) {
+      ui.skillId.value = skill.id || "";
+      ui.skillName.value = skill.name || "";
+      ui.damageType.value = skill.damage_type || "magical";
+      ui.target.value = skill.target || "individual";
+      ui.power.value = String(numberValue(skill.power, 0));
+      ui.accuracy.value = String(numberValue(skill.accuracy, 1));
+      ui.manaCost.value = String(Math.max(0, Math.floor(numberValue(skill.mana_cost, 0))));
+      ui.staminaCost.value = String(Math.max(0, Math.floor(numberValue(skill.stamina_cost, 0))));
+      ui.hits.value = String(Math.max(1, Math.floor(numberValue(skill.hits, 1))));
+      ui.hitChance.value = String(numberValue(skill.hit_chance, 1));
+      ui.spCost.value = String(Math.max(0, Math.floor(numberValue(skill.skill_points_cost, 0))));
+      state.formPrerequisites = [...new Set((Array.isArray(skill.prerequisites) ? skill.prerequisites : []).filter(Boolean))];
+      renderPrerequisiteList();
+      ui.description.value = skill.extra && typeof skill.extra === "object" ? String(skill.extra.description || "") : "";
+      ui.notes.value = skill.extra && typeof skill.extra === "object" ? String(skill.extra.notes || "") : "";
+
+      const firstEffect = Array.isArray(skill.effects) && skill.effects.length ? skill.effects[0] : null;
+      setEffectExpanded(Boolean(firstEffect));
+      ui.effectId.value = firstEffect ? String(firstEffect.effect_id || "") : "";
+      ui.statusEffect.value = firstEffect ? String(firstEffect.status_effect || "") : "";
+      ui.effectApplyTo.value = firstEffect ? String(firstEffect.apply_to || "enemy_one") : "enemy_one";
+      ui.effectTurns.value = firstEffect ? String(Math.max(0, Math.floor(numberValue(firstEffect.turns, 0)))) : "0";
+      ui.effectDamage.value = firstEffect ? String(Math.max(0, Math.floor(numberValue(firstEffect.damage, 0)))) : "0";
+      ui.effectApplyChance.value = firstEffect ? String(clamp01(firstEffect.apply_chance, 1)) : "1";
+      const regen = firstEffect && firstEffect.resource_regen && typeof firstEffect.resource_regen === "object" ? firstEffect.resource_regen : {};
+      ui.effectRegenHp.value = String(Math.max(0, Math.floor(numberValue(regen.hp, 0))));
+      ui.effectRegenMana.value = String(Math.max(0, Math.floor(numberValue(regen.mana, 0))));
+      ui.effectRegenStamina.value = String(Math.max(0, Math.floor(numberValue(regen.stamina, 0))));
+
+      updateHitChanceAvailability();
+      ui.prerequisiteInput.value = "";
+    }
+
+    function lockMapInteraction() {
+      return state.drawerOpen || state.pendingDeleteSkillId !== null;
+    }
+
+    function collectSkillDraft(existingSkill = null) {
+      // Build the skill payload from the current form values while preserving any existing metadata.
+      const baseSkill = existingSkill
+        ? {
+          ...existingSkill,
+          extra: existingSkill.extra && typeof existingSkill.extra === "object" ? { ...existingSkill.extra } : {},
+        }
+        : { extra: {} };
+      const id = existingSkill ? existingSkill.id : ui.skillId.value.trim();
+      const description = ui.description.value.trim();
+      if (description) baseSkill.extra.description = description;
+      else delete baseSkill.extra.description;
+      const notes = ui.notes.value.trim();
+      if (notes) baseSkill.extra.notes = notes;
+      else delete baseSkill.extra.notes;
+
+      return {
+        ...baseSkill,
+        id,
+        name: ui.skillName.value.trim() || prettifyId(id),
+        element: currentData().element,
+        damage_type: ui.damageType.value,
+        target: ui.target.value,
+        power: numberValue(ui.power.value, 0),
+        accuracy: numberValue(ui.accuracy.value, 1),
+        mana_cost: Math.max(0, Math.floor(numberValue(ui.manaCost.value, 0))),
+        stamina_cost: Math.max(0, Math.floor(numberValue(ui.staminaCost.value, 0))),
+        hits: Math.max(1, Math.floor(numberValue(ui.hits.value, 1))),
+        hit_chance: numberValue(ui.hitChance.value, 1),
+        skill_points_cost: Math.max(0, Math.floor(numberValue(ui.spCost.value, 0))),
+        prerequisites: [...state.formPrerequisites],
+        extra: Object.keys(baseSkill.extra).length ? baseSkill.extra : {},
+      };
+    }
+
+    async function persistElement(element) {
+      if (!state.directoryHandle) {
+        return false;
+      }
+
+      const data = state.filesByElement[element];
+      if (!data) return false;
+
+      let handle = state.fileHandlesByElement[element];
+      if (!handle) {
+        handle = await state.directoryHandle.getFileHandle(data.fileName || `${element}.yaml`, { create: true });
+        state.fileHandlesByElement[element] = handle;
+      }
+
+      const writable = await handle.createWritable();
+      await writable.write(toYaml(data));
+      await writable.close();
+      return true;
+    }
+
+    async function persistCurrentElement(successMessage, fallbackMessage) {
+      try {
+        const saved = await persistElement(state.currentElement);
+        setStatus(saved ? successMessage : fallbackMessage);
+      } catch (error) {
+        setStatus(`Failed to write YAML: ${error instanceof Error ? error.message : String(error)}`, true);
+      }
+    }
+
+    // #endregion
+
+    // #region Dependency graph, layout, and rendering
+    function collectDirectDependents(skillId, data = currentData()) {
+      return (data.skills || [])
+        .filter((skill) => Array.isArray(skill.prerequisites) && skill.prerequisites.includes(skillId))
+        .map((skill) => skill.id)
+        .sort();
+    }
+
+    function collectCascadeDependents(skillId, data = currentData()) {
+      const cascade = new Set();
+      const queue = [...collectDirectDependents(skillId, data)];
+
+      while (queue.length) {
+        const currentId = queue.shift();
+        if (cascade.has(currentId)) continue;
+        cascade.add(currentId);
+        queue.push(...collectDirectDependents(currentId, data));
+      }
+
+      return [...cascade].sort();
+    }
+
+    function buildGraph(skills) {
+      // Build the prerequisite graph, compute levels, and flag missing or circular references.
+      const warnings = [];
+      const nodesById = new Map();
+
+      for (const skill of skills) {
+        if (!skill.id) continue;
+        if (nodesById.has(skill.id)) {
+          warnings.push(`duplicate id: ${skill.id}`);
+          continue;
+        }
+        nodesById.set(skill.id, {
+          skill,
+          parents: [],
+          children: [],
+          indegree: 0,
+          level: 0,
+          missingPrereqs: [],
+          pos: { x: 0, y: 0 },
+        });
+      }
+
+      for (const node of nodesById.values()) {
+        const prereqs = Array.isArray(node.skill.prerequisites) ? node.skill.prerequisites : [];
+        const uniquePrereqs = [...new Set(prereqs.filter(Boolean))];
+        node.skill.prerequisites = uniquePrereqs;
+        if (uniquePrereqs.includes(node.skill.id)) {
+          warnings.push(`self prerequisite detected: ${node.skill.id}`);
+        }
+
+        for (const prereq of uniquePrereqs) {
+          const parent = nodesById.get(prereq);
+          if (!parent) {
+            node.missingPrereqs.push(prereq);
+            warnings.push(`missing prerequisite: ${node.skill.id} -> ${prereq}`);
+            continue;
+          }
+          if (prereq === node.skill.id) continue;
+          parent.children.push(node.skill.id);
+          node.parents.push(prereq);
+          node.indegree += 1;
+        }
+      }
+
+      const indegreeMap = new Map();
+      for (const [id, node] of nodesById.entries()) indegreeMap.set(id, node.indegree);
+      const queue = [...[...nodesById.keys()].filter((id) => indegreeMap.get(id) === 0)].sort();
+      const topo = [];
+
+      while (queue.length) {
+        const id = queue.shift();
+        topo.push(id);
+        const node = nodesById.get(id);
+        for (const childId of node.children) {
+          const next = indegreeMap.get(childId) - 1;
+          indegreeMap.set(childId, next);
+          const child = nodesById.get(childId);
+          child.level = Math.max(child.level, node.level + 1);
+          if (next === 0) {
+            queue.push(childId);
+            queue.sort();
+          }
+        }
+      }
+
+      if (topo.length < nodesById.size) {
+        warnings.push("cycle detected in prerequisites");
+        const maxLevel = Math.max(0, ...[...nodesById.values()].map((n) => n.level));
+        for (const [id, node] of nodesById.entries()) {
+          if (!topo.includes(id)) node.level = maxLevel + 1;
+        }
+      }
+
+      const layers = [];
+      for (const node of nodesById.values()) {
+        if (!layers[node.level]) layers[node.level] = [];
+        layers[node.level].push(node);
+      }
+
+      for (const layer of layers) {
+        if (!layer) continue;
+        layer.sort((a, b) => a.skill.id.localeCompare(b.skill.id));
+        const count = layer.length;
+        const startX = -((count - 1) * H_GAP) / 2;
+        layer.forEach((node, index) => {
+          node.pos.x = startX + index * H_GAP;
+          node.pos.y = node.level * V_GAP;
+        });
+      }
+
+      const edges = [];
+      for (const node of nodesById.values()) {
+        for (const parentId of node.parents) {
+          edges.push({ from: parentId, to: node.skill.id });
+        }
+      }
+
+      return { nodesById, edges, warnings, layers };
+    }
+
+    function setStatus(message, isError = false) {
+      ui.status.textContent = message;
+      ui.status.className = `status-pill${isError ? " error" : ""}`;
+      if (ui.errorArea) {
+        if (isError) {
+          ui.errorArea.textContent = message;
+          ui.errorArea.style.display = "block";
+        } else {
+          ui.errorArea.textContent = "";
+          ui.errorArea.style.display = "none";
+        }
+      }
+    }
+
+    function applyTransform() {
+      const t = state.transform;
+      ui.viewport.setAttribute("transform", `translate(${t.x} ${t.y}) scale(${t.k})`);
+    }
+
+    function fitGraphToView() {
+      if (!state.graph || !state.graph.nodesById.size) {
+        state.transform = { x: ui.graph.clientWidth / 2, y: 120, k: 1 };
+        applyTransform();
+        return;
+      }
+
+      const nodes = [...state.graph.nodesById.values()];
+      const minX = Math.min(...nodes.map((node) => node.pos.x - NODE_WIDTH / 2));
+      const maxX = Math.max(...nodes.map((node) => node.pos.x + NODE_WIDTH / 2));
+      const minY = Math.min(...nodes.map((node) => node.pos.y - NODE_HEIGHT / 2));
+      const maxY = Math.max(...nodes.map((node) => node.pos.y + NODE_HEIGHT / 2));
+
+      const viewW = ui.graph.clientWidth;
+      const viewH = ui.graph.clientHeight;
+      const graphW = Math.max(1, maxX - minX);
+      const graphH = Math.max(1, maxY - minY);
+
+      const pad = 80;
+      const k = Math.min(1.2, Math.max(0.35, Math.min((viewW - pad) / graphW, (viewH - pad) / graphH)));
+      const centerGraphX = (minX + maxX) / 2;
+      const centerGraphY = (minY + maxY) / 2;
+
+      state.transform = {
+        x: viewW / 2 - centerGraphX * k,
+        y: viewH / 2 - centerGraphY * k,
+        k,
+      };
+      applyTransform();
+    }
+
+    /**
+ * Grid-based tree layout.
+ * - Leaves occupy 1 column.
+ * - Parents span their children's columns (rounded to odd width so they center on an integer).
+ * - Siblings are separated by their full subtree widths, preventing overlap.
+ */
+    function calculateGridLayout(skills) {
+      const skillMap = new Map(skills.map(s => [s.id, s]));
+
+      // Build adjacency
+      const children = new Map();
+      const parents = new Map();
+      for (const skill of skills) {
+        children.set(skill.id, []);
+        parents.set(skill.id, []);
+      }
+      for (const skill of skills) {
+        for (const prereq of skill.prerequisites || []) {
+          if (skillMap.has(prereq)) {
+            children.get(prereq).push(skill.id);
+            parents.get(skill.id).push(prereq);
+          }
+        }
+      }
+
+      // Find roots (nodes with no parent in this set)
+      const rootIds = skills
+        .filter(s => parents.get(s.id).length === 0)
+        .map(s => s.id);
+      const roots = rootIds.length ? rootIds : skills.map(s => s.id);
+
+      // Calculate depth (row) for each node
+      const depth = new Map();
+      function setDepth(id, d) {
+        const cur = depth.get(id);
+        if (cur === undefined || d > cur) {
+          depth.set(id, d);
+          for (const child of children.get(id)) {
+            setDepth(child, d + 1);
+          }
+        }
+      }
+      for (const root of roots) setDepth(root, 0);
+
+      // --- Bottom-up: subtree widths ---
+      // Leaves = 1. Internal nodes = sum(children). If even, +1 so parent centers on integer column.
+      const subtreeWidth = new Map();
+      function calcWidth(id) {
+        const childIds = children.get(id).filter(cid => depth.get(cid) === depth.get(id) + 1);
+        if (childIds.length === 0) {
+          subtreeWidth.set(id, 1);
+          return 1;
+        }
+        let w = 0;
+        for (const cid of childIds) w += calcWidth(cid);
+        if (w % 2 === 0) w++; // force odd so center is integer
+        subtreeWidth.set(id, w);
+        return w;
+      }
+      for (const root of roots) calcWidth(root);
+
+      // --- Top-down: assign grid coordinates ---
+      // Each node gets {col, row, start, end}. start/end are inclusive column bounds.
+      const grid = new Map();
+      function placeNode(id, start, end, row) {
+        const col = (start + end) / 2;
+        grid.set(id, { col, row, start, end });
+
+        const childIds = children.get(id).filter(cid => depth.get(cid) === row + 1);
+        let cursor = start;
+        for (const cid of childIds) {
+          const w = subtreeWidth.get(cid);
+          placeNode(cid, cursor, cursor + w - 1, row + 1);
+          cursor += w;
+        }
+      }
+
+      let cursor = 0;
+      for (const root of roots) {
+        const w = subtreeWidth.get(root);
+        placeNode(root, cursor, cursor + w - 1, 0);
+        cursor += w;
+      }
+
+      // --- Convert grid to pixels ---
+      const COL_WIDTH = 220;   // adjust based on your NODE_WIDTH
+      const ROW_HEIGHT = 140;  // adjust based on your NODE_HEIGHT
+
+      const positions = new Map();
+      for (const [id, info] of grid) {
+        positions.set(id, {
+          x: info.col * COL_WIDTH,
+          y: info.row * ROW_HEIGHT
+        });
+      }
+
+      return { positions, grid, subtreeWidth };
+    }
+
+
+    function renderGraph() {
+      // Render the current element as SVG nodes and edges, then refresh the status preview.
+      const data = getAccessibleSkillCatalog(state.currentElement);
+      const sourceData = currentData();
+      console.log("Rendering graph with data:", data);
+
+      // Build graph structure (edges, warnings, etc.)
+      state.graph = buildGraph(data.skills || []);
+      state.warnings = state.graph.warnings;
+
+      // Override positions with grid layout so nothing overlaps
+      const layout = calculateGridLayout(data.skills || []);
+      for (const [id, node] of state.graph.nodesById) {
+        const pos = layout.positions.get(id);
+        if (pos) node.pos = pos;
+      }
+
+      if (state.selectedSkillId && !state.graph.nodesById.has(state.selectedSkillId)) {
+        state.selectedSkillId = null;
+      }
+
+      ui.filePath.textContent = `data/combat/skills/${sourceData.fileName || `${sourceData.element}.yaml`}`;
+      ui.edges.innerHTML = "";
+      ui.nodes.innerHTML = "";
+
+      for (const edge of state.graph.edges) {
+        const from = state.graph.nodesById.get(edge.from);
+        const to = state.graph.nodesById.get(edge.to);
+        if (!from || !to) continue;
+
+        const x1 = from.pos.x;
+        const y1 = from.pos.y + NODE_HEIGHT / 2;
+        const x2 = to.pos.x;
+        const y2 = to.pos.y - NODE_HEIGHT / 2;
+        const midY = y1 + (y2 - y1) * 0.5;
+
+        const path = document.createElementNS("http://www.w3.org/2000/svg", "path");
+        path.setAttribute("class", "edge");
+        path.setAttribute("d", `M ${x1} ${y1} C ${x1} ${midY}, ${x2} ${midY}, ${x2} ${y2}`);
+        ui.edges.appendChild(path);
+      }
+
+      for (const node of state.graph.nodesById.values()) {
+        const g = document.createElementNS("http://www.w3.org/2000/svg", "g");
+        const selected = state.selectedSkillId === node.skill.id;
+        const shouldAnimate = state.highlightedSkillId === node.skill.id;
+        g.setAttribute("class", `node${selected ? " selected" : ""}${shouldAnimate ? " entering" : ""}`);
+        g.setAttribute("transform", `translate(${node.pos.x - NODE_WIDTH / 2} ${node.pos.y - NODE_HEIGHT / 2})`);
+
+        const rect = document.createElementNS("http://www.w3.org/2000/svg", "rect");
+        rect.setAttribute("class", "node-card");
+        rect.setAttribute("width", String(NODE_WIDTH));
+        rect.setAttribute("height", String(NODE_HEIGHT));
+        g.appendChild(rect);
+
+        const title = document.createElementNS("http://www.w3.org/2000/svg", "text");
+        title.setAttribute("x", String(NODE_WIDTH / 2));
+        title.setAttribute("y", "28");
+        title.setAttribute("font-size", "15");
+        title.setAttribute("font-weight", "700");
+        title.setAttribute("text-anchor", "middle");
+        title.textContent = node.skill.name || prettifyId(node.skill.id);
+        g.appendChild(title);
+
+        appendSkillBadges(g, node.skill);
+
+        if (node.missingPrereqs.length) {
+          const warning = document.createElementNS("http://www.w3.org/2000/svg", "text");
+          warning.setAttribute("x", "12");
+          warning.setAttribute("y", "81");
+          warning.setAttribute("class", "warn");
+          warning.textContent = `missing: ${node.missingPrereqs.join(", ")}`;
+          g.appendChild(warning);
+        }
+
+        g.addEventListener("mouseenter", (event) => showTooltip(event, node.skill, node.missingPrereqs));
+        g.addEventListener("mousemove", (event) => moveTooltip(event.clientX, event.clientY));
+        g.addEventListener("mouseleave", hideTooltip);
+        g.addEventListener("click", () => {
+          state.selectedSkillId = state.selectedSkillId === node.skill.id ? null : node.skill.id;
+          renderGraph();
+        });
+
+        if (shouldAnimate) {
+          g.addEventListener("animationend", () => {
+            if (state.highlightedSkillId === node.skill.id) state.highlightedSkillId = null;
+          }, { once: true });
+        }
+
+        ui.nodes.appendChild(g);
+      }
+
+      const warningText = state.warnings.length
+        ? `${data.skills.length} skills | ${state.warnings.length} warning(s)`
+        : `${data.skills.length} skills | graph ok`;
+      setStatus(warningText, state.warnings.length > 0);
+
+      ui.yamlPreview.textContent = toYaml(data);
+      applyTransform();
+      updateSelectionUi();
+    }
+
+    function showTooltip(event, skill, missingPrereqs) {
+      renderTooltip(skill, missingPrereqs, event.clientX, event.clientY);
+    }
+
+    function moveTooltip(x, y) {
+      const offset = 14;
+      ui.tooltip.style.left = `${x + offset}px`;
+      ui.tooltip.style.top = `${y + offset}px`;
+    }
+
+    function hideTooltip() {
+      ui.tooltip.style.display = "none";
+      state.lastTooltip = null;
+    }
+
+    function getFieldHelpPayload(trigger) {
+      const key = trigger?.dataset?.helpKey;
+      if (!key) return null;
+      return FIELD_HELP_CONTENT[key] || null;
+    }
+
+    function moveFieldTooltip(trigger) {
+      const rect = trigger.getBoundingClientRect();
+      const tip = ui.fieldTooltip;
+      const viewportWidth = window.innerWidth;
+      const viewportHeight = window.innerHeight;
+      const spacing = 10;
+
+      let left = rect.right + spacing;
+      let top = rect.top - 4;
+      const tipRect = tip.getBoundingClientRect();
+
+      if (left + tipRect.width > viewportWidth - 12) {
+        left = Math.max(12, rect.left - tipRect.width - spacing);
+      }
+      if (top + tipRect.height > viewportHeight - 12) {
+        top = Math.max(12, viewportHeight - tipRect.height - 12);
+      }
+      if (top < 12) {
+        top = 12;
+      }
+
+      tip.style.left = `${left}px`;
+      tip.style.top = `${top}px`;
+    }
+
+    function showFieldTooltip(trigger) {
+      const payload = getFieldHelpPayload(trigger);
+      if (!payload) return;
+      ui.fieldTooltipTitle.textContent = payload.title;
+      ui.fieldTooltipBody.textContent = payload.body;
+      ui.fieldTooltip.setAttribute("aria-hidden", "false");
+      ui.fieldTooltip.style.display = "block";
+      moveFieldTooltip(trigger);
+    }
+
+    function hideFieldTooltip() {
+      ui.fieldTooltip.style.display = "none";
+      ui.fieldTooltip.setAttribute("aria-hidden", "true");
+    }
+
+    function zoomAroundPoint(factor, clientX, clientY) {
+      const rect = ui.graph.getBoundingClientRect();
+      const px = clientX - rect.left;
+      const py = clientY - rect.top;
+      const k0 = state.transform.k;
+      const k1 = Math.max(0.3, Math.min(2.4, k0 * factor));
+      const wx = (px - state.transform.x) / k0;
+      const wy = (py - state.transform.y) / k0;
+
+      state.transform.k = k1;
+      state.transform.x = px - wx * k1;
+      state.transform.y = py - wy * k1;
+      applyTransform();
+    }
+
+    function onWheel(event) {
+      if (lockMapInteraction()) {
+        event.preventDefault();
+        return;
+      }
+      event.preventDefault();
+      const factor = event.deltaY < 0 ? 1.12 : 0.9;
+      zoomAroundPoint(factor, event.clientX, event.clientY);
+    }
+
+    function onPointerDown(event) {
+      if (event.button !== 0) return;
+      if (lockMapInteraction()) return;
+      if (event.target.closest(".node")) return;
+      if (state.selectedSkillId !== null) {
+        state.selectedSkillId = null;
+        renderGraph();
+      }
+      ui.graph.setPointerCapture(event.pointerId);
+      state.dragging = {
+        pointerId: event.pointerId,
+        startX: event.clientX,
+        startY: event.clientY,
+        originX: state.transform.x,
+        originY: state.transform.y,
+      };
+    }
+
+    function onPointerMove(event) {
+      if (lockMapInteraction()) return;
+      if (!state.dragging || state.dragging.pointerId !== event.pointerId) return;
+      const dx = event.clientX - state.dragging.startX;
+      const dy = event.clientY - state.dragging.startY;
+      state.transform.x = state.dragging.originX + dx;
+      state.transform.y = state.dragging.originY + dy;
+      applyTransform();
+    }
+
+    function onPointerUp(event) {
+      if (!state.dragging || state.dragging.pointerId !== event.pointerId) return;
+      ui.graph.releasePointerCapture(event.pointerId);
+      state.dragging = null;
+    }
+
+    function openDrawer(mode = "create") {
+      state.drawerMode = mode;
+      if (mode === "edit") {
+        const skill = currentSkill();
+        if (!skill) {
+          setStatus("Select a skill to edit", true);
+          return;
+        }
+        setFormFromSkill(skill);
+      } else {
+        clearForm();
+      }
+      updateDrawerUi();
+      state.drawerOpen = true;
+      ui.drawer.classList.add("open");
+      ui.drawerScrim.classList.add("open");
+      if (mode === "edit") ui.skillName.focus();
+      else ui.skillId.focus();
+    }
+
+    function closeDrawer() {
+      state.drawerOpen = false;
+      ui.drawer.classList.remove("open");
+      ui.drawerScrim.classList.remove("open");
+      hideFieldTooltip();
+    }
+
+    function clearForm() {
+      ui.skillId.value = FORM_DEFAULTS.skillId || "";
+      ui.skillName.value = FORM_DEFAULTS.skillName || "";
+      ui.damageType.value = FORM_DEFAULTS.damageType || "magical";
+      ui.target.value = FORM_DEFAULTS.target || "individual";
+      ui.power.value = FORM_DEFAULTS.power || "10";
+      ui.accuracy.value = FORM_DEFAULTS.accuracy || "1";
+      ui.manaCost.value = FORM_DEFAULTS.manaCost || "4";
+      ui.staminaCost.value = FORM_DEFAULTS.staminaCost || "0";
+      ui.hits.value = FORM_DEFAULTS.hits || "1";
+      ui.hitChance.value = FORM_DEFAULTS.hitChance || "1";
+      ui.spCost.value = FORM_DEFAULTS.spCost || "1";
+      ui.prerequisiteInput.value = FORM_DEFAULTS.prerequisiteInput || "";
+      state.formPrerequisites = [];
+      renderPrerequisiteList();
+      setEffectExpanded(Boolean(FORM_DEFAULTS.effectExpanded));
+      ui.effectId.value = FORM_DEFAULTS.effectId || "";
+      ui.statusEffect.value = FORM_DEFAULTS.statusEffect || "";
+      ui.effectApplyTo.value = FORM_DEFAULTS.effectApplyTo || "enemy_one";
+      ui.effectTurns.value = FORM_DEFAULTS.effectTurns || "0";
+      ui.effectDamage.value = FORM_DEFAULTS.effectDamage || "0";
+      ui.effectApplyChance.value = FORM_DEFAULTS.effectApplyChance || "1";
+      ui.effectRegenHp.value = FORM_DEFAULTS.effectRegenHp || "0";
+      ui.effectRegenMana.value = FORM_DEFAULTS.effectRegenMana || "0";
+      ui.effectRegenStamina.value = FORM_DEFAULTS.effectRegenStamina || "0";
+      updateHitChanceAvailability();
+      ui.description.value = FORM_DEFAULTS.description || "";
+      ui.notes.value = FORM_DEFAULTS.notes || "";
+    }
+
+    async function saveSkillFromForm() {
+      const data = currentData();
+      const existingSkill = state.drawerMode === "edit" ? currentSkill() : null;
+      const id = existingSkill ? existingSkill.id : ui.skillId.value.trim();
+      if (!id) {
+        setStatus("ID is required", true);
+        ui.skillId.focus();
+        return;
+      }
+
+      if (!existingSkill && data.skills.some((skill) => skill.id === id)) {
+        setStatus(`Skill id already exists: ${id}`, true);
+        return;
+      }
+
+      if (state.formPrerequisites.includes(id)) {
+        setStatus("A skill cannot require itself", true);
+        return;
+      }
+
+      const skill = collectSkillDraft(existingSkill);
+      const effects = collectEffectDraft(existingSkill);
+      if (effects === null) return;
+      skill.effects = effects;
+
+      if (existingSkill) {
+        const index = data.skills.findIndex((item) => item.id === existingSkill.id);
+        if (index >= 0) data.skills[index] = skill;
+      } else {
+        data.skills.push(skill);
+      }
+
+      state.selectedSkillId = skill.id;
+      state.highlightedSkillId = skill.id;
+      renderGraph();
+      closeDrawer();
+      await persistCurrentElement(
+        `${existingSkill ? "Skill updated" : "Skill added"}: ${id}${state.directoryHandle ? " and written to file" : ""}`,
+        `${existingSkill ? "Skill updated" : "Skill added"}: ${id}. Load the folder through the picker to write back to disk.`
+      );
+    }
+
+    // #endregion
+
+    // #region Delete flow, copy/download, and file import
+    function openDeleteModal(skillId = state.selectedSkillId) {
+      const skill = currentData().skills.find((entry) => entry.id === skillId);
+      if (!skill) {
+        setStatus("Select a skill to delete", true);
+        return;
+      }
+      if (isProtectedSkillId(skill.id)) {
+        setStatus(`Protected runtime skill cannot be deleted here: ${skill.id}`, true);
+        return;
+      }
+
+      const directDependents = collectDirectDependents(skill.id);
+      const cascadeDependents = collectCascadeDependents(skill.id);
+      state.pendingDeleteSkillId = skill.id;
+      ui.deleteModalTitle.textContent = `Delete ${skill.name || prettifyId(skill.id)} (${skill.id})?`;
+      if (!directDependents.length) {
+        ui.deleteModalMessage.textContent = "This attack has no dependent skills. Delete selected only removes the attack. Delete cascade has the same effect.";
+      } else {
+        const cascadeText = cascadeDependents.length
+          ? `Cascade delete will remove ${cascadeDependents.length + 1} skills total: ${[skill.id, ...cascadeDependents].join(", ")}.`
+          : "Cascade delete only removes the selected skill.";
+        ui.deleteModalMessage.textContent = `Direct dependents: ${directDependents.join(", ")}. Delete selected only keeps those skills but removes this prerequisite from them. ${cascadeText}`;
+      }
+      ui.modalScrim.classList.add("open");
+      ui.deleteModal.classList.add("open");
+    }
+
+    function closeDeleteModal() {
+      state.pendingDeleteSkillId = null;
+      ui.modalScrim.classList.remove("open");
+      ui.deleteModal.classList.remove("open");
+    }
+
+    async function deletePendingSkill(cascade) {
+      const skillId = state.pendingDeleteSkillId;
+      if (!skillId) return;
+
+      const data = currentData();
+      const cascadeDependents = collectCascadeDependents(skillId, data);
+      const removedIds = new Set(cascade ? [skillId, ...cascadeDependents] : [skillId]);
+      let adjustedDependents = 0;
+
+      data.skills = data.skills
+        .filter((skill) => !removedIds.has(skill.id))
+        .map((skill) => {
+          if (cascade) return skill;
+          if (!Array.isArray(skill.prerequisites) || !skill.prerequisites.includes(skillId)) {
+            return skill;
+          }
+          adjustedDependents += 1;
+          return {
+            ...skill,
+            prerequisites: skill.prerequisites.filter((prerequisite) => prerequisite !== skillId),
+          };
+        });
+
+      if (state.selectedSkillId === skillId || removedIds.has(state.selectedSkillId)) {
+        state.selectedSkillId = null;
+      }
+      if (state.drawerOpen && state.drawerMode === "edit" && currentSkill() === null) {
+        closeDrawer();
+      }
+
+      closeDeleteModal();
+      renderGraph();
+      await persistCurrentElement(
+        cascade
+          ? `Deleted ${removedIds.size} skill(s) including ${skillId}${state.directoryHandle ? " and wrote file" : ""}`
+          : `Deleted ${skillId} and updated ${adjustedDependents} dependent skill(s)${state.directoryHandle ? " on disk" : ""}`,
+        cascade
+          ? `Deleted ${removedIds.size} skill(s). Load the folder through the picker to write back to disk.`
+          : `Deleted ${skillId} and updated ${adjustedDependents} dependent skill(s). Load the folder through the picker to write back to disk.`
+      );
+    }
+
+    async function copyYaml() {
+      try {
+        await navigator.clipboard.writeText(toYaml(getAccessibleSkillCatalog(state.currentElement)));
+        setStatus("YAML copied to clipboard");
+      } catch (_err) {
+        setStatus("Clipboard blocked. Copy from YAML preview.", true);
+      }
+    }
+
+    function downloadYaml() {
+      const data = getAccessibleSkillCatalog(state.currentElement);
+      const blob = new Blob([toYaml(data)], { type: "text/yaml;charset=utf-8" });
+      const url = URL.createObjectURL(blob);
+      const anchor = document.createElement("a");
+      anchor.href = url;
+      anchor.download = data.fileName || `${data.element}.yaml`;
+      anchor.click();
+      URL.revokeObjectURL(url);
+      setStatus(`Downloaded ${anchor.download}`);
+    }
+
+    async function loadSingleElementSkillsInternal(elementName, path, fileName) {
+      const requestedElements = [...new Set([String(elementName || "").trim().toLowerCase(), "corporis", "magic", "vetus"])];
+
+      for (const requestedElement of requestedElements) {
+        const fullPath = `${path}${requestedElement}.yaml`;
+
+        if (state.filesByElement[requestedElement] && Array.isArray(state.filesByElement[requestedElement].skills) && state.filesByElement[requestedElement].skills.length > 0) {
+          continue;
+        }
+
+        try {
+          const response = await fetch(fullPath);
+          if (!response.ok) {
+            throw new Error(`Failed to load skills data: ${response.statusText}`);
+          }
+
+          const text = await response.text();
+          const parsed = parseSkillsYaml(text);
+
+          state.filesByElement[requestedElement] = parsed;
+          console.log(`Successfully loaded skills for element: ${requestedElement}`);
+        } catch (error) {
+          console.error(`Error loading skills for "${requestedElement}":`, error);
+        }
+      }
+
+      return getAccessibleSkillCatalog(elementName);
+    }
+
+    function bindEvents() {
+      // Connect the UI controls to the graph, form, and tooltip logic.
+      ui.elementSelect.addEventListener("change", () => {
+        const newElement = ui.elementSelect.value;
+        state.currentElement = newElement;
+        state.selectedSkillId = null;
+        console.log(`Element changed to: ${newElement}`);
+        closeDrawer();
+        closeDeleteModal();
+        // file:///d%3A/trabalho/GalaTime-CotP-Terminal/mockups/skill-atlas/data/combat/skills/magic.yaml
+        loadSingleElementSkillsInternal(newElement, "../../data/combat/skills/", `${newElement}.yaml`).then(() => {
+          renderGraph();
+          fitGraphToView();
+        });
+      });
+
+      ui.tooltipModeToggle.addEventListener("change", () => {
+        state.tooltipMode = ui.tooltipModeToggle.value;
+        if (ui.tooltip.style.display === "block" && state.lastTooltip) {
+          renderTooltip(state.lastTooltip.skill, state.lastTooltip.missingPrereqs, state.lastTooltip.x, state.lastTooltip.y);
+        }
+      });
+
+      ui.zoomInBtn.addEventListener("click", () => {
+        const rect = ui.graph.getBoundingClientRect();
+        zoomAroundPoint(1.14, rect.left + rect.width / 2, rect.top + rect.height / 2);
+      });
+
+      ui.zoomOutBtn.addEventListener("click", () => {
+        const rect = ui.graph.getBoundingClientRect();
+        zoomAroundPoint(0.88, rect.left + rect.width / 2, rect.top + rect.height / 2);
+      });
+
+      ui.resetViewBtn.addEventListener("click", fitGraphToView);
+      ui.copyBtn.addEventListener("click", copyYaml);
+      ui.downloadBtn.addEventListener("click", downloadYaml);
+
+      ui.openDrawerBtn.addEventListener("click", () => openDrawer("create"));
+      ui.editSelectedBtn.addEventListener("click", () => openDrawer("edit"));
+      ui.deleteSelectedBtn.addEventListener("click", () => openDeleteModal());
+      ui.closeDrawerBtn.addEventListener("click", closeDrawer);
+      ui.drawerScrim.addEventListener("click", closeDrawer);
+      ui.clearFormBtn.addEventListener("click", clearForm);
+      ui.saveSkillBtn.addEventListener("click", () => {
+        void saveSkillFromForm();
+      });
+      ui.hits.addEventListener("input", updateHitChanceAvailability);
+      ui.toggleEffectBtn.addEventListener("click", () => {
+        const isExpanded = !ui.effectFields.classList.contains("hidden");
+        setEffectExpanded(!isExpanded);
+      });
+      ui.addPrerequisiteBtn.addEventListener("click", () => {
+        addPrerequisite(ui.prerequisiteInput.value);
+      });
+      ui.prerequisiteInput.addEventListener("keydown", (event) => {
+        if (event.key !== "Enter") return;
+        event.preventDefault();
+        addPrerequisite(ui.prerequisiteInput.value);
+      });
+
+      const helpTriggers = document.querySelectorAll(".help-icon-btn[data-help-key]");
+      helpTriggers.forEach((trigger) => {
+        trigger.addEventListener("mouseenter", () => showFieldTooltip(trigger));
+        trigger.addEventListener("focus", () => showFieldTooltip(trigger));
+        trigger.addEventListener("mousemove", () => moveFieldTooltip(trigger));
+        trigger.addEventListener("mouseleave", hideFieldTooltip);
+        trigger.addEventListener("blur", hideFieldTooltip);
+      });
+
+      if (ui.drawerBody) {
+        ui.drawerBody.addEventListener("scroll", hideFieldTooltip);
+      }
+
+      ui.cancelDeleteBtn.addEventListener("click", closeDeleteModal);
+      ui.modalScrim.addEventListener("click", closeDeleteModal);
+      ui.deleteOnlyBtn.addEventListener("click", () => {
+        void deletePendingSkill(false);
+      });
+      ui.deleteCascadeBtn.addEventListener("click", () => {
+        void deletePendingSkill(true);
+      });
+
+      ui.graph.addEventListener("wheel", onWheel, { passive: false });
+      ui.graph.addEventListener("pointerdown", onPointerDown);
+      ui.graph.addEventListener("pointermove", onPointerMove);
+      ui.graph.addEventListener("pointerup", onPointerUp);
+      ui.graph.addEventListener("pointercancel", onPointerUp);
+      ui.graph.addEventListener("pointerleave", onPointerUp);
+
+      window.addEventListener("resize", () => {
+        applyTransform();
+      });
+
+      window.addEventListener("keydown", (event) => {
+        if (event.key !== "Escape") return;
+        if (state.pendingDeleteSkillId !== null) {
+          closeDeleteModal();
+          return;
+        }
+        if (state.drawerOpen) {
+          closeDrawer();
+        }
+      });
+    }
+
+    // Trigger folder picker when clicking loadFolderBtn
+    ui.loadFolderBtn.addEventListener("click", () => {
+      ui.folderInput.click();
+    });
+
+    // Handle file selection and import
+    ui.folderInput.addEventListener("change", async (event) => {
+      const files = event.target.files;
+
+      if (files.length === 0) return;
+
+      // Reset UI state before importing
+      clearForm();
+      closeDrawer();
+      closeDeleteModal();
+
+      // Import the files
+      await loadImportedSkills(files);
+
+      // Refresh the graph
+      renderGraph();
+      fitGraphToView();
+
+      // Clear the input so same files can be selected again
+      event.target.value = "";
+    });
+
+    async function loadImportedSkills(files) {
+      const imported = new Map();
+      const errors = [];
+
+      for (const file of files) {
+        try {
+          let fileName = "";
+          if (file.path) {
+            const relativePath = file.path.replace(/\\+/g, "/");
+            fileName = relativePath.split("/").pop().split("?")[0];
+          } else if (file.name) {
+            fileName = file.name;
+          }
+
+          if (!fileName || !fileName.endsWith(".yaml") && !fileName.endsWith(".yml")) {
+            continue;
+          }
+
+          const baseName = fileName.replace(/\.yaml?$/i, "");
+          const content = await file.arrayBuffer();
+          const text = new TextDecoder().decode(content);
+          const parsed = parseSkillsYaml(text);
+
+          if (parsed.skills.length > 0) {
+            state.filesByElement[baseName] = parsed;
+            imported.set(baseName, parsed);
+            console.log(`Imported skills for element: ${baseName}`);
+          } else {
+            console.warn(`Import skipped for "${fileName}": no skills found`);
+          }
+
+        } catch (error) {
+          console.error(`Error importing file "${fileName || file.name}":`, error);
+          errors.push(`${fileName || file.name}: ${error.message}`);
+        }
+      }
+
+      refreshElementSelect();
+
+      if (imported.size > 0) {
+        setStatus(`Imported ${imported.size} element(s): ${[...imported.keys()].join(", ")}`);
+      } else {
+        setStatus("No valid skill files found in the selection");
+      }
+
+      if (errors.length > 0) {
+        console.warn(`Import warnings:`, errors.join("; "));
+      }
+
+      return imported;
+    }
+
+
+    // #endregion
+
+    // #region Event wiring and app startup
+    function setup() {
+      initData();
+      refreshElementSelect();
+      ui.tooltipModeToggle.value = state.tooltipMode;
+      bindEvents();
+      clearForm();
+      renderGraph();
+      fitGraphToView();
+    }
+
+    setup();
+    // #endregion
+  </script>
+</body>
+
+</html>

@@ -1,0 +1,31 @@
+id: pacci_kitchen
+name: Kitchen and Dining Room
+description: >
+  The broad kitchen and dining room fills the left side of the ground floor.
+  Iron pots, clay ovens, polished knives, and hanging herbs speak of a medieval
+  household shaped by craft and light magic rather than machinery. In the
+  dining area, a large table is set with care beneath a patterned tablecloth in
+  the distinctive colors and motifs of Atlaria.
+tags: [house, safe, indoor]
+connections:
+  - target: pacci_entry_hall
+    label: "Return to the entrance hall"
+extra:
+  ui:
+    location_path: ["Pacci's House", "Ground Floor", "Kitchen and Dining Room"]
+  interactions:
+    objects:
+      cookware:
+        aliases: [pots, pans, cookware, utensils, kitchen tools]
+        default_action: inspect
+        actions:
+          inspect:
+            responses:
+              - "The cookware is all metal, clay, wood, and careful craftsmanship, with a few faintly enchanted tools meant to keep heat steady and hands safe."
+      dining_table:
+        aliases: [table, dining table, dinner table]
+        default_action: inspect
+        actions:
+          inspect:
+            responses:
+              - "The dining table is laid out in good order, with a floral centerpiece, folded napkins, and a woven tablecloth whose repeating Atlarian pattern gives the room a strong sense of home."

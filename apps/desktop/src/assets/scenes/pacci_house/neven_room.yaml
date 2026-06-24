@@ -1,0 +1,36 @@
+id: neven_room
+name: Neven's Room
+description: >
+  Neven's room is spare to the point of austerity. A bed, wardrobe, and single
+  bedside table provide only what is necessary, and the rest of the room is
+  nearly bare.
+tags: [house, safe, indoor]
+connections:
+  - target: pacci_corridor
+    label: "Return to the corridor"
+extra:
+  ui:
+    location_path: ["Pacci's House", "Upper Floor", "Neven's Room"]
+  interactions:
+    objects:
+      bed:
+        aliases: [bed]
+        default_action: inspect
+        actions:
+          inspect:
+            responses:
+              - "The bed is neatly made and almost severe in its simplicity, with no personal touches beyond a plain blanket."
+      wardrobe:
+        aliases: [wardrobe, guarda vestidos, clothes]
+        default_action: inspect
+        actions:
+          inspect:
+            responses:
+              - "The wardrobe is orderly and practical, containing only what seems useful and nothing meant purely for comfort."
+      bedside_table:
+        aliases: [bedside table, nightstand, table]
+        default_action: inspect
+        actions:
+          inspect:
+            responses:
+              - "A single lamp and nothing else rest on the bedside table, leaving the room feeling intentionally impersonal."

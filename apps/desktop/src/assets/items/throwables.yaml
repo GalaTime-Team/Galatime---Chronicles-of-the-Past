@@ -1,0 +1,171 @@
+# ═══════════════════════════════════════════════════════════════════
+#  THROWABLES  –  Damage items thrown at enemies
+# ═══════════════════════════════════════════════════════════════════
+
+# ── Basic Bombs ───────────────────────────────────────────────────
+
+- id: fire_bomb
+  name: Fire Bomb
+  description: Deals 40 fire damage to one enemy.
+  category: consumable
+  item_type: damage
+  target_type: enemy
+  effect:
+    type: damage
+    amount: 40
+    element: ignis
+
+- id: ice_bomb
+  name: Ice Bomb
+  description: Deals 40 ice damage to one enemy.
+  category: consumable
+  item_type: damage
+  target_type: enemy
+  effect:
+    type: damage
+    amount: 40
+    element: aqua
+
+- id: wind_bomb
+  name: Wind Bomb
+  description: Deals 40 wind damage to one enemy.
+  category: consumable
+  item_type: damage
+  target_type: enemy
+  effect:
+    type: damage
+    amount: 40
+    element: caeli
+
+- id: earth_bomb
+  name: Earth Bomb
+  description: Deals 40 earth damage to one enemy.
+  category: consumable
+  item_type: damage
+  target_type: enemy
+  effect:
+    type: damage
+    amount: 40
+    element: lapis
+
+# ── Enhanced Bombs ────────────────────────────────────────────────
+
+- id: fire_bomb_plus
+  name: Fire Bomb+
+  description: Deals 90 fire damage to one enemy.
+  category: consumable
+  item_type: damage
+  target_type: enemy
+  effect:
+    type: damage
+    amount: 90
+    element: ignis
+
+- id: ice_bomb_plus
+  name: Ice Bomb+
+  description: Deals 90 ice damage to one enemy.
+  category: consumable
+  item_type: damage
+  target_type: enemy
+  effect:
+    type: damage
+    amount: 90
+    element: aqua
+
+- id: wind_bomb_plus
+  name: Wind Bomb+
+  description: Deals 90 wind damage to one enemy.
+  category: consumable
+  item_type: damage
+  target_type: enemy
+  effect:
+    type: damage
+    amount: 90
+    element: caeli
+
+# ── AoE Bombs (hit all enemies) ──────────────────────────────────
+
+- id: scatter_bomb
+  name: Scatter Bomb
+  description: Deals 25 damage to all enemies.
+  category: consumable
+  item_type: damage
+  target_type: all_enemies
+  effect:
+    type: damage
+    amount: 25
+
+- id: fire_rain
+  name: Fire Rain
+  description: Deals 35 fire damage to all enemies.
+  category: consumable
+  item_type: damage
+  target_type: all_enemies
+  effect:
+    type: damage
+    amount: 35
+    element: ignis
+
+- id: blizzard_flask
+  name: Blizzard Flask
+  description: Deals 35 ice damage to all enemies.
+  category: consumable
+  item_type: damage
+  target_type: all_enemies
+  effect:
+    type: damage
+    amount: 35
+    element: aqua
+
+- id: thunder_jar
+  name: Thunder Jar
+  description: Deals 35 wind damage to all enemies.
+  category: consumable
+  item_type: damage
+  target_type: all_enemies
+  effect:
+    type: damage
+    amount: 35
+    element: caeli
+
+# ── Damage-over-Time (poison / burn items) ────────────────────────
+
+- id: poison_vial
+  name: Poison Vial
+  description: Poisons one enemy, dealing 10 damage per turn for 3 turns.
+  category: consumable
+  item_type: damage
+  target_type: enemy
+  effect:
+    type: status
+    status_effect: Poisoned
+    effect_id: item_poison
+    turns: 3
+    damage: 10
+
+- id: acid_flask
+  name: Acid Flask
+  description: Corrodes one enemy for 15 damage per turn for 3 turns.
+  category: consumable
+  item_type: damage
+  target_type: enemy
+  effect:
+    type: status
+    status_effect: Corroded
+    effect_id: item_corrode
+    turns: 3
+    damage: 15
+
+- id: burning_oil
+  name: Burning Oil
+  description: Sets one enemy ablaze for 12 fire damage per turn for 4 turns.
+  category: consumable
+  item_type: damage
+  target_type: enemy
+  effect:
+    type: status
+    status_effect: Burning
+    effect_id: item_burn
+    turns: 4
+    damage: 12
+    element: ignis

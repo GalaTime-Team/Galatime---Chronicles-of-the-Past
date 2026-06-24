@@ -1,0 +1,104 @@
+id: neven
+name: Neven
+surname: Firdaus
+gender: Male
+age: 22
+height: "170 cm"
+weight: "62 kg"
+birthday: "Jan 31"
+origin: Atlaria
+description: >
+  Cold, enigmatic and mute. I can't figure out what he wants or what he's thinking.
+  Raphael seems to always know what he's thinking... I can barely believe he's 
+  Pacci's brother, they seem so different.
+
+starting_relationships:
+  liking: 50
+  trust: 50
+
+scenes:
+  - scene_id: null
+    dialog: null
+
+ai:
+  personality: aggressive
+
+elements:
+  - umbra
+  - spatium
+
+base_stats:
+  hp: 480
+  max_hp: 480
+  mana: 122
+  max_mana: 122
+  stamina: 35
+  max_stamina: 35
+  physical_attack: 25
+  magical_attack: 97
+  physical_defense: 74
+  magical_defense: 31
+  speed: 150
+
+skills:
+  - id: shadow_sneak
+    name: Shadow Sneak
+    element: umbra
+    damage_type: magical
+    power: 45
+    mana_cost: 7
+    stamina_cost: 2
+    effects:
+      - effect_id: shadow_sneak
+        status_effect: Shadow Sneak
+        apply_to: self
+        turns: 5
+        buff:
+          speed: 10
+
+  - id: reaper
+    name: Reaper
+    element: umbra
+    damage_type: magical
+    target: all
+    power: 80
+    mana_cost: 16
+    stamina_cost: 2
+
+  - id: dark_blades
+    name: Dark Blades
+    element: umbra
+    damage_type: physical
+    power: 65
+    mana_cost: 5
+    stamina_cost: 5
+
+  - id: time_warp
+    name: Time Warp
+    element: spatium
+    damage_type: magical
+    target: all
+    power: 140
+    mana_cost: 26
+    stamina_cost: 9
+    collateral:
+      chance: 0.2
+      apply_to: allies_all
+      include_primary_target: false
+      include_caster: false
+      target_hit_chance: 0.2
+      damage_multiplier: [0.6, 0.8]
+
+weapon:
+  id: droment_dagger
+  name: Dorment Dagger
+  element: umbra
+  damage_type: physical
+  target: individual
+  hits: 6
+  hit_chance: 0.8
+  power: 30
+  stamina_cost: 2
+  damage_variance: [0.8, 1.1]
+
+tags: [mute, cold, enigmatic]

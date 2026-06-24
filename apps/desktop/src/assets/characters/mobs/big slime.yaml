@@ -1,0 +1,86 @@
+﻿id: big_slime
+name: Big Slime
+rarity: uncommon
+height: "120 cm"
+weight: "80 kg"
+description: >
+  A large gelatinous creature that can be found in various environments.
+  Despite their simple appearance, big slimes are surprisingly resilient.
+
+age: null
+birthday: null
+origin: Atlaria
+starting_relationships:
+  liking: 0
+  trust: 0
+
+
+ai:
+  personality: aggressive
+
+elements:
+  - aqua
+
+base_stats:
+  hp: 445
+  max_hp: 445
+  mana: 25
+  max_mana: 25
+  stamina: 31
+  max_stamina: 31
+  physical_attack: 25
+  magical_attack: 28
+  physical_defense: 18
+  magical_defense: 41
+  speed: 20
+
+skills:
+  - id: headbutt_II
+    name: Headbutt II
+    element: corporis
+    damage_type: physical
+    target: individual
+    power: 20
+    stamina_cost: 4
+
+  - id: splash_II
+    name: Splash II
+    element: aqua
+    damage_type: magical
+    target: individual
+    power: 25
+    mana_cost: 4
+
+weapon: null
+
+abilities:
+  - ability_name: Split
+    condition:
+      type: on_death
+    action:
+      type: spawn
+      enemies:
+        - slime
+        - slime
+    keep_triggered_after_once: false
+    activation_message: "The Big Slime splits into two smaller slimes!"
+
+  - ability_name: Gelatinous Absorption
+    condition:
+      type: on_hit
+      damage_type: physical
+    action:
+      type: heal
+      percent: 0.05
+    keep_triggered_after_once: true
+    activation_message: "The Big Slime absorbs some of the impact!"
+
+loot:
+  - item_id: gold_coin
+    quantity: 1
+    chance: 0.4
+  - item_id: slime_goo
+    quantity: 1
+    chance: 0.8
+
+

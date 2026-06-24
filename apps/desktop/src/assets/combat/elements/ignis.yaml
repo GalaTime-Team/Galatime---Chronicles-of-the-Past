@@ -1,0 +1,12 @@
+id: ignis
+name: Ignis
+description: "The element of fire, heat, and combustion."
+
+strong_vs:
+  - naturalea
+  - umbra
+  - umbra
+weak_to:
+  - aqua
+  - caeli
+  - corporis

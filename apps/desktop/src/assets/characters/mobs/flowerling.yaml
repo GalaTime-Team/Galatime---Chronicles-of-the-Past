@@ -1,0 +1,93 @@
+﻿id: flowerling
+name: Flowerling
+rarity: common
+height: "30 cm"
+weight: "3 kg"
+description: >
+  A small, plant-like creature that resembles a flower. They are
+  often found in gardens and meadows, and are known for their
+  sweet scent.
+
+age: null
+birthday: null
+origin: Atlaria
+starting_relationships:
+  liking: 0
+  trust: 0
+
+
+ai:
+  personality: balanced
+
+elements:
+  - naturalea
+
+base_stats:
+  hp: 170
+  max_hp: 170
+  mana: 25
+  max_mana: 25
+  stamina: 38
+  max_stamina: 38
+  physical_attack: 40
+  magical_attack: 10
+  physical_defense: 35
+  magical_defense: 38
+  speed: 20
+
+skills:
+  - id: vine
+    name: Vine
+    element: naturalea
+    damage_type: physical
+    target: individual
+    power: 30
+    mana_cost: 4
+    effects:
+      - effect_id: vine
+        status_effect: Vine
+        apply_to: enemy_one
+        turns: 3
+        debuff:
+          speed: 10
+          physical_attack: 10
+        effect_hit_chance: 0.7
+
+  - id: vine_whip
+    name: Vine Whip
+    element: naturalea
+    damage_type: physical
+    target: individual
+    power: 35
+    mana_cost: 4
+
+weapon:
+  id: thorny_vine
+  name: Thorny Vine
+  element: naturalea
+  damage_type: physical
+  target: individual
+  power: 20
+  stamina_cost: 2
+  damage_variance: [0.8, 1.2]
+
+loot:
+  - item_id: gold_coin
+    quantity: 1
+    chance: 0.4
+  - item_id: sweet_pollen
+    quantity: 1
+    chance: 0.8
+
+abilities:
+  - ability_name: Thorny Retaliation
+    condition:
+      type: on_hit
+      element: corporis
+    action:
+      type: reflect_damage
+      reflect_fraction: 0.1
+    keep_triggered_after_once: true
+    activation_message: "The Flowerling's thorns scratch back!"
+
+

@@ -1,0 +1,84 @@
+﻿id: charitable_soul
+name: Charitable Soul
+rarity: uncommon
+height: "120 cm"
+weight: "0 kg"
+description: >
+  Hollow glowing yellow souls that wander around, healing creatures.
+  I hope these things aren't actual souls...
+
+age: null
+birthday: null
+origin: Atlaria
+starting_relationships:
+  liking: 0
+  trust: 0
+
+
+ai:
+  personality: support
+  conditions:
+    - condition: default
+      action: heal_ally
+      priority: 80
+
+elements:
+  - lux
+
+base_stats:
+  hp: 250
+  max_hp: 250
+  mana: 40
+  max_mana: 40
+  stamina: 18
+  max_stamina: 18
+  physical_attack: 46
+  magical_attack: 7
+  physical_defense: 22
+  magical_defense: 42
+  speed: 30
+
+skills:
+  - id: radiant_mend
+    name: Radiant Mend
+    element: lux
+    damage_type: status
+    target: allies_all
+    power: 0
+    mana_cost: 10
+    effects:
+      - effect_id: radiant_mend
+        status_effect: Radiant Mend
+        apply_to: allies_all
+        resource_regen:
+          hp: 10
+        regen_variance: [0.8, 1.2]
+
+loot:
+  - item_id: gold_coin
+    quantity: 1
+    chance: 0.4
+
+abilities:
+  - ability_name: Selfless Reflection
+    condition:
+      type: on_hit
+    action:
+      type: reflect_damage
+      reflect_fraction: 0.6
+    keep_triggered_after_once: true
+    activation_message: "The Charitable Soul reflects all suffering back to its source!"
+
+  - ability_name: Hollow Giving
+    condition:
+      type: on_turn
+      interval: 3
+      timing: post_action
+      require_battle_continues: true
+    action:
+      type: change_state
+      new_template: greedy_soul
+    keep_triggered_after_once: false
+    activation_message: "The Charitable Soul has given too much of itself... something darker takes over."
+
+

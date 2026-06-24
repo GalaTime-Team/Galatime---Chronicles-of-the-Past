@@ -1,0 +1,203 @@
+# ═══════════════════════════════════════════════════════════════════
+#  POTIONS  –  Consumable restoratives
+# ═══════════════════════════════════════════════════════════════════
+
+# ── HP Potions ────────────────────────────────────────────────────
+
+- id: hp_potion
+  name: HP Potion
+  description: Restores 30 HP to one ally.
+  category: consumable
+  item_type: healing
+  target_type: ally          # self | ally | enemy | all_allies | all_enemies
+  effect:
+    type: restore
+    stat: hp
+    max_stat: max_hp
+    amount: 30
+
+- id: hp_potion_plus
+  name: HP Potion+
+  description: Restores 75 HP to one ally.
+  category: consumable
+  item_type: healing
+  target_type: ally
+  effect:
+    type: restore
+    stat: hp
+    max_stat: max_hp
+    amount: 75
+
+- id: mega_hp_potion
+  name: Mega HP Potion
+  description: Restores 200 HP to one ally.
+  category: consumable
+  item_type: healing
+  target_type: ally
+  effect:
+    type: restore
+    stat: hp
+    max_stat: max_hp
+    amount: 200
+
+- id: team_hp_potion
+  name: Team HP Potion
+  description: Restores 40 HP to all allies.
+  category: consumable
+  item_type: healing
+  target_type: all_allies
+  effect:
+    type: restore
+    stat: hp
+    max_stat: max_hp
+    amount: 40
+
+# ── Mana Potions ──────────────────────────────────────────────────
+
+- id: mn_potion
+  name: MN Potion
+  description: Restores 20 Mana to one ally.
+  category: consumable
+  item_type: healing
+  target_type: ally
+  effect:
+    type: restore
+    stat: mana
+    max_stat: max_mana
+    amount: 20
+
+- id: mn_potion_plus
+  name: MN Potion+
+  description: Restores 50 Mana to one ally.
+  category: consumable
+  item_type: healing
+  target_type: ally
+  effect:
+    type: restore
+    stat: mana
+    max_stat: max_mana
+    amount: 50
+
+- id: mega_mn_potion
+  name: Mega MN Potion
+  description: Restores 120 Mana to one ally.
+  category: consumable
+  item_type: healing
+  target_type: ally
+  effect:
+    type: restore
+    stat: mana
+    max_stat: max_mana
+    amount: 120
+
+- id: team_mn_potion
+  name: Team MN Potion
+  description: Restores 25 Mana to all allies.
+  category: consumable
+  item_type: healing
+  target_type: all_allies
+  effect:
+    type: restore
+    stat: mana
+    max_stat: max_mana
+    amount: 25
+
+# ── Stamina Potions ───────────────────────────────────────────────
+
+- id: sn_potion
+  name: SN Potion
+  description: Restores 20 Stamina to one ally.
+  category: consumable
+  item_type: healing
+  target_type: ally
+  effect:
+    type: restore
+    stat: stamina
+    max_stat: max_stamina
+    amount: 20
+
+- id: sn_potion_plus
+  name: SN Potion+
+  description: Restores 50 Stamina to one ally.
+  category: consumable
+  item_type: healing
+  target_type: ally
+  effect:
+    type: restore
+    stat: stamina
+    max_stat: max_stamina
+    amount: 50
+
+- id: mega_sn_potion
+  name: Mega SN Potion
+  description: Restores 120 Stamina to one ally.
+  category: consumable
+  item_type: healing
+  target_type: ally
+  effect:
+    type: restore
+    stat: stamina
+    max_stat: max_stamina
+    amount: 120
+
+# ── Multi-Restore Potions ─────────────────────────────────────────
+
+- id: elixir
+  name: Elixir
+  description: Restores 50 HP, 30 Mana, and 30 Stamina to one ally.
+  category: consumable
+  item_type: healing
+  target_type: ally
+  effects:
+    - type: restore
+      stat: hp
+      max_stat: max_hp
+      amount: 50
+    - type: restore
+      stat: mana
+      max_stat: max_mana
+      amount: 30
+    - type: restore
+      stat: stamina
+      max_stat: max_stamina
+      amount: 30
+
+- id: mega_elixir
+  name: Mega Elixir
+  description: Fully restores HP, Mana, and Stamina of one ally.
+  category: consumable
+  item_type: healing
+  target_type: ally
+  effects:
+    - type: restore
+      stat: hp
+      max_stat: max_hp
+      amount: 9999
+    - type: restore
+      stat: mana
+      max_stat: max_mana
+      amount: 9999
+    - type: restore
+      stat: stamina
+      max_stat: max_stamina
+      amount: 9999
+
+- id: team_elixir
+  name: Team Elixir
+  description: Restores 30 HP, 15 Mana, and 15 Stamina to all allies.
+  category: consumable
+  item_type: healing
+  target_type: all_allies
+  effects:
+    - type: restore
+      stat: hp
+      max_stat: max_hp
+      amount: 30
+    - type: restore
+      stat: mana
+      max_stat: max_mana
+      amount: 15
+    - type: restore
+      stat: stamina
+      max_stat: max_stamina
+      amount: 15

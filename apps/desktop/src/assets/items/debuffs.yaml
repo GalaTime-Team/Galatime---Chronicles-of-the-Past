@@ -1,0 +1,186 @@
+# ═══════════════════════════════════════════════════════════════════
+#  DEBUFF ITEMS  –  Weaken enemies
+# ═══════════════════════════════════════════════════════════════════
+
+# ── Single-stat debuffs ───────────────────────────────────────────
+
+- id: weakness_powder
+  name: Weakness Powder
+  description: Reduces one enemy's physical attack by 5 for 3 turns.
+  category: consumable
+  item_type: debuff
+  target_type: enemy
+  effect:
+    type: status
+    status_effect: Weakened
+    effect_id: item_weakened
+    turns: 3
+    debuff:
+      physical_attack: 5
+
+- id: mind_fog_dust
+  name: Mind Fog Dust
+  description: Reduces one enemy's magical attack by 5 for 3 turns.
+  category: consumable
+  item_type: debuff
+  target_type: enemy
+  effect:
+    type: status
+    status_effect: Mind Fog
+    effect_id: item_mind_fog
+    turns: 3
+    debuff:
+      magical_attack: 5
+
+- id: rust_powder
+  name: Rust Powder
+  description: Reduces one enemy's physical defense by 5 for 3 turns.
+  category: consumable
+  item_type: debuff
+  target_type: enemy
+  effect:
+    type: status
+    status_effect: Rusted
+    effect_id: item_rusted
+    turns: 3
+    debuff:
+      physical_defense: 5
+
+- id: dispel_dust
+  name: Dispel Dust
+  description: Reduces one enemy's magical defense by 5 for 3 turns.
+  category: consumable
+  item_type: debuff
+  target_type: enemy
+  effect:
+    type: status
+    status_effect: Dispelled
+    effect_id: item_dispelled
+    turns: 3
+    debuff:
+      magical_defense: 5
+
+- id: slow_trap
+  name: Slow Trap
+  description: Reduces one enemy's speed by 4 for 3 turns.
+  category: consumable
+  item_type: debuff
+  target_type: enemy
+  effect:
+    type: status
+    status_effect: Slowed
+    effect_id: item_slowed
+    turns: 3
+    debuff:
+      speed: 4
+
+# ── Enhanced debuffs ──────────────────────────────────────────────
+
+- id: weakness_powder_plus
+  name: Weakness Powder+
+  description: Reduces one enemy's physical attack by 10 for 4 turns.
+  category: consumable
+  item_type: debuff
+  target_type: enemy
+  effect:
+    type: status
+    status_effect: Weakened+
+    effect_id: item_weakened_plus
+    turns: 4
+    debuff:
+      physical_attack: 10
+
+- id: rust_powder_plus
+  name: Rust Powder+
+  description: Reduces one enemy's physical defense by 10 for 4 turns.
+  category: consumable
+  item_type: debuff
+  target_type: enemy
+  effect:
+    type: status
+    status_effect: Rusted+
+    effect_id: item_rusted_plus
+    turns: 4
+    debuff:
+      physical_defense: 10
+
+# ── Multi-stat debuffs ────────────────────────────────────────────
+
+- id: hex_bag
+  name: Hex Bag
+  description: Reduces one enemy's attack and defense by 3 for 3 turns.
+  category: consumable
+  item_type: debuff
+  target_type: enemy
+  effect:
+    type: status
+    status_effect: Hexed
+    effect_id: item_hexed
+    turns: 3
+    debuff:
+      physical_attack: 3
+      magical_attack: 3
+      physical_defense: 3
+      magical_defense: 3
+
+- id: curse_scroll
+  name: Curse Scroll
+  description: Reduces all stats of one enemy by 2 for 4 turns.
+  category: consumable
+  item_type: debuff
+  target_type: enemy
+  effect:
+    type: status
+    status_effect: Cursed
+    effect_id: item_cursed
+    turns: 4
+    debuff:
+      physical_attack: 2
+      magical_attack: 2
+      physical_defense: 2
+      magical_defense: 2
+      speed: 2
+
+# ── AoE debuffs ───────────────────────────────────────────────────
+
+- id: smoke_bomb
+  name: Smoke Bomb
+  description: Reduces speed of all enemies by 3 for 2 turns.
+  category: consumable
+  item_type: debuff
+  target_type: all_enemies
+  effect:
+    type: status
+    status_effect: Blinded
+    effect_id: item_blinded
+    turns: 2
+    debuff:
+      speed: 3
+
+- id: terror_mask
+  name: Terror Mask
+  description: Reduces physical attack of all enemies by 3 for 2 turns.
+  category: consumable
+  item_type: debuff
+  target_type: all_enemies
+  effect:
+    type: status
+    status_effect: Frightened
+    effect_id: item_frightened
+    turns: 2
+    debuff:
+      physical_attack: 3
+
+- id: mana_drain_dust
+  name: Mana Drain Dust
+  description: Reduces magical attack of all enemies by 3 for 2 turns.
+  category: consumable
+  item_type: debuff
+  target_type: all_enemies
+  effect:
+    type: status
+    status_effect: Mana Drain
+    effect_id: item_mana_drain
+    turns: 2
+    debuff:
+      magical_attack: 3

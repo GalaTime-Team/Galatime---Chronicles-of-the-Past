@@ -1,0 +1,10 @@
+node_modules/
+dist/
+build/
+coverage/
+.vscode/*.log
+apps/desktop/src-tauri/target/
+apps/desktop/src-tauri/gen/
+apps/desktop/src-tauri/Cargo.lock
+.env
+.env.*

@@ -1,0 +1,13 @@
+id: chaos
+name: Chaos
+description: "The element of disorder, entropy, and raw unbound force."
+
+immune_to:
+  - corporis
+strong_vs:
+  - caeli
+  - lapis
+weak_to:
+  - corporis
+  - lux
+  - spatium

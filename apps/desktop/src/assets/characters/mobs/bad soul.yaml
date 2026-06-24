@@ -1,0 +1,90 @@
+﻿id: bad_soul
+name: Bad Soul
+rarity: rare
+height: "128 cm"
+weight: "0 kg"
+description: >
+  A greedy soul that has abandoned all restraint. It tears at life
+  energy with ruthless hunger and grows stronger with every theft.
+
+age: null
+birthday: null
+origin: Atlaria
+starting_relationships:
+  liking: 0
+  trust: 0
+
+
+ai:
+  personality: aggressive
+  conditions:
+    - condition: default
+      action: strongest_attack
+      priority: 65
+
+elements:
+  - umbra
+
+base_stats:
+  hp: 360
+  max_hp: 360
+  mana: 60
+  max_mana: 60
+  stamina: 24
+  max_stamina: 24
+  physical_attack: 20
+  magical_attack: 56
+  physical_defense: 35
+  magical_defense: 28
+  speed: 42
+
+skills:
+  - id: ravenous_drain
+    name: Ravenous Drain
+    element: umbra
+    damage_type: magical
+    target: individual
+    power: 34
+    stamina_cost: 9
+    effects:
+      - effect_id: ravenous_drain_heal
+        status_effect: Ravenous Drain
+        apply_to: self
+        resource_regen:
+          hp: 16
+        regen_variance: [0.3, 1.1]
+
+  - id: avarice_burst
+    name: Avarice Burst
+    element: umbra
+    damage_type: magical
+    target: all
+    power: 22
+    mana_cost: 12
+    effects:
+      - effect_id: avarice_burst
+        status_effect: Avarice Burst
+        apply_to: enemies_all
+        turns: 2
+        debuff:
+          magical_defense: 6
+        apply_chance: 0.35
+
+loot:
+  - item_id: gold_coin
+    quantity: 2
+    chance: 0.55
+
+abilities:
+  - ability_name: Fall Into Corruption
+    condition:
+      type: on_turn
+      interval: 4
+      timing: post_action
+      require_battle_continues: true
+    action:
+      type: change_state
+      new_template: good_soul
+    keep_triggered_after_once: false
+    activation_message: "The Bad Soul's aggression ebbs... it reforms into a Good Soul."
+

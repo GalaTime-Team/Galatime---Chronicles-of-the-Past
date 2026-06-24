@@ -1,0 +1,22 @@
+element: ignis
+skills:
+  - id: chama
+    name: Chama
+    element: ignis
+    damage_type: magical
+    target: individual
+    power: 8
+    mana_cost: 3
+    skill_points_cost: 1
+    prerequisites: []
+
+  - id: bola_de_fogo
+    name: Bola de Fogo
+    element: ignis
+    damage_type: magical
+    target: individual
+    power: 18
+    mana_cost: 8
+    skill_points_cost: 2
+    prerequisites:
+      - chama

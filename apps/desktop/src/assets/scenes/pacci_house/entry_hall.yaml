@@ -1,0 +1,46 @@
+id: pacci_entry_hall
+name: Entrance Hall
+description: >
+  The ground-floor hall divides the house cleanly. To the left, the broad
+  kitchen and dining space opens into warmth and spice; to the right, doors
+  lead to the sitting room and bathroom. At the far end, a back door opens to
+  the patio, while the staircase climbs beside a cramped nook where the family
+  stores odds and ends beneath the steps.
+tags: [house, safe, indoor]
+connections:
+  - target: pacci_kitchen
+    label: "Enter the kitchen and dining room"
+  - target: pacci_living_room
+    label: "Go to the living room"
+  - target: pacci_downstairs_bathroom
+    label: "Enter the downstairs bathroom"
+  - target: pacci_patio
+    label: "Open the back door to the patio"
+  - target: pacci_corridor
+    label: "Climb the stairs to the upper corridor"
+extra:
+  ui:
+    location_path: ["Pacci's House", "Ground Floor", "Entrance Hall"]
+  interactions:
+    objects:
+      stairs:
+        aliases: [stairs, staircase, steps]
+        default_action: inspect
+        actions:
+          inspect:
+            responses:
+              - "The staircase is sturdy oak, polished smooth by years of use and edged with a simple carved railing."
+      storage_nook:
+        aliases: [storage, nook, clutter, tralha, crates, boxes]
+        default_action: inspect
+        actions:
+          inspect:
+            responses:
+              - "The space under the stairs is packed with baskets, folded fabric, spare candles, old jars, and the sort of household clutter every family promises to sort one day."
+      patio_door:
+        aliases: [door, patio door, back door]
+        default_action: inspect
+        actions:
+          inspect:
+            responses:
+              - "The back door is framed by iron hinges and a braided charm meant to keep ill luck outside the threshold."

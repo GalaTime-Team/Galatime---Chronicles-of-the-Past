@@ -1,0 +1,112 @@
+﻿id: good_soul
+name: Good Soul
+rarity: rare
+height: "128 cm"
+weight: "0 kg"
+description: >
+  A charitable soul that learned to wield its light with precision.
+  Its glow restores allies while weakening hostile intent.
+
+age: null
+birthday: null
+origin: Atlaria
+starting_relationships:
+  liking: 0
+  trust: 0
+
+
+ai:
+  personality: support
+  conditions:
+    - condition: ally_low_hp
+      threshold: 0.65
+      action: heal_ally
+      priority: 92
+    - condition: default
+      action: strongest_attack
+      priority: 55
+
+elements:
+  - lux
+
+base_stats:
+  hp: 340
+  max_hp: 340
+  mana: 62
+  max_mana: 62
+  stamina: 22
+  max_stamina: 22
+  physical_attack: 58
+  magical_attack: 16
+  physical_defense: 32
+  magical_defense: 58
+  speed: 34
+
+skills:
+  - id: radiant_mend_plus
+    name: Radiant Mend+
+    element: lux
+    damage_type: status
+    target: allies_all
+    power: 0
+    mana_cost: 12
+    effects:
+      - effect_id: radiant_mend_plus
+        status_effect: Radiant Mend+
+        apply_to: allies_all
+        resource_regen:
+          hp: 16
+        regen_variance: [0.9, 1.2]
+
+  - id: luminous_blessing
+    name: Luminous Blessing
+    element: lux
+    damage_type: status
+    target: allies_all
+    power: 0
+    mana_cost: 14
+    effects:
+      - effect_id: luminous_blessing
+        status_effect: Luminous Blessing
+        apply_to: allies_all
+        turns: 2
+        buff:
+          magical_defense: 10
+          physical_defense: 6
+
+  - id: gleam_lance
+    name: Gleam Lance
+    element: lux
+    damage_type: magical
+    target: individual
+    power: 28
+    mana_cost: 8
+
+loot:
+  - item_id: gold_coin
+    quantity: 2
+    chance: 0.55
+
+abilities:
+  - ability_name: Mercy Mirror
+    condition:
+      type: on_hit
+      damage_type: magical
+    action:
+      type: reflect_damage
+      reflect_fraction: 0.8
+    keep_triggered_after_once: true
+    activation_message: "The Good Soul reflects part of the malice back."
+
+  - ability_name: Ascending Light
+    condition:
+      type: on_turn
+      interval: 4
+      timing: post_action
+      require_battle_continues: true
+    action:
+      type: change_state
+      new_template: bad_soul
+    keep_triggered_after_once: false
+    activation_message: "The Good Soul's focus falters... it reverts into a Bad Soul."
+

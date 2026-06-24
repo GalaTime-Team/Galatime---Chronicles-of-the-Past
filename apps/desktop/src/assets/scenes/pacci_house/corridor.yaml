@@ -1,0 +1,33 @@
+id: pacci_corridor
+name: Upper Corridor
+description: >
+  The upper corridor runs along the right side of the second floor, with a
+  clear view toward the stairwell and the open balcony beyond. Framed family
+  sketches, candle sconces, and a runner woven in Atlarian colors soften the
+  quiet passage between the private rooms.
+tags: [house, safe, indoor]
+connections:
+  - target: pacci_entry_hall
+    label: "Go downstairs to the entrance hall"
+  - target: pacci_balcony
+    label: "Step onto the balcony"
+  - target: pacci_guest_room
+    label: "Return to the guest room"
+  - target: pacci_room
+    label: "Go to Pacci's room"
+  - target: pacci_bathroom
+    label: "Enter the upstairs bathroom"
+  - target: neven_room
+    label: "Go to Neven's room"
+extra:
+  ui:
+    location_path: ["Pacci's House", "Upper Floor", "Corridor"]
+  interactions:
+    objects:
+      portraits:
+        aliases: [portraits, portrait, paintings]
+        default_action: inspect
+        actions:
+          inspect:
+            responses:
+              - "The portraits and sketches show the Firdaus family across different years, some formal, some intimate, and several dotted with handwritten dates in the margin."

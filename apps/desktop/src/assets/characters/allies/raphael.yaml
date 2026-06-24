@@ -1,0 +1,132 @@
+id: raphael
+name: Raphael
+surname: Isof
+gender: Male
+age: 31
+height: "192 cm"
+weight: "85 kg"
+birthday: "Feb 29"
+origin: Atlaria
+description: >
+  Extroverted and quick-witted alchemist. Though he appears carefree,
+  he's actually quite knowledgeable and skilled in his craft.
+
+starting_relationships:
+  liking: 0
+  trust: 0
+
+scenes:
+  - scene_id: null
+    dialog: null
+
+ai:
+  personality: balanced
+
+elements:
+  - lapis
+  - naturalea
+
+base_stats:
+  hp: 1080
+  max_hp: 1080
+  mana: 109
+  max_mana: 109
+  stamina: 43
+  max_stamina: 43
+  physical_attack: 46
+  magical_attack: 54
+  physical_defense: 109
+  magical_defense: 100
+  speed: 32
+
+skills:
+  - id: dig
+    name: Dig
+    element: lapis
+    damage_type: physical
+    target: individual
+    power: 55
+    stamina_cost: 4
+
+  - id: stone_minion
+    name: Stone Minion
+    element: lapis
+    damage_type: physical
+    target: all
+    power: 30
+    mana_cost: 6
+    stamina_cost: 4
+    effects:
+      - effect_id: stone_minion
+        status_effect: Stone Minion
+        apply_to: enemies_all
+        turns: [1, 3]
+        can_stack: true
+        damage: 5
+        damage_variance: [0.5, 1.2]
+        effect_hit_chance: 0.8
+
+  - id: vine_II
+    name: Vine II
+    element: naturalea
+    damage_type: physical
+    target: individual
+    power: 45
+    mana_cost: 5
+    effects:
+      - effect_id: vine
+        status_effect: Vine
+        apply_to: enemy_one
+        turns: 3
+        lower_accuracy: 0.25
+        apply_chance: 0.7
+        debuff:
+          speed: 10
+          physical_attack: 10
+
+  - id: nature_absorption
+    name: Nature Absorption
+    element: naturalea
+    damage_type: magical
+    target: individual
+    power: 125
+    mana_cost: 16
+    stamina_cost: 16
+    effects:
+      - effect_id: nature_mend
+        status_effect: Nature Mend
+        apply_to: allies_all
+        resource_regen:
+          hp: 20
+        regen_variance: [0.5, 1.2]
+    collateral:
+      chance: 0.4
+      apply_to: enemy_all
+      include_primary_target: false
+      include_caster: false
+      target_hit_chance: 0.5
+      damage_multiplier: [0.1, 0.2]
+
+weapon:
+  id: peace_maker
+  name: Peace Maker
+  element: lux
+  damage_type: physical
+  target: individual
+  hits: 1
+  accuracy: 0.80
+  power: 100
+  stamina_cost: 6
+  damage_variance: [0.9, 1.6]
+  effects:
+    - effect_id: stun
+      status_effect: Stun
+      apply_to: enemy_one
+      turns: 4
+      lower_accuracy: 0.25
+      effect_hit_chance: 0.4
+      debuff:
+        physical_attack: 15
+        magical_attack: 15
+
+tags: [extroverted, quick-witted, alchemist]

@@ -1,0 +1,6 @@
+- id: pacci_keepsake
+  name: Pacci's Keepsake
+  description: A small carved keepsake Pacci thought he had lost somewhere in the house.
+  category: key
+  item_type: special
+  target_type: self

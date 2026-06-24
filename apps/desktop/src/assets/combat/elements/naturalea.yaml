@@ -1,0 +1,11 @@
+id: naturalea
+name: Naturalea
+description: "The element of nature, plants, and living growth."
+
+strong_vs:
+  - aqua
+  - corporis
+  - lux
+weak_to:
+  - ignis
+  - spatium

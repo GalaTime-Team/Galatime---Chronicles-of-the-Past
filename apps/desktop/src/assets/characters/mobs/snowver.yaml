@@ -1,0 +1,107 @@
+﻿id: snowver
+name: Snowver
+rarity: common
+height: "95 cm"
+weight: "42 kg"
+description: >
+  Due to people constantly hunting them for their meat and fur,
+  Snowvers have gained deep hatred towards humnas. They say,
+  however, that if you gain their trust, they'll guide you around
+  the snowy mountains.
+
+age: null
+birthday: null
+origin: Atlaria
+starting_relationships:
+  liking: 0
+  trust: 0
+
+
+ai:
+  personality: aggressive
+
+elements:
+  - corporis
+  - aqua
+
+base_stats:
+  hp: 340
+  max_hp: 340
+  mana: 6
+  max_mana: 6
+  stamina: 88
+  max_stamina: 88
+  physical_attack: 69
+  magical_attack: 9
+  physical_defense: 58
+  magical_defense: 24
+  speed: 35
+
+skills:
+  - id: ice_cube
+    name: Ice Cube
+    element: aqua
+    damage_type: magical
+    target: individual
+    power: 20
+    mana_cost: 2
+    effects:
+      - effect_id: freeze
+        status_effect: Freeze
+        apply_to: enemy_one
+        turns: 2
+        debuff:
+          speed: 8
+        apply_chance: 0.2
+
+  - id: roll
+    name: Roll
+    element: corporis
+    damage_type: physical
+    target: individual
+    hits: 2
+    hit_chance: 0.85
+    power: 35
+    stamina_cost: 8
+
+weapon:
+  id: icy_horns
+  name: Icy Horns
+  element: inanus
+  damage_type: physical
+  target: individual
+  power: 20
+  stamina_cost: 4
+  damage_variance: [0.9, 1.2]
+
+loot:
+  - item_id: gold_coin
+    quantity: 1
+    chance: 0.4
+
+abilities:
+  - ability_name: Powder Snow
+    condition:
+      type: on_hit
+      damage_type: physical
+    action:
+      type: buff_self
+      buff:
+        physical_defense: 8
+        speed: 6
+      duration: 2
+    keep_triggered_after_once: true
+    activation_message: "Snow bursts from the Snowver's coat as it braces itself."
+
+  - ability_name: Winter Instinct
+    condition:
+      type: on_low_resource
+      resource: hp
+      threshold: 0.35
+    action:
+      type: enrage
+      multiplier: 1.25
+      duration: 3
+    keep_triggered_after_once: false
+    activation_message: "The Snowver roars and charges with renewed ferocity!"
+

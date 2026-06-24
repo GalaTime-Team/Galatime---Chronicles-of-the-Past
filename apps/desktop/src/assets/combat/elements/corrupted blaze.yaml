@@ -1,0 +1,18 @@
+id: corrupted_blaze
+name: Corrupted Blaze
+description: "description here"
+
+immune_to:
+  - ignis
+super_strong_vs:
+  - naturalea
+  - spatium
+  - umbra
+strong_vs:
+  - lux
+  - corporis
+weak_to:
+  - chaos
+super_weak_to:
+  - aqua
+  - caeli

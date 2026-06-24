@@ -1,0 +1,18 @@
+id: corrupted_night
+name: Corrupted Night
+description: "description here"
+
+immune_to:
+  - lapis
+  - umbra
+super_strong_vs:
+  - aqua
+  - caeli
+  - naturalea
+  - spatium
+strong_vs:
+  - chaos
+super_weak_to:
+  - ignis
+  - lux
+  - corporis

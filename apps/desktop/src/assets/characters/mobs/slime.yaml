@@ -1,0 +1,76 @@
+﻿id: slime
+name: Slime
+rarity: common
+height: "40 cm"
+weight: "12 kg"
+description: >
+  A gelatinous creature that can be found in various environments.
+  Despite their simple appearance, slimes are surprisingly resilient.
+
+age: null
+birthday: null
+origin: Atlaria
+starting_relationships:
+  liking: 0
+  trust: 0
+
+
+ai:
+  personality: aggressive
+
+elements:
+  - aqua
+
+base_stats:
+  hp: 98
+  max_hp: 98
+  mana: 19
+  max_mana: 19
+  stamina: 15
+  max_stamina: 15
+  physical_attack: 17
+  magical_attack: 25
+  physical_defense: 10
+  magical_defense: 34
+  speed: 37
+
+skills:
+  - id: headbutt
+    name: Headbutt
+    element: corporis
+    damage_type: physical
+    target: individual
+    power: 10
+    stamina_cost: 3
+
+  - id: splash
+    name: Splash
+    element: aqua
+    damage_type: magical
+    target: individual
+    power: 20
+    mana_cost: 3
+
+weapon: null
+
+abilities:
+  - ability_name: Split
+    condition:
+      type: on_death
+    action:
+      type: spawn
+      enemies:
+        - small_slime
+        - small_slime
+    keep_triggered_after_once: false
+    activation_message: "The Slime splits into two smaller slimes!"
+
+loot:
+  - item_id: gold_coin
+    quantity: 1
+    chance: 0.4
+  - item_id: slime_goo
+    quantity: 1
+    chance: 0.8
+
+

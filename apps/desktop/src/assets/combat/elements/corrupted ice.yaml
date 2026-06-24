@@ -1,0 +1,18 @@
+id: corrupted_ice
+name: Corrupted Ice
+description: "description here"
+
+immune_to:
+  - aqua
+  - corporis
+super_strong_vs:
+  - ignis
+  - lux
+  - umbra
+strong_vs:
+  - lapis
+weak_to:
+  - caeli
+super_weak_to:
+  - chaos
+  - naturalea

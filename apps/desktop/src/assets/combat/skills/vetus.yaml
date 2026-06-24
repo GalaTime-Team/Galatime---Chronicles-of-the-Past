@@ -1,0 +1,11 @@
+element: vetus
+skills:
+  - id: ancestral_guard
+    name: Ancestral Guard
+    element: vetus
+    damage_type: status
+    target: self
+    power: 0
+    mana_cost: 2
+    skill_points_cost: 1
+    prerequisites: []

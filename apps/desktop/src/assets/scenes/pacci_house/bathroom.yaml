@@ -1,0 +1,29 @@
+id: pacci_bathroom
+name: Upstairs Bathroom
+description: >
+  The upstairs bathroom is brighter and a little more refined than the one
+  below. Fresh towels are stacked near a ceramic basin, and scented soap rests
+  beside a mirror with a simple carved frame.
+tags: [house, safe, indoor]
+connections:
+  - target: pacci_corridor
+    label: "Return to the upper corridor"
+extra:
+  ui:
+    location_path: ["Pacci's House", "Upper Floor", "Bathroom"]
+  interactions:
+    objects:
+      basin:
+        aliases: [basin, sink]
+        default_action: inspect
+        actions:
+          inspect:
+            responses:
+              - "The ceramic basin is cool to the touch, spotless, and freshly filled, with a small dish of scented soap beside it."
+      towels:
+        aliases: [towels, towel]
+        default_action: inspect
+        actions:
+          inspect:
+            responses:
+              - "The towels are stacked with almost excessive precision, their linen still crisp and carrying a faint scent of lavender."

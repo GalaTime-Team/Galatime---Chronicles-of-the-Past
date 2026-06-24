@@ -1,0 +1,101 @@
+﻿id: dante
+name: Dante
+surname: Pravin
+gender: Male
+age: 27
+height: "180 cm"
+weight: "74 kg"
+birthday: "November 17"
+origin: Sedra
+description: >
+  Add description here.
+
+starting_relationships:
+  liking: 0
+  trust: 0
+
+scenes:
+  - scene_id: null
+    dialog: null
+
+ai:
+  personality: balanced
+
+elements:
+  - caeli
+
+base_stats:
+
+  hp: 700
+  max_hp: 700
+  mana: 87
+  max_mana: 87
+  stamina: 74
+  max_stamina: 74
+  physical_attack: 52
+  magical_attack: 83
+  physical_defense: 45
+  magical_defense: 43
+  speed: 71
+
+skills:
+  - id: wind_shield
+    name: Wind Shield
+    element: caeli
+    damage_type: status
+    target: self
+    power: 0
+    mana_cost: 12
+    effects:
+      - effect_id: wind_shield
+        status_effect: Wind Shield
+        apply_to: self
+        turns: [1, 4]
+        buff:
+          physical_defense: 20
+          magical_defense: 20
+
+  - id: tornado
+    name: Tornado
+    element: caeli
+    damage_type: magical
+    target: enemies_all
+    power: 90
+    mana_cost: 25
+
+  - id: gale_force
+    name: Gale Force
+    element: caeli
+    damage_type: physical
+    target: enemy_one
+    power: 110
+    stamina_cost: 14
+    accuracy: 0.85
+
+  - id: tailwind
+    name: Tailwind
+    element: caeli
+    damage_type: status
+    target: allies_all
+    power: 0
+    mana_cost: 18
+    effects:
+      - effect_id: tailwind
+        status_effect: Tailwind
+        apply_to: allies_all
+        turns: [2, 4]
+        buff:
+          speed: 20
+
+weapon:
+  id: windblade
+  name: Windblade
+  element: caeli
+  damage_type: physical
+  target: enemy_one
+  hits: 1
+  accuracy: 0.9
+  power: 30
+  stamina_cost: 2
+
+tags: [support, healer, lux]

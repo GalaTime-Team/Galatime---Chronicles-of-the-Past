@@ -1,0 +1,112 @@
+﻿id: snow_wyvern
+name: Snow Wyvern
+rarity: rare
+height: "260 cm"
+weight: "180 kg"
+description: >
+  A long wyvern with a giant snowflake in its tail, used to find its
+  way through the blizzards. These big and strange creatures are
+  found roaming the snowy mountains. That's why the others don't know
+  much about them.
+
+age: null
+birthday: null
+origin: Atlaria
+starting_relationships:
+  liking: 0
+  trust: 0
+
+
+ai:
+  personality: balanced
+
+elements:
+  - aqua
+  - caeli
+
+base_stats:
+  hp: 600
+  max_hp: 600
+  mana: 43
+  max_mana: 43
+  stamina: 71
+  max_stamina: 71
+  physical_attack: 29
+  magical_attack: 40
+  physical_defense: 42
+  magical_defense: 37
+  speed: 50
+
+skills:
+  - id: freeze_ii
+    name: Freeze II
+    element: aqua
+    damage_type: magical
+    target: individual
+    power: 20
+    mana_cost: 8
+    effects:
+      - effect_id: freeze_ii
+        status_effect: Freeze II
+        apply_to: enemy_one
+        turns: 2
+        debuff:
+          speed: 25
+        apply_chance: 0.75
+
+  - id: icy_wind
+    name: Icy Wind
+    element: caeli
+    damage_type: magical
+    target: all
+    power: 20
+    mana_cost: 12
+    effects:
+      - effect_id: icy_wind
+        status_effect: Icy Wind
+        apply_to: enemies_all
+        turns: 2
+        debuff:
+          speed: 8
+          magical_attack: 8
+        apply_chance: 0.55
+
+  - id: frost
+    name: Frost
+    element: aqua
+    damage_type: magical
+    target: individual
+    power: 60
+    mana_cost: 9
+    effects:
+      - effect_id: frost
+        status_effect: Frost
+        apply_to: enemy_one
+        turns: 2
+        lower_accuracy: 0.15
+        debuff:
+          speed: 10
+        apply_chance: 0.6
+
+weapon:
+  id: wyvern_talon
+  name: Wyvern Talon
+  element: inanus
+  damage_type: physical
+  target: individual
+  power: 20
+  stamina_cost: 3
+  damage_variance: [0.9, 1.3]
+
+loot:
+  - item_id: gold_coin
+    quantity: 1
+    chance: 0.4
+  - item_id: magical_ice
+    quantity: 1
+    chance: 0.45
+  - item_id: blue_scale
+    quantity: 1
+    chance: 0.2
+
+

@@ -1,0 +1,112 @@
+﻿id: fire_cloak
+name: Fire Cloak
+rarity: rare
+height: "170 cm"
+weight: "25 kg"
+description: >
+  Besides being a living fire, this creature also wears a cloak
+  that doesn't burn.
+
+
+age: null
+birthday: null
+origin: Atlaria
+starting_relationships:
+  liking: 0
+  trust: 0
+
+
+ai:
+  personality: balanced
+
+elements:
+  - ignis
+
+base_stats:
+  hp: 264
+  max_hp: 264
+  mana: 47
+  max_mana: 47
+  stamina: 8
+  max_stamina: 8
+  physical_attack: 40
+  magical_attack: 70
+  physical_defense: 290
+  magical_defense: 39
+  speed: 50
+
+skills:
+  - id: fire_ball
+    name: Fire Ball
+    element: ignis
+    damage_type: magical
+    target: individual
+    hits: 1
+    power: 25
+    mana_cost: 2
+
+  - id: fire_tornado
+    name: Fire Tornado
+    element: ignis
+    damage_type: magical
+    target: individual
+    hits: 1
+    power: 70
+    mana_cost: 13
+    collateral:
+      chance: 0.9
+      apply_to: enemies_all
+      include_primary_targets: false
+      include_caster: false
+      target_hit_chance: 1.0
+      damage_multiplier: [0.2, 0.4]
+
+  - id: commet_dash
+    name: Commet Dash
+    element: ignis
+    damage_type: physical
+    target: individual
+    hits: 1
+    power: 30
+    mana_cost: 4
+    stamina_cost: 2
+    collateral:
+      chance: 0.15
+      apply_to: enemies_all
+      include_primary_targets: false
+      include_caster: false
+      target_hit_chance: 0.8
+      damage_multiplier: [0.75, 1.0]
+
+weapon:
+  id: hit
+  name: Hit
+  element: inanus
+  damage_type: physical
+  target: individual
+  power: 10
+  stamina_cost: 2
+
+loot:
+  - item_id: gold_coin
+    quantity: 1
+    chance: 0.4
+  - item_id: crimson_coal
+    quantity: 1
+    chance: 0.2
+  - item_id: warm_rag
+    quantity: 1
+    chance: 0.9
+
+abilities:
+  - ability_name: Falling Cloak
+    condition:
+      type: on_hit
+      damage_type: physical
+    action:
+      type: immunity
+      damage_type: physical
+      duration: 0
+    keep_triggered_after_once: true
+    activation_message: "The Fire Cloak's cloak fell!"
+

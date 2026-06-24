@@ -1,0 +1,14 @@
+id: spatium
+name: Spatium
+description: "The element of space, dimensions, and displacement."
+
+immune_to:
+  - corporis
+  - vetus
+strong_vs:
+  - lux
+  - naturalea
+weak_to:
+  - spatium
+  - umbra
+  - umbra

@@ -1,0 +1,11 @@
+element: corporis
+skills:
+  - id: foco
+    name: Foco
+    element: corporis
+    damage_type: status
+    target: self
+    power: 0
+    mana_cost: 0
+    skill_points_cost: 1
+    prerequisites: []

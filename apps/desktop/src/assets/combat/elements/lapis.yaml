@@ -1,0 +1,17 @@
+id: lapis
+name: Lapis
+description: "The element of earth, stone, and the unyielding ground."
+
+immune_to:
+  - magic
+  - vetus
+strong_vs:
+  - caeli
+  - ignis
+  - lux
+  - umbra
+  - umbra
+weak_to:
+  - aqua
+  - chaos
+  - naturalea

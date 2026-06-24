@@ -1,0 +1,22 @@
+id: pacci_patio
+name: Patio
+description: >
+  The rear patio is modest but welcoming, enclosed by stone walls warmed by the
+  day's light. Clay pots of herbs line one side, and a small table suggests the
+  family sometimes takes meals or tea outside when the weather is kind.
+tags: [house, safe, outdoor]
+connections:
+  - target: pacci_entry_hall
+    label: "Go back inside to the entrance hall"
+extra:
+  ui:
+    location_path: ["Pacci's House", "Patio"]
+  interactions:
+    objects:
+      herbs:
+        aliases: [herbs, pots, plants]
+        default_action: inspect
+        actions:
+          inspect:
+            responses:
+              - "Mint, thyme, and a few magical household herbs grow in labeled pots, carefully tended and trimmed."

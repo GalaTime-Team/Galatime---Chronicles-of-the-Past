@@ -1,0 +1,11 @@
+element: aqua
+skills:
+  - id: gota_de_agua
+    name: Gota de Água
+    element: aqua
+    damage_type: magical
+    target: individual
+    power: 7
+    mana_cost: 3
+    skill_points_cost: 1
+    prerequisites: []

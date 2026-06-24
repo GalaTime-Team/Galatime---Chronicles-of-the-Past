@@ -1,0 +1,95 @@
+﻿id: regular_tree
+name: Regular Tree
+rarity: uncommon
+height: "280 cm"
+weight: "420 kg"
+description: >
+  There is nothing regular about this tree. Beside it moving,
+  it throws explosive apples, and summons flowerlings to fight...
+  I will give it credit, it has some sick moves.
+
+age: null
+birthday: null
+origin: Atlaria
+starting_relationships:
+  liking: 0
+  trust: 0
+
+
+ai:
+  personality: balanced
+
+elements:
+  - naturalea
+  - chaos
+
+base_stats:
+  hp: 736
+  max_hp: 736
+  mana: 22
+  max_mana: 22
+  stamina: 39
+  max_stamina: 39
+  physical_attack: 43
+  magical_attack: 24
+  physical_defense: 55
+  magical_defense: 31
+  speed: 8
+
+skills:
+  - id: explosive_apples
+    name: Explosive Apples
+    element: chaos
+    damage_type: magical
+    target: individual
+    power: 30
+    mana_cost: 6
+    collateral:
+      chance: 0.65
+      apply_to: enemies_all
+      include_primary_targets: false
+      include_caster: false
+      target_hit_chance: 0.75
+      damage_multiplier: [0.25, 0.45]
+
+  - id: apple_party
+    name: Apple Party
+    element: naturalea
+    damage_type: physical
+    target: all
+    hits: 5
+    hit_chance: 0.7
+    power: 20
+    stamina_cost: 8
+
+weapon:
+  id: knotted_branch
+  name: Knotted Branch
+  element: inanus
+  damage_type: physical
+  target: individual
+  power: 18
+  stamina_cost: 2
+  damage_variance: [0.8, 1.2]
+
+loot:
+  - item_id: gold_coin
+    quantity: 1
+    chance: 0.4
+  - item_id: sweet_pollen
+    quantity: 1
+    chance: 0.45
+
+abilities:
+  - ability_name: Orchard Call
+    condition:
+      type: on_turn
+      interval: 3
+    action:
+      type: summon_ally
+      enemies:
+        - flowerling
+      max_summons: 2
+    keep_triggered_after_once: true
+    activation_message: "The Regular Tree shakes, and a Flowerling drops from its branches!"
+

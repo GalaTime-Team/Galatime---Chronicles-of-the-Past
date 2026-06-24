@@ -1,0 +1,18 @@
+id: corrupted_day
+name: Corrupted Day
+description: "description here"
+
+immune_to:
+  - caeli
+  - lux
+super_strong_vs:
+  - chaos
+  - ignis
+  - lapis
+  - corporis
+strong_vs:
+  - spatium
+super_weak_to:
+  - aqua
+  - naturalea
+  - umbra

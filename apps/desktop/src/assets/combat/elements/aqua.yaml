@@ -1,0 +1,12 @@
+id: aqua
+name: Aqua
+description: "The element of water, ice, and tides."
+
+immune_to:
+  - corporis
+strong_vs:
+  - ignis
+  - lux
+weak_to:
+  - chaos
+  - naturalea

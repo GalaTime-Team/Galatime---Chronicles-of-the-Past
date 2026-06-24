@@ -1,0 +1,137 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Story Forge - Dialog Editor</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,400,0,0" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;700&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+  <link href="./assets/theme.css" rel="stylesheet">
+  <script defer src="https://cdn.jsdelivr.net/npm/js-yaml@4.1.0/dist/js-yaml.min.js"></script>
+  <script defer src="./data/story-content.js"></script>
+  <script defer src="./data/story-help.js"></script>
+  <script defer src="./scripts/common.js"></script>
+  <script defer src="./scripts/dialog-page.js"></script>
+</head>
+
+<body>
+  <main class="app">
+    <header class="toolbar">
+      <div class="toolbar-left">
+        <div class="col">
+          <h1>Story Forge - Dialog Editor</h1>
+          <p>Edit dialog trees and visualize branch outcomes.</p>
+        </div>
+        <div class="col">
+          <a class="btn" href="./index.html">
+            <span class="material-symbols-outlined">home</span>
+            <span>Home</span>
+          </a>
+          <a class="btn" href="./story.html">
+            <span class="material-symbols-outlined">local_library</span>
+            <span>Story Editor</span>
+          </a>
+        </div>
+      </div>
+      <div class="toolbar-right">
+        <button id="pickDialogsBtn" type="button" class="btn">
+          <span class="material-symbols-outlined">folder_open</span>
+          <span>Load Dialogs</span>
+        </button>
+        <button id="newDialogBtn" type="button" class="btn primary">
+          <span class="material-symbols-outlined">add_comment</span>
+          <span>New Dialog</span>
+        </button>
+        <button id="removeDialogBtn" type="button" class="btn danger">
+          <span class="material-symbols-outlined">delete</span>
+          <span>Remove Dialog</span>
+        </button>
+        <button id="copyDialogYamlBtn" type="button" class="btn">
+          <span class="material-symbols-outlined">content_copy</span>
+          <span>Copy YAML</span>
+        </button>
+        <button id="downloadDialogYamlBtn" type="button" class="btn">
+          <span class="material-symbols-outlined">download</span>
+          <span>Download YAML</span>
+        </button>
+      </div>
+    </header>
+
+    <section class="status-row">
+      <div id="statusText" class="status-pill">Ready.</div>
+      <div id="dirtyFlag" class="status-pill">No changes</div>
+      <div id="dialogCount" class="status-pill">Dialogs: 0</div>
+      <div id="selectedDialogLabel" class="status-pill">Selected: none</div>
+    </section>
+
+    <section class="layout dialog-layout">
+      <section class="panel editor-panel">
+        <div class="panel-head">
+          <h2>Dialog Tree</h2>
+          <div class="field compact">
+            <label for="dialogSelect">Selected dialog tree</label>
+            <select id="dialogSelect"></select>
+          </div>
+        </div>
+
+        <div class="grid two">
+          <div class="field">
+            <label for="dialogId">id</label>
+            <input id="dialogId" type="text" placeholder="dialog_tree_id">
+          </div>
+          <div class="field">
+            <label for="dialogSpeaker">speaker</label>
+            <input id="dialogSpeaker" type="text" placeholder="Optional default speaker">
+          </div>
+        </div>
+
+        <div class="grid two">
+          <div class="field">
+            <label for="dialogSpeakerId">speaker_id</label>
+            <input id="dialogSpeakerId" type="text" placeholder="Character ID (optional)">
+          </div>
+          <div class="field">
+            <label for="dialogStartNode">start_node</label>
+            <input id="dialogStartNode" type="text" placeholder="start">
+          </div>
+        </div>
+
+        <div class="section-title with-action">
+          <span>nodes</span>
+          <button id="addDialogNodeBtn" type="button" class="btn tiny">Add node</button>
+        </div>
+        <div id="dialogNodesList" class="list-block"></div>
+
+        <div class="yaml-preview">
+          <h3>Dialog YAML Preview</h3>
+          <pre id="dialogYamlPreview"></pre>
+        </div>
+      </section>
+
+      <section class="panel map-panel">
+        <div class="panel-head">
+          <h2>Dialog Map</h2>
+          <p class="hint">Solid edges are node transitions, dashed edges are cross-dialog jumps.</p>
+        </div>
+        <div id="dialogMapShell" class="map-shell">
+          <svg id="dialogMapSvg" viewBox="0 0 1200 900" preserveAspectRatio="xMidYMin meet"></svg>
+        </div>
+      </section>
+
+      <aside class="panel reference-panel">
+        <h2>Schema Reference</h2>
+        <div id="validationBox" class="validation-box"></div>
+        <div id="schemaReference" class="schema-reference"></div>
+      </aside>
+    </section>
+
+    <div id="branchTooltip" class="field-tooltip"></div>
+
+    <input id="dialogsFolderInput" type="file" accept=".yaml,.yml" multiple hidden>
+  </main>
+</body>
+
+</html>

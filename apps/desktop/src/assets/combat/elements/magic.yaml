@@ -1,0 +1,10 @@
+id: magic
+name: Magic
+description: "The element of arcane energy, spells, and sorcery."
+
+strong_vs:
+  - chaos
+  - corporis
+weak_to:
+  - lapis
+  - vetus

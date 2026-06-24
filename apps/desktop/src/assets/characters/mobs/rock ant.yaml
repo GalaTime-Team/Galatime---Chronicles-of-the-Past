@@ -1,0 +1,72 @@
+﻿id: rock_ant
+name: Rock Ant
+rarity: common
+height: "20 cm"
+weight: "5 kg"
+description: >
+  A sturdy insect with a rocky exterior. The hard rocks provide
+  excellent defense.
+
+age: null
+birthday: null
+origin: Atlaria
+starting_relationships:
+  liking: 0
+  trust: 0
+
+
+ai:
+  personality: aggressive
+
+elements:
+  - lapis
+
+base_stats:
+  hp: 215
+  max_hp: 215
+  mana: 11
+  max_mana: 11
+  stamina: 12
+  max_stamina: 12
+  physical_attack: 34
+  magical_attack: 5
+  physical_defense: 61
+  magical_defense: 21
+  speed: 11
+
+skills:
+  - id: bite
+    name: Bite
+    element: corporis
+    damage_type: physical
+    target: individual
+    power: 20
+    stamina_cost: 3
+
+  - id: dig
+    name: Dig
+    element: lapis
+    damage_type: physical
+    target: individual
+    power: 55
+    stamina_cost: 4
+
+weapon:
+  id: mandibles
+  name: Mandibles
+  element: inanus
+  damage_type: physical
+  target: individual
+  power: 15
+  stamina_cost: 1
+  damage_variance: [0.8, 1.2]
+
+loot:
+  - item_id: gold_coin
+    quantity: 1
+    chance: 0.4
+  - item_id: cobble_stone
+    quantity: 1
+    chance: 0.8
+
+

@@ -1,0 +1,259 @@
+# ═══════════════════════════════════════════════════════════════════
+#  BUFF ITEMS  –  Temporary stat boosts for allies
+# ═══════════════════════════════════════════════════════════════════
+
+# ── Single-stat buffs ─────────────────────────────────────────────
+
+- id: power_tonic
+  name: Power Tonic
+  description: Boosts physical attack by 5 for 3 turns.
+  category: consumable
+  item_type: buff
+  target_type: ally
+  effect:
+    type: status
+    status_effect: Power Up
+    effect_id: item_power_up
+    turns: 3
+    buff:
+      physical_attack: 5
+
+- id: arcane_tonic
+  name: Arcane Tonic
+  description: Boosts magical attack by 5 for 3 turns.
+  category: consumable
+  item_type: buff
+  target_type: ally
+  effect:
+    type: status
+    status_effect: Arcane Power
+    effect_id: item_arcane_up
+    turns: 3
+    buff:
+      magical_attack: 5
+
+- id: iron_tonic
+  name: Iron Tonic
+  description: Boosts physical defense by 5 for 3 turns.
+  category: consumable
+  item_type: buff
+  target_type: ally
+  effect:
+    type: status
+    status_effect: Iron Guard
+    effect_id: item_iron_guard
+    turns: 3
+    buff:
+      physical_defense: 5
+
+- id: ward_tonic
+  name: Ward Tonic
+  description: Boosts magical defense by 5 for 3 turns.
+  category: consumable
+  item_type: buff
+  target_type: ally
+  effect:
+    type: status
+    status_effect: Magic Ward
+    effect_id: item_magic_ward
+    turns: 3
+    buff:
+      magical_defense: 5
+
+- id: speed_tonic
+  name: Speed Tonic
+  description: Boosts speed by 4 for 3 turns.
+  category: consumable
+  item_type: buff
+  target_type: ally
+  effect:
+    type: status
+    status_effect: Haste
+    effect_id: item_haste
+    turns: 3
+    buff:
+      speed: 4
+
+# ── Enhanced single-stat buffs ────────────────────────────────────
+
+- id: power_tonic_plus
+  name: Power Tonic+
+  description: Boosts physical attack by 10 for 4 turns.
+  category: consumable
+  item_type: buff
+  target_type: ally
+  effect:
+    type: status
+    status_effect: Power Up+
+    effect_id: item_power_up_plus
+    turns: 4
+    buff:
+      physical_attack: 10
+
+- id: arcane_tonic_plus
+  name: Arcane Tonic+
+  description: Boosts magical attack by 10 for 4 turns.
+  category: consumable
+  item_type: buff
+  target_type: ally
+  effect:
+    type: status
+    status_effect: Arcane Power+
+    effect_id: item_arcane_up_plus
+    turns: 4
+    buff:
+      magical_attack: 10
+
+- id: iron_tonic_plus
+  name: Iron Tonic+
+  description: Boosts physical defense by 10 for 4 turns.
+  category: consumable
+  item_type: buff
+  target_type: ally
+  effect:
+    type: status
+    status_effect: Iron Guard+
+    effect_id: item_iron_guard_plus
+    turns: 4
+    buff:
+      physical_defense: 10
+
+# ── Multi-stat buffs ──────────────────────────────────────────────
+
+- id: war_elixir
+  name: War Elixir
+  description: Boosts physical and magical attack by 4 for 3 turns.
+  category: consumable
+  item_type: buff
+  target_type: ally
+  effect:
+    type: status
+    status_effect: Battle Rage
+    effect_id: item_war_elixir
+    turns: 3
+    buff:
+      physical_attack: 4
+      magical_attack: 4
+
+- id: fortress_elixir
+  name: Fortress Elixir
+  description: Boosts physical and magical defense by 4 for 3 turns.
+  category: consumable
+  item_type: buff
+  target_type: ally
+  effect:
+    type: status
+    status_effect: Fortified
+    effect_id: item_fortified
+    turns: 3
+    buff:
+      physical_defense: 4
+      magical_defense: 4
+
+- id: hero_elixir
+  name: Hero Elixir
+  description: Boosts all combat stats by 3 for 3 turns.
+  category: consumable
+  item_type: buff
+  target_type: ally
+  effect:
+    type: status
+    status_effect: Heroic
+    effect_id: item_heroic
+    turns: 3
+    buff:
+      physical_attack: 3
+      magical_attack: 3
+      physical_defense: 3
+      magical_defense: 3
+      speed: 3
+
+# ── Team buffs ────────────────────────────────────────────────────
+
+- id: war_drum
+  name: War Drum
+  description: Boosts physical attack by 3 for all allies for 3 turns.
+  category: consumable
+  item_type: buff
+  target_type: all_allies
+  effect:
+    type: status
+    status_effect: War Cry
+    effect_id: item_war_cry
+    turns: 3
+    buff:
+      physical_attack: 3
+
+- id: barrier_scroll
+  name: Barrier Scroll
+  description: Boosts magical defense by 4 for all allies for 3 turns.
+  category: consumable
+  item_type: buff
+  target_type: all_allies
+  effect:
+    type: status
+    status_effect: Barrier
+    effect_id: item_barrier
+    turns: 3
+    buff:
+      magical_defense: 4
+
+# ── Regen buffs ───────────────────────────────────────────────────
+
+- id: regen_salve
+  name: Regen Salve
+  description: Regenerates 8 HP per turn for 4 turns.
+  category: consumable
+  item_type: buff
+  target_type: ally
+  effect:
+    type: status
+    status_effect: Regen
+    effect_id: item_regen
+    turns: 4
+    resource_regen:
+      hp: 8
+
+- id: focus_incense
+  name: Focus Incense
+  description: Regenerates 5 Mana per turn for 4 turns.
+  category: consumable
+  item_type: buff
+  target_type: ally
+  effect:
+    type: status
+    status_effect: Focus
+    effect_id: item_focus
+    turns: 4
+    resource_regen:
+      mana: 5
+
+- id: endurance_salve
+  name: Endurance Salve
+  description: Regenerates 5 Stamina per turn for 4 turns.
+  category: consumable
+  item_type: buff
+  target_type: ally
+  effect:
+    type: status
+    status_effect: Endurance
+    effect_id: item_endurance
+    turns: 4
+    resource_regen:
+      stamina: 5
+
+- id: vitality_incense
+  name: Vitality Incense
+  description: Regenerates 5 HP, 3 Mana, and 3 Stamina per turn for 3 turns.
+  category: consumable
+  item_type: buff
+  target_type: ally
+  effect:
+    type: status
+    status_effect: Vitality
+    effect_id: item_vitality
+    turns: 3
+    resource_regen:
+      hp: 5
+      mana: 3
+      stamina: 3

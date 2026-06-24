@@ -1,0 +1,206 @@
+# ═══════════════════════════════════════════════════════════════════
+#  SPECIAL ITEMS  –  Unique / rare effects
+# ═══════════════════════════════════════════════════════════════════
+
+# ── Revival Items ─────────────────────────────────────────────────
+
+- id: phoenix_feather
+  name: Phoenix Feather
+  description: "Revives a fallen ally with 25% HP."
+  category: consumable
+  item_type: special
+  target_type: dead_ally
+  effect:
+    type: revive
+    amount_percent: 25
+
+- id: phoenix_plume
+  name: Phoenix Plume
+  description: "Revives a fallen ally with 50% HP."
+  category: consumable
+  item_type: special
+  target_type: dead_ally
+  effect:
+    type: revive
+    amount_percent: 50
+
+- id: miracle_feather
+  name: Miracle Feather
+  description: "Revives a fallen ally with full HP."
+  category: consumable
+  item_type: special
+  target_type: dead_ally
+  effect:
+    type: revive
+    amount_percent: 100
+
+# ── Cleanse Items ─────────────────────────────────────────────────
+
+- id: antidote
+  name: Antidote
+  description: Removes all status effects from one ally.
+  category: consumable
+  item_type: special
+  target_type: ally
+  effect:
+    type: cleanse
+
+- id: team_antidote
+  name: Team Antidote
+  description: Removes all status effects from all allies.
+  category: consumable
+  item_type: special
+  target_type: all_allies
+  effect:
+    type: cleanse
+
+# ── Percent-Based Heal ────────────────────────────────────────────
+
+- id: life_dew
+  name: Life Dew
+  description: Restores 30% of one ally's max HP.
+  category: consumable
+  item_type: healing
+  target_type: ally
+  effect:
+    type: restore_percent
+    stat: hp
+    max_stat: max_hp
+    amount_percent: 30
+
+- id: moon_dew
+  name: Moon Dew
+  description: Restores 30% of one ally's max Mana.
+  category: consumable
+  item_type: healing
+  target_type: ally
+  effect:
+    type: restore_percent
+    stat: mana
+    max_stat: max_mana
+    amount_percent: 30
+
+# ── Drain Items (damage + heal self) ──────────────────────────────
+
+- id: soul_siphon
+  name: Soul Siphon
+  description: Deals 35 damage to one enemy and heals yourself for the same amount.
+  category: consumable
+  item_type: special
+  target_type: enemy
+  effect:
+    type: drain
+    amount: 35
+
+- id: life_steal_orb
+  name: Life Steal Orb
+  description: Deals 60 damage to one enemy and heals yourself for half.
+  category: consumable
+  item_type: special
+  target_type: enemy
+  effect:
+    type: drain
+    amount: 60
+    drain_percent: 50
+
+# ── Unique / Lore Items ──────────────────────────────────────────
+
+- id: galatime_shard
+  name: GalaTime Shard
+  description: A crystallized fragment of time. Fully restores one ally and boosts all stats by 5 for 5 turns.
+  category: consumable
+  item_type: special
+  target_type: ally
+  effects:
+    - type: restore
+      stat: hp
+      max_stat: max_hp
+      amount: 9999
+    - type: restore
+      stat: mana
+      max_stat: max_mana
+      amount: 9999
+    - type: restore
+      stat: stamina
+      max_stat: max_stamina
+      amount: 9999
+    - type: status
+      status_effect: Time Blessing
+      effect_id: galatime_blessing
+      turns: 5
+      buff:
+        physical_attack: 5
+        magical_attack: 5
+        physical_defense: 5
+        magical_defense: 5
+        speed: 5
+
+- id: mirror_shard
+  name: Mirror Shard
+  description: Grants one ally a reflect shield that boosts defense by 8 for 2 turns.
+  category: consumable
+  item_type: special
+  target_type: ally
+  effect:
+    type: status
+    status_effect: Reflect Shield
+    effect_id: item_reflect
+    turns: 2
+    buff:
+      physical_defense: 8
+      magical_defense: 8
+
+- id: berserker_draught
+  name: Berserker Draught
+  description: Massively boosts attack but lowers defense for 3 turns.
+  category: consumable
+  item_type: special
+  target_type: self
+  effect:
+    type: status
+    status_effect: Berserk
+    effect_id: item_berserk
+    turns: 3
+    buff:
+      physical_attack: 10
+      magical_attack: 10
+    debuff:
+      physical_defense: 5
+      magical_defense: 5
+
+- id: shadow_cloak
+  name: Shadow Cloak
+  description: Massively boosts speed and evasion for 2 turns.
+  category: consumable
+  item_type: special
+  target_type: self
+  effect:
+    type: status
+    status_effect: Shadow Form
+    effect_id: item_shadow
+    turns: 2
+    buff:
+      speed: 8
+
+- id: lucky_coin
+  name: Lucky Coin
+  description: A mysterious coin. Randomly restores 10-80 HP to one ally.
+  category: consumable
+  item_type: special
+  target_type: ally
+  effect:
+    type: restore
+    stat: hp
+    max_stat: max_hp
+    amount: 10
+    amount_max: 80
+
+- id: mystery_potion
+  name: Mystery Potion
+  description: "Who knows what this does? Random buff or debuff for 3 turns."
+  category: consumable
+  item_type: special
+  target_type: self
+  effect:
+    type: mystery
+    turns: 3

@@ -1,0 +1,22 @@
+id: pacci_hidden_nook
+name: Hidden Nook
+description: >
+  Beneath the lifted hatch is a cramped storage nook between the floor and the
+  foundation beams. Dust hangs in the still air, and a small wooden box has
+  been pushed against the far wall.
+tags: [house, hidden, indoor]
+connections:
+  - target: pacci_guest_room
+    label: "Climb back into the guest room"
+extra:
+  ui:
+    location_path: ["Pacci's House", "Upper Floor", "Guest Room", "Hidden Nook"]
+  interactions:
+    objects:
+      box:
+        aliases: [box, wooden box]
+        default_action: inspect
+        actions:
+          inspect:
+            responses:
+              - "The wooden box is open and empty now, but its velvet lining still holds the shape of the keepsake that was hidden inside."

@@ -1,0 +1,140 @@
+id: noelia
+name: Noelia
+surname: Agatha
+gender: Female
+age: 18
+height: "155 cm"
+weight: "45 kg"
+birthday: "Jul 10"
+origin: Atlaria
+description: >
+  An innocent-looking little girl, with a very explosive personality.
+  She was a member of the Imperial Guards to bring the country down, 
+  could she be behind all of this?
+
+starting_relationships:
+  liking: -30        
+  trust: 0
+
+scenes:
+  - scene_id: null
+    dialog: null
+
+ai:
+  personality: balanced
+  conditions:
+    - condition: critical_hp
+      threshold: 0.10
+      action: heal_self
+      priority: 100
+    - condition: low_hp
+      threshold: 0.30
+      action: heal_self
+      priority: 90
+    - condition: first_turn
+      action: buff_self
+      priority: 80
+    - condition: low_mana
+      threshold: 0.15
+      action: rest
+      priority: 70
+    - condition: enemy_low_hp
+      threshold: 0.20
+      action: strongest_attack
+      priority: 85
+    - condition: default
+      action: strongest_attack
+      priority: 50
+
+elements:
+  - corrupted_day
+
+base_stats:
+  hp: 690
+  max_hp: 690
+  mana: 104
+  max_mana: 104
+  stamina: 60
+  max_stamina: 60
+  physical_attack: 58
+  magical_attack: 108
+  physical_defense: 49
+  magical_defense: 64
+  speed: 70
+
+skills:
+  - id: recognition
+    name: Recognition
+    element: lux
+    damage_type: status
+    target: self
+    power: 0
+    mana_cost: 2
+    effects:
+      - effect_id: recognition_buff
+        status_effect: Recognition
+        apply_to: self
+        turns: 10
+        buff:
+          physical_attack: 10
+          speed: 10
+        effect_hit_chance: 1.0
+
+  - id: celestial_strike
+    name: Celestial Strike
+    element: lux
+    damage_type: magical
+    target: all
+    hits: 6
+    hit_chance: 0.4
+    power: 50
+    mana_cost: 10
+
+  - id: mana50
+    name: Mana 50
+    element: magic
+    damage_type: magical
+    target: individual
+    power: 50
+    mana_cost: 10
+
+  - id: recover
+    name: Recover
+    element: lux
+    damage_type: status
+    target: self
+    power: 0
+    mana_cost: 10
+    effects:
+      - effect_id: recover
+        status_effect: Recover
+        apply_to: self
+        resource_regen:
+          hp: 20
+          mana: 10
+          stamina: 10
+        regen_variance: [0.5, 1.0]
+        effect_hit_chance: 1.0
+
+
+weapon:
+  id: cast_rapier
+  name: Cast Rapier
+  element: inanus
+  damage_type: physical
+  target: individual
+  hits: 1
+  accuracy: 0.95
+  power: 85
+  stamina_cost: 2
+  damage_variance: [0.4, 1.1]
+
+loot:
+  - item: imperial_guard_crest
+    chance: 1.0
+  - item: crude_blade
+    chance: 0.4
+  - item: potion_small
+    chance: 0.6
+
+tags: [boss, imperial_guard, female, young, explosive]

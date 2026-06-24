@@ -1,0 +1,22 @@
+id: pacci_downstairs_bathroom
+name: Downstairs Bathroom
+description: >
+  The downstairs bathroom is compact, practical, and freshly aired. A wash
+  basin, stacked linens, and a cedar shelf make the small room feel tidy rather
+  than cramped.
+tags: [house, safe, indoor]
+connections:
+  - target: pacci_entry_hall
+    label: "Return to the entrance hall"
+extra:
+  ui:
+    location_path: ["Pacci's House", "Ground Floor", "Bathroom"]
+  interactions:
+    objects:
+      basin:
+        aliases: [basin, wash basin, sink]
+        default_action: inspect
+        actions:
+          inspect:
+            responses:
+              - "The stone basin is filled with clean water and a faint herbal rinse that leaves the room smelling fresh."

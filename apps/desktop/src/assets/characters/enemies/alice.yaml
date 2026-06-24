@@ -1,0 +1,140 @@
+﻿id: alice
+name: Alice
+surname: Kiru
+gender: Female
+age: 25
+height: "172 cm"
+weight: "55 kg"
+birthday: "Sep 19"
+origin: Lotipel
+description: >
+  A beautiful and innocent-looking commander of the Imperial Guards.
+  I still think her job is too dangerous for someone like her...
+
+starting_relationships:
+  liking: -30        
+  trust: 0
+
+scenes:
+  - scene_id: null
+    dialog: null
+
+ai:
+  personality: balanced
+  conditions:
+    - condition: critical_hp
+      threshold: 0.10
+      action: heal_self
+      priority: 95
+    - condition: low_hp
+      threshold: 0.30
+      action: rest
+      priority: 80
+    - condition: low_mana
+      threshold: 0.15
+      action: physical_attack
+      priority: 65
+    - condition: low_stamina
+      threshold: 0.15
+      action: magical_attack
+      priority: 65
+    - condition: enemy_low_hp
+      threshold: 0.20
+      action: strongest_attack
+      priority: 85
+    - condition: default
+      action: strongest_attack
+      priority: 50
+
+elements:
+  - corrupted_void
+
+base_stats:
+  hp: 1000
+  max_hp: 1000
+  mana: 62
+  max_mana: 62
+  stamina: 61
+  max_stamina: 61
+  physical_attack: 83
+  magical_attack: 96
+  physical_defense: 90
+  magical_defense: 71
+  speed: 60
+
+skills:
+  - id: chaos_mark
+    name: Chaos Mark
+    element: chaos
+    damage_type: status
+    target: individual
+    power: 0
+    mana_cost: 6
+    effects:
+      - effect_id: chaos_mark_debuff
+        status_effect: Chaos Mark
+        apply_to: target
+        turns: 4
+        debuff:
+          magical_defense: 15
+          speed: 10
+        effect_hit_chance: 0.9
+
+  - id: chaotic_barrage
+    name: Chaotic Barrage
+    element: chaos
+    damage_type: magical
+    target: all
+    hits: 3
+    hit_chance: 0.75
+    power: 40
+    mana_cost: 12
+
+  - id: floral_barrage
+    name: Floral Barrage
+    element: naturalea
+    damage_type: physical
+    target: individual
+    hits: 3
+    hit_chance: 0.85
+    power: 40
+    stamina_cost: 6
+
+  - id: nature_surge
+    name: Nature's Surge
+    element: naturalea
+    damage_type: status
+    target: self
+    power: 0
+    mana_cost: 5
+    effects:
+      - effect_id: natures_surge_buff
+        status_effect: Nature's Surge
+        apply_to: self
+        turns: 5
+        buff:
+          physical_attack: 8
+          magical_attack: 8
+        effect_hit_chance: 1.0
+
+
+weapon:
+  id: imperial_blade
+  name: Imperial Blade
+  element: inanus
+  damage_type: physical
+  target: individual
+  power: 50
+  stamina_cost: 2
+  damage_variance: [0.8, 1.2]
+
+loot:
+  - item: imperial_guard_crest
+    chance: 1.0
+  - item: crude_blade
+    chance: 0.4
+  - item: potion_small
+    chance: 0.6
+
+tags: [boss, imperial_guard, female, cute]
+

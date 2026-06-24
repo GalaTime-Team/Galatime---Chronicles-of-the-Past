@@ -1,0 +1,78 @@
+﻿id: crystal_mage
+name: Crystal Mage
+rarity: common
+height: "90 cm"
+weight: "35 kg"
+description: >
+  A crystal that has gained sentience and hostility towards all
+  living things. I asked the others where do these things gain
+  their sentience and they told me about an urban legend about
+  how crystal mages are the souls of people that died buried
+  alive...
+
+
+age: null
+birthday: null
+origin: Atlaria
+starting_relationships:
+  liking: 0
+  trust: 0
+
+
+ai:
+  personality: balanced
+
+elements:
+  - lapis
+
+base_stats:
+  hp: 315
+  max_hp: 315
+  mana: 75
+  max_mana: 75
+  stamina: 22
+  max_stamina: 22
+  physical_attack: 36
+  magical_attack: 73
+  physical_defense: 14
+  magical_defense: 35
+  speed: 24
+
+skills:
+  - id: vine
+    name: Vine
+    element: naturalea
+    damage_type: physical
+    target: individual
+    hits: 1
+    power: 30
+    mana_cost: 4
+
+  - id: vine_whip
+    name: Vine Whip
+    element: naturalea
+    damage_type: physical
+    target: individual
+    hits: 1
+    power: 35
+    mana_cost: 4
+
+weapon:
+  id: crystal_edge
+  name: Crystal Edge
+  element: lapis
+  damage_type: physical
+  target: individual
+  power: 20
+  stamina_cost: 2
+  damage_variance: [0.7, 1.3]
+
+loot:
+  - item_id: gold_coin
+    quantity: 1
+    chance: 0.4
+  - item_id: crystal_shard
+    quantity: 1
+    chance: 0.8
+
+

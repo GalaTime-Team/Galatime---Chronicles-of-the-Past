@@ -1,0 +1,16 @@
+id: corrupted_void
+name: Corrupted Void
+description: "description here"
+
+immune_to:
+  - ignis
+  - corporis
+super_strong_vs:
+  - lapis
+  - lux
+  - naturalea
+weak_to:
+  - chaos
+super_weak_to:
+  - spatium
+  - umbra

@@ -1,0 +1,16 @@
+id: caeli
+name: Caeli
+description: "The element of wind, sky, and storms."
+
+immune_to:
+  - corporis
+  - lux
+  - umbra
+  - umbra
+strong_vs:
+  - aqua
+  - naturalea
+  - spatium
+weak_to:
+  - ignis
+  - lapis

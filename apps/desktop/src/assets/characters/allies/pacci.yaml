@@ -1,0 +1,110 @@
+id: pacci
+name: Pacci
+surname: Firdaus
+gender: Male
+age: 26
+height: "174 cm"
+weight: "78 kg"
+birthday: "Jan 2"
+origin: Atlaria
+description: >
+  Calm and empathetic, Pacci is a reliable and warm person. He
+  has helped me from the start, I hope I can repay him in the future. 
+
+starting_relationships:
+  liking: 0
+  trust: 0
+
+scenes:
+  - scene_id: pacci_living_room
+
+ai:
+  personality: balanced
+
+elements:
+  - naturalea
+  - umbra
+
+base_stats:
+  hp: 800
+  max_hp: 800
+  mana: 82
+  max_mana: 82
+  stamina: 85
+  max_stamina: 85
+  physical_attack: 67
+  magical_attack: 65
+  physical_defense: 65
+  magical_defense: 117
+  speed: 58
+
+skills:
+  - id: lunar_beam
+    name: Lunar Beam
+    element: umbra
+    damage_type: magical
+    target: individual
+    power: 70
+    mana_cost: 16
+    stamina_cost: 2
+    collateral:
+      chance: 0.4
+      apply_to: enemy_all
+      include_primary_target: false
+      include_caster: false
+      target_hit_chance: 0.5
+      damage_multiplier: [0.1, 0.3]
+    
+  - id: dark_energy
+    name: Dark Energy
+    element: umbra
+    damage_type: magical
+    target: individual
+    power: 30
+    mana_cost: 2
+    stamina_cost: 1
+    collateral:
+      chance: 0.4
+      apply_to: enemy_all
+      include_primary_target: false
+      include_caster: false
+      target_hit_chance: 0.5
+      damage_multiplier: [0.1, 0.3]
+    
+  - id: electric_ball
+    name: Electric Ball
+    element: naturalea
+    damage_type: magical
+    target: individual
+    power: 25
+    mana_cost: 2
+    
+  - id: lunar_guard
+    name: Lunar Guard
+    element: umbra
+    damage_type: status
+    target: self
+    power: 0
+    mana_cost: 5
+    stamina_cost: 2
+    effects:
+      - effect_id: lunar_guard
+        status_effect: Lunar Guard
+        can_stack: true
+        apply_to: self
+        turns: 5
+        buff:
+          physical_defense: 10
+          magical_defense: 10
+
+weapon:
+  id: iron_sword
+  name: Iron Sword
+  element: inanus
+  damage_type: physical
+  target: individual
+  power: 40
+  stamina_cost: 2
+  damage_variance: [0.7, 1.0]
+
+tags: [empathetic, reliable, warm]

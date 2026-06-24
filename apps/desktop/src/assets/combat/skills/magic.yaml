@@ -1,0 +1,150 @@
+element: magic
+skills:
+  - id: mana10
+    name: "Mana 10"
+    element: magic
+    damage_type: magical
+    target: individual
+    power: 10
+    accuracy: 1
+    mana_cost: 10
+    stamina_cost: 0
+    hits: 1
+    hit_chance: 1
+    skill_points_cost: 1
+    prerequisites:
+      - mana05
+
+  - id: mana20
+    name: "Mana 20"
+    element: magic
+    damage_type: magical
+    target: individual
+    power: 20
+    accuracy: 1
+    mana_cost: 20
+    stamina_cost: 0
+    hits: 1
+    hit_chance: 1
+    skill_points_cost: 1
+    prerequisites:
+      - mana10
+
+  - id: mana05
+    name: "Mana 05"
+    element: magic
+    damage_type: magical
+    target: individual
+    power: 5
+    accuracy: 1
+    mana_cost: 5
+    stamina_cost: 0
+    hits: 1
+    hit_chance: 1
+    skill_points_cost: 1
+    prerequisites: []
+
+  - id: mana30
+    name: "Mana 30"
+    element: magic
+    damage_type: magical
+    target: individual
+    power: 30
+    accuracy: 1
+    mana_cost: 30
+    stamina_cost: 0
+    hits: 1
+    hit_chance: 1
+    skill_points_cost: 1
+    prerequisites:
+      - mana20
+
+  - id: mana40
+    name: "Mana 40"
+    element: magic
+    damage_type: magical
+    target: individual
+    power: 40
+    accuracy: 1
+    mana_cost: 40
+    stamina_cost: 0
+    hits: 1
+    hit_chance: 1
+    skill_points_cost: 1
+    prerequisites:
+      - mana30
+
+  - id: mana50
+    name: "Mana 50"
+    element: magic
+    damage_type: magical
+    target: individual
+    power: 50
+    accuracy: 1
+    mana_cost: 50
+    stamina_cost: 0
+    hits: 1
+    hit_chance: 1
+    skill_points_cost: 1
+    prerequisites:
+      - mana40
+
+  - id: mana60
+    name: "Mana 60"
+    element: magic
+    damage_type: magical
+    target: individual
+    power: 60
+    accuracy: 1
+    mana_cost: 60
+    stamina_cost: 0
+    hits: 1
+    hit_chance: 1
+    skill_points_cost: 1
+    prerequisites:
+      - mana50
+
+  - id: small_barrier
+    name: "Small Barrier"
+    element: magic
+    damage_type: status
+    target: self
+    power: 0
+    accuracy: 0.85
+    mana_cost: 50
+    stamina_cost: 0
+    hits: 1
+    hit_chance: 1
+    skill_points_cost: 2
+    prerequisites:
+      - mana20
+
+  - id: barrier
+    name: Barrier
+    element: magic
+    damage_type: magical
+    target: self
+    power: 0
+    accuracy: 1
+    mana_cost: 60
+    stamina_cost: 0
+    hits: 1
+    hit_chance: 1
+    skill_points_cost: 2
+    prerequisites:
+      - small_barrier
+
+  - id: mana_bullet
+    name: "Mana Bullet"
+    element: magic
+    damage_type: magical
+    target: individual
+    power: 20
+    accuracy: 1
+    mana_cost: 10
+    stamina_cost: 0
+    hits: 2
+    hit_chance: 0.85
+    skill_points_cost: 1
+    prerequisites:
+      - mana20

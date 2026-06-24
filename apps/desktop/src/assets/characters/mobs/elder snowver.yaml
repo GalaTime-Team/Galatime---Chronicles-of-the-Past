@@ -1,0 +1,103 @@
+﻿id: elder_snowver
+name: Elder Snowver
+rarity: rare
+height: "145 cm"
+weight: "60 kg"
+description: >
+  As Snowvers grow old, they lose their fur and muscle mass. However,
+  they gain the ability to wield magic in ways similar to humans.
+  Elder Snowvers use their power to protect their young and to ward
+  off predators from afar.
+
+age: null
+birthday: null
+origin: Atlaria
+starting_relationships:
+  liking: 0
+  trust: 0
+
+
+ai:
+  personality: defensive
+
+elements:
+  - aqua
+
+base_stats:
+  hp: 336
+  max_hp: 336
+  mana: 91
+  max_mana: 91
+  stamina: 38
+  max_stamina: 38
+  physical_attack: 8
+  magical_attack: 70
+  physical_defense: 46
+  magical_defense: 53
+  speed: 16
+
+skills:
+  - id: ice_thorns
+    name: Ice Thorns
+    element: aqua
+    damage_type: physical
+    target: individual
+    power: 45
+    mana_cost: 6
+    stamina_cost: 2
+    effects:
+      - effect_id: freeze
+        status_effect: Freeze
+        apply_to: enemy_one
+        turns: 2
+        debuff:
+          speed: 10
+        effect_hit_chance: 0.75
+
+  - id: iceberg
+    name: Iceberg
+    element: aqua
+    damage_type: magical
+    target: all_enemies
+    power: 85
+    mana_cost: 11
+    effects:
+      - effect_id: freeze
+        status_effect: Freeze
+        apply_to: enemy_one
+        turns: 2
+        debuff:
+          speed: 10
+        effect_hit_chance: 0.75
+
+  - id: water_absorption
+    name: Water Absorption
+    element: aqua
+    damage_type: status
+    target: self
+    power: 0
+    mana_cost: 9
+    effects:
+      - effect_id: water_absorb
+        status_effect: Regenerate
+        apply_to: self
+        turns: 3
+        resource_regen:
+          hp: 10
+
+weapon:
+  id: frozen_talon
+  name: Frozen Talon
+  element: aqua
+  damage_type: physical
+  target: individual
+  power: 25
+  stamina_cost: 3
+  damage_variance: [0.9, 1.1]
+
+loot:
+  - item_id: magical_ice
+    quantity: 1
+    chance: 0.5
+
+

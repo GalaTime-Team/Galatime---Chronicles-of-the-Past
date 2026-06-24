@@ -1,0 +1,64 @@
+﻿id: small_slime
+name: Small Slime
+rarity: common
+height: "20 cm"
+weight: "4 kg"
+description: >
+  A gelatinous creature that can be found in various environments.
+  Despite their simple appearance, slimes are surprisingly resilient.
+
+age: null
+birthday: null
+origin: Atlaria
+starting_relationships:
+  liking: 0
+  trust: 0
+
+
+ai:
+  personality: balanced
+
+elements:
+  - aqua
+
+base_stats:
+  hp: 50
+  max_hp: 50
+  mana: 11
+  max_mana: 11
+  stamina: 13
+  max_stamina: 13
+  physical_attack: 15
+  magical_attack: 20
+  physical_defense: 10
+  magical_defense: 17
+  speed: 68
+
+skills:
+  - id: headbutt
+    name: Headbutt
+    element: corporis
+    damage_type: physical
+    target: individual
+    power: 10
+    stamina_cost: 3
+
+  - id: splash
+    name: Splash
+    element: aqua
+    damage_type: magical
+    target: individual
+    power: 20
+    mana_cost: 3
+
+weapon: null
+
+loot:
+  - item_id: gold_coin
+    quantity: 1
+    chance: 0.4
+  - item_id: slime_goo
+    quantity: 1
+    chance: 0.8
+
+

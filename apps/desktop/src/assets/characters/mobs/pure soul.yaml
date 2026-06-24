@@ -1,0 +1,129 @@
+﻿id: pure_soul
+name: Pure Soul
+rarity: epic
+height: "140 cm"
+weight: "0 kg"
+description: >
+  A soul refined into radiant serenity. Its light shields companions,
+  restores vitality, and overwhelms darkness.
+
+age: null
+birthday: null
+origin: Atlaria
+starting_relationships:
+  liking: 0
+  trust: 0
+
+
+ai:
+  personality: support
+  conditions:
+    - condition: ally_low_hp
+      threshold: 0.75
+      action: heal_ally
+      priority: 95
+    - condition: default
+      action: strongest_attack
+      priority: 60
+
+elements:
+  - lux
+
+base_stats:
+  hp: 470
+  max_hp: 470
+  mana: 90
+  max_mana: 90
+  stamina: 30
+  max_stamina: 30
+  physical_attack: 68
+  magical_attack: 25
+  physical_defense: 40
+  magical_defense: 72
+  speed: 39
+
+skills:
+  - id: radiant_restoration
+    name: Radiant Restoration
+    element: lux
+    damage_type: status
+    target: allies_all
+    power: 0
+    mana_cost: 16
+    effects:
+      - effect_id: radiant_restoration
+        status_effect: Radiant Restoration
+        apply_to: allies_all
+        resource_regen:
+          hp: 24
+        regen_variance: [0.95, 1.2]
+
+  - id: sanctified_aegis
+    name: Sanctified Aegis
+    element: lux
+    damage_type: status
+    target: allies_all
+    power: 0
+    mana_cost: 16
+    effects:
+      - effect_id: sanctified_aegis
+        status_effect: Sanctified Aegis
+        apply_to: allies_all
+        turns: 3
+        buff:
+          physical_defense: 12
+          magical_defense: 14
+
+  - id: dawnflare
+    name: Dawnflare
+    element: lux
+    damage_type: magical
+    target: all
+    power: 34
+    mana_cost: 16
+    effects:
+      - effect_id: dawnflare
+        status_effect: Dawnflare
+        apply_to: enemies_all
+        turns: 2
+        debuff:
+          magical_attack: 10
+        apply_chance: 0.45
+
+loot:
+  - item_id: gold_coin
+    quantity: 3
+    chance: 0.65
+
+abilities:
+  - ability_name: Divine Reflection
+    condition:
+      type: on_hit
+    action:
+      type: reflect_damage
+      reflect_fraction: 1.0
+    keep_triggered_after_once: true
+    activation_message: "The Pure Soul's aura reflects incoming suffering."
+
+  - ability_name: Halo Renewal
+    condition:
+      type: on_turn
+      interval: 3
+    action:
+      type: heal
+      percent: 0.1
+    keep_triggered_after_once: true
+    activation_message: "A radiant halo renews the Pure Soul."
+
+  - ability_name: Radiant Reversion
+    condition:
+      type: on_turn
+      interval: 3
+      timing: post_action
+      require_battle_continues: true
+    action:
+      type: change_state
+      new_template: corrupted_soul
+    keep_triggered_after_once: false
+    activation_message: "A moment of wavering light returns the Pure Soul to Corruption."
+

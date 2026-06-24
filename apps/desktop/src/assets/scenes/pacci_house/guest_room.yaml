@@ -1,0 +1,62 @@
+id: pacci_guest_room
+name: Guest Room
+description: >
+  The guest room sits at the end of the upper floor, simple but welcoming.
+  Fresh sheets still smell faintly of lavender, a patterned carpet softens the
+  wooden floor, and a tall bookshelf stands beside the window. Everything is
+  arranged with the careful hospitality of a house that expects visitors to be
+  treated well.
+tags: [house, safe, indoor]
+connections:
+  - target: pacci_corridor
+    label: "Go to the corridor"
+  - target: pacci_hidden_nook
+    label: "Lift the hidden floor hatch"
+    guard:
+      path: "flags.pacci_guest_room.carpet_moved"
+      value: true
+extra:
+  ui:
+    location_path: ["Pacci's House", "Upper Floor", "Guest Room"]
+  interactions:
+    objects:
+      carpet:
+        aliases: [carpet, rug]
+        default_action: inspect
+        actions:
+          inspect:
+            responses:
+              - "The carpet is hand-woven in deep red and gold, worn smooth where many feet once crossed it."
+          move:
+            aliases: [move, drag, pull]
+            set_state:
+              flags.pacci_guest_room.carpet_moved: true
+            responses:
+              - "You drag the carpet aside and find pale marks in the floorboards, as if a chest or heavy trunk once rested there."
+              - "The carpet is already folded aside. The bare floorboards underneath still show the old pressure marks."
+      bookshelf:
+        aliases: [bookshelf, shelf, books]
+        default_action: inspect
+        actions:
+          inspect:
+            explore_sequentially: true
+            continue_prompt: "Explore the bookshelf further?"
+            default_response: "You have already gone through the bookshelf carefully. Nothing else stands out now."
+            responses:
+              - "Most of the books are practical: medicine, herbal remedies, and household ledgers copied in a tidy hand."
+              - "Tucked between the practical volumes, you notice a weathered adventure novel with a cracked spine and a pressed blue flower between its pages."
+              - "At the back of the highest shelf, you find a slim notebook full of copied quotations and half-finished reflections, written in a careful but restless hand."
+      bed:
+        aliases: [bed, guest bed, sheets]
+        default_action: inspect
+        actions:
+          inspect:
+            responses:
+              - "The guest bed is neatly made, layered with clean blankets and a folded quilt stitched in soft geometric patterns."
+      bedside_table:
+        aliases: [bedside table, side table, table]
+        default_action: inspect
+        actions:
+          inspect:
+            responses:
+              - "A brass lamp, a folded handkerchief, and a glass of water sit neatly on the small bedside table."

@@ -1,0 +1,126 @@
+id: annah
+name: Annah
+surname: Froy
+gender: Female
+age: 23
+height: "166 cm"
+weight: "53 kg"
+birthday: "March 3"
+origin: Atlaria
+description: >
+  I'm not sure if she tolerates me or hates me, or if it's just normal military
+  discipline. But she sure acts different around Pacci, like she's a completely
+  different person... was he some sort of mentor?
+
+starting_relationships:
+  liking: 0
+  trust: 0
+
+scenes:
+  - scene_id: null
+    dialog: null
+
+ai:
+  personality: support
+
+elements:
+  - aqua
+  - lux
+
+base_stats:
+  hp: 1010
+  max_hp: 1010
+  mana: 91
+  max_mana: 91
+  stamina: 61
+  max_stamina: 61
+  physical_attack: 42
+  magical_attack: 62
+  physical_defense: 60
+  magical_defense: 83
+  speed: 59
+
+skills:
+  - id: light_heal
+    name: Light Heal
+    element: lux
+    damage_type: status
+    target: self
+    hits: 1
+    power: 0
+    mana_cost: 10
+    stamina_cost: 0
+    effects:
+      - apply_to: self
+        resource_regen:
+          hp: 10
+        regen_variance: [0.5, 1.2]
+
+  - id: ice_barrage
+    name: Ice Barrage
+    element: vetus
+    damage_type: magical
+    target: individual
+    hits: 20
+    hit_chance: 0.6
+    power: 20
+    mana_cost: 24
+    stamina_cost: 0
+    effects:
+      - effect_id: ice_barrage
+        status_effect: Ice Barrage
+        apply_to: enemy_one
+        turns: [1, 3]
+        debuff:
+          speed: 10
+          physical_attack: 10
+
+  - id: frost
+    name: Frost
+    element: aqua
+    damage_type: magical
+    target: individual
+    hits: 1
+    power: 60
+    mana_cost: 9
+    stamina_cost: 1
+    effects:
+      - apply_to: enemy_one
+        effect_id: frost
+        status_effect: Frost
+        can_stack: false
+        turns: [1, 3]
+        debuff:
+          speed: 10
+        effect_hit_chance: 1.0
+
+  - id: angels_judgement
+    name: Angel's Judgement
+    element: vetus
+    damage_type: magical
+    target: individual
+    hits: 1
+    power: 90
+    mana_cost: 18
+    stamina_cost: 4
+    effects:
+      - apply_to: enemy_one
+        effect_id: angels_judgement
+        status_effect: Angel's Judgement
+        turns: [1, 3]
+        debuff:
+          magical_attack: 10
+          physical_attack: 10
+        effect_hit_chance: 1.0
+
+weapon:
+  id: iron_sword
+  name: Iron Sword
+  element: inanus
+  damage_type: physical
+  target: individual
+  power: 40
+  stamina_cost: 2
+  damage_variance: [0.7, 1.0]
+
+tags: []

@@ -1,0 +1,73 @@
+id: pacci_room
+name: Pacci's Room
+description: >
+  Pacci's room feels arranged, warm, and unmistakably lived in. A queen bed,
+  matching bedside tables, a wardrobe, and a bookcase anchor the room, while a
+  work desk overflows with papers, writing tools, candles, and notes. A rug in
+  Atlarian colors, healthy plants, and family sketches make the room feel full
+  of care rather than clutter.
+tags: [house, safe, indoor]
+connections:
+  - target: pacci_corridor
+    label: "Return to the corridor"
+extra:
+  ui:
+    location_path: ["Pacci's House", "Upper Floor", "Pacci's Room"]
+  interactions:
+    objects:
+      bed:
+        aliases: [bed, queen bed]
+        default_action: inspect
+        actions:
+          inspect:
+            responses:
+              - "The queen bed is perfectly made, its pillows aligned beneath a quilt embroidered with understated Atlarian motifs."
+      bedside_tables:
+        aliases: [tables, bedside tables, nightstands, table]
+        default_action: inspect
+        actions:
+          inspect:
+            responses:
+              - "The bedside tables hold a lamp, a water carafe, a ribbon marker tucked into a book, and the small daily objects of someone who values order."
+      wardrobe:
+        aliases: [wardrobe, guardarobe, guarda vestidos, clothes]
+        default_action: inspect
+        actions:
+          inspect:
+            responses:
+              - "The wardrobe is well kept, with clothing arranged by use and season and a sachet of dried herbs tucked discreetly inside."
+      bookcase:
+        aliases: [bookcase, bookshelf, books, shelves]
+        default_action: inspect
+        actions:
+          inspect:
+            responses:
+              - "Medical references, journals, copied folktales, and a few sentimental volumes fill the bookcase in careful but frequent use."
+      desk:
+        aliases: [desk, writing desk]
+        default_action: inspect
+        actions:
+          inspect:
+            responses:
+              - "The desk is crowded with careful notes, drafts, ink pots, wax drippings, and bundles of writing materials set around a cluster of half-burned candles."
+      rug:
+        aliases: [rug, carpet]
+        default_action: inspect
+        actions:
+          inspect:
+            responses:
+              - "The rug's repeating Atlarian pattern ties the whole room together, rich in deep reds, gold, and muted blue."
+      plants:
+        aliases: [plants, plant, shelves, plant shelves]
+        default_action: inspect
+        actions:
+          inspect:
+            responses:
+              - "A tall plant stands near the window, and the shelves nearby are crowded with smaller green things that have clearly been watered, trimmed, and fussed over with affection."
+      drawings:
+        aliases: [drawings, family drawings, sketches, pictures]
+        default_action: inspect
+        actions:
+          inspect:
+            responses:
+              - "Several family drawings have been pinned beside the desk, some childlike and some careful, all kept close enough to be seen every day."

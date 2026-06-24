@@ -1,0 +1,14 @@
+{
+  "name": "galatime-chronicles-of-the-past",
+  "version": "0.1.0",
+  "private": true,
+  "workspaces": [
+    "apps/*",
+    "packages/*"
+  ],
+  "scripts": {
+    "dev": "npm run dev --workspace desktop",
+    "build": "npm run build --workspace desktop",
+    "test": "npm run test --workspace desktop"
+  }
+}

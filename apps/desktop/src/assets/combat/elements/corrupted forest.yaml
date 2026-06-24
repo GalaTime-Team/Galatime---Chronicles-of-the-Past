@@ -1,0 +1,18 @@
+id: corrupted_forest
+name: Corrupted Forest
+description: "description here"
+
+immune_to:
+  - umbra
+  - naturalea
+super_strong_vs:
+  - chaos
+  - lapis
+strong_vs:
+  - corporis
+  - spatium
+weak_to:
+  - aqua
+  - caeli
+super_weak_to:
+  - ignis

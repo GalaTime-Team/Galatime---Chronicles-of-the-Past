@@ -1,0 +1,110 @@
+﻿id: imp
+name: Imp
+rarity: uncommon
+height: "70 cm"
+weight: "18 kg"
+description: >
+  Burning dark balls of fire. It's said that the imps are made of
+  negative emotions and pain. It makes me wonder how many people
+  have suffered for these things to be common.
+
+age: null
+birthday: null
+origin: Atlaria
+starting_relationships:
+  liking: 0
+  trust: 0
+
+
+ai:
+  personality: aggressive
+
+elements:
+  - umbra
+  - ignis
+
+base_stats:
+  hp: 352
+  max_hp: 352
+  mana: 17
+  max_mana: 17
+  stamina: 37
+  max_stamina: 37
+  physical_attack: 28
+  magical_attack: 44
+  physical_defense: 40
+  magical_defense: 45
+  speed: 51
+
+skills:
+  - id: dark_ball
+    name: Dark Ball
+    element: umbra
+    damage_type: magical
+    target: individual
+    power: 30
+    mana_cost: 4
+
+  - id: bloodthirsty
+    name: Bloodthirsty
+    element: umbra
+    damage_type: physical
+    target: individual
+    power: 20
+    mana_cost: 2
+    stamina_cost: 4
+    effects:
+      - effect_id: bloodthirsty
+        status_effect: Bloodthirsty
+        apply_to: self
+        resource_regen:
+          hp: 10
+        regen_variance: [0.8, 1.2]
+
+  - id: fear
+    name: Fear
+    element: umbra
+    damage_type: status
+    target: individual
+    power: 0
+    mana_cost: 5
+    effects:
+      - effect_id: fear
+        status_effect: Fear
+        apply_to: enemy_one
+        turns: 2
+        lower_accuracy: 0.25
+        debuff:
+          physical_attack: 10
+          magical_attack: 10
+          speed: 10
+        apply_chance: 0.75
+
+weapon:
+  id: barbed_tail
+  name: Barbed Tail
+  element: ignis
+  damage_type: physical
+  target: individual
+  power: 16
+  stamina_cost: 2
+  damage_variance: [0.9, 1.2]
+
+loot:
+  - item_id: gold_coin
+    quantity: 1
+    chance: 0.4
+
+abilities:
+  - ability_name: Cackling Escape
+    condition:
+      type: on_hp_threshold
+      threshold: 0.3
+    action:
+      type: buff_self
+      buff:
+        speed: 12
+      duration: 3
+    keep_triggered_after_once: false
+    activation_message: "The Imp cackles and starts darting wildly around the field!"
+

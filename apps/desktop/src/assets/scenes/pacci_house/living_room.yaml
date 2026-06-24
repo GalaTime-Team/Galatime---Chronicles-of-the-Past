@@ -1,0 +1,30 @@
+id: pacci_living_room
+name: Living Room
+description: >
+  The sitting room is comfortable and lived-in without being cluttered. Sofas,
+  armchairs, and a long cabinet frame a table suited for quiet games, reading,
+  or evening conversation, while shelves of books and small keepsakes give the
+  room a warm, thoughtful character.
+tags: [house, safe, indoor]
+connections:
+  - target: pacci_entry_hall
+    label: "Return to the entrance hall"
+extra:
+  ui:
+    location_path: ["Pacci's House", "Ground Floor", "Living Room"]
+  interactions:
+    objects:
+      game_table:
+        aliases: [table, game table, gaming table]
+        default_action: inspect
+        actions:
+          inspect:
+            responses:
+              - "Dice, carved markers, and a neatly folded cloth rest on the broad table, ready for games, letters, or any other shared work."
+      bookshelf:
+        aliases: [bookshelf, shelves, books, bookcase]
+        default_action: inspect
+        actions:
+          inspect:
+            responses:
+              - "The shelves hold history, folktales, herbal references, and a few much-loved adventure stories with worn corners."

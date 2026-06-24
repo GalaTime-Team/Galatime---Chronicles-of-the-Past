@@ -1,0 +1,29 @@
+id: pacci_balcony
+name: Balcony
+description: >
+  The wide balcony runs along the left side of the second floor. Small tables
+  and chairs have been arranged to catch the light and air, turning the space
+  into a quiet place for tea, reading, or late conversations above the patio.
+tags: [house, safe, outdoor]
+connections:
+  - target: pacci_corridor
+    label: "Return to the upper corridor"
+extra:
+  ui:
+    location_path: ["Pacci's House", "Upper Floor", "Balcony"]
+  interactions:
+    objects:
+      tables:
+        aliases: [tables, table, tea table]
+        default_action: inspect
+        actions:
+          inspect:
+            responses:
+              - "The round tables are light enough to move with the sun, each one marked by rings from teacups and candle stubs."
+      chairs:
+        aliases: [chairs, chair, seats]
+        default_action: inspect
+        actions:
+          inspect:
+            responses:
+              - "The chairs are mismatched but comfortable, dressed with cushions in faded reds, golds, and sea-blue thread."

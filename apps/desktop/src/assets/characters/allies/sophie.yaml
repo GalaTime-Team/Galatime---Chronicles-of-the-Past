@@ -1,0 +1,151 @@
+﻿id: sophie
+name: Sophie
+surname: Travin
+gender: Female
+age: 21
+height: "162 cm"
+weight: "52 kg"
+birthday: "December 3"
+origin: Sedra
+description: >
+  Add description here.
+
+starting_relationships:
+  liking: 0
+  trust: 0
+
+scenes:
+  - scene_id: null
+    dialog: null
+
+ai:
+  personality: support
+  conditions:
+    - condition: low_mana
+      threshold: 0.45
+      action: heal_ally
+      priority: 99
+    - condition: ally_low_hp
+      threshold: 0.80
+      action: heal_ally
+      priority: 95
+    - condition: default
+      action: buff_ally
+      priority: 70
+    - condition: default
+      action: strongest_attack
+      priority: 42
+
+elements:
+  - lux
+
+base_stats:
+  hp: 1000
+  max_hp: 1000
+  mana: 84
+  max_mana: 84
+  stamina: 85
+  max_stamina: 85
+  physical_attack: 25
+  magical_attack: 44
+  physical_defense: 69
+  magical_defense: 50
+  speed: 75
+
+skills:
+  - id: dazzling_gleam
+    name: Dazzling Gleam
+    element: lux
+    damage_type: magical
+    target: all
+    power: 100
+    mana_cost: 19
+    collateral:
+      chance: 0.8
+      apply_to: both_teams
+      include_primary_targets: false
+      include_caster: true
+      damage_multiplier: [0.4, 0.6]
+
+  - id: angels_blessing
+    name: Angel's Blessing
+    element: lux
+    damage_type: status
+    target: allies_all
+    power: 0
+    mana_cost: 40
+    effects:
+      - effect_id: angels_blessing
+        status_effect: Angel's Blessing
+        apply_to: allies_all
+        resource_regen:
+          hp: 120
+        regen_variance: [0.9, 1.1]
+
+  - id: angels_guard
+    name: Angel's Guard
+    element: lux
+    damage_type: status
+    target: allies_all
+    power: 0
+    mana_cost: 10
+    effects:
+      - effect_id: angels_guard
+        status_effect: Angel's Guard
+        apply_to: allies_all
+        turns: 5
+        buff:
+          magical_defense: 25
+
+  - id: serene_shroud
+    name: Serene Shroud
+    element: lux
+    damage_type: status
+    target: all
+    power: 0
+    mana_cost: 12
+    effects:
+      - effect_id: serene_shroud
+        status_effect: Serene Shroud
+        apply_to: enemies_all
+        turns: 3
+        debuff:
+          magical_attack: 10
+        effect_hit_chance: 0.9
+
+weapon:
+  id: golden_scepter
+  name: Golden Scepter
+  element: lux
+  damage_type: status
+  target: self
+  hits: 1
+  accuracy: 0.75
+  power: 0
+  stamina_cost: 2
+  effects:
+    - effect_id: heal_hp
+      status_effect: Soothing Light
+      apply_to: ally_one
+      resource_regen:
+        hp: 10
+      regen_variance: [0.5, 1.1]
+      apply_chance: 0.2
+
+    - effect_id: heal_mana
+      status_effect: Soothing Mind
+      apply_to: ally_one
+      resource_regen:
+        mana: 4
+      regen_variance: [0.5, 1.1]
+      apply_chance: 0.2
+
+    - effect_id: heal_stamina
+      status_effect: Soothing Spirit
+      apply_to: ally_one
+      resource_regen:
+        stamina: 4
+      regen_variance: [0.5, 1.1]
+      apply_chance: 0.2
+
+tags: [support, healer, lux]

@@ -1,0 +1,16 @@
+id: umbra
+name: Umbra
+description: "The element of darkness, shadow, and the unseen."
+
+immune_to:
+  - caeli
+  - lapis
+  - umbra
+strong_vs:
+  - aqua
+  - spatium
+  - vetus
+weak_to:
+  - ignis
+  - lux
+  - corporis
