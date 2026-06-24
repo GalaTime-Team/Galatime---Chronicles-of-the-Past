@@ -3,16 +3,21 @@ export default {
   content: ["./index.html", "./src/**/*.{js,ts,jsx,tsx}"],
   theme: {
     extend: {
-      colors: {
-        gala: {
-          obsidian: "#111113",
-          ember: "#c05a2e",
-          parchment: "#f6e3b4",
-          steel: "#5a6a73",
-        },
+      fontFamily: {
+        custom: ['m5x7', '"Trebuchet MS"', '"Segoe UI"', 'Tahoma', 'Geneva', 'Verdana', 'sans-serif'],
       },
+      colors: {
+        galatime: {
+          primary: '#6D72CA',
+          accent: '#C5B4E9',
+          dark: '#09091A',
+          correct: "#236050",
+          warning: "#FFD869",
+          error: "#A42132"
+        }
+      }
     },
   },
-  plugins: [],
+  plugins: []
 }
 
