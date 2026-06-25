@@ -1,0 +1,47 @@
+{
+  "loading": {
+    "text": "Loading...",
+    "alt": "Loading animation"
+  },
+  "selector": {
+    "previous": "Previous option",
+    "next": "Next option",
+    "chevronLeft": "<",
+    "chevronRight": ">"
+  },
+  "switch": {
+    "toggle": "Toggle",
+    "on": "on",
+    "off": "off",
+    "altOn": "ON",
+    "altOff": "OFF"
+  },
+  "game": {
+    "header": {
+      "tagline": "GalaTime",
+      "title": "Chronicles of the Past",
+      "subtitle": "Tailwind CSS + Tauri"
+    },
+    "difficulty": {
+      "title": "Difficulty",
+      "easy": {
+        "label": "Easy",
+        "description": "For those who want to relax."
+      },
+      "normal": {
+        "label": "Normal",
+        "description": "The standard experience."
+      },
+      "hard": {
+        "label": "Hard",
+        "description": "A true challenge awaits."
+      }
+    },
+    "settings": {
+      "fightingTips": {
+        "title": "Fighting Tool tip",
+        "description": "Display details about attacks."
+      }
+    }
+  }
+}

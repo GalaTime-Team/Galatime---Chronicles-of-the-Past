@@ -1,4 +1,5 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
+import { useTranslation } from 'react-i18next';
 
 interface CommonSwitchProps {
     /** The title displayed above the switch */
@@ -29,6 +30,7 @@ const CommonSwitch: React.FC<CommonSwitchProps> = ({
     switchClassName = '',
     descriptionClassName = '',
 }) => {
+    const { t } = useTranslation('common');
     const [isChecked, setIsChecked] = useState(defaultChecked);
 
     const handleToggle = () => {
@@ -40,7 +42,7 @@ const CommonSwitch: React.FC<CommonSwitchProps> = ({
     return (
         <div className={`flex flex-col items-center select-none ${containerClassName}`}>
             {/* Title Section — added explicit text-xl (adjust to your design) */}
-            <h2 className={`text-white text-center text-xl ${titleClassName}`}>
+            <h2 className={`text-white/70 text-center text-2xl ${titleClassName}`}>
                 {title}
             </h2>
 
@@ -48,12 +50,12 @@ const CommonSwitch: React.FC<CommonSwitchProps> = ({
             <button
                 onClick={handleToggle}
                 className={`mt-3 text-2xl focus:outline-none hover:scale-105 active:scale-95 transition-transform duration-150 ${switchClassName}`}
-                aria-label={`Toggle ${title} ${isChecked ? 'off' : 'on'}`}
+                aria-label={`${t('switch.toggle')} ${title} ${isChecked ? t('switch.off') : t('switch.on')}`}
             >
                 <img
-                    src={isChecked ? '/images/ui/switch/switch_on.png' : '/images/ui/switch/switch_off.png'}
-                    alt={isChecked ? 'ON' : 'OFF'}
-                    className="h-[0.55em] w-auto block"
+                    src={isChecked ? '/images/ui/switch/switch_on.svg' : '/images/ui/switch/switch_off.svg'}
+                    alt={isChecked ? t('switch.altOn') : t('switch.altOff')}
+                    className={`h-[0.55em] w-auto block transition-all duration-50 ${isChecked ? 'opacity-100' : 'opacity-40'}`}
                 />
             </button>
 
