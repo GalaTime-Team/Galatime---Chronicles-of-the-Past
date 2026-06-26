@@ -1,8 +1,8 @@
-element: magic
+element: vis
 skills:
   - id: mana10
     name: "Mana 10"
-    element: magic
+    element: vis
     damage_type: magical
     target: individual
     power: 10
@@ -17,7 +17,7 @@ skills:
 
   - id: mana20
     name: "Mana 20"
-    element: magic
+    element: vis
     damage_type: magical
     target: individual
     power: 20
@@ -32,7 +32,7 @@ skills:
 
   - id: mana05
     name: "Mana 05"
-    element: magic
+    element: vis
     damage_type: magical
     target: individual
     power: 5
@@ -46,7 +46,7 @@ skills:
 
   - id: mana30
     name: "Mana 30"
-    element: magic
+    element: vis
     damage_type: magical
     target: individual
     power: 30
@@ -61,7 +61,7 @@ skills:
 
   - id: mana40
     name: "Mana 40"
-    element: magic
+    element: vis
     damage_type: magical
     target: individual
     power: 40
@@ -76,7 +76,7 @@ skills:
 
   - id: mana50
     name: "Mana 50"
-    element: magic
+    element: vis
     damage_type: magical
     target: individual
     power: 50
@@ -91,7 +91,7 @@ skills:
 
   - id: mana60
     name: "Mana 60"
-    element: magic
+    element: vis
     damage_type: magical
     target: individual
     power: 60
@@ -106,7 +106,7 @@ skills:
 
   - id: small_barrier
     name: "Small Barrier"
-    element: magic
+    element: vis
     damage_type: status
     target: self
     power: 0
@@ -121,7 +121,7 @@ skills:
 
   - id: barrier
     name: Barrier
-    element: magic
+    element: vis
     damage_type: magical
     target: self
     power: 0
@@ -136,7 +136,7 @@ skills:
 
   - id: mana_bullet
     name: "Mana Bullet"
-    element: magic
+    element: vis
     damage_type: magical
     target: individual
     power: 20

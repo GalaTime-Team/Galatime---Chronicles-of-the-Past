@@ -3,27 +3,50 @@ import CommonSwitch from '../components/common/CommonSwitch';
 import CommonLoading from '../components/common/CommonLoading';
 import { useTranslation } from 'react-i18next';
 import CommonButton from '../components/common/CommonButton';
+import AttackCard, { Attack } from '../components/game/AttackCard';
 
 export function GamePage() {
   const { t } = useTranslation('common');
 
   const difficultyItems = [
-    { 
-      id: 'easy', 
-      title: t('game.difficulty.easy.label'), 
-      description: t('game.difficulty.easy.description') 
+    {
+      id: 'easy',
+      title: t('game.difficulty.easy.label'),
+      description: t('game.difficulty.easy.description')
     },
-    { 
-      id: 'normal', 
-      title: t('game.difficulty.normal.label'), 
-      description: t('game.difficulty.normal.description') 
+    {
+      id: 'normal',
+      title: t('game.difficulty.normal.label'),
+      description: t('game.difficulty.normal.description')
     },
-    { 
-      id: 'hard', 
-      title: t('game.difficulty.hard.label'), 
-      description: t('game.difficulty.hard.description') 
+    {
+      id: 'hard',
+      title: t('game.difficulty.hard.label'),
+      description: t('game.difficulty.hard.description')
     },
   ];
+
+  const fireBallAttack: Attack = {
+    id: 'fireball_001',
+    title: 'Fire Ball',
+    elementId: 'ignis',
+    type: 'magical',
+    power: 10,
+    accuracy: 90,
+    mana_cost: 20,
+    stamina_cost: 0,
+  };
+
+    const darknessAttack: Attack = {
+    id: 'darkness_001',
+    title: 'Darkness',
+    elementId: 'umbra',
+    type: 'buff',
+    power: 0,
+    accuracy: 100,
+    mana_cost: 30,
+    stamina_cost: 0,
+  };
 
   const handleDifficultyChange = (item: { id: string; title: string; description?: string }) => {
     console.log('Selected difficulty:', item.id);
@@ -31,6 +54,10 @@ export function GamePage() {
 
   const handleToggleTips = (isEnabled: boolean) => {
     console.log('Fighting Tool tip enabled:', isEnabled);
+  };
+
+  const handleAttackClick = (attack: Attack) => {
+    console.log(`Attack clicked: ${attack.title}`);
   };
 
   return (
@@ -45,18 +72,21 @@ export function GamePage() {
 
       <div className="flex flex-col gap-6 items-center">
         <CommonLoading />
+
         <CommonsSelector
           title={t('game.difficulty.title')}
           items={difficultyItems}
           defaultId="normal"
           onChange={handleDifficultyChange}
         />
+
         <CommonSwitch
           title={t('game.settings.fightingTips.title')}
           description={t('game.settings.fightingTips.description')}
           defaultChecked={true}
           onChange={handleToggleTips}
         />
+
         <div className="flex flex-row gap-6">
           <CommonButton
             variant="primary"
@@ -87,6 +117,17 @@ export function GamePage() {
             Success Button
           </CommonButton>
         </div>
+
+        <AttackCard
+          attack={fireBallAttack}
+          onClick={handleAttackClick}
+          className="mb-4"
+        />
+        <AttackCard
+          attack={darknessAttack}
+          onClick={handleAttackClick}
+          className="mb-4"
+        />
       </div>
 
     </div>

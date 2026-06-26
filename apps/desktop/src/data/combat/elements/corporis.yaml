@@ -1,6 +1,7 @@
 id: corporis
 name: Corporis
 description: "The element of body, physicality, and martial force."
+type: common
 
 strong_vs:
   - aqua
@@ -8,5 +9,5 @@ strong_vs:
   - vetus
 weak_to:
   - lux
-  - magic
+  - vis
   - spatium

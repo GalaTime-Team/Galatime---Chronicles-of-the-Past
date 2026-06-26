@@ -1,6 +1,7 @@
 id: umbra
 name: Umbra
 description: "The element of darkness, shadow, and the unseen."
+type: common
 
 immune_to:
   - caeli

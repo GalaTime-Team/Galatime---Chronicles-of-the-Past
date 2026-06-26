@@ -1,6 +1,7 @@
-id: magic
-name: Magic
+id: vis
+name: Vis
 description: "The element of arcane energy, spells, and sorcery."
+type: common
 
 strong_vs:
   - chaos

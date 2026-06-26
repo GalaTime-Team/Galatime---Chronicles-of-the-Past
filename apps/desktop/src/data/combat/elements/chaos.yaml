@@ -1,6 +1,7 @@
 id: chaos
 name: Chaos
 description: "The element of disorder, entropy, and raw unbound force."
+type: common
 
 immune_to:
   - corporis

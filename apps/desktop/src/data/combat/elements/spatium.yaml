@@ -1,6 +1,7 @@
 id: spatium
 name: Spatium
 description: "The element of space, dimensions, and displacement."
+type: common
 
 immune_to:
   - corporis

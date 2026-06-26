@@ -1,9 +1,10 @@
 id: lapis
 name: Lapis
 description: "The element of earth, stone, and the unyielding ground."
+type: common
 
 immune_to:
-  - magic
+  - vis
   - vetus
 strong_vs:
   - caeli

@@ -1,6 +1,7 @@
 id: caeli
 name: Caeli
 description: "The element of wind, sky, and storms."
+type: common
 
 immune_to:
   - corporis

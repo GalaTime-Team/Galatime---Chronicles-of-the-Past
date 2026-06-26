@@ -1,9 +1,10 @@
 id: vetus
 name: Vetus
 description: "The element of the ancient, primordial power, and forgotten ages."
+type: common
 
 strong_vs:
-  - magic
+  - vis
   - spatium
 weak_to:
   - caeli

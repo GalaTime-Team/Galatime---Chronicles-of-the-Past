@@ -1,6 +1,7 @@
 id: naturalea
 name: Naturalea
 description: "The element of nature, plants, and living growth."
+type: common
 
 strong_vs:
   - aqua

@@ -1,6 +1,7 @@
 id: aqua
 name: Aqua
 description: "The element of water, ice, and tides."
+type: common
 
 immune_to:
   - corporis

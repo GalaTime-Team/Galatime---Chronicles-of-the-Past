@@ -92,7 +92,7 @@ skills:
 
   - id: mana50
     name: Mana 50
-    element: magic
+    element: vis
     damage_type: magical
     target: individual
     power: 50

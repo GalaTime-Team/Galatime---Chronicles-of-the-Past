@@ -1,6 +1,7 @@
 id: lux
 name: Lux
 description: "The element of light, radiance, and purification."
+type: common
 
 immune_to:
   - caeli
@@ -11,5 +12,4 @@ strong_vs:
 weak_to:
   - aqua
   - naturalea
-  - umbra
   - umbra
