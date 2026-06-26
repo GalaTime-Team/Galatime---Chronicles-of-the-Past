@@ -5,6 +5,8 @@ import { createPortal } from 'react-dom';
 import CommonHoverElement from '../common/CommonHoverElement';
 import CommonHoverAttackType from '../common/CommonHoverAttackType';
 
+import { useGame } from '../../context/GameContext';
+
 export interface Attack {
     id: string | number;
     title: string;
@@ -35,6 +37,9 @@ const AttackCard: React.FC<AttackCardProps> = ({
     const typeIconPath = `${assetPath}/type/${type}.svg`;
     const elementIconPath = `${assetPath}/${elementId}.png`;
     const mainIconPath = `${assetPath}/attacks/${attack.id}.png`;
+
+    const { gameState } = useGame();
+    const TooltipIsVisible = gameState.settings.fightingTooltipVisible;
 
     const { refs: elementRefs, floatingStyles: elementFloatingStyles } = useFloating({
         open: isElementTooltipVisible,
@@ -119,7 +124,7 @@ const AttackCard: React.FC<AttackCardProps> = ({
                                 elementId={elementId}
                                 elementName={elementId}
                                 isVisible={true}
-                                isTooltip={false}
+                                isTooltip={TooltipIsVisible}
                                 isAttack={true}
                             />
                         </div>,

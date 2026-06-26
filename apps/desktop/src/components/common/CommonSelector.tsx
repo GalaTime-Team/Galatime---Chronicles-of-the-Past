@@ -91,7 +91,7 @@ const CommonSelector: React.FC<CommonSelectorProps> = ({
 
                     {/* Selected Option Title */}
                     <div className={`text-lg text-white text-center ${optionsClassName}`}>
-                        {currentItem?.title}
+                        {t(currentItem?.title || '')}
                     </div>
 
                     {/* Right Chevron */}
@@ -114,7 +114,7 @@ const CommonSelector: React.FC<CommonSelectorProps> = ({
                 {/* Description Section */}
                 {currentItem?.description && (
                     <div className={`mt- text-galatime-accent text-xs text-center max-w-xs ${descriptionClassName}`}>
-                        {currentItem.description}
+                        {t(currentItem.description)}
                     </div>
                 )}
             </div>

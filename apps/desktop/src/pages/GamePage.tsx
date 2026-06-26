@@ -1,30 +1,18 @@
+import { useTranslation } from 'react-i18next';
+
+import { DIFFICULTIES } from '../constants/DifficultyConstants';
+
 import CommonsSelector from '../components/common/CommonSelector';
 import CommonSwitch from '../components/common/CommonSwitch';
 import CommonLoading from '../components/common/CommonLoading';
-import { useTranslation } from 'react-i18next';
 import CommonButton from '../components/common/CommonButton';
 import AttackCard, { Attack } from '../components/game/AttackCard';
+import { useGame } from '../context/GameContext';
 
 export function GamePage() {
   const { t } = useTranslation('common');
 
-  const difficultyItems = [
-    {
-      id: 'easy',
-      title: t('game.difficulty.easy.label'),
-      description: t('game.difficulty.easy.description')
-    },
-    {
-      id: 'normal',
-      title: t('game.difficulty.normal.label'),
-      description: t('game.difficulty.normal.description')
-    },
-    {
-      id: 'hard',
-      title: t('game.difficulty.hard.label'),
-      description: t('game.difficulty.hard.description')
-    },
-  ];
+  const { gameState, setGameState } = useGame();
 
   const fireBallAttack: Attack = {
     id: 'fireball_001',
@@ -37,7 +25,7 @@ export function GamePage() {
     stamina_cost: 0,
   };
 
-    const darknessAttack: Attack = {
+  const darknessAttack: Attack = {
     id: 'darkness_001',
     title: 'Darkness',
     elementId: 'umbra',
@@ -48,12 +36,24 @@ export function GamePage() {
     stamina_cost: 0,
   };
 
-  const handleDifficultyChange = (item: { id: string; title: string; description?: string }) => {
-    console.log('Selected difficulty:', item.id);
+  const handleDifficultyChange = (item: { id: string }) => {
+    setGameState((prevState) => ({
+      ...prevState,
+      settings: {
+        ...prevState.settings,
+        difficulty: item.id as keyof typeof DIFFICULTIES,
+      },
+    }));
   };
 
   const handleToggleTips = (isEnabled: boolean) => {
-    console.log('Fighting Tool tip enabled:', isEnabled);
+    setGameState((prevState) => ({
+      ...prevState,
+      settings: {
+        ...prevState.settings,
+        fightingTooltipVisible: isEnabled,
+      },
+    }));
   };
 
   const handleAttackClick = (attack: Attack) => {
@@ -75,15 +75,15 @@ export function GamePage() {
 
         <CommonsSelector
           title={t('game.difficulty.title')}
-          items={difficultyItems}
-          defaultId="normal"
+          items={Object.values(DIFFICULTIES)}
+          defaultId={gameState.settings.difficulty}
           onChange={handleDifficultyChange}
         />
 
         <CommonSwitch
           title={t('game.settings.fightingTips.title')}
           description={t('game.settings.fightingTips.description')}
-          defaultChecked={true}
+          defaultChecked={gameState.settings.fightingTooltipVisible}
           onChange={handleToggleTips}
         />
 

@@ -1,47 +1,70 @@
 {
-  "loading": {
-    "text": "Loading...",
-    "alt": "Loading animation"
-  },
-  "selector": {
-    "previous": "Previous option",
-    "next": "Next option",
-    "chevronLeft": "<",
-    "chevronRight": ">"
-  },
-  "switch": {
-    "toggle": "Toggle",
-    "on": "on",
-    "off": "off",
-    "altOn": "ON",
-    "altOff": "OFF"
-  },
-  "game": {
-    "header": {
-      "tagline": "GalaTime",
-      "title": "Chronicles of the Past",
-      "subtitle": "Tailwind CSS + Tauri"
-    },
-    "difficulty": {
-      "title": "Difficulty",
-      "easy": {
-        "label": "Easy",
-        "description": "For those who want to relax."
-      },
-      "normal": {
-        "label": "Normal",
-        "description": "The standard experience."
-      },
-      "hard": {
-        "label": "Hard",
-        "description": "A true challenge awaits."
-      }
-    },
-    "settings": {
-      "fightingTips": {
-        "title": "Fighting Tool tip",
-        "description": "Display details about attacks."
-      }
-    }
-  }
+	"loading": {
+		"text": "Loading...",
+		"alt": "Loading animation"
+	},
+	"selector": {
+		"previous": "Previous option",
+		"next": "Next option",
+		"chevronLeft": "<",
+		"chevronRight": ">"
+	},
+	"switch": {
+		"toggle": "Toggle",
+		"on": "on",
+		"off": "off",
+		"altOn": "ON",
+		"altOff": "OFF"
+	},
+	"game": {
+		"header": {
+			"tagline": "GalaTime",
+			"title": "Chronicles of the Past",
+			"subtitle": "Tailwind CSS + Tauri"
+		},
+		"settings": {
+			"difficulty": {
+				"title": "Difficulty",
+				"easy": {
+					"label": "Easy",
+					"description": "For those who want to relax."
+				},
+				"normal": {
+					"label": "Normal",
+					"description": "The standard experience."
+				},
+				"hard": {
+					"label": "Hard",
+					"description": "A true challenge awaits."
+				},
+				"hardcore": {
+					"label": "Hardcore",
+					"description": "You and your allies only have one life."
+				}
+			},
+			"allyControl": {
+				"title": "Ally Control",
+				"alliesPlayer": {
+					"label": "Allies + Player",
+					"description": "You control your allies and yourself."
+				},
+				"player": {
+					"label": "Player",
+					"description": "You control yourself and allies act on their own."
+				},
+				"playerOnly": {
+					"label": "Player Only",
+					"description": "You control yourself and there are no allies."
+				}
+			},
+			"fightingTips": {
+				"title": "Fighting Tool tip",
+				"description": "Display details about attacks."
+			},
+			"actionTips": {
+				"title": "Action Tool tip",
+				"description": "Display all the interactable objects."
+			}
+		}
+	}
 }

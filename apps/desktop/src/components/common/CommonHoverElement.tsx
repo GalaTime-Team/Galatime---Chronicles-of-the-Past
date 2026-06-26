@@ -65,7 +65,7 @@ const CommonHoverElement: React.FC<CommonHoverElementProps> = ({
     return (
         <div className={`flex flex-col border-2 border-white bg-galatime-dark z-50 pointer-events-none select-none ${className}`}>
             {/* Header: Name and Main Icon */}
-            <div className="flex items-center justify-center gap-2 mb-1 mx-4">
+            <div className="flex items-center justify-center gap-2 mx-4">
                 <h2 className="text-lg font-bold text-white uppercase tracking-wider">
                     {elementName || elementId}
                 </h2>
@@ -86,7 +86,7 @@ const CommonHoverElement: React.FC<CommonHoverElementProps> = ({
 
             {/* Weakness Table */}
             {isTooltip && (
-                <div className="flex flex-col">
+                <div className="flex flex-col p-2">
                     {loading ? (
                         <div className="text-white text-center py-2 opacity-50">Loading...</div>
                     ) : (
