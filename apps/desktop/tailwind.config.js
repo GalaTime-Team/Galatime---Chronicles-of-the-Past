@@ -17,7 +17,15 @@ export default {
           warning: "#FFBB00",
           warningHover: "#FFD869",
           error: "#A42132",
-          errorHover: "#D42B42"
+          errorHover: "#D42B42",
+          element:{
+            immune: '#1B4B3E',
+            superStrong: '#236050',
+            strong: '#44BB9B',
+            normal: '#FFFFFF',
+            weak: '#D42B42',
+            superWeak: '#A42132',
+          }
         }
       }
     },

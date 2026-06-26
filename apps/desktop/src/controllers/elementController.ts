@@ -1,13 +1,12 @@
 import {
     getElementsData,
-    getElementWeaknesses,
-    getElementStrengths,
     getCommonElementIds,
     ElementWeakness,
 } from "../services/elementService";
 import {
     consolidateWeaknesses,
     weaknessesToMultipliers,
+    mapElementRelationshipsToScores,
 } from "../utils/elementUtils";
 
 
@@ -24,7 +23,9 @@ export interface ElementWeaknessResult {
 }
 
 /**
- * Calcula as fraquezas efetivas de um ou mais elementos.
+ * Calculates the effective weaknesses of one or more elements.
+ * @param elementIds Array of element IDs
+ * @returns ElementWeaknessResult
  */
 export async function getElementsWeaknesses(
     elementIds: string[]
@@ -44,10 +45,10 @@ export async function getElementsWeaknesses(
         };
     }
 
-    // 1. Buscar dados de todos os elementos
+    // Get data for all elements
     const elementsData = await getElementsData(elementIds);
 
-    // 2. Extrair fraquezas e forças de cada elemento válido
+    // Extract weaknesses of each valid element
     const allWeaknesses: ElementWeakness[] = [];
     const validElements: string[] = [];
 
@@ -55,17 +56,16 @@ export async function getElementsWeaknesses(
         const element = elementsData[i];
         if (element !== null) {
             validElements.push(element.id);
-            const weaknesses = getElementWeaknesses(element);
-            const strengths = getElementStrengths(element);
+            // Map all relationships in a single pass
+            const weaknesses = mapElementRelationshipsToScores(element as any);
             allWeaknesses.push(weaknesses);
-            allWeaknesses.push(strengths);
         }
     }
 
-    // 3. Consolidar fraquezas (somar valores)
+    // Consolidate weaknesses
     let consolidated = consolidateWeaknesses(allWeaknesses);
 
-    // 4. Semear scores neutros para todos os elementos "common" que faltam
+    // Seed neutral scores for all missing "common" elements
     const commonIds = await getCommonElementIds();
     for (const commonId of commonIds) {
         if (!(commonId in consolidated)) {
@@ -73,10 +73,10 @@ export async function getElementsWeaknesses(
         }
     }
 
-    // 5. Converter para multiplicadores de dano
+    // Convert to damage multipliers
     const multipliers = weaknessesToMultipliers(consolidated);
 
-    // 6. Ordenar por elementId (alfabeticamente)
+    // Sort by elementId (alphabetically)
     const sorted: Record<string, number> = Object.keys(consolidated)
         .sort((a, b) => a.localeCompare(b))
         .reduce((acc, elementId) => {
@@ -84,10 +84,10 @@ export async function getElementsWeaknesses(
             return acc;
         }, {} as Record<string, number>);
 
-    // 7. Ordenar elementos válidos por elementId
+    // Sort valid elements by elementId
     validElements.sort((a, b) => a.localeCompare(b));
 
-    // 8. Gerar resumo
+    // Generate summary
     const hasImmunities = Object.values(multipliers).some((m) => m === 0);
     const hasResistances = Object.values(multipliers).some((m) => 0 < m && m < 1);
     const hasWeaknesses = Object.values(multipliers).some((m) => m > 1);
@@ -103,36 +103,4 @@ export async function getElementsWeaknesses(
             hasWeaknesses,
         },
     };
-}
-
-/**
- * Versão simplificada que retorna apenas os multiplicadores finais.
- * @param elementIds Array de IDs de elementos
- * @returns Objeto com elementId -> multiplicador
- */
-export async function getElementsWeaknessMultipliers(
-    elementIds: string[]
-): Promise<Record<string, number>> {
-    const result = await getElementsWeaknesses(elementIds);
-    return result.multipliers;
-}
-
-/**
- * Calcula o multiplicador de dano total para um elemento alvo,
- * dado um array de elementos atacantes.
- * 
- * Exemplo: se o alvo é Aqua e os atacantes são [Ignis, Lux],
- * e ambos são fracos contra Aqua, o multiplicador será 2 + 2 = 4
- * (na verdade será somado o score bruto e depois convertido).
- * 
- * @param elementIds Array de IDs dos elementos atacantes
- * @param targetElement ID do elemento alvo
- * @returns Multiplicador de dano combinado para o alvo
- */
-export async function getCombinedWeakness(
-    elementIds: string[],
-    targetElement: string
-): Promise<number> {
-    const result = await getElementsWeaknesses(elementIds);
-    return result.multipliers[targetElement] ?? 1;
 }

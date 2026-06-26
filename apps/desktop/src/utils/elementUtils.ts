@@ -1,20 +1,16 @@
-/**
- * Utilitários para consolidar e processar fraquezas de elementos.
- */
-
 export interface ElementWeakness {
   [elementId: string]: number;
 }
 
 /**
- * Consolida fraquezas de múltiplos elementos somando os valores.
+ * Consolidates weaknesses from multiple elements by summing the values.
  * 
- * Exemplo: se Ignis tem weak_to Aqua (valor 1) e Caeli (valor 1),
- * e Naturalea também tem weak_to Aqua (valor 1), o resultado será:
+ * Example: if Ignis has weak_to Aqua (value 1) and Caeli (value 1),
+ * and Naturalea also has weak_to Aqua (value 1), the result will be:
  * { aqua: 2, caeli: 1 }
  * 
- * @param elementWeaknesses Array de objetos de fraquezas
- * @returns Objeto consolidado com fraquezas combinadas
+ * @param elementWeaknesses Array of weakness objects
+ * @returns Consolidated object with combined weaknesses
  */
 export function consolidateWeaknesses(
   elementWeaknesses: ElementWeakness[]
@@ -31,23 +27,23 @@ export function consolidateWeaknesses(
 }
 
 /**
- * Converte scores de fraqueza para a escala de multiplicador de dano final.
+ * Converts weakness scores to the final damage multiplier scale.
  * 
- * Mapeamento:
- * - imune (-3) -> 0
- * - super_strong (-2) -> 0.25
- * - strong (-1) -> 0.5
- * - normal (0) -> 1
- * - weak (1) -> 2
- * - super_weak (2) -> 4
+ * Mapping:
+ * - immune (-3) -> x0
+ * - super_strong (-2) -> x0.25
+ * - strong (-1) -> x0.5
+ * - normal (0) -> x1
+ * - weak (1) -> x2
+ * - super_weak (2) -> x4
  * 
- * @param score Score bruto da fraqueza
- * @returns Multiplicador de dano final
+ * @param score Raw weakness score
+ * @returns Final damage multiplier
  */
 export function scoreToMultiplier(score: number): number {
   switch (score) {
     case -3:
-      return 0; // imune
+      return 0; // immune
     case -2:
       return 0.25; // super_strong
     case -1:
@@ -67,9 +63,46 @@ export function scoreToMultiplier(score: number): number {
 }
 
 /**
- * Converte um objeto de fraquezas consolidadas para multiplicadores de dano.
- * @param weaknesses Objeto de fraquezas com scores
- * @returns Objeto com os mesmos elementIds e multiplicadores de dano
+ * Maps all relationships from an element to a scores object.
+ * Processes immune_to, super_strong_vs, strong_vs, weak_to, super_weak_to in a single pass.
+ * 
+ * Score mapping:
+ * - immune_to -> -3
+ * - super_strong_vs -> -2
+ * - strong_vs -> -1
+ * - weak_to -> 1
+ * - super_weak_to -> 2
+ * 
+ * @param element Element data with relationship arrays
+ * @returns Object with elementId as key and score as value
+ */
+export function mapElementRelationshipsToScores(element: any): ElementWeakness {
+    const weaknesses: ElementWeakness = {};
+    
+    const scores: Record<string, number> = {
+        immune_to: -3,
+        super_strong_vs: -2,
+        strong_vs: -1,
+        weak_to: 1,
+        super_weak_to: 2,
+    };
+
+    for (const [prop, score] of Object.entries(scores)) {
+        const value = element[prop];
+        if (value && Array.isArray(value)) {
+            for (const targetElement of value) {
+                weaknesses[targetElement] = (weaknesses[targetElement] || 0) + score;
+            }
+        }
+    }
+
+    return weaknesses;
+}
+
+/**
+ * Converts a consolidated weaknesses object to damage multipliers.
+ * @param weaknesses Object with elementIds as keys and scores as values
+ * @returns Object with the same elementIds and damage multipliers
  */
 export function weaknessesToMultipliers(
   weaknesses: ElementWeakness

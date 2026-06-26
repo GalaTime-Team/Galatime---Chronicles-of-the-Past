@@ -1,3 +1,7 @@
+/**
+ * Interface
+ */
+
 export interface ElementWeakness {
     [elementId: string]: number;
 }
@@ -7,18 +11,21 @@ export interface ElementData {
     name: string;
     description: string;
     type: "common" | string;
+    immune_to?: string[];
+    super_strong_vs?: string[];
     strong_vs?: string[];
     weak_to?: string[];
+    super_weak_to?: string[];
 }
 
 /**
- * Cache de elementos carregados
+ * Cache of loaded elements
  */
 const elementCache: Map<string, ElementData> = new Map();
 let elementsGlob: Record<string, () => Promise<{ default: string }>> | null = null;
 
 /**
- * Inicializa o glob de elementos
+ * Initializes the elements glob
  */
 async function initializeElementsGlob() {
     if (elementsGlob === null) {
@@ -30,8 +37,10 @@ async function initializeElementsGlob() {
 }
 
 /**
- * Parse simples de YAML sem dependência externa.
- * Funciona para a estrutura específica dos ficheiros de elemento.
+ * Parses simple YAML without external dependencies.
+ * Works for the specific structure of element files.
+ * @param content YAML content as string
+ * @returns Parsed object
  */
 function parseSimpleYaml(content: string): Partial<ElementData> {
     const result: Record<string, unknown> = {};
@@ -43,7 +52,7 @@ function parseSimpleYaml(content: string): Partial<ElementData> {
         const line = lines[i];
         const trimmed = line.trim();
 
-        // Ignorar linhas vazias e comentários
+        // Ignore empty lines and comments
         if (!trimmed || trimmed.startsWith("#")) {
             if (currentListKey && trimmed === "") {
                 result[currentListKey] = currentList;
@@ -53,29 +62,29 @@ function parseSimpleYaml(content: string): Partial<ElementData> {
             continue;
         }
 
-        // Detectar listas (começam com `-`)
+        // Detect lists (start with `-`)
         if (trimmed.startsWith("-")) {
             const item = trimmed.substring(1).trim();
             currentList.push(item);
             continue;
         }
 
-        // Se estava processando lista, finalizar
+        // If was processing a list, finalize
         if (currentListKey) {
             result[currentListKey] = currentList;
             currentListKey = null;
             currentList = [];
         }
 
-        // Detectar pares chave: valor
+        // Detect key-value pairs
         const colonIndex = trimmed.indexOf(":");
         if (colonIndex > 0) {
             const key = trimmed.substring(0, colonIndex).trim();
             const valueStr = trimmed.substring(colonIndex + 1).trim();
 
-            // Parse de valores simples
+            // Parse simple values
             if (valueStr === "") {
-                // Próximas linhas podem ser lista
+                // Next lines may be a list
                 currentListKey = key;
                 currentList = [];
             } else if (
@@ -83,7 +92,7 @@ function parseSimpleYaml(content: string): Partial<ElementData> {
                 valueStr.endsWith('"') &&
                 valueStr.length > 1
             ) {
-                // String entre aspas
+                // String between quotes
                 result[key] = valueStr.substring(1, valueStr.length - 1);
             } else if (valueStr === "true") {
                 result[key] = true;
@@ -92,13 +101,13 @@ function parseSimpleYaml(content: string): Partial<ElementData> {
             } else if (!isNaN(Number(valueStr))) {
                 result[key] = Number(valueStr);
             } else {
-                // String simples
+                // Simple string
                 result[key] = valueStr;
             }
         }
     }
 
-    // Finalizar lista se ainda há
+    // Finalize list if still present
     if (currentListKey) {
         result[currentListKey] = currentList;
     }
@@ -107,18 +116,18 @@ function parseSimpleYaml(content: string): Partial<ElementData> {
 }
 
 /**
- * Busca dados de um elemento pelo ID.
- * @param elementId ID do elemento (nome do ficheiro sem extensão)
- * @returns Dados do elemento ou null se não encontrado
+ * Fetches element data by ID.
+ * @param elementId Element ID (file name without extension)
+ * @returns Element data or null if not found
  */
 export async function getElementData(elementId: string): Promise<ElementData | null> {
     try {
-        // Verificar cache
+        // Check cache
         if (elementCache.has(elementId)) {
             return elementCache.get(elementId) ?? null;
         }
 
-        // Inicializar glob se necessário
+        // Initialize glob if necessary
         await initializeElementsGlob();
 
         if (!elementsGlob) {
@@ -126,7 +135,7 @@ export async function getElementData(elementId: string): Promise<ElementData | n
             return null;
         }
 
-        // Encontrar o ficheiro correspondente
+        // Find the corresponding file
         const globPath = `../data/combat/elements/${elementId}.yaml`;
         const loaderFn = elementsGlob[globPath];
 
@@ -136,7 +145,7 @@ export async function getElementData(elementId: string): Promise<ElementData | n
             return null;
         }
 
-        // Carregar e parsear
+        // Load and parse
         const module = await loaderFn();
         const content = module.default as string;
         const parsed = parseSimpleYaml(content) as unknown as ElementData;
@@ -152,9 +161,9 @@ export async function getElementData(elementId: string): Promise<ElementData | n
 }
 
 /**
- * Busca múltiplos elementos pelo ID.
- * @param elementIds Lista de IDs de elementos
- * @returns Array de dados de elementos (null para elementos não encontrados)
+ * Fetches multiple elements by ID.
+ * @param elementIds List of element IDs
+ * @returns Array of element data (null for not found elements)
  */
 export async function getElementsData(
     elementIds: string[]
@@ -163,19 +172,19 @@ export async function getElementsData(
 }
 
 /**
- * Mapeia as fraquezas de um elemento para um objeto de scores.
- * @param element Dados do elemento
- * @returns Objeto com elementId como chave e score de fraqueza como valor
+ * Maps an element's weaknesses to a scores object.
+ * @param element Element data
+ * @returns Object with elementId as key and weakness score as value
  */
 export function getElementWeaknesses(element: ElementData): ElementWeakness {
     const weaknesses: ElementWeakness = {};
 
-    // Se não tem weak_to definido e é type "common", não tem fraquezas específicas
+    // If weak_to is not defined and type is "common", there are no specific weaknesses
     if (!element.weak_to || element.weak_to.length === 0) {
         return weaknesses;
     }
 
-    // Cada fraqueza tem score 1 (weak_to)
+    // Each weakness has a score of 1 (weak_to)
     for (const weakElement of element.weak_to) {
         weaknesses[weakElement] = 1;
     }
@@ -184,19 +193,19 @@ export function getElementWeaknesses(element: ElementData): ElementWeakness {
 }
 
 /**
- * Mapeia os elementos que o elemento é forte contra para um objeto de scores.
- * @param element Dados do elemento
- * @returns Objeto com elementId como chave e score de força como valor
+ * Maps an element's strengths to a scores object.
+ * @param element Element data
+ * @returns Object with elementId as key and strength score as value
  */
 export function getElementStrengths(element: ElementData): ElementWeakness {
     const strengths: ElementWeakness = {};
 
-    // Se não tem strong_vs definido, não tem vantagens específicas
+    // If strong_vs is not defined, there are no specific strengths
     if (!element.strong_vs || element.strong_vs.length === 0) {
         return strengths;
     }
 
-    // Cada elemento que é forte contra tem score -1 (strong_vs)
+    // Each element that is strong against has a score of -1 (strong_vs)
     for (const strongElement of element.strong_vs) {
         strengths[strongElement] = -1;
     }
@@ -205,12 +214,12 @@ export function getElementStrengths(element: ElementData): ElementWeakness {
 }
 
 /**
- * Enumera todos os elementos com type "common".
- * @returns Array de IDs de elementos comum
+ * Enumerates all elements with type "common".
+ * @returns Array of common element IDs
  */
 export async function getCommonElementIds(): Promise<string[]> {
     try {
-        // Inicializar glob se necessário
+        // Initialize glob if necessary
         await initializeElementsGlob();
 
         if (!elementsGlob) {
@@ -220,15 +229,15 @@ export async function getCommonElementIds(): Promise<string[]> {
 
         const commonIds: string[] = [];
 
-        // Iterar através de todos os ficheiros de elemento
+        // Iterate through all element files
         for (const globPath of Object.keys(elementsGlob)) {
-            // Extrair ID do caminho (e.g., "../data/combat/elements/ignis.yaml" -> "ignis")
+            // Extract ID from path (e.g., "../data/combat/elements/ignis.yaml" -> "ignis")
             const match = globPath.match(/\/([^\/]+)\.yaml$/);
             if (match) {
                 const elementId = match[1];
                 const elementData = await getElementData(elementId);
 
-                // Verificar se é tipo "common"
+                // Check if it is type "common"
                 if (elementData && elementData.type === "common") {
                     commonIds.push(elementId);
                 }
