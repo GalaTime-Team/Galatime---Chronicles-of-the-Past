@@ -1,6 +1,7 @@
 id: corrupted_blaze
 name: Corrupted Blaze
 description: "description here"
+type: corrupted
 
 immune_to:
   - ignis

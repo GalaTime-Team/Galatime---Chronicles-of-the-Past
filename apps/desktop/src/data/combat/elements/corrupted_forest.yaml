@@ -1,6 +1,7 @@
 id: corrupted_forest
 name: Corrupted Forest
 description: "description here"
+type: corrupted
 
 immune_to:
   - umbra

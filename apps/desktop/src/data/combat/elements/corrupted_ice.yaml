@@ -1,6 +1,7 @@
 id: corrupted_ice
 name: Corrupted Ice
 description: "description here"
+type: corrupted
 
 immune_to:
   - aqua

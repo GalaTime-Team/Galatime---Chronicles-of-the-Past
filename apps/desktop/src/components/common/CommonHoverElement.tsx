@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { getElementsWeaknesses, ElementWeaknessResult } from '../../controllers/elementController';
+import { getElementsWeaknesses, ElementMultiplierResult, getElementsDamage } from '../../controllers/elementController';
 
 interface CommonHoverElementProps {
     elementId: string;
@@ -17,10 +17,10 @@ const CommonHoverElement: React.FC<CommonHoverElementProps> = ({
     isAttack = true,
     className = '',
 }) => {
-    const [data, setData] = useState<ElementWeaknessResult | null>(null);
+    const [data, setData] = useState<ElementMultiplierResult | null>(null);
     const [loading, setLoading] = useState<boolean>(false);
 
-    // Fetch element weaknesses
+    // Fetch tooltip data
     useEffect(() => {
         if (isVisible && elementId && isTooltip && !data && !loading) {
             const fetchData = async () => {
@@ -31,14 +31,12 @@ const CommonHoverElement: React.FC<CommonHoverElementProps> = ({
 
                     if (isAttack) {
                         // Fetch damage table
-                        result = await getElementsWeaknesses([elementId]);
+                        result = await getElementsDamage([elementId]);
                     } else {
                         // Fetch weaknesses table
                         result = await getElementsWeaknesses([elementId]);
                     }
-                    result = await getElementsWeaknesses([elementId]);
                     setData(result);
-                    console.log('Fetched element weaknesses:', result);
                 } catch (error) {
                     console.error('Failed to fetch element weaknesses:', error);
                 } finally {
@@ -53,7 +51,7 @@ const CommonHoverElement: React.FC<CommonHoverElementProps> = ({
 
     // Helper to determine color and weight based on multiplier
     const getMultiplierStyle = (multiplier: number) => {
-        switch (multiplier){
+        switch (multiplier) {
             case 0: return 'text-galatime-element-immune font-bold'; // Immunity (takes no damage)
             case 0.25: return 'text-galatime-element-superStrong font-bold'; // Super Strong (takes 25% damage)
             case 0.5: return 'text-galatime-element-strong font-bold'; // Strong (takes 50% damage)
@@ -92,31 +90,34 @@ const CommonHoverElement: React.FC<CommonHoverElementProps> = ({
                     {loading ? (
                         <div className="text-white text-center py-2 opacity-50">Loading...</div>
                     ) : (
-                        data && Object.entries(data.multipliers).map(([id, multiplier]) => (
-                            <div key={id} className="flex items-center justify-between mb-[-10px]">
-                                {/* Element Icon */}
-                                <div className="flex items-center">
-                                    <img
-                                        src={`/images/elements/${id}.png`}
-                                        alt={id}
-                                        className="w-4 h-4 pixelated"
-                                        onError={(e) => {
-                                            const target = e.target as HTMLImageElement;
-                                            if (!target.src.includes('/images/elements/unknown.png')) {
-                                                target.src = '/images/elements/unknown.png';
-                                            } else {
-                                                target.style.display = 'none';
-                                            }
-                                        }}
-                                    />
-                                </div>
+                        data && Object
+                        .entries(data.multipliers)
+                        .filter(([_, multiplier]) => multiplier.type === 'common')
+                        .map(([id, multiplier]) => (
+                                <div key={id} className="flex items-center justify-between mb-[-10px]">
+                                    {/* Element Icon */}
+                                    <div className="flex items-center">
+                                        <img
+                                            src={`/images/elements/${id}.png`}
+                                            alt={id}
+                                            className="w-4 h-4 pixelated"
+                                            onError={(e) => {
+                                                const target = e.target as HTMLImageElement;
+                                                if (!target.src.includes('/images/elements/unknown.png')) {
+                                                    target.src = '/images/elements/unknown.png';
+                                                } else {
+                                                    target.style.display = 'none';
+                                                }
+                                            }}
+                                        />
+                                    </div>
 
-                                {/* Multiplier Value */}
-                                <span className={`text-lg ${getMultiplierStyle(multiplier)}`}>
-                                    x{multiplier}
-                                </span>
-                            </div>
-                        ))
+                                    {/* Multiplier Value */}
+                                    <span className={`text-lg ${getMultiplierStyle(multiplier.score)}`}>
+                                        x{multiplier.score}
+                                    </span>
+                                </div>
+                            ))
                     )}
                 </div>
             )}

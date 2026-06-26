@@ -7,7 +7,6 @@ immune_to:
   - corporis
   - lux
   - umbra
-  - umbra
 strong_vs:
   - aqua
   - naturalea

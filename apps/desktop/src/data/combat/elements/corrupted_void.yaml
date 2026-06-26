@@ -1,6 +1,7 @@
 id: corrupted_void
 name: Corrupted Void
 description: "description here"
+type: corrupted
 
 immune_to:
   - ignis

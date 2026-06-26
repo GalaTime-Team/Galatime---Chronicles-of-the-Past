@@ -97,6 +97,7 @@ const AttackCard: React.FC<AttackCardProps> = ({
                                 elementName={elementId}
                                 isVisible={true}
                                 isTooltip={true}
+                                isAttack={true}
                             />
                         </div>,
                         document.body

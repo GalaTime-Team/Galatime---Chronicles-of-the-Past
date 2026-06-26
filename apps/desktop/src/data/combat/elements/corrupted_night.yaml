@@ -1,6 +1,7 @@
 id: corrupted_night
 name: Corrupted Night
 description: "description here"
+type: corrupted
 
 immune_to:
   - lapis

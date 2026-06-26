@@ -1,9 +1,13 @@
-export interface ElementWeakness {
-  [elementId: string]: number;
-}
+const scoreMap: Record<string, number> = {
+	immune_to: -3,
+	super_strong_vs: -2,
+	strong_vs: -1,
+	weak_to: 1,
+	super_weak_to: 2,
+};
 
 /**
- * Consolidates weaknesses from multiple elements by summing the values.
+ * Consolidates scores from multiple elements by summing the values.
  * 
  * Example: if Ignis has weak_to Aqua (value 1) and Caeli (value 1),
  * and Naturalea also has weak_to Aqua (value 1), the result will be:
@@ -12,18 +16,21 @@ export interface ElementWeakness {
  * @param elementWeaknesses Array of weakness objects
  * @returns Consolidated object with combined weaknesses
  */
-export function consolidateWeaknesses(
-  elementWeaknesses: ElementWeakness[]
-): ElementWeakness {
-  const consolidated: ElementWeakness = {};
+export function consolidateScores(
+	elementWeaknesses: Record<string, { type: string; score: number }>[]
+): Record<string, { type: string; score: number }> {
+	const consolidated: Record<string, { type: string; score: number }> = {};
 
-  for (const weaknesses of elementWeaknesses) {
-    for (const [elementId, score] of Object.entries(weaknesses)) {
-      consolidated[elementId] = (consolidated[elementId] || 0) + score;
-    }
-  }
+	for (const weaknesses of elementWeaknesses) {
+		for (const [elementId, { type, score }] of Object.entries(weaknesses)) {
+			consolidated[elementId] = {
+				type,
+				score: (consolidated[elementId]?.score || 0) + score,
+			};
+		}
+	}
 
-  return consolidated;
+	return consolidated;
 }
 
 /**
@@ -41,77 +48,97 @@ export function consolidateWeaknesses(
  * @returns Final damage multiplier
  */
 export function scoreToMultiplier(score: number): number {
-  switch (score) {
-    case -3:
-      return 0; // immune
-    case -2:
-      return 0.25; // super_strong
-    case -1:
-      return 0.5; // strong
-    case 0:
-      return 1; // normal
-    case 1:
-      return 2; // weak
-    case 2:
-      return 4; // super_weak
-    default:
-      // Interpolação linear para valores fora do intervalo
-      if (score < -3) return 0;
-      if (score > 2) return 4;
-      return 1; // fallback
-  }
+	switch (score) {
+		case -3:
+			return 0; // immune
+		case -2:
+			return 0.25; // super_strong
+		case -1:
+			return 0.5; // strong
+		case 0:
+			return 1; // normal
+		case 1:
+			return 2; // weak
+		case 2:
+			return 4; // super_weak
+		default:
+			// Interpolação linear para valores fora do intervalo
+			if (score < -3) return 0;
+			if (score > 2) return 4;
+			return 1; // fallback
+	}
 }
 
 /**
- * Maps all relationships from an element to a scores object.
- * Processes immune_to, super_strong_vs, strong_vs, weak_to, super_weak_to in a single pass.
- * 
- * Score mapping:
- * - immune_to -> -3
- * - super_strong_vs -> -2
- * - strong_vs -> -1
- * - weak_to -> 1
- * - super_weak_to -> 2
+ * Maps the defensive element's weaknesses and strengths to a score.
  * 
  * @param element Element data with relationship arrays
  * @returns Object with elementId as key and score as value
  */
-export function mapElementRelationshipsToScores(element: any): ElementWeakness {
-    const weaknesses: ElementWeakness = {};
-    
-    const scores: Record<string, number> = {
-        immune_to: -3,
-        super_strong_vs: -2,
-        strong_vs: -1,
-        weak_to: 1,
-        super_weak_to: 2,
-    };
+export function mapElementWeaknessesToScores(element: any): Record<string, { type: string; score: number }> {
+	const weaknesses: Record<string, { type: string; score: number }> = {};
 
-    for (const [prop, score] of Object.entries(scores)) {
-        const value = element[prop];
-        if (value && Array.isArray(value)) {
-            for (const targetElement of value) {
-                weaknesses[targetElement] = (weaknesses[targetElement] || 0) + score;
-            }
-        }
-    }
+	for (const [prop, score] of Object.entries(scoreMap)) {
+		const value = element[prop];
+		if (value && Array.isArray(value)) {
+			for (const targetElement of value) {
+				weaknesses[targetElement] = {
+					type: prop, // Include the type (e.g., "weakness", "strength", etc.)
+					score: (weaknesses[targetElement]?.score || 0) + score,
+				};
+			}
+		}
+	}
 
-    return weaknesses;
+	return weaknesses;
 }
 
 /**
- * Converts a consolidated weaknesses object to damage multipliers.
- * @param weaknesses Object with elementIds as keys and scores as values
+ * Maps the offensive element's effectiveness against a target element to a score.
+ * 
+ * @param element Element data with relationship arrays
+ * @param offensiveElementId Offensive element ID
+ * @returns Object with elementId as key and score as value
+ */
+export function mapElementDamageToScores(
+	element: any,
+	offensiveElementId: string
+): Record<string, { type: string; score: number }> {
+	const scores: Record<string, { type: string; score: number }> = {};
+
+	for (const [prop, score] of Object.entries(scoreMap)) {
+		if (element[prop]?.includes(offensiveElementId)) {
+			scores[element.id] = {
+				type: prop, // Include the type (e.g., "weakness", "strength", etc.)
+				score: score,
+			};
+			return scores;
+		}
+	}
+
+	scores[element.id] = {
+		type: "none", // Default type if no match is found
+		score: 0,
+	};
+	return scores;
+}
+
+/**
+ * Converts a consolidated scores object to damage multipliers.
+ * @param scores Object with elementIds as keys and scores as values
  * @returns Object with the same elementIds and damage multipliers
  */
-export function weaknessesToMultipliers(
-  weaknesses: ElementWeakness
-): Record<string, number> {
-  const multipliers: Record<string, number> = {};
+export function scoresToMultipliers(
+	scores: Record<string, { type: string; score: number }>
+): Record<string, { type: string; score: number }> {
+	const multipliers: Record<string, { type: string; score: number }> = {};
 
-  for (const [elementId, score] of Object.entries(weaknesses)) {
-    multipliers[elementId] = scoreToMultiplier(score);
-  }
+	for (const [elementId, { type, score }] of Object.entries(scores)) {
+		multipliers[elementId] = {
+			type,
+			score: scoreToMultiplier(score),
+		};
+	}
 
-  return multipliers;
+	return multipliers;
 }
