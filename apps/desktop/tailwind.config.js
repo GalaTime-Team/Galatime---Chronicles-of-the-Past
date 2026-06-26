@@ -13,7 +13,7 @@ export default {
           accent: '#C5B4E9',
           dark: '#09091A',
           success: "#236050",
-          successHover: "#44BB9B",
+          successHover: "#36967C",
           warning: "#FFBB00",
           warningHover: "#FFD869",
           error: "#A42132",
@@ -25,6 +25,13 @@ export default {
             normal: '#FFFFFF',
             weak: '#D42B42',
             superWeak: '#A42132',
+          },
+          stats: {
+            health: '#44BB9B',
+            manaFrom: '#D5B7F7',
+            manaTo: '#93FBFC',
+            stamina: '#FFBB00',
+            damage: '#D42B42'
           }
         }
       }

@@ -1,6 +1,3 @@
-import React, { useEffect, useState } from 'react';
-import { getElementsWeaknesses, ElementMultiplierResult, getElementsDamage } from '../../controllers/elementController';
-
 interface CommonHoverAttackTypeProps {
     typeName: string;
     typeIconPath: string;

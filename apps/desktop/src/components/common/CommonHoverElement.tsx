@@ -9,6 +9,7 @@ interface CommonHoverElementProps {
     isAttack?: boolean;
     className?: string;
 }
+
 const CommonHoverElement: React.FC<CommonHoverElementProps> = ({
     elementId,
     elementName,
@@ -26,14 +27,10 @@ const CommonHoverElement: React.FC<CommonHoverElementProps> = ({
             const fetchData = async () => {
                 setLoading(true);
                 try {
-                    setLoading(true);
                     let result: any;
-
                     if (isAttack) {
-                        // Fetch damage table
                         result = await getElementsDamage([elementId]);
                     } else {
-                        // Fetch weaknesses table
                         result = await getElementsWeaknesses([elementId]);
                     }
                     setData(result);
@@ -52,15 +49,26 @@ const CommonHoverElement: React.FC<CommonHoverElementProps> = ({
     // Helper to determine color and weight based on multiplier
     const getMultiplierStyle = (multiplier: number) => {
         switch (multiplier) {
-            case 0: return 'text-galatime-element-immune font-bold'; // Immunity (takes no damage)
-            case 0.25: return 'text-galatime-element-superStrong font-bold'; // Super Strong (takes 25% damage)
-            case 0.5: return 'text-galatime-element-strong font-bold'; // Strong (takes 50% damage)
-            case 1: return 'text-galatime-element-normal'; // Normal (takes 100% damage)
-            case 2: return 'text-galatime-element-weak font-bold'; // Weak (takes 200% damage)
-            case 4: return 'text-galatime-element-superWeak font-bold'; // Super Weak (takes 400% damage)
-            default: return 'text-white'; // Default to white for unexpected values
+            case 0: return 'text-galatime-element-immune font-bold';
+            case 0.25: return 'text-galatime-element-superStrong font-bold';
+            case 0.5: return 'text-galatime-element-strong font-bold';
+            case 1: return 'text-galatime-element-normal';
+            case 2: return 'text-galatime-element-weak font-bold';
+            case 4: return 'text-galatime-element-superWeak font-bold';
+            default: return 'text-white';
         }
     };
+
+    // Split the weakness entries into two columns
+    const getSplitWeaknessEntries = () => {
+        if (!data) return [[], []];
+        const entries = Object.entries(data.multipliers)
+            .filter(([_, multiplier]) => multiplier.type === 'common');
+        const half = Math.ceil(entries.length / 2);
+        return [entries.slice(0, half), entries.slice(half)];
+    };
+
+    const [leftColumn, rightColumn] = getSplitWeaknessEntries();
 
     return (
         <div className={`flex flex-col border-2 border-white bg-galatime-dark z-50 pointer-events-none select-none ${className}`}>
@@ -86,42 +94,60 @@ const CommonHoverElement: React.FC<CommonHoverElementProps> = ({
 
             {/* Weakness Table */}
             {isTooltip && (
-                <div className="flex flex-col p-2">
-                    {loading ? (
-                        <div className="text-white text-center py-2 opacity-50">Loading...</div>
-                    ) : (
-                        data && Object
-                        .entries(data.multipliers)
-                        .filter(([_, multiplier]) => multiplier.type === 'common')
-                        .map(([id, multiplier]) => (
-                                <div key={id} className="flex items-center justify-between mb-[-10px]">
-                                    {/* Element Icon */}
-                                    <div className="flex items-center">
-                                        <img
-                                            src={`/images/elements/${id}.png`}
-                                            alt={id}
-                                            className="w-4 h-4 pixelated"
-                                            onError={(e) => {
-                                                const target = e.target as HTMLImageElement;
-                                                if (!target.src.includes('/images/elements/unknown.png')) {
-                                                    target.src = '/images/elements/unknown.png';
-                                                } else {
-                                                    target.style.display = 'none';
-                                                }
-                                            }}
-                                        />
-                                    </div>
-
-                                    {/* Multiplier Value */}
-                                    <span className={`text-lg ${getMultiplierStyle(multiplier.score)}`}>
-                                        x{multiplier.score}
-                                    </span>
+                <div className="flex p-2">
+                    {/* Left Column */}
+                    <div className="flex flex-col mr-2">
+                        {leftColumn.map(([id, multiplier]) => (
+                            <div key={id} className="flex items-center justify-between mb-[-10px] whitespace-nowrap">
+                                <div className="flex items-center mr-1">
+                                    <img
+                                        src={`/images/elements/${id}.png`}
+                                        alt={id}
+                                        className="w-4 h-4 pixelated"
+                                        onError={(e) => {
+                                            const target = e.target as HTMLImageElement;
+                                            if (!target.src.includes('/images/elements/unknown.png')) {
+                                                target.src = '/images/elements/unknown.png';
+                                            } else {
+                                                target.style.display = 'none';
+                                            }
+                                        }}
+                                    />
                                 </div>
-                            ))
-                    )}
+                                <span className={`text-lg ${getMultiplierStyle(multiplier.score)}`}>
+                                    x{multiplier.score}
+                                </span>
+                            </div>
+                        ))}
+                    </div>
+
+                    {/* Right Column */}
+                    <div className="flex flex-col">
+                        {rightColumn.map(([id, multiplier]) => (
+                            <div key={id} className="flex items-center justify-between mb-[-10px] whitespace-nowrap">
+                                <div className="flex items-center mr-1">
+                                    <img
+                                        src={`/images/elements/${id}.png`}
+                                        alt={id}
+                                        className="w-4 h-4 pixelated"
+                                        onError={(e) => {
+                                            const target = e.target as HTMLImageElement;
+                                            if (!target.src.includes('/images/elements/unknown.png')) {
+                                                target.src = '/images/elements/unknown.png';
+                                            } else {
+                                                target.style.display = 'none';
+                                            }
+                                        }}
+                                    />
+                                </div>
+                                <span className={`text-lg ${getMultiplierStyle(multiplier.score)}`}>
+                                    x{multiplier.score}
+                                </span>
+                            </div>
+                        ))}
+                    </div>
                 </div>
             )}
-
         </div>
     );
 };
