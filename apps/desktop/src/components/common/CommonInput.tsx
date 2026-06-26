@@ -115,7 +115,7 @@ const CommonInput: React.FC<CommonInputProps> = ({
                     aria-describedby={
                         description ? `${title}-description` : undefined
                     }
-                    className={` bg-transparent border-0 border-b text-lg border-galatime-primary/40 text-white placeholder:text-galatime-primary/40 focus:outline-none focus:ring-0 px-0 py-1 w-auto min-w-[50px] transition ${isHorizontal ? 'text-left' : 'text-center'} ${inputClassName}
+                    className={`bg-transparent border-0 border-b text-lg border-galatime-primary/40 text-white placeholder:text-galatime-primary/40 focus:outline-none focus:ring-0 px-0 w-auto min-w-[30px] leading-none transition ${isHorizontal ? 'text-left' : 'text-center'} ${inputClassName}
                 `}
                 />
 
