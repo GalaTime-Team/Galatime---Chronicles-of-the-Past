@@ -1,23 +1,23 @@
 export const DIFFICULTIES = {
   easy: {
     id: 'easy',
-    title: 'game.difficulty.easy.label',
-    description: 'game.difficulty.easy.description',
+    title: 'game.settings.difficulty.easy.label',
+    description: 'game.settings.difficulty.easy.description',
   },
   normal: {
     id: 'normal',
-    title: 'game.difficulty.normal.label',
-    description: 'game.difficulty.normal.description',
+    title: 'game.settings.difficulty.normal.label',
+    description: 'game.settings.difficulty.normal.description',
   },
   hard: {
     id: 'hard',
-    title: 'game.difficulty.hard.label',
-    description: 'game.difficulty.hard.description',
+    title: 'game.settings.difficulty.hard.label',
+    description: 'game.settings.difficulty.hard.description',
   },
   hardcore: {
     id: 'hardcore',
-    title: 'game.difficulty.hardcore.label',
-    description: 'game.difficulty.hardcore.description',
+    title: 'game.settings.difficulty.hardcore.label',
+    description: 'game.settings.difficulty.hardcore.description',
   },
 } as const;
 

@@ -1,4 +1,5 @@
 import { useTranslation } from 'react-i18next';
+import { useState } from 'react';
 
 import { DIFFICULTIES } from '../constants/DifficultyConstants';
 
@@ -8,11 +9,14 @@ import CommonLoading from '../components/common/CommonLoading';
 import CommonButton from '../components/common/CommonButton';
 import AttackCard, { Attack } from '../components/game/AttackCard';
 import { useGame } from '../context/GameContext';
+import CommonInput from '../components/common/CommonInput';
 
 export function GamePage() {
   const { t } = useTranslation('common');
 
   const { gameState, setGameState } = useGame();
+
+  const [title, setTitle] = useState(t('game.settings.saveFile.default'));
 
   const fireBallAttack: Attack = {
     id: 'fireball_001',
@@ -34,6 +38,10 @@ export function GamePage() {
     accuracy: 100,
     mana_cost: 30,
     stamina_cost: 0,
+  };
+
+  const handleTitleChange = (value: string) => {
+    setTitle(value);
   };
 
   const handleDifficultyChange = (item: { id: string }) => {
@@ -73,11 +81,24 @@ export function GamePage() {
       <div className="flex flex-col gap-6 items-center">
         <CommonLoading />
 
+        <CommonInput
+          title={t('game.settings.saveFile.title')}
+          value={title}
+          onChange={handleTitleChange}
+          placeholder={t('game.settings.saveFile.placeholder')}
+          orientation="vertical"
+          maxCharacters={20}
+          showDescription={false}
+        />
+
         <CommonsSelector
-          title={t('game.difficulty.title')}
+          title={t('game.settings.difficulty.title')}
           items={Object.values(DIFFICULTIES)}
           defaultId={gameState.settings.difficulty}
           onChange={handleDifficultyChange}
+          orientation="horizontal"
+          showDescription={true}
+          containerClassName="max-w-xl"
         />
 
         <CommonSwitch
@@ -85,6 +106,8 @@ export function GamePage() {
           description={t('game.settings.fightingTips.description')}
           defaultChecked={gameState.settings.fightingTooltipVisible}
           onChange={handleToggleTips}
+          orientation="vertical"
+          showDescription={true}
         />
 
         <div className="flex flex-row gap-6">
@@ -104,14 +127,14 @@ export function GamePage() {
           </CommonButton>
           <CommonButton
             variant="danger"
-            size="md"
+            size="lg"
             onPress={() => console.log('Danger button clicked')}
           >
             Danger Button
           </CommonButton>
           <CommonButton
             variant="success"
-            size="md"
+            size="sm"
             onPress={() => console.log('Success button clicked')}
           >
             Success Button
@@ -121,12 +144,10 @@ export function GamePage() {
         <AttackCard
           attack={fireBallAttack}
           onClick={handleAttackClick}
-          className="mb-4"
         />
         <AttackCard
           attack={darknessAttack}
           onClick={handleAttackClick}
-          className="mb-4"
         />
       </div>
 

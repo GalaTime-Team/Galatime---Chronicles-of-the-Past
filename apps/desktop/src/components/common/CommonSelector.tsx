@@ -24,6 +24,10 @@ interface CommonSelectorProps {
     optionsClassName?: string;
     /** Custom class for the description text */
     descriptionClassName?: string;
+    /** Orientation of the selector: 'horizontal' or 'vertical' */
+    orientation?: 'horizontal' | 'vertical';
+    /** Whether to show the description or not */
+    showDescription?: boolean;
 }
 
 const CommonSelector: React.FC<CommonSelectorProps> = ({
@@ -31,10 +35,12 @@ const CommonSelector: React.FC<CommonSelectorProps> = ({
     defaultId,
     title,
     onChange,
+    orientation = 'horizontal',
     containerClassName = '',
     titleClassName = '',
     optionsClassName = '',
     descriptionClassName = '',
+    showDescription = false,
 }) => {
     const { t } = useTranslation('common');
     // Find the initial index based on defaultId or fallback to 0
@@ -42,6 +48,7 @@ const CommonSelector: React.FC<CommonSelectorProps> = ({
     const [currentIndex, setCurrentIndex] = useState(initialIndex !== -1 ? initialIndex : 0);
 
     const currentItem = items[currentIndex];
+    const isHorizontal = orientation === 'horizontal';
 
     const handlePrev = () => {
         if (currentIndex > 0) {
@@ -63,21 +70,33 @@ const CommonSelector: React.FC<CommonSelectorProps> = ({
     const isAtEnd = currentIndex === items.length - 1;
 
     return (
-        <div className={`flex flex-col items-center justify-center select-none ${containerClassName}`}>
-            {/* 1st div: Title + 2nd div */}
-            <h2 className={`text-2xl text-white/70 ${titleClassName}`}>
+        <div
+            className={`select-none ${isHorizontal
+                    ? 'flex flex-row items-center justify-between w-full'
+                    : 'flex flex-col items-center justify-center'
+                } ${containerClassName}`}
+        >
+            {/* Title */}
+            <h2
+                className={`${isHorizontal ? 'text-lg text-white' : 'text-2xl text-white/70'
+                    } ${titleClassName}`}
+            >
                 {title}
             </h2>
 
-            {/* 2nd div: 3rd div + Description */}
-            <div className="mt-1 flex flex-col items-center justify-center">
-                {/* 3rd div: Left Chevron + Option + Right Chevron */}
+            {/* Options + Description wrapper */}
+            <div
+                className={`group relative flex flex-col items-center justify-center ${isHorizontal ? '' : 'mt-1'}`}
+            >
+                {/* Chevron + Option + Chevron */}
                 <div className="flex items-center justify-center">
                     {/* Left Chevron */}
                     <button
                         onClick={handlePrev}
                         disabled={isAtStart}
-                        className={`mr-2 transition-all duration-200 ${isAtStart ? 'opacity-40 cursor-not-allowed' : 'opacity-100 cursor-pointer hover:scale-110 active:scale-95'
+                        className={`mr-2 transition-all duration-200 ${isAtStart
+                                ? 'opacity-40 cursor-not-allowed'
+                                : 'opacity-100 cursor-pointer hover:scale-110 active:scale-95'
                             }`}
                         aria-label={t('selector.previous')}
                     >
@@ -98,7 +117,9 @@ const CommonSelector: React.FC<CommonSelectorProps> = ({
                     <button
                         onClick={handleNext}
                         disabled={isAtEnd}
-                        className={`ml-2 transition-all duration-200 ${isAtEnd ? 'opacity-40 cursor-not-allowed' : 'opacity-100 cursor-pointer hover:scale-110 active:scale-95'
+                        className={`ml-2 transition-all duration-200 ${isAtEnd
+                                ? 'opacity-40 cursor-not-allowed'
+                                : 'opacity-100 cursor-pointer hover:scale-110 active:scale-95'
                             }`}
                         aria-label={t('selector.next')}
                     >
@@ -112,10 +133,18 @@ const CommonSelector: React.FC<CommonSelectorProps> = ({
                 </div>
 
                 {/* Description Section */}
-                {currentItem?.description && (
-                    <div className={`mt- text-galatime-accent text-xs text-center max-w-xs ${descriptionClassName}`}>
-                        {t(currentItem.description)}
-                    </div>
+                {showDescription && currentItem?.description && (
+                    isHorizontal ? (
+                        <div
+                            className={`absolute top-full z-10 mt-1 text-galatime-accent text-xs text-center max-w-xs opacity-0 group-hover:opacity-100 transition-opacity duration-200 pointer-events-none ${descriptionClassName}`}
+                        >
+                            {t(currentItem.description)}
+                        </div>
+                    ) : (
+                        <div className={`mt-1 text-galatime-accent text-xs text-center max-w-xs ${descriptionClassName}`}>
+                            {t(currentItem.description)}
+                        </div>
+                    )
                 )}
             </div>
         </div>

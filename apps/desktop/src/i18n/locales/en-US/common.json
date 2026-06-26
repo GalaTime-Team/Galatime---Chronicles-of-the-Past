@@ -23,6 +23,26 @@
 			"subtitle": "Tailwind CSS + Tauri"
 		},
 		"settings": {
+			"saveFile": {
+				"title": "Title",
+				"default": "Untitled1",
+				"placeholder": "Save file title"
+			},
+			"gametype": {
+				"title": "Game Type",
+				"storyMode": {
+					"label": "Story Mode",
+					"description": "Skip battles, focus on the narrative and the characters."
+				},
+				"fullGameplay": {
+					"label": "Full Gameplay",
+					"description": "Includes story and battle mechanics."
+				},
+				"battleMode": {
+					"label": "Battle Mode",
+					"description": "Fight waves of enemies."
+				}
+			},
 			"difficulty": {
 				"title": "Difficulty",
 				"easy": {
