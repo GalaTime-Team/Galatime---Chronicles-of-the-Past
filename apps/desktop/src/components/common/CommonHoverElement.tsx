@@ -63,7 +63,7 @@ const CommonHoverElement: React.FC<CommonHoverElementProps> = ({
     };
 
     return (
-        <div className={`flex flex-col p-2 border-2 border-white bg-galatime-dark z-50 pointer-events-none select-none ${className}`}>
+        <div className={`flex flex-col border-2 border-white bg-galatime-dark z-50 pointer-events-none select-none ${className}`}>
             {/* Header: Name and Main Icon */}
             <div className="flex items-center justify-center gap-2 mb-1 mx-4">
                 <h2 className="text-lg font-bold text-white uppercase tracking-wider">

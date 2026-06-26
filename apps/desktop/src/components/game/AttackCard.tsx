@@ -1,7 +1,9 @@
 import React, { useState } from 'react';
-import CommonHoverElement from '../common/CommonHoverElement';
 import { useFloating, autoUpdate, offset, flip, shift } from '@floating-ui/react';
 import { createPortal } from 'react-dom';
+
+import CommonHoverElement from '../common/CommonHoverElement';
+import CommonHoverAttackType from '../common/CommonHoverAttackType';
 
 export interface Attack {
     id: string | number;
@@ -26,18 +28,27 @@ const AttackCard: React.FC<AttackCardProps> = ({
     className = "",
 }) => {
     const { title, elementId, type, power, accuracy, mana_cost, stamina_cost } = attack;
-    const [isTooltipVisible, setIsTooltipVisible] = useState(false);
+    const [isElementTooltipVisible, setIsElementTooltipVisible] = useState(false);
+    const [isAttackTypeTooltipVisible, setIsAttackTypeTooltipVisible] = useState(false);
 
     const assetPath = "/images/elements";
     const typeIconPath = `${assetPath}/type/${type}.svg`;
     const elementIconPath = `${assetPath}/${elementId}.png`;
     const mainIconPath = `${assetPath}/attacks/${attack.id}.png`;
 
-    const { refs, floatingStyles, context: _context } = useFloating({
-        open: isTooltipVisible,
-        onOpenChange: setIsTooltipVisible,
-        placement: 'bottom-end',  // ou 'top', 'right', etc.
-        whileElementsMounted: autoUpdate,  // atualiza posição no scroll/resize
+    const { refs: elementRefs, floatingStyles: elementFloatingStyles } = useFloating({
+        open: isElementTooltipVisible,
+        onOpenChange: setIsElementTooltipVisible,
+        placement: 'right-end',
+        whileElementsMounted: autoUpdate,
+        middleware: [offset(8), flip(), shift()],
+    });
+
+    const { refs: typeRefs, floatingStyles: typeFloatingStyles } = useFloating({
+        open: isAttackTypeTooltipVisible,
+        onOpenChange: setIsAttackTypeTooltipVisible,
+        placement: 'right-end',
+        whileElementsMounted: autoUpdate,
         middleware: [offset(8), flip(), shift()],
     });
 
@@ -77,26 +88,38 @@ const AttackCard: React.FC<AttackCardProps> = ({
 
                     {/* Top Right: Element of the attack */}
                     <div
-                        ref={refs.setReference}
-                        onMouseEnter={() => setIsTooltipVisible(true)}
-                        onMouseLeave={() => setIsTooltipVisible(false)}
+                        ref={elementRefs.setReference}
+                        onMouseEnter={() => setIsElementTooltipVisible(true)}
+                        onMouseLeave={() => setIsElementTooltipVisible(false)}
                         className="flex-1 flex items-center justify-end pr-2"
                     >
-                        <img src={elementIconPath} alt={elementId} className="h-5 w-5 object-contain" />
+                        <img
+                            src={elementIconPath}
+                            alt={elementId}
+                            className="h-5 w-5 object-contain"
+                            onError={(e) => {
+                                const target = e.target as HTMLImageElement;
+                                if (!target.src.includes('/images/elements/unknown.png')) {
+                                    target.src = '/images/elements/unknown.png';
+                                } else {
+                                    target.style.display = 'none';
+                                }
+                            }}
+                        />
                     </div>
 
                     {/* Tooltip */}
-                    {isTooltipVisible && createPortal(
+                    {isElementTooltipVisible && createPortal(
                         <div
-                            ref={refs.setFloating}
-                            style={floatingStyles}
+                            ref={elementRefs.setFloating}
+                            style={elementFloatingStyles}
                             className="z-50 pointer-events-none"
                         >
                             <CommonHoverElement
                                 elementId={elementId}
                                 elementName={elementId}
                                 isVisible={true}
-                                isTooltip={true}
+                                isTooltip={false}
                                 isAttack={true}
                             />
                         </div>,
@@ -127,7 +150,12 @@ const AttackCard: React.FC<AttackCardProps> = ({
                     </div>
 
                     {/* Bottom Right: Type image */}
-                    <div className="flex-1 flex items-center justify-end pr-2">
+                    <div
+                        ref={typeRefs.setReference}
+                        onMouseEnter={() => setIsAttackTypeTooltipVisible(true)}
+                        onMouseLeave={() => setIsAttackTypeTooltipVisible(false)}
+                        className="flex-1 flex items-center justify-end pr-2"
+                    >
                         <img
                             src={typeIconPath}
                             alt={type}
@@ -142,6 +170,22 @@ const AttackCard: React.FC<AttackCardProps> = ({
                             }}
                         />
                     </div>
+
+                    {/* Tooltip */}
+                    {isAttackTypeTooltipVisible && createPortal(
+                        <div
+                            ref={typeRefs.setFloating}
+                            style={typeFloatingStyles}
+                            className="z-50 pointer-events-none"
+                        >
+                            <CommonHoverAttackType
+                                typeName={type}
+                                typeIconPath={typeIconPath}
+                                isVisible={true}
+                            />
+                        </div>,
+                        document.body
+                    )}
                 </div>
             </div>
         </div>
