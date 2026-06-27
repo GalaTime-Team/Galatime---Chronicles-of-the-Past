@@ -85,9 +85,9 @@ const AttackCard: React.FC<AttackCardProps> = ({
             <div className="ml-8 my-2 mr-2 w-full bg-galatime-dark border-2 border-white flex flex-col text-white overflow-hidden gap-1">
 
                 {/* Top Half */}
-                <div className="flex flex-1 gap-20">
+                <div className="flex flex-1">
                     {/* Top Left: Name of the attack */}
-                    <div className="flex-[3] flex items-center pl-11 text-xl font-bold truncate uppercase tracking-wider">
+                    <div className="flex-1 flex items-center pl-11 text-xl font-medium truncate uppercase tracking-wide">
                         {title}
                     </div>
 
@@ -96,7 +96,7 @@ const AttackCard: React.FC<AttackCardProps> = ({
                         ref={elementRefs.setReference}
                         onMouseEnter={() => setIsElementTooltipVisible(true)}
                         onMouseLeave={() => setIsElementTooltipVisible(false)}
-                        className="flex-1 flex items-center justify-end pr-1"
+                        className="flex items-center justify-end p-1"
                     >
                         <img
                             src={elementIconPath}
@@ -133,9 +133,9 @@ const AttackCard: React.FC<AttackCardProps> = ({
                 </div>
 
                 {/* Bottom Half */}
-                <div className="flex flex-1">
+                <div className="flex flex-1 w-full">
                     {/* Bottom Left: Relevant stats */}
-                    <div className="flex-[3] flex items-center pl-11 pb-1 gap-2 text-sm text-white/40 leading-none">
+                    <div className="flex-1 flex items-center pl-11 pb-1 gap-2 text-sm text-white/40 leading-none">
                         <div className="flex gap-1">
                             <span>PW</span>
                             <span className="text-white">{power}</span>
@@ -159,7 +159,7 @@ const AttackCard: React.FC<AttackCardProps> = ({
                         ref={typeRefs.setReference}
                         onMouseEnter={() => setIsAttackTypeTooltipVisible(true)}
                         onMouseLeave={() => setIsAttackTypeTooltipVisible(false)}
-                        className="flex-1 flex items-center justify-end pr-1 pb-1"
+                        className="flex items-center justify-end p-1"
                     >
                         <img
                             src={typeIconPath}

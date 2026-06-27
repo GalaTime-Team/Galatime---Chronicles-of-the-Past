@@ -24,9 +24,9 @@ const defaultState: GameState = {
     fightingTooltipVisible: true,
   },
   player: {
-    hp: { current: 1000, max: 1000 },
-    mana: { current: 500, max: 500 },
-    stamina: { current: 700, max: 700 },
+    hp: { current: 800, max: 1000 },
+    mana: { current: 400, max: 600 },
+    stamina: { current: 500, max: 700 },
   },
 };
 

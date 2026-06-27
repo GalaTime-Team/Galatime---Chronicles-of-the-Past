@@ -94,12 +94,12 @@ const CommonHoverElement: React.FC<CommonHoverElementProps> = ({
 
             {/* Weakness Table */}
             {isTooltip && (
-                <div className="flex p-2">
+                <div className="flex gap-1 p-2 w-full">
                     {/* Left Column */}
-                    <div className="flex flex-col mr-2">
+                    <div className="flex-1 flex flex-col">
                         {leftColumn.map(([id, multiplier]) => (
                             <div key={id} className="flex items-center justify-between mb-[-10px] whitespace-nowrap">
-                                <div className="flex items-center mr-1">
+                                <div className="flex items-center w-4 h-4 mr-1">
                                     <img
                                         src={`/images/elements/${id}.png`}
                                         alt={id}
@@ -122,10 +122,10 @@ const CommonHoverElement: React.FC<CommonHoverElementProps> = ({
                     </div>
 
                     {/* Right Column */}
-                    <div className="flex flex-col">
+                    <div className="flex-1 flex flex-col">
                         {rightColumn.map(([id, multiplier]) => (
                             <div key={id} className="flex items-center justify-between mb-[-10px] whitespace-nowrap">
-                                <div className="flex items-center mr-1">
+                                <div className="flex items-center w-4 h-4 mr-1">
                                     <img
                                         src={`/images/elements/${id}.png`}
                                         alt={id}

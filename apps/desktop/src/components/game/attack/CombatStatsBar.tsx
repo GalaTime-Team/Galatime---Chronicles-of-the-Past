@@ -60,7 +60,7 @@ const CombatStatsBar = forwardRef<CombatStatsBarRef, CombatStatsBarProps>(
         previewDepleteClass = 'bg-galatime-stats-damage/60',
         previewRestoreClass = 'bg-galatime-stats-gain-health/60',
         trackClass = 'bg-white/10',
-        titleClass = 'text-white/40 text-sm whitespace-nowrap leading-none',
+        titleClass = '',
     }, ref) => {
         const [displayedHp, setDisplayedHp] = useState(() =>
             Math.max(0, Math.min(current, max))
@@ -206,23 +206,25 @@ const CombatStatsBar = forwardRef<CombatStatsBarRef, CombatStatsBarProps>(
         );
 
         // Layout classes based on orientation
-        const outerFlexClass = isLTR 
+        const outerFlexClass = isLTR
             ? 'flex flex-row items-center gap-2'
-            : isRTL 
-            ? 'flex flex-row-reverse items-center gap-2'
-            : isTTB 
-            ? 'flex flex-col items-center gap-2'
-            : 'flex flex-col-reverse items-center gap-2';
-            
+            : isRTL
+                ? 'flex flex-row-reverse items-center gap-2'
+                : isTTB
+                    ? 'flex flex-col items-center gap-2'
+                    : 'flex flex-col-reverse items-center gap-2';
+
         const trackDimensionClass = isHorizontal ? 'w-full h-1.5' : 'w-1.5 h-full';
 
         return (
             <div className={`w-full ${className} ${!isHorizontal ? 'h-full' : ''}`}>
-                <div className={`${outerFlexClass} ${!isHorizontal ? 'h-full' : ''}`}>
+                <div className={`flex ${outerFlexClass} ${!isHorizontal ? 'flex-col h-full' : 'flex-row'} justify-center items-center`}>
                     {showTitle && (
-                        <div className={titleClass}>{title}</div>
+                        <div className={`text-white/40 text-sm whitespace-nowrap leading-none ${titleClass}`}>
+                            {title}
+                        </div>
                     )}
-                    <div className={`flex-1 relative ${!isHorizontal ? 'w-full h-full' : ''}`}>
+                    <div className={`flex-1 relative ${!isHorizontal ? 'w-full h-full' : ''} flex justify-center items-center`}>
                         <div className={`${trackDimensionClass} relative overflow-hidden ${trackClass}`}>
                             {/* Current health fill */}
                             <div className={`absolute ${healthClass}`} style={healthStyle} />
@@ -235,7 +237,7 @@ const CombatStatsBar = forwardRef<CombatStatsBarRef, CombatStatsBarProps>(
                                 />
                             )}
 
-                            {/* Restoreing animation overlay */}
+                            {/* Restore animation overlay */}
                             {restoreAnim && (
                                 <div className={`absolute ${restoreClass}`} style={restoreStyle} />
                             )}
