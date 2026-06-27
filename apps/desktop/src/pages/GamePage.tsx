@@ -1,5 +1,5 @@
 import { useTranslation } from 'react-i18next';
-import { useRef, useState } from 'react';
+import { useState } from 'react';
 
 import { DIFFICULTIES } from '../constants/DifficultyConstants';
 
@@ -7,11 +7,9 @@ import CommonsSelector from '../components/common/CommonSelector';
 import CommonSwitch from '../components/common/CommonSwitch';
 import CommonLoading from '../components/common/CommonLoading';
 import CommonButton from '../components/common/CommonButton';
-import AttackCard, { Attack } from '../components/game/AttackCard';
 import { useGame } from '../context/GameContext';
 import CommonInput from '../components/common/CommonInput';
-import ExtraMovementCard from '../components/game/ExtraMovementCard';
-import CombatStatsBar, { type CombatStatsBarRef } from '../components/game/CombatStatsBar';
+import CombatHUD, { Weapon, Attack } from '../components/game/attack/CombatHUD';
 
 export function GamePage() {
 	const { t } = useTranslation('common');
@@ -19,50 +17,6 @@ export function GamePage() {
 	const { gameState, setGameState } = useGame();
 
 	const [title, setTitle] = useState(t('game.settings.saveFile.default'));
-
-	const fireBallAttack: Attack = {
-		id: 'fireball_001',
-		title: 'Fire Ball',
-		elementId: 'ignis',
-		type: 'magical',
-		power: 10,
-		accuracy: 90,
-		mana_cost: 20,
-		stamina_cost: 0,
-	};
-
-	const darknessAttack: Attack = {
-		id: 'darkness_001',
-		title: 'Darkness',
-		elementId: 'umbra',
-		type: 'buff',
-		power: 0,
-		accuracy: 100,
-		mana_cost: 30,
-		stamina_cost: 0,
-	};
-
-	const [hp, setHp] = useState(100);
-	const maxHp = 100;
-	const hpBarRef = useRef<CombatStatsBarRef>(null);
-	const [previewDeplete, setPreviewDeplete] = useState(0);
-	const [previewRestore, setPreviewRestore] = useState(0);
-
-	const applyDeplete = (amount: number, animate: boolean) => {
-		if (animate) {
-			hpBarRef.current?.deplete(amount);
-		}
-		setHp((prev) => Math.max(0, prev - amount));
-
-	};
-
-	const applyRestore = (amount: number, animate: boolean) => {
-		if (animate) {
-			hpBarRef.current?.restore(amount);
-		}
-		setHp((prev) => Math.min(maxHp, prev + amount));
-
-	};
 
 	const handleTitleChange = (value: string) => {
 		setTitle(value);
@@ -88,8 +42,79 @@ export function GamePage() {
 		}));
 	};
 
+	// ── Sample attacks (replace with gameState.attacks or a selector) ──
+	const attacks: Attack[] = [
+		{
+			id: 'angel_attack',
+			title: 'Angel Attack',
+			elementId: 'lux',
+			type: 'magical',
+			power: 40,
+			accuracy: 85,
+			mana_cost: 50,
+			stamina_cost: 0,
+		},
+		{
+			id: 'magic_suck',
+			title: 'Magic Suck',
+			elementId: 'vis',
+			type: 'physical',
+			power: 20,
+			accuracy: 95,
+			mana_cost: 0,
+			stamina_cost: 40,
+		},
+		{
+			id: 'gas_minion',
+			title: 'Gas Minion',
+			elementId: 'naturalea',
+			type: 'buff',
+			power: 10,
+			accuracy: 100,
+			mana_cost: 40,
+			stamina_cost: 10,
+		},
+		{
+			id: 'dense_fog',
+			title: 'Dense Fog',
+			elementId: 'caeli',
+			type: 'debuff',
+			power: 0,
+			accuracy: 75,
+			mana_cost: 35,
+			stamina_cost: 0,
+		},
+	];
+
+	const weapon: Weapon = {
+		id: 'iron-sword',
+		name: 'Iron Sword',
+	};
+
 	const handleAttackClick = (attack: Attack) => {
-		console.log(`Attack clicked: ${attack.title}`);
+		console.log('Attack selected:', attack);
+		// TODO: dispatch to combat engine / API
+	};
+
+	const handleExtraMovementClick = (
+		movement: 'defend' | 'weapon' | 'rest' | 'inventory'
+	) => {
+		console.log('Extra movement selected:', movement);
+		// TODO: update game state or open inventory modal, etc.
+	};
+
+	// ── Derive stats from gameState (with fallbacks) ──
+	const hp = {
+		current: gameState.player?.hp.current ?? 800,
+		max: gameState.player?.hp.max ?? 1000,
+	};
+	const mana = {
+		current: gameState.player?.mana.current ?? 400,
+		max: gameState.player?.mana.max ?? 600,
+	};
+	const stamina = {
+		current: gameState.player?.stamina.current ?? 500,
+		max: gameState.player?.stamina.max ?? 700,
 	};
 
 	return (
@@ -135,128 +160,48 @@ export function GamePage() {
 				/>
 
 				<div className="flex flex-row gap-6">
-					<div
-						onMouseEnter={() => setPreviewDeplete(5)}
-						onMouseLeave={() => setPreviewDeplete(0)}
+					<CommonButton
+						variant="primary"
+						size="md"
 					>
-						<CommonButton
-							variant="primary"
-							size="md"
-							onPress={() => applyDeplete(5, false)}
-						>
-							-5 HP w/out animation
-						</CommonButton>
-					</div>
+						Primarty Button
+					</CommonButton>
 
 
-					<div
-						onMouseEnter={() => setPreviewRestore(5)}
-						onMouseLeave={() => setPreviewRestore(0)}
+					<CommonButton
+						variant="outline"
+						size="md"
 					>
-						<CommonButton
-							variant="outline"
-							size="md"
-							onPress={() => applyRestore(5, false)}
-						>
-							+5 HP w/out animation
-						</CommonButton>
-					</div>
+						Outline Button
+					</CommonButton>
 
 					<CommonButton
 						variant="danger"
 						size="lg"
-						onPress={() => applyDeplete(5, true)}
 					>
-						-5 HP w/ animation
+						Danger Button
 					</CommonButton>
 
 					<CommonButton
 						variant="success"
 						size="sm"
-						onPress={() => applyRestore(5, true)}
 					>
-						+5 HP w/ animation
+						Success Button
 					</CommonButton>
 				</div>
 
-				<CombatStatsBar
-					ref={hpBarRef}
-					title='HP'
-					showTitle
-					current={hp}
-					max={maxHp}
-					orientation="ltr"
-					className="w-full max-w-2xl"
-					previewDeplete={previewDeplete}
-					previewRestore={previewRestore}
+				{/* ── Combat HUD ── */}
+				<CombatHUD
+					hp={hp}
+					mana={mana}
+					stamina={stamina}
+					attacks={attacks}
+					weapon={weapon}
+					onAttackClick={handleAttackClick}
+					onExtraMovementClick={handleExtraMovementClick}
+					gridConfig={{ columns: 2, rows: 2 }}
+					className="my-combat-hud"
 				/>
-
-				<CombatStatsBar
-					ref={hpBarRef}
-					title="MN"
-					showTitle
-					current={hp}
-					max={maxHp}
-					orientation="rtl"
-					className="w-full max-w-2xl"
-					healthClass="bg-gradient-to-r from-galatime-stats-manaFrom to-galatime-stats-manaTo"
-					previewDepleteClass="bg-galatime-dark/60"
-					previewRestoreClass="bg-galatime-stats-manaTo/60"
-					previewDeplete={previewDeplete}
-					previewRestore={previewRestore}
-					depleteClass=""
-					restoreClass=""
-				/>
-
-				<CombatStatsBar
-					ref={hpBarRef}
-					title="SN"
-					showTitle
-					current={hp}
-					max={maxHp}
-					orientation="ltr"
-					className="h-full max-h-2xl"
-					healthClass="bg-galatime-stats-stamina"
-					previewDepleteClass="bg-galatime-dark/60"
-					previewRestoreClass="bg-galatime-stats-stamina/60"
-					previewDeplete={previewDeplete}
-					previewRestore={previewRestore}
-					depleteClass=""
-					restoreClass=""
-				/>
-
-				<AttackCard
-					attack={fireBallAttack}
-					onClick={handleAttackClick}
-				/>
-				<AttackCard
-					attack={darknessAttack}
-					onClick={handleAttackClick}
-				/>
-
-				<div className="flex flex-row gap-2">
-					<ExtraMovementCard
-						iconPath="/images/elements/extra/defend.svg"
-						title="Defend"
-						onClick={() => console.log('Defend clicked')}
-					/>
-					<ExtraMovementCard
-						iconPath="/images/elements/extra/weapon.svg"
-						title="Weapon"
-						onClick={() => console.log('Weapon clicked')}
-					/>
-					<ExtraMovementCard
-						iconPath="/images/elements/extra/rest.svg"
-						title="Rest"
-						onClick={() => console.log('Rest clicked')}
-					/>
-					<ExtraMovementCard
-						iconPath="/images/elements/extra/inventory.svg"
-						title="Inventory"
-						onClick={() => console.log('Inventory clicked')}
-					/>
-				</div>
-
 			</div>
 
 		</div>

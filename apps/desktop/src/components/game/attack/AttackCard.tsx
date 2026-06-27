@@ -2,10 +2,10 @@ import React, { useState } from 'react';
 import { useFloating, autoUpdate, offset, flip, shift } from '@floating-ui/react';
 import { createPortal } from 'react-dom';
 
-import CommonHoverElement from '../common/CommonHoverElement';
-import CommonHoverAttackType from '../common/CommonHoverAttackType';
+import CommonHoverElement from '../../common/CommonHoverElement';
+import CommonHoverAttackType from '../../common/CommonHoverAttackType';
 
-import { useGame } from '../../context/GameContext';
+import { useGame } from '../../../context/GameContext';
 
 export interface Attack {
     id: string | number;

@@ -5,6 +5,11 @@ interface GameState {
   settings: {
     difficulty: Difficulty;
     fightingTooltipVisible?: boolean;
+  },
+  player?: {
+    hp: { current: number; max: number };
+    mana: { current: number; max: number };
+    stamina: { current: number; max: number };
   };
 }
 
@@ -17,6 +22,11 @@ const defaultState: GameState = {
   settings: {
     difficulty: 'normal' as Difficulty,
     fightingTooltipVisible: true,
+  },
+  player: {
+    hp: { current: 1000, max: 1000 },
+    mana: { current: 500, max: 500 },
+    stamina: { current: 700, max: 700 },
   },
 };
 
