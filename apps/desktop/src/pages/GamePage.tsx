@@ -1,5 +1,5 @@
 import { useTranslation } from 'react-i18next';
-import { useState } from 'react';
+import { useRef, useState } from 'react';
 
 import { DIFFICULTIES } from '../constants/DifficultyConstants';
 
@@ -11,6 +11,7 @@ import AttackCard, { Attack } from '../components/game/AttackCard';
 import { useGame } from '../context/GameContext';
 import CommonInput from '../components/common/CommonInput';
 import ExtraMovementCard from '../components/game/ExtraMovementCard';
+import CombatStatsBar, { type CombatStatsBarRef } from '../components/game/CombatStatsBar';
 
 export function GamePage() {
 	const { t } = useTranslation('common');
@@ -39,6 +40,28 @@ export function GamePage() {
 		accuracy: 100,
 		mana_cost: 30,
 		stamina_cost: 0,
+	};
+
+	const [hp, setHp] = useState(100);
+	const maxHp = 100;
+	const hpBarRef = useRef<CombatStatsBarRef>(null);
+	const [previewDeplete, setPreviewDeplete] = useState(0);
+	const [previewRestore, setPreviewRestore] = useState(0);
+
+	const applyDeplete = (amount: number, animate: boolean) => {
+		if (animate) {
+			hpBarRef.current?.deplete(amount);
+		}
+		setHp((prev) => Math.max(0, prev - amount));
+
+	};
+
+	const applyRestore = (amount: number, animate: boolean) => {
+		if (animate) {
+			hpBarRef.current?.restore(amount);
+		}
+		setHp((prev) => Math.min(maxHp, prev + amount));
+
 	};
 
 	const handleTitleChange = (value: string) => {
@@ -112,35 +135,95 @@ export function GamePage() {
 				/>
 
 				<div className="flex flex-row gap-6">
-					<CommonButton
-						variant="primary"
-						size="md"
-						onPress={() => console.log('Primary button clicked')}
+					<div
+						onMouseEnter={() => setPreviewDeplete(5)}
+						onMouseLeave={() => setPreviewDeplete(0)}
 					>
-						Primary Button
-					</CommonButton>
-					<CommonButton
-						variant="outline"
-						size="md"
-						onPress={() => console.log('Outline button clicked')}
+						<CommonButton
+							variant="primary"
+							size="md"
+							onPress={() => applyDeplete(5, false)}
+						>
+							-5 HP w/out animation
+						</CommonButton>
+					</div>
+
+
+					<div
+						onMouseEnter={() => setPreviewRestore(5)}
+						onMouseLeave={() => setPreviewRestore(0)}
 					>
-						Outline Button
-					</CommonButton>
+						<CommonButton
+							variant="outline"
+							size="md"
+							onPress={() => applyRestore(5, false)}
+						>
+							+5 HP w/out animation
+						</CommonButton>
+					</div>
+
 					<CommonButton
 						variant="danger"
 						size="lg"
-						onPress={() => console.log('Danger button clicked')}
+						onPress={() => applyDeplete(5, true)}
 					>
-						Danger Button
+						-5 HP w/ animation
 					</CommonButton>
+
 					<CommonButton
 						variant="success"
 						size="sm"
-						onPress={() => console.log('Success button clicked')}
+						onPress={() => applyRestore(5, true)}
 					>
-						Success Button
+						+5 HP w/ animation
 					</CommonButton>
 				</div>
+
+				<CombatStatsBar
+					ref={hpBarRef}
+					title='HP'
+					showTitle
+					current={hp}
+					max={maxHp}
+					orientation="ltr"
+					className="w-full max-w-2xl"
+					previewDeplete={previewDeplete}
+					previewRestore={previewRestore}
+				/>
+
+				<CombatStatsBar
+					ref={hpBarRef}
+					title="MN"
+					showTitle
+					current={hp}
+					max={maxHp}
+					orientation="rtl"
+					className="w-full max-w-2xl"
+					healthClass="bg-gradient-to-r from-galatime-stats-manaFrom to-galatime-stats-manaTo"
+					previewDepleteClass="bg-galatime-dark/60"
+					previewRestoreClass="bg-galatime-stats-manaTo/60"
+					previewDeplete={previewDeplete}
+					previewRestore={previewRestore}
+					depleteClass=""
+					restoreClass=""
+				/>
+
+				<CombatStatsBar
+					ref={hpBarRef}
+					title="SN"
+					showTitle
+					current={hp}
+					max={maxHp}
+					orientation="ltr"
+					className="h-full max-h-2xl"
+					healthClass="bg-galatime-stats-stamina"
+					previewDepleteClass="bg-galatime-dark/60"
+					previewRestoreClass="bg-galatime-stats-stamina/60"
+					previewDeplete={previewDeplete}
+					previewRestore={previewRestore}
+					depleteClass=""
+					restoreClass=""
+				/>
 
 				<AttackCard
 					attack={fireBallAttack}

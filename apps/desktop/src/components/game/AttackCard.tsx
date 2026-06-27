@@ -60,7 +60,7 @@ const AttackCard: React.FC<AttackCardProps> = ({
     return (
         <div
             onClick={() => onClick?.(attack)}
-            className={`relative w-72 flex items-center cursor-pointer group transition-transform active:scale-[.98] ${className}`}
+            className={`relative w-72 flex items-center cursor-pointer group transition-transform active:scale-[.98] hover:scale-[1.01] ${className}`}
         >
             {/* The image on the left - positioned above the box */}
             <div className="absolute left-0 z-10 w-20 h-20 flex items-center justify-center">

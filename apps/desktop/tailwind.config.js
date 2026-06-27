@@ -30,8 +30,13 @@ export default {
             health: '#44BB9B',
             manaFrom: '#D5B7F7',
             manaTo: '#93FBFC',
-            stamina: '#FFBB00',
-            damage: '#D42B42'
+            stamina: '#459FED',
+            damage: '#D42B42',
+            gain: {
+              health: '#8FD6C3',
+              mana: '#CDFDFE',
+              stamina: '#74B7F1',
+            }
           }
         }
       }

@@ -15,13 +15,13 @@ const ExtraMovementCard: React.FC<ExtraMovementCardProps> = ({
     return (
         <div
             onClick={onClick}
-            className={`relative w-auto flex items-center cursor-pointer group transition-transform active:scale-[.98] ${className}`}
+            className={`relative w-auto flex items-center cursor-pointer group transition-transform active:scale-[.98] hover:scale-[1.01] ${className}`}
         >
             {/* Main Box */}
             <div className="flex flex-row w-full bg-galatime-dark border-2 border-white text-white overflow-hidden items-center p-1">
 
                 {/* Left: Icon */}
-                <div className="flex-shrink-0 flex items-center justify-center mr-2">
+                <div className="flex-shrink-0 flex items-center justify-center mr-1">
                     <img
                         src={iconPath}
                         alt={title}
