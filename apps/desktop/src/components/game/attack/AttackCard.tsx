@@ -82,7 +82,7 @@ const AttackCard: React.FC<AttackCardProps> = ({
             </div>
 
             {/* The main box - shifted right to accommodate the icon */}
-            <div className="ml-8 my-2 mr-2 w-full bg-galatime-dark border-2 border-white flex flex-col text-white overflow-hidden gap-1">
+            <div className="ml-8 my-2 mr-2 w-full bg-galatime-dark outline-white outline-3 outline flex flex-col text-white overflow-hidden gap-1">
 
                 {/* Top Half */}
                 <div className="flex flex-1">

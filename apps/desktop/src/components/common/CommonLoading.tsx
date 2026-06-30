@@ -47,7 +47,7 @@ const CommonLoading: React.FC<CommonLoadingProps> = ({
     }, [images.length, interval]);
 
     // Use prop or fall back to translated default
-    const displayText = loadingText !== undefined ? loadingText : t('loading.text');
+    const displayText = loadingText ? t(loadingText) : null;
     const altText = t('loading.alt');
 
     return (
@@ -55,7 +55,7 @@ const CommonLoading: React.FC<CommonLoadingProps> = ({
             className={`flex flex-col items-center justify-center select-none ${containerClassName}`}
         >
             {/* Animated Image Section */}
-            <div className="m-4 flex items-center justify-center">
+            <div className="flex items-center justify-center">
                 <img
                     src={images[currentIndex]}
                     alt={altText}
