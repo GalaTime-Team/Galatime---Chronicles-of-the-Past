@@ -24,7 +24,7 @@ ai:
 
 elements:
   - lapis
-  - naturalea
+  - florere
 
 base_stats:
   hp: 1080
@@ -68,7 +68,7 @@ skills:
 
   - id: vine_II
     name: Vine II
-    element: naturalea
+    element: florere
     damage_type: physical
     target: individual
     power: 45
@@ -86,7 +86,7 @@ skills:
 
   - id: nature_absorption
     name: Nature Absorption
-    element: naturalea
+    element: florere
     damage_type: magical
     target: individual
     power: 125

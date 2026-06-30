@@ -20,7 +20,7 @@ ai:
   personality: balanced
 
 elements:
-  - naturalea
+  - florere
   - chaos
 
 base_stats:
@@ -54,7 +54,7 @@ skills:
 
   - id: apple_party
     name: Apple Party
-    element: naturalea
+    element: florere
     damage_type: physical
     target: all
     hits: 5

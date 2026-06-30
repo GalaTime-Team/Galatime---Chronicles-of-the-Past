@@ -92,7 +92,7 @@ skills:
 
   - id: floral_barrage
     name: Floral Barrage
-    element: naturalea
+    element: florere
     damage_type: physical
     target: individual
     hits: 3
@@ -102,7 +102,7 @@ skills:
 
   - id: nature_surge
     name: Nature's Surge
-    element: naturalea
+    element: florere
     damage_type: status
     target: self
     power: 0

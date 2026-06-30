@@ -5,7 +5,7 @@ type: corrupted
 
 immune_to:
   - umbra
-  - naturalea
+  - florere
 super_strong_vs:
   - chaos
   - lapis

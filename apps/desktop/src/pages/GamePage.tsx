@@ -2,13 +2,14 @@ import { useTranslation } from 'react-i18next';
 import { useState } from 'react';
 
 import { DIFFICULTIES } from '../constants/DifficultyConstants';
+import { useGame } from '../context/GameContext';
 
 import CommonsSelector from '../components/common/CommonSelector';
 import CommonSwitch from '../components/common/CommonSwitch';
 import CommonLoading from '../components/common/CommonLoading';
 import CommonButton from '../components/common/CommonButton';
-import { useGame } from '../context/GameContext';
 import CommonInput from '../components/common/CommonInput';
+import CommonSlider from '../components/common/CommonSlider';
 import CombatHUD, { Weapon, Attack } from '../components/game/attack/CombatHUD';
 
 export function GamePage() {
@@ -67,7 +68,7 @@ export function GamePage() {
 		{
 			id: 'gas_minion',
 			title: 'Gas Minion',
-			elementId: 'naturalea',
+			elementId: 'florere',
 			type: 'buff',
 			power: 10,
 			accuracy: 100,
@@ -117,6 +118,8 @@ export function GamePage() {
 		max: gameState.player?.stamina.max ?? 700,
 	};
 
+	const [volume, setVolume] = useState(80);
+
 	return (
 		<div className="min-h-screen bg-gradient-to-br from-galatime-dark via-galatime-primary/20 to-galatime-accent/30 px-6 py-8">
 			<div className="mx-auto flex w-full max-w-5xl flex-col gap-6">
@@ -159,6 +162,16 @@ export function GamePage() {
 					showDescription={true}
 				/>
 
+				<CommonSlider
+					title='Volume'
+					min={0}
+					max={100}
+					value={volume}
+					onChange={setVolume}
+					className="max-w-xl"
+					sliderContainerClassName="w-28"
+				/>
+
 				<div className="flex flex-row gap-6">
 					<CommonButton
 						variant="primary"
@@ -190,7 +203,6 @@ export function GamePage() {
 					</CommonButton>
 				</div>
 
-				{/* ── Combat HUD ── */}
 				<CombatHUD
 					hp={hp}
 					mana={mana}

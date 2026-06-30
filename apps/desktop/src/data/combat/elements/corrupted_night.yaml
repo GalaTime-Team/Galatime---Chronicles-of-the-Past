@@ -9,7 +9,7 @@ immune_to:
 super_strong_vs:
   - aqua
   - caeli
-  - naturalea
+  - florere
   - spatium
 strong_vs:
   - chaos

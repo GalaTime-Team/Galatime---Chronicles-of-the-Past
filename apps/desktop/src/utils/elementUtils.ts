@@ -10,7 +10,7 @@ const scoreMap: Record<string, number> = {
  * Consolidates scores from multiple elements by summing the values.
  * 
  * Example: if Ignis has weak_to Aqua (value 1) and Caeli (value 1),
- * and Naturalea also has weak_to Aqua (value 1), the result will be:
+ * and Florere also has weak_to Aqua (value 1), the result will be:
  * { aqua: 2, caeli: 1 }
  * 
  * @param elementWeaknesses Array of weakness objects

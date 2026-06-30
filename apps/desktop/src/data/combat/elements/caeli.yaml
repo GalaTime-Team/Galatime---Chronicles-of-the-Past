@@ -9,7 +9,7 @@ immune_to:
   - umbra
 strong_vs:
   - aqua
-  - naturalea
+  - florere
   - spatium
 weak_to:
   - ignis

@@ -41,7 +41,7 @@ base_stats:
 skills:
   - id: vine
     name: Vine
-    element: naturalea
+    element: florere
     damage_type: physical
     target: individual
     hits: 1
@@ -50,7 +50,7 @@ skills:
 
   - id: vine_whip
     name: Vine Whip
-    element: naturalea
+    element: florere
     damage_type: physical
     target: individual
     hits: 1

@@ -6,7 +6,7 @@ type: corrupted
 immune_to:
   - ignis
 super_strong_vs:
-  - naturalea
+  - florere
   - spatium
   - umbra
 strong_vs:

@@ -22,7 +22,7 @@ ai:
   personality: balanced
 
 elements:
-  - naturalea
+  - florere
   - umbra
 
 base_stats:
@@ -73,7 +73,7 @@ skills:
     
   - id: electric_ball
     name: Electric Ball
-    element: naturalea
+    element: florere
     damage_type: magical
     target: individual
     power: 25
