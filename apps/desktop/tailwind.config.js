@@ -12,13 +12,13 @@ export default {
           primaryHover: '#8F92D6',
           accent: '#C5B4E9',
           dark: '#09091A',
-          success: "#236050",
-          successHover: "#36967C",
-          warning: "#FFBB00",
-          warningHover: "#FFD869",
-          error: "#A42132",
-          errorHover: "#D42B42",
-          element:{
+          success: '#236050',
+          successHover: '#36967C',
+          warning: '#FFBB00',
+          warningHover: '#FFD869',
+          error: '#A42132',
+          errorHover: '#D42B42',
+          element: {
             immune: '#1B4B3E',
             superStrong: '#236050',
             strong: '#44BB9B',
@@ -42,6 +42,6 @@ export default {
       }
     },
   },
-  plugins: []
-}
+  plugins: [],
+};
 

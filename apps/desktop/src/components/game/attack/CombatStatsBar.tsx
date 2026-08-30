@@ -85,7 +85,6 @@ const CombatStatsBar = forwardRef<CombatStatsBarRef, CombatStatsBarProps>(
         const isLTR = orientation === 'ltr';
         const isRTL = orientation === 'rtl';
         const isTTB = orientation === 'ttb';
-        const isBTT = orientation === 'btt';
 
         useEffect(() => {
             setDisplayedHp(Math.max(0, Math.min(current, max)));

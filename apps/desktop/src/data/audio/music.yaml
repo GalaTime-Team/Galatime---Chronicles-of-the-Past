@@ -1,0 +1,11 @@
+- id: galatime_theme
+  src: ../assets/music/Galatime - Chronicles of the Past.ogg
+  loop: true
+
+- id: cellordion_forest
+  src: ../assets/music/Cellordion Forest.ogg
+  loop: true
+
+- id: hivv_village
+  src: ../assets/music/Hivv Village.ogg
+  loop: true

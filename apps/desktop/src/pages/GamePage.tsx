@@ -1,11 +1,22 @@
 import { useTranslation } from 'react-i18next';
-import { useState, useRef, useCallback } from 'react';
-import { motion, AnimatePresence } from "framer-motion";
+import { useState, useRef, useCallback, useEffect } from 'react';
+import { AnimatePresence } from "framer-motion";
 
+import {
+	DEFAULT_MUSIC_TRACK_ID,
+	MUSIC_TRACKS,
+} from '../constants/AudioConstants';
 import { DIFFICULTIES } from '../constants/DifficultyConstants';
+import {
+	playMusic,
+	setAllVolumes,
+	setChannelVolume,
+	setMasterVolume,
+	stopAllAudio,
+} from '../controllers/audioController';
 import { useGame } from '../context/GameContext';
 
-import CommonsSelector from '../components/common/CommonSelector';
+import CommonSelector from '../components/common/CommonSelector';
 import CommonSwitch from '../components/common/CommonSwitch';
 import CommonLoading from '../components/common/CommonLoading';
 import CommonButton from '../components/common/CommonButton';
@@ -18,8 +29,10 @@ export function GamePage() {
 	const { t } = useTranslation('common');
 
 	const { gameState, setGameState } = useGame();
+	const audioUnlockPendingRef = useRef(false);
 
 	const [title, setTitle] = useState(t('game.settings.saveFile.default'));
+	const [needsAudioUnlock, setNeedsAudioUnlock] = useState(false);
 
 	const [popup, setPopup] = useState<{
 		visible: boolean;
@@ -30,8 +43,6 @@ export function GamePage() {
 		message: '',
 		mode: 'normal',
 	});
-
-	const lastConditionRef = useRef<string | null>(null);
 
 	const handleTitleChange = (value: string) => {
 		setTitle(value);
@@ -56,6 +67,44 @@ export function GamePage() {
 			},
 		}));
 	};
+
+	const updateAudioVolume = useCallback(
+		(channel: 'master' | 'music' | 'sfx' | 'ambient', value: number) => {
+			setGameState((prevState) => ({
+				...prevState,
+				settings: {
+					...prevState.settings,
+					audio: {
+						...prevState.settings.audio,
+						[channel]: value,
+					},
+				},
+			}));
+
+			if (channel === 'master') {
+				setMasterVolume(value);
+				return;
+			}
+
+			setChannelVolume(channel, value);
+		},
+		[setGameState]
+	);
+
+	const handleMusicChange = useCallback(
+		(item: { id: string }) => {
+			setGameState((prevState) => ({
+				...prevState,
+				settings: {
+					...prevState.settings,
+					currentMusicTrackId: item.id,
+				},
+			}));
+
+			void playMusic(item.id, { restartIfSame: true });
+		},
+		[setGameState]
+	);
 
 	// ── Sample attacks (replace with gameState.attacks or a selector) ──
 	const attacks: Attack[] = [
@@ -132,79 +181,75 @@ export function GamePage() {
 		max: gameState.player?.stamina.max ?? 700,
 	};
 
-	const [volume, setVolume] = useState(80);
+	useEffect(() => {
+		setAllVolumes(gameState.settings.audio);
+	}, [gameState.settings.audio]);
 
-	const getVolumeCondition = (value: number): { message: string; mode: PopupMode; key: string } => {
-		if (value === 0) {
-			return { message: "Whaat, no music? Laame", mode: 'danger', key: 'danger' };
-		}
-		if (value <= 20) {
-			return { message: "It's the other way around!", mode: 'warning', key: 'warning' };
-		}
-		if (value === 100) {
-			return { message: "Now we're talking!", mode: 'success', key: 'success' };
-		}
-		if (value >= 80) {
-			return { message: "Somebody likes it loud!", mode: 'normal', key: 'normal' };
-		}
-		return { message: '', mode: 'normal', key: 'none' };
-	};
+	useEffect(() => {
+		const selectedTrackId = gameState.settings.currentMusicTrackId || DEFAULT_MUSIC_TRACK_ID;
 
-	const handleVolumeChange = useCallback(
-		(value: number) => {
-			setVolume(value);
-
-			const { message, mode, key } = getVolumeCondition(value);
-
-			if (key === 'none') {
-				lastConditionRef.current = null;
+		void playMusic(selectedTrackId).then((started) => {
+			if (started) {
+				setNeedsAudioUnlock(false);
 				setPopup((prev) => ({ ...prev, visible: false }));
 				return;
 			}
 
-			if (lastConditionRef.current === key) {
+			setNeedsAudioUnlock(true);
+			setPopup({
+				visible: true,
+				message: 'Audio blocked by autoplay policy. Click or press any key to start the music.',
+				mode: 'warning',
+			});
+		});
+	}, [gameState.settings.currentMusicTrackId]);
+
+	useEffect(() => {
+		return () => {
+			stopAllAudio();
+		};
+	}, []);
+
+	useEffect(() => {
+		if (!needsAudioUnlock) {
+			return;
+		}
+
+		const tryUnlock = () => {
+			if (audioUnlockPendingRef.current) {
 				return;
 			}
 
-			lastConditionRef.current = key;
-			setPopup({ visible: true, message, mode });
-		},
-		[t]
-	);
+			audioUnlockPendingRef.current = true;
+			const selectedTrackId = gameState.settings.currentMusicTrackId || DEFAULT_MUSIC_TRACK_ID;
+
+			void playMusic(selectedTrackId).then((started) => {
+				audioUnlockPendingRef.current = false;
+
+				if (!started) {
+					return;
+				}
+
+				setNeedsAudioUnlock(false);
+				setPopup((prev) => ({ ...prev, visible: false }));
+			});
+		};
+
+		document.addEventListener('pointerdown', tryUnlock);
+		document.addEventListener('keydown', tryUnlock);
+
+		return () => {
+			document.removeEventListener('pointerdown', tryUnlock);
+			document.removeEventListener('keydown', tryUnlock);
+		};
+	}, [gameState.settings.currentMusicTrackId, needsAudioUnlock]);
 
 	const handlePopupClose = useCallback(() => {
 		setPopup((prev) => ({ ...prev, visible: false }));
 	}, []);
 
 	const handlePopupClick = () => {
-		switch (lastConditionRef.current) {
-			case 'danger':
-				// Wait for the exit animation / close state to settle, then show follow-up
-				setTimeout(() => {
-					setPopup({
-						visible: true,
-						message: 'Hey, you think you can shush me!? Listen to the music, man!',
-						mode: 'danger',
-					});
-
-					lastConditionRef.current = 'danger-followup';
-				}, 300);
-				break;
-			case 'danger-followup':
-				// Wait for the exit animation / close state to settle, then show follow-up
-				setTimeout(() => {
-					setPopup({
-						visible: true,
-						message: 'Fine, have it your way... But just so you know, the music is REALLY GOOD!',
-						mode: 'normal',
-					});
-
-					lastConditionRef.current = 'danger-followup2';
-				}, 300);
-				break;
-			default:
-				break;
-		}
+		handlePopupClose();
 	};
 
 	return (
@@ -232,16 +277,14 @@ export function GamePage() {
 					showDescription={false}
 				/>
 
-				<CommonsSelector
+				<CommonSelector
 					title={t('game.settings.difficulty.title')}
 					items={Object.values(DIFFICULTIES)}
 					defaultId={gameState.settings.difficulty}
-					onChange={handleDifficultyChange}
-					orientation="horizontal"
+					onChange={handleDifficultyChange} orientation="horizontal"
 					showDescription={true}
 					containerClassName="max-w-xl"
 				/>
-
 				<CommonSwitch
 					title={t('game.settings.fightingTips.title')}
 					description={t('game.settings.fightingTips.description')}
@@ -252,21 +295,61 @@ export function GamePage() {
 				/>
 
 				<CommonSlider
-					title='Volume'
+					title="Master Volume"
 					min={0}
 					max={100}
-					value={volume}
-					onChange={handleVolumeChange}
+					value={gameState.settings.audio.master}
+					onChange={(value) => updateAudioVolume('master', value)}
 					className="max-w-xl"
 					sliderContainerClassName="w-28"
 				/>
 
+				<CommonSlider
+					title="Music Volume"
+					min={0}
+					max={100}
+					value={gameState.settings.audio.music}
+					onChange={(value) => updateAudioVolume('music', value)}
+					className="max-w-xl"
+					sliderContainerClassName="w-28"
+				/>
+
+				<CommonSlider
+					title="SFX Volume"
+					min={0}
+					max={100}
+					value={gameState.settings.audio.sfx}
+					onChange={(value) => updateAudioVolume('sfx', value)}
+					className="max-w-xl"
+					sliderContainerClassName="w-28"
+				/>
+
+				<CommonSlider
+					title="Ambient Volume"
+					min={0}
+					max={100}
+					value={gameState.settings.audio.ambient}
+					onChange={(value) => updateAudioVolume('ambient', value)}
+					className="max-w-xl"
+					sliderContainerClassName="w-28"
+				/>
+
+				<CommonSelector
+					title="Music Track"
+					items={MUSIC_TRACKS}
+					defaultId={gameState.settings.currentMusicTrackId}
+					onChange={handleMusicChange}
+					orientation="horizontal"
+					showDescription={false}
+					containerClassName="max-w-xl"
+				/>
+				
 				<div className="flex flex-row gap-6">
 					<CommonButton
 						variant="primary"
 						size="md"
 					>
-						Primarty Button
+						Primary Button
 					</CommonButton>
 
 
@@ -301,7 +384,6 @@ export function GamePage() {
 					onAttackClick={handleAttackClick}
 					onExtraMovementClick={handleExtraMovementClick}
 					gridConfig={{ columns: 2, rows: 2 }}
-					className="my-combat-hud"
 				/>
 			</div>
 

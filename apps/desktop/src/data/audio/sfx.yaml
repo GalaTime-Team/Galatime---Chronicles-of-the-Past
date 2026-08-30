@@ -1,0 +1,3 @@
+- id: button_sfx
+  src: ../assets/sounds/button_sfx.ogg
+  loop: false

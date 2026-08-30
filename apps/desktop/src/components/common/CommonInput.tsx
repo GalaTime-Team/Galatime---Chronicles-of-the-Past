@@ -1,5 +1,4 @@
 import React, { useMemo } from 'react';
-import { useTranslation } from 'react-i18next';
 
 interface CommonInputProps {
     /** Title displayed above the input */
@@ -67,8 +66,6 @@ const CommonInput: React.FC<CommonInputProps> = ({
     descriptionClassName = '',
     counterClassName = '',
 }) => {
-    const { t } = useTranslation('common');
-
     const isHorizontal = orientation === 'horizontal';
 
     const characters = useMemo(() => splitGraphemes(value), [value]);

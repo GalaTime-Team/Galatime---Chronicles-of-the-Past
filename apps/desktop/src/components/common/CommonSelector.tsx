@@ -1,9 +1,11 @@
 import React, { useState } from 'react';
 import { useTranslation } from 'react-i18next';
+import { playSfx } from '../../controllers/audioController';
+import { BUTTON_SFX_ID } from '../../constants/AudioConstants';
 
 interface SelectorItem {
     id: string;
-    title: string;
+    title?: string;
     description?: string;
 }
 
@@ -93,6 +95,7 @@ const CommonSelector: React.FC<CommonSelectorProps> = ({
                     {/* Left Chevron */}
                     <button
                         onClick={handlePrev}
+                        onMouseEnter={() => playSfx(BUTTON_SFX_ID)}
                         disabled={isAtStart}
                         className={`mr-2 transition-all duration-200 ${isAtStart
                                 ? 'opacity-40 cursor-not-allowed'
@@ -110,12 +113,13 @@ const CommonSelector: React.FC<CommonSelectorProps> = ({
 
                     {/* Selected Option Title */}
                     <div className={`text-lg text-white text-center ${optionsClassName}`}>
-                        {t(currentItem?.title || '')}
+                        {currentItem?.title ? t(currentItem.title) : currentItem?.id}
                     </div>
 
                     {/* Right Chevron */}
                     <button
                         onClick={handleNext}
+                        onMouseEnter={() => playSfx(BUTTON_SFX_ID)}
                         disabled={isAtEnd}
                         className={`ml-2 transition-all duration-200 ${isAtEnd
                                 ? 'opacity-40 cursor-not-allowed'

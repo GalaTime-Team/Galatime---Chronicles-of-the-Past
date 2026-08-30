@@ -1,10 +1,18 @@
 import { createContext, useContext, useState, ReactNode } from 'react';
+import { DEFAULT_AUDIO_VOLUMES, DEFAULT_MUSIC_TRACK_ID } from '../constants/AudioConstants';
 import { Difficulty } from '../constants/DifficultyConstants';
 
 interface GameState {
   settings: {
     difficulty: Difficulty;
     fightingTooltipVisible?: boolean;
+    audio: {
+      master: number;
+      music: number;
+      sfx: number;
+      ambient: number;
+    };
+    currentMusicTrackId: string;
   },
   player?: {
     hp: { current: number; max: number };
@@ -22,6 +30,8 @@ const defaultState: GameState = {
   settings: {
     difficulty: 'normal' as Difficulty,
     fightingTooltipVisible: true,
+    audio: DEFAULT_AUDIO_VOLUMES,
+    currentMusicTrackId: DEFAULT_MUSIC_TRACK_ID,
   },
   player: {
     hp: { current: 800, max: 1000 },

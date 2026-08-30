@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { useTranslation } from 'react-i18next';
+import { playSfx } from '../../controllers/audioController';
 
 interface CommonSwitchProps {
     /** The title displayed above the switch */
@@ -46,6 +47,10 @@ const CommonSwitch: React.FC<CommonSwitchProps> = ({
         onChange(newState);
     };
 
+    const handleMouseEnter = () => {
+        playSfx('button_sfx');
+    };
+
     return (
         <div
             className={`select-none ${
@@ -68,6 +73,7 @@ const CommonSwitch: React.FC<CommonSwitchProps> = ({
                 {/* Switch Toggle */}
                 <button
                     onClick={handleToggle}
+                    onMouseEnter={handleMouseEnter}
                     className={`text-2xl focus:outline-none hover:scale-105 active:scale-95 transition-transform duration-150 ${switchClassName}`}
                     aria-label={`${t('switch.toggle')} ${title} ${isChecked ? t('switch.off') : t('switch.on')}`}
                 >
