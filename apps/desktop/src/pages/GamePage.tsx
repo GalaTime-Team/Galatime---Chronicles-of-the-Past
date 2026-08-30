@@ -196,11 +196,6 @@ export function GamePage() {
 			}
 
 			setNeedsAudioUnlock(true);
-			setPopup({
-				visible: true,
-				message: 'Audio blocked by autoplay policy. Click or press any key to start the music.',
-				mode: 'warning',
-			});
 		});
 	}, [gameState.settings.currentMusicTrackId]);
 

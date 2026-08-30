@@ -114,7 +114,8 @@ const CommonSlider: React.FC<CommonSliderProps> = ({
                 >
                     {bars.map((h, i) => {
                         const barPosPercent = (i / (numBars - 1)) * 100;
-                        const isActive = barPosPercent <= percentage;
+                        const activationThreshold = ((i + 1) / numBars) * 100;
+                        const isActive = percentage >= activationThreshold;
 
                         return (
                             <div
