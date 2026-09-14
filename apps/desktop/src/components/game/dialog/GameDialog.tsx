@@ -143,12 +143,6 @@ const GameDialog: React.FC<GameDialogProps> = ({
         };
     }, [pages, pageIndex, textSpeed]);
 
-    useEffect(() => {
-        if (textRef.current) {
-            textRef.current.scrollTop = textRef.current.scrollHeight;
-        }
-    }, [displayedText]);
-
 
 
     const isIndicatorVisible =
@@ -214,8 +208,8 @@ const GameDialog: React.FC<GameDialogProps> = ({
                 <div className="px-4 py-3 overflow-hidden">
                     <p
                         ref={textRef}
-                        className={`overflow-hidden text-white text-sm leading-6.5 font-custom ${textClassName}`}
-                        style={{ height: `${Math.max(1, maxRows) * 26}px` }}
+                        className={`overflow-hidden text-white text-sm leading-4 font-custom ${textClassName}`}
+                        style={{ height: `${Math.max(1, maxRows) * 24}px`, margin: 0, padding: 0 }}
                     >
                         {displayedText}
                         {!isPageDone && (
@@ -247,17 +241,20 @@ const GameDialog: React.FC<GameDialogProps> = ({
             </div>
 
             {/* Must use the same width, font, line-height, and whitespace rules as the visible text. */}
-            <div className="absolute -top-[9999px] left-0 w-full pointer-events-none opacity-0">
-                <p
-                    ref={measureRef}
-                    className={`text-white text-sm leading-[26px] font-custom ${textClassName}`}
-                    style={{
-                        width: '100%',
-                        margin: 0,
-                        whiteSpace: 'pre-wrap',
-                        overflow: 'visible',
-                    }}
-                />
+            <div className="absolute top-[-9999px] left-0 w-full pointer-events-none opacity-0">
+                <div className="px-4">
+                    <p
+                        ref={measureRef}
+                        className={`text-white text-sm leading-4 font-custom ${textClassName}`}
+                        style={{
+                            width: '100%',
+                            margin: 0,
+                            padding: 0,
+                            whiteSpace: 'pre-wrap',
+                            overflow: 'visible'
+                        }}
+                    />
+                </div>
             </div>
         </div>
     );
