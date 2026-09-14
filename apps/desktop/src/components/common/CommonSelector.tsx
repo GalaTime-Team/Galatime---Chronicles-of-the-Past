@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { playSfx } from '../../controllers/audioController';
 import { BUTTON_SFX_ID } from '../../constants/AudioConstants';
+import { ChevronLeft, ChevronRight } from '../../assets/GalatimeIcon';
 
 interface SelectorItem {
     id: string;
@@ -97,18 +98,13 @@ const CommonSelector: React.FC<CommonSelectorProps> = ({
                         onClick={handlePrev}
                         onMouseEnter={() => playSfx(BUTTON_SFX_ID)}
                         disabled={isAtStart}
-                        className={`mr-2 transition-all duration-200 ${isAtStart
-                                ? 'opacity-40 cursor-not-allowed'
-                                : 'opacity-100 cursor-pointer hover:scale-110 active:scale-95'
+                        className={`mr-2 transition-colors duration-200 ${isAtStart
+                                ? 'text-white/15 cursor-not-allowed'
+                                : 'text-white/70 cursor-pointer hover:text-white'
                             }`}
                         aria-label={t('selector.previous')}
                     >
-                        <img
-                            src="/images/ui/chevron/chevron_left.svg"
-                            alt={t('selector.chevronLeft')}
-                            className="h-[0.80em] w-auto block"
-                            style={{ height: '0.80em' }}
-                        />
+                        <ChevronLeft className="h-[0.80em] w-auto block" />
                     </button>
 
                     {/* Selected Option Title */}
@@ -121,18 +117,13 @@ const CommonSelector: React.FC<CommonSelectorProps> = ({
                         onClick={handleNext}
                         onMouseEnter={() => playSfx(BUTTON_SFX_ID)}
                         disabled={isAtEnd}
-                        className={`ml-2 transition-all duration-200 ${isAtEnd
-                                ? 'opacity-40 cursor-not-allowed'
-                                : 'opacity-100 cursor-pointer hover:scale-110 active:scale-95'
+                        className={`ml-2 transition-colors duration-200 ${isAtEnd
+                                ? 'text-white/15 cursor-not-allowed'
+                                : 'text-white/70 cursor-pointer hover:text-white'
                             }`}
                         aria-label={t('selector.next')}
                     >
-                        <img
-                            src="/images/ui/chevron/chevron_right.svg"
-                            alt={t('selector.chevronRight')}
-                            className="h-[0.80em] w-auto block"
-                            style={{ height: '0.80em' }}
-                        />
+                        <ChevronRight className="h-[0.80em] w-auto block" />
                     </button>
                 </div>
 
@@ -140,12 +131,12 @@ const CommonSelector: React.FC<CommonSelectorProps> = ({
                 {showDescription && currentItem?.description && (
                     isHorizontal ? (
                         <div
-                            className={`absolute top-full z-10 mt-1 text-galatime-accent text-xs text-center max-w-xs opacity-0 group-hover:opacity-100 transition-opacity duration-200 pointer-events-none ${descriptionClassName}`}
+                            className={`absolute top-full z-10 mt-1 text-galatime-accent text-xs text-center max-w-xs leading-2.5 opacity-0 group-hover:opacity-100 transition-opacity duration-200 pointer-events-none ${descriptionClassName}`}
                         >
                             {t(currentItem.description)}
                         </div>
                     ) : (
-                        <div className={`mt-1 text-galatime-accent text-xs text-center max-w-xs ${descriptionClassName}`}>
+                        <div className={`mt-1 text-galatime-accent text-xs text-center max-w-xs leading-2.5 ${descriptionClassName}`}>
                             {t(currentItem.description)}
                         </div>
                     )

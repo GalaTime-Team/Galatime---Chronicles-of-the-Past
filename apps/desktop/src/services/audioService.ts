@@ -15,8 +15,14 @@ function clampVolume(value: number): number {
     return Math.max(0, Math.min(100, Math.round(value)));
 }
 
+/** Extra attenuation applied to the SFX channel so effects don't overpower music/ambient. */
+const SFX_ATTENUATION = 0.7;
+
 function toNormalizedVolume(value: number): number {
-    return clampVolume(value) / 100;
+    const clamped = clampVolume(value) / 100;
+    // Perceptual curve (quadratic): makes each slider step feel
+    // roughly equally spaced to human ears instead of linear.
+    return clamped * clamped;
 }
 
 export class AudioService {
@@ -222,7 +228,8 @@ export class AudioService {
     }
 
     private getEffectiveVolume(channel: Exclude<AudioChannel, 'master'>): number {
-        return toNormalizedVolume(this.volumes.master) * toNormalizedVolume(this.volumes[channel]);
+        const volume = toNormalizedVolume(this.volumes.master) * toNormalizedVolume(this.volumes[channel]);
+        return channel === 'sfx' ? volume * SFX_ATTENUATION : volume;
     }
 
     private applyAllVolumes(): void {

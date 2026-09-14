@@ -1,7 +1,7 @@
 import React, { useEffect, useRef, useCallback } from 'react';
 import { motion, AnimatePresence } from "framer-motion";
 
-import CommonLoading from './CommonLoading';
+import { Loading } from '../../assets/GalatimeIcon';
 
 export type PopupMode = 'normal' | 'danger' | 'warning' | 'success';
 
@@ -71,7 +71,7 @@ const CommonPopupCard: React.FC<CommonPopupCardProps> = ({
 					onClick={handleClick}
 				>
 					<div className="flex items-center justify-center gap-4 m-2">
-						{showLoading && <CommonLoading imageClassName="h-5 " />}
+						{showLoading && <Loading imageClassName="h-5 " />}
 						<span className="leading-none">{message}</span>
 					</div>
 				</motion.div>

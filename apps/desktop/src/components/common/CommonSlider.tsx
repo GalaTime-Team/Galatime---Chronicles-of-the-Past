@@ -21,10 +21,10 @@ const CommonSlider: React.FC<CommonSliderProps> = ({
     max,
     value,
     onChange,
-    numBars = 11,
+    numBars = 10,
     snapToGrid = true,
-    className = "",
-    sliderContainerClassName = "w-48",
+    className = '',
+    sliderContainerClassName = 'w-48',
     baseHeight = 8,
     maxBarHeight = 24,
     step = 1,
@@ -42,23 +42,23 @@ const CommonSlider: React.FC<CommonSliderProps> = ({
         if (!containerRef.current) return;
 
         const rect = containerRef.current.getBoundingClientRect();
-        // Limit offsetX to be within the container width
         const offsetX = Math.max(0, Math.min(clientX - rect.left, rect.width));
         const percentage = offsetX / rect.width;
         let rawValue = min + percentage * (max - min);
 
         if (snapToGrid) {
-            const step = (max - min) / (numBars - 1);
-            const closestStep = Math.round((rawValue - min) / step);
-            rawValue = min + closestStep * step;
+            // Mantém os pontos de snap em 0%, 10%, ..., 100%.
+            const gridStep = (max - min) / numBars;
+            const closestStep = Math.round((rawValue - min) / gridStep);
+            rawValue = min + closestStep * gridStep;
         } else {
-            rawValue = Math.round(rawValue);
+            rawValue = Math.round(rawValue / step) * step;
         }
 
         const newValue = Math.max(min, Math.min(max, rawValue));
         setDragValue(newValue);
         onChange(newValue);
-    }, [min, max, snapToGrid, numBars, onChange]);
+    }, [min, max, snapToGrid, numBars, step, onChange]);
 
     const onMouseDown = (e: React.MouseEvent) => {
         setIsDragging(true);
@@ -87,41 +87,43 @@ const CommonSlider: React.FC<CommonSliderProps> = ({
     }, [isDragging, handleMove]);
 
     const displayValue = dragValue !== null ? dragValue : value;
-    const percentage = ((displayValue - min) / (max - min)) * 100;
+    const percentage = Math.max(0, Math.min(100, ((displayValue - min) / (max - min)) * 100));
+
+    // 0% = nenhuma barra; 100% = todas as barras.
+    // Cada barra acrescenta exatamente 1 / numBars da escala.
+    const activeBars = percentage <= 0
+        ? 0
+        : Math.min(numBars, Math.ceil((percentage / 100) * numBars));
 
     return (
         <div className={`flex flex-row items-center w-full gap-4 select-none ${className}`}>
-            {/* Title */}
             <span className="text-white text-lg font-medium whitespace-nowrap">
                 {title}
             </span>
 
-            {/* Espaço flexível entre o título e o slider */}
-            <div className="flex-1"></div>
+            <div className="flex-1" />
 
-            {/* Slider Container (largura fixa) */}
             <div
                 ref={containerRef}
                 className={`relative flex items-center cursor-pointer group ${sliderContainerClassName}`}
                 style={{ height: `${maxBarHeight}px` }}
                 onMouseDown={onMouseDown}
             >
-
-                {/* Bars */}
                 <div
                     className="absolute inset-x-0 flex items-center justify-between pointer-events-none"
                     style={{ height: `${maxBarHeight}px` }}
                 >
                     {bars.map((h, i) => {
-                        const barPosPercent = (i / (numBars - 1)) * 100;
-                        const activationThreshold = ((i + 1) / numBars) * 100;
-                        const isActive = percentage >= activationThreshold;
+                        const isActive = i < activeBars;
 
                         return (
                             <div
                                 key={i}
                                 style={{ height: `${h}px` }}
-                                className={`w-1 transition-colors duration-150 ${isActive ? 'bg-white' : 'bg-white/30'}`}
+                                className={`w-1 transition-colors duration-150 ${isActive
+                                    ? 'bg-white/70 group-hover:bg-white'
+                                    : 'bg-white/15'
+                                    }`}
                             />
                         );
                     })}

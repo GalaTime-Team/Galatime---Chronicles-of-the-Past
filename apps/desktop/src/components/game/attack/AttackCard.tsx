@@ -4,6 +4,7 @@ import { createPortal } from 'react-dom';
 
 import CommonHoverElement from '../../common/CommonHoverElement';
 import CommonHoverAttackType from '../../common/CommonHoverAttackType';
+import { ElementIcon } from '../../../assets/GalatimeIcon';
 
 import { useGame } from '../../../context/GameContext';
 
@@ -60,11 +61,11 @@ const AttackCard: React.FC<AttackCardProps> = ({
     return (
         <div
             onClick={() => onClick?.(attack)}
-            className={`relative w-72 flex items-center cursor-pointer group transition-transform active:scale-[.98] hover:scale-[1.01] ${className}`}
+            className={`relative w-72 flex items-center cursor-pointer group transition-colors ${className}`}
         >
             {/* The image on the left - positioned above the box */}
             <div className="absolute left-0 z-10 w-20 h-20 flex items-center justify-center">
-                <div className="w-[80px] h-[80px] overflow-hidden flex items-center justify-center">
+                <div className="w-20 h-20 overflow-hidden flex items-center justify-center">
                     <img
                         src={mainIconPath}
                         alt={title}
@@ -82,12 +83,12 @@ const AttackCard: React.FC<AttackCardProps> = ({
             </div>
 
             {/* The main box - shifted right to accommodate the icon */}
-            <div className="ml-8 my-2 mr-2 w-full bg-galatime-dark outline-white outline-3 outline flex flex-col text-white overflow-hidden gap-1">
+            <div className="ml-8 my-2 mr-2 w-full bg-galatime-dark hover:bg-galatime-darkHover outline-white outline-3 flex flex-col text-white overflow-hidden gap-1 transition-colors">
 
                 {/* Top Half */}
                 <div className="flex flex-1">
                     {/* Top Left: Name of the attack */}
-                    <div className="flex-1 flex items-center pl-11 text-xl font-medium truncate uppercase tracking-wide">
+                    <div className="flex-1 flex items-center pl-14 text-xl font-medium truncate uppercase tracking-wide">
                         {title}
                     </div>
 
@@ -98,19 +99,7 @@ const AttackCard: React.FC<AttackCardProps> = ({
                         onMouseLeave={() => setIsElementTooltipVisible(false)}
                         className="flex items-center justify-end p-1"
                     >
-                        <img
-                            src={elementIconPath}
-                            alt={elementId}
-                            className="h-5 w-5 object-contain"
-                            onError={(e) => {
-                                const target = e.target as HTMLImageElement;
-                                if (!target.src.includes('/images/elements/unknown.png')) {
-                                    target.src = '/images/elements/unknown.png';
-                                } else {
-                                    target.style.display = 'none';
-                                }
-                            }}
-                        />
+                    <ElementIcon id={elementId} className="h-5 w-5 object-contain" />
                     </div>
 
                     {/* Tooltip */}
@@ -135,7 +124,7 @@ const AttackCard: React.FC<AttackCardProps> = ({
                 {/* Bottom Half */}
                 <div className="flex flex-1 w-full">
                     {/* Bottom Left: Relevant stats */}
-                    <div className="flex-1 flex items-center pl-11 pb-1 gap-2 text-sm text-white/40 leading-none">
+                    <div className="flex-1 flex items-center pl-14 pb-1 gap-2 text-sm text-white/40 leading-none">
                         <div className="flex gap-1">
                             <span>PW</span>
                             <span className="text-white">{power}</span>

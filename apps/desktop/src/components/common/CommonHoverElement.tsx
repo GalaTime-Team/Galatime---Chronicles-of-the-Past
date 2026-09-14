@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { getElementsWeaknesses, ElementMultiplierResult, getElementsDamage } from '../../controllers/elementController';
+import { ElementIcon } from '../../assets/GalatimeIcon';
 
 interface CommonHoverElementProps {
     elementId: string;
@@ -77,19 +78,7 @@ const CommonHoverElement: React.FC<CommonHoverElementProps> = ({
                 <h2 className="text-lg font-bold text-white uppercase tracking-wider">
                     {elementName || elementId}
                 </h2>
-                <img
-                    src={`/images/elements/${elementId}.png`}
-                    alt={elementId}
-                    className="w-5 h-5 pixelated"
-                    onError={(e) => {
-                        const target = e.target as HTMLImageElement;
-                        if (!target.src.includes('/images/elements/unknown.png')) {
-                            target.src = '/images/elements/unknown.png';
-                        } else {
-                            target.style.display = 'none';
-                        }
-                    }}
-                />
+                <ElementIcon id={elementId} className="w-5 h-5 pixelated" />
             </div>
 
             {/* Weakness Table */}
@@ -100,19 +89,7 @@ const CommonHoverElement: React.FC<CommonHoverElementProps> = ({
                         {leftColumn.map(([id, multiplier]) => (
                             <div key={id} className="flex items-center justify-between mb-[-10px] whitespace-nowrap">
                                 <div className="flex items-center w-4 h-4 mr-1">
-                                    <img
-                                        src={`/images/elements/${id}.png`}
-                                        alt={id}
-                                        className="w-4 h-4 pixelated"
-                                        onError={(e) => {
-                                            const target = e.target as HTMLImageElement;
-                                            if (!target.src.includes('/images/elements/unknown.png')) {
-                                                target.src = '/images/elements/unknown.png';
-                                            } else {
-                                                target.style.display = 'none';
-                                            }
-                                        }}
-                                    />
+                                    <ElementIcon id={id} className="w-4 h-4 pixelated" />
                                 </div>
                                 <span className={`text-lg ${getMultiplierStyle(multiplier.score)}`}>
                                     x{multiplier.score}
@@ -126,19 +103,7 @@ const CommonHoverElement: React.FC<CommonHoverElementProps> = ({
                         {rightColumn.map(([id, multiplier]) => (
                             <div key={id} className="flex items-center justify-between mb-[-10px] whitespace-nowrap">
                                 <div className="flex items-center w-4 h-4 mr-1">
-                                    <img
-                                        src={`/images/elements/${id}.png`}
-                                        alt={id}
-                                        className="w-4 h-4 pixelated"
-                                        onError={(e) => {
-                                            const target = e.target as HTMLImageElement;
-                                            if (!target.src.includes('/images/elements/unknown.png')) {
-                                                target.src = '/images/elements/unknown.png';
-                                            } else {
-                                                target.style.display = 'none';
-                                            }
-                                        }}
-                                    />
+                                    <ElementIcon id={id} className="w-4 h-4 pixelated" />
                                 </div>
                                 <span className={`text-lg ${getMultiplierStyle(multiplier.score)}`}>
                                     x{multiplier.score}

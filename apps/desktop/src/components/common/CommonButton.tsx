@@ -25,13 +25,13 @@ const CommonButton: React.FC<CommonButtonProps> = ({
     const handleMouseEnter = () => {
         playSfx('button_sfx');
     };
-    // Base styles — slower transition, scale down on click
-    const baseStyles = "relative inline-flex items-center justify-center uppercase tracking-widest transition-all duration-300 ease-out active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed disabled:active:scale-100 select-none rounded-none border-4 leading-none";
+    // Base styles — color-based transitions on hover/active
+    const baseStyles = "relative inline-flex items-center justify-center uppercase tracking-widest transition-colors duration-300 ease-out disabled:opacity-50 disabled:cursor-not-allowed select-none rounded-none border-4 leading-none";
 
-    // Variant styles — borders now transition with hover for smoothness
+    // Variant styles — colors transition with hover for smoothness
     const variants: Record<ButtonVariant, string> = {
         primary: "bg-galatime-primary border-galatime-primary text-white hover:bg-galatime-primaryHover hover:border-galatime-primaryHover",
-        outline: "bg-transparent border-white/30 text-white hover:bg-white/10 hover:border-white/70",
+        outline: "bg-transparent border-white/30 text-white/70 hover:bg-white hover:border-white hover:text-galatime-dark",
         danger: "bg-galatime-error border-galatime-error text-white hover:bg-galatime-errorHover hover:border-galatime-errorHover",
         success: "bg-galatime-success border-galatime-success text-white hover:bg-galatime-successHover hover:border-galatime-successHover",
     };

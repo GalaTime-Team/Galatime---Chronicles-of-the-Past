@@ -12,6 +12,7 @@ export default {
           primaryHover: '#8F92D6',
           accent: '#C5B4E9',
           dark: '#09091A',
+          darkHover: '#14152E',
           success: '#236050',
           successHover: '#36967C',
           warning: '#FFBB00',

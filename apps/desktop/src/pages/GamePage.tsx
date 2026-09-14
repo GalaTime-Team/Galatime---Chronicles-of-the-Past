@@ -18,12 +18,13 @@ import { useGame } from '../context/GameContext';
 
 import CommonSelector from '../components/common/CommonSelector';
 import CommonSwitch from '../components/common/CommonSwitch';
-import CommonLoading from '../components/common/CommonLoading';
+import { Loading } from '../assets/GalatimeIcon';
 import CommonButton from '../components/common/CommonButton';
 import CommonInput from '../components/common/CommonInput';
 import CommonSlider from '../components/common/CommonSlider';
 import CommonPopupCard, { PopupMode } from '../components/common/CommonPopupCard';
 import CombatHUD, { Weapon, Attack } from '../components/game/attack/CombatHUD';
+import GameDialog from '../components/game/dialog/GameDialog';
 
 export function GamePage() {
 	const { t } = useTranslation('common');
@@ -258,7 +259,7 @@ export function GamePage() {
 			</div>
 
 			<div className="flex flex-col gap-6 items-center">
-				<CommonLoading
+				<Loading
 					imageClassName="h-5"
 				/>
 
@@ -379,6 +380,14 @@ export function GamePage() {
 					onAttackClick={handleAttackClick}
 					onExtraMovementClick={handleExtraMovementClick}
 					gridConfig={{ columns: 2, rows: 2 }}
+				/>
+
+				<GameDialog
+					speakerName="Elder Arion"
+					text="Lorem Ipsum, lorem ipsum lorem ipsum lorem ipsum lorem ipsum lorem ipsum lorem ipsum lorem ipsum lorem ipsum lorem ipsum lorem ipsum lorem ipsum lorem ipsum lorem ipsum lorem ipsum lorem ipsum lorem ipsum lorem ipsum lorem ipsum lorem ipsum lorem ipsum lorem ipsum lorem ipsum lorem ipsum lorem ipsum lorem ipsum lorem ipsum lorem ipsum lorem ipsum lorem ipsum lorem ipsum!"
+					textSpeed={40}
+					className="max-w-xl"
+					onComplete={() => console.log('Dialog continued')}
 				/>
 			</div>
 

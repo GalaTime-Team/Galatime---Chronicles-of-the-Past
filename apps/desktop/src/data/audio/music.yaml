@@ -9,3 +9,11 @@
 - id: hivv_village
   src: ../assets/music/Hivv Village.ogg
   loop: true
+
+- id: dream_world
+  src: ../assets/music/Dream World.ogg
+  loop: true
+
+- id: deeper_meaning
+  src: ../assets/music/Deeper Meaning.ogg
+  loop: true

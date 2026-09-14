@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { playSfx } from '../../controllers/audioController';
+import { SwitchIcon } from '../../assets/GalatimeIcon';
 
 interface CommonSwitchProps {
     /** The title displayed above the switch */
@@ -23,6 +24,8 @@ interface CommonSwitchProps {
     orientation?: 'horizontal' | 'vertical';
     /** Whether to show the description or not */
     showDescription?: boolean;
+    /** Whether the switch is disabled */
+    disabled?: boolean;
 }
 
 const CommonSwitch: React.FC<CommonSwitchProps> = ({
@@ -36,34 +39,34 @@ const CommonSwitch: React.FC<CommonSwitchProps> = ({
     switchClassName = '',
     descriptionClassName = '',
     showDescription = false,
+    disabled = false,
 }) => {
     const { t } = useTranslation('common');
     const [isChecked, setIsChecked] = useState(defaultChecked);
     const isHorizontal = orientation === 'horizontal';
 
     const handleToggle = () => {
+        if (disabled) return;
         const newState = !isChecked;
         setIsChecked(newState);
         onChange(newState);
     };
 
     const handleMouseEnter = () => {
-        playSfx('button_sfx');
+        if (!disabled) playSfx('button_sfx');
     };
 
     return (
         <div
-            className={`select-none ${
-                isHorizontal
-                    ? 'flex flex-row items-center justify-between w-full'
-                    : 'flex flex-col items-center'
-            } ${containerClassName}`}
+            className={`select-none ${isHorizontal
+                ? 'flex flex-row items-center justify-between w-full'
+                : 'flex flex-col items-center'
+                } ${containerClassName}`}
         >
             {/* Title Section */}
             <h2
-                className={`text-center ${
-                    isHorizontal ? 'text-lg text-white' : 'text-white/70 text-2xl'
-                } ${titleClassName}`}
+                className={`text-center ${isHorizontal ? 'text-lg text-white' : 'text-white/70 text-2xl'
+                    } ${titleClassName}`}
             >
                 {title}
             </h2>
@@ -74,14 +77,14 @@ const CommonSwitch: React.FC<CommonSwitchProps> = ({
                 <button
                     onClick={handleToggle}
                     onMouseEnter={handleMouseEnter}
-                    className={`text-2xl focus:outline-none hover:scale-105 active:scale-95 transition-transform duration-150 ${switchClassName}`}
+                    disabled={disabled}
+                    className={`text-2xl focus:outline-none hover:scale-105 active:scale-95 transition-all duration-150 ${disabled
+                        ? 'text-white/15 cursor-not-allowed'
+                        : 'text-white/70 cursor-pointer hover:text-white'
+                        } ${switchClassName}`}
                     aria-label={`${t('switch.toggle')} ${title} ${isChecked ? t('switch.off') : t('switch.on')}`}
                 >
-                    <img
-                        src={isChecked ? '/images/ui/switch/switch_on.svg' : '/images/ui/switch/switch_off.svg'}
-                        alt={isChecked ? t('switch.altOn') : t('switch.altOff')}
-                        className={`h-[0.55em] w-auto block transition-all duration-50 ${isChecked ? 'opacity-100' : 'opacity-40'}`}
-                    />
+                    <SwitchIcon checked={isChecked} />
                 </button>
 
                 {/* Description Section */}

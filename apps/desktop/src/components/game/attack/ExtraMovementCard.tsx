@@ -1,3 +1,6 @@
+import React from 'react';
+import { AppIcon } from '../../../assets/GalatimeIcon';
+
 interface ExtraMovementCardProps {
     iconPath: string;
     title: string;
@@ -15,26 +18,14 @@ const ExtraMovementCard: React.FC<ExtraMovementCardProps> = ({
     return (
         <div
             onClick={onClick}
-            className={`relative w-auto flex items-center cursor-pointer group transition-transform active:scale-[.98] hover:scale-[1.01] ${className}`}
+            className={`relative w-auto flex items-center cursor-pointer group transition-colors ${className}`}
         >
             {/* Main Box */}
-            <div className="flex flex-row w-full bg-galatime-dark border-2 border-white text-white overflow-hidden items-center p-1">
+            <div className="flex flex-row w-full bg-galatime-dark hover:bg-galatime-darkHover border-2 border-white/70 group-hover:border-white text-white/70 group-hover:text-white overflow-hidden items-center p-1 transition-colors">
 
                 {/* Left: Icon */}
                 <div className="flex-shrink-0 flex items-center justify-center mr-1">
-                    <img
-                        src={iconPath}
-                        alt={title}
-                        className="w-3 h-3 object-contain"
-                        onError={(e) => {
-                            const target = e.target as HTMLImageElement;
-                            if (!target.src.includes('/images/elements/unknown.png')) {
-                                target.src = '/images/elements/unknown.png';
-                            } else {
-                                target.style.display = 'none';
-                            }
-                        }}
-                    />
+                    <AppIcon src={iconPath} alt={title} className="w-3 h-3" />
                 </div>
 
                 {/* Right: Name */}
