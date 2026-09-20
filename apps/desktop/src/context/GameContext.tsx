@@ -17,8 +17,8 @@ import {
 } from '../constants/GamepadConstants';
 import type { Difficulty } from '../constants/DifficultyConstants';
 import {
-  findControlForEvent,
-  findControlForGamepadButton,
+  findControlsForEvent,
+  findControlsForGamepadButton,
   normalizeControlBindings,
   normalizeControlKeys,
   normalizeGamepadButtons,
@@ -120,8 +120,8 @@ interface GameContextType {
   setGameState: React.Dispatch<React.SetStateAction<GameState>>;
   /** Inputs currently bound to each control. */
   controls: ControlBindings;
-  /** Resolves the control triggered by a keyboard event, or `null` when the key is unbound. */
-  getControlId: (event: KeyboardEvent) => ControlId | null;
+  /** Resolves every control triggered by a keyboard event; the same key may be shared on purpose. */
+  getControlIds: (event: KeyboardEvent) => ControlId[];
   /** `true` when the event triggers the given control. */
   isControl: (event: KeyboardEvent, id: ControlId) => boolean;
   /** Rebinds a single control; an empty list leaves that device unable to trigger it. */
@@ -187,14 +187,14 @@ export function GameProvider({ children }: { children: ReactNode }) {
     controlsRef.current = controls;
   }, [controls]);
 
-  const getControlId = useCallback(
-    (event: KeyboardEvent) => findControlForEvent(event, controls),
+  const getControlIds = useCallback(
+    (event: KeyboardEvent) => findControlsForEvent(event, controls),
     [controls],
   );
 
   const isControl = useCallback(
-    (event: KeyboardEvent, id: ControlId) => getControlId(event) === id,
-    [getControlId],
+    (event: KeyboardEvent, id: ControlId) => getControlIds(event).includes(id),
+    [getControlIds],
   );
 
   const setControlBinding = useCallback((id: ControlId, binding: ControlBinding) => {
@@ -298,8 +298,9 @@ export function GameProvider({ children }: { children: ReactNode }) {
 
           buttonSubscribers.current.forEach((listener) => listener(button));
 
-          const controlId = findControlForGamepadButton(button, controlsRef.current);
-          if (controlId) controlSubscribers.current.forEach((listener) => listener(controlId));
+          for (const controlId of findControlsForGamepadButton(button, controlsRef.current)) {
+            controlSubscribers.current.forEach((listener) => listener(controlId));
+          }
         }
       }
 
@@ -315,7 +316,7 @@ export function GameProvider({ children }: { children: ReactNode }) {
         gameState,
         setGameState,
         controls,
-        getControlId,
+        getControlIds,
         isControl,
         setControlBinding,
         gamepad,
@@ -344,8 +345,8 @@ export function useGame() {
  * key or button, so rebinding a control in Settings keeps working everywhere.
  */
 export function useControls() {
-  const { controls, getControlId, isControl, setControlBinding, gamepad, rumble } = useGame();
-  return { controls, getControlId, isControl, setControlBinding, gamepad, rumble };
+  const { controls, getControlIds, isControl, setControlBinding, gamepad, rumble } = useGame();
+  return { controls, getControlIds, isControl, setControlBinding, gamepad, rumble };
 }
 
 /** Handlers keyed by the control they respond to. */
@@ -361,29 +362,27 @@ export type ControlHandlers = Partial<Record<ControlId, () => void>>;
  * keys the game already handled, such as scrolling with Space or the arrow keys.
  */
 export function useControlListener(handlers: ControlHandlers, options: { preventDefault?: boolean } = {}) {
-  const { getControlId, subscribeToControl } = useGame();
+  const { getControlIds, subscribeToControl } = useGame();
   const { preventDefault = true } = options;
 
   const handlersRef = useRef(handlers);
-  const getControlIdRef = useRef(getControlId);
+  const getControlIdsRef = useRef(getControlIds);
   const preventDefaultRef = useRef(preventDefault);
 
   useEffect(() => {
     handlersRef.current = handlers;
-    getControlIdRef.current = getControlId;
+    getControlIdsRef.current = getControlIds;
     preventDefaultRef.current = preventDefault;
   });
 
   useEffect(() => {
     const handleKeyDown = (event: KeyboardEvent) => {
-      const controlId = getControlIdRef.current(event);
-      if (!controlId) return;
-
-      const handler = handlersRef.current[controlId];
-      if (!handler) return;
+      // A shared key fires every control bound to it, so each listening component reacts.
+      const triggered = getControlIdsRef.current(event).filter((controlId) => handlersRef.current[controlId]);
+      if (triggered.length === 0) return;
 
       if (preventDefaultRef.current) event.preventDefault();
-      handler();
+      for (const controlId of triggered) handlersRef.current[controlId]?.();
     };
 
     window.addEventListener('keydown', handleKeyDown);

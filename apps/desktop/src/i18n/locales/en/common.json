@@ -122,6 +122,7 @@
 		},
 		"controls": {
 			"confirm": "Confirm",
+			"deny": "Deny",
 			"advance": "Advance dialogue",
 			"keyboard": "Keyboard",
 			"gamepad": "Controller",

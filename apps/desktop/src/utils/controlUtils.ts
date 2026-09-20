@@ -177,26 +177,36 @@ export function normalizeControlBindings(raw: unknown): Partial<ControlBindings>
     return normalized;
 }
 
+/** Device of a physical input, matching the shape stored on each binding. */
+export type ControlInputDevice = 'keyboard' | 'gamepad';
+
 /**
- * Resolves the control triggered by a keyboard event, or `null` when the key is
- * unbound. When a key is shared by several controls, the first declaration in
- * `CONTROL_DEFINITIONS` wins.
+ * Resolves every control triggered by a keyboard event. The same key may be bound to
+ * several controls on purpose — controllers have few buttons — so all matches fire,
+ * in declaration order. Returns an empty list when the key is unbound.
  */
-export function findControlForEvent(event: KeyboardEvent, bindings: ControlBindings): ControlId | null {
-    const code = event.code || event.key;
-
-    for (const definition of CONTROL_DEFINITIONS) {
-        if (bindings[definition.id]?.keyboard?.includes(code)) return definition.id;
-    }
-
-    return null;
+export function findControlsForEvent(event: KeyboardEvent, bindings: ControlBindings): ControlId[] {
+    return findControlsForInput(event.code || event.key, 'keyboard', bindings);
 }
 
 /** Same resolution for a controller button, dispatched by the gamepad polling loop. */
-export function findControlForGamepadButton(button: GamepadButtonId, bindings: ControlBindings): ControlId | null {
+export function findControlsForGamepadButton(button: GamepadButtonId, bindings: ControlBindings): ControlId[] {
+    return findControlsForInput(button, 'gamepad', bindings);
+}
+
+/** Every control bound to one physical input on a device. */
+export function findControlsForInput(input: string, device: ControlInputDevice, bindings: ControlBindings): ControlId[] {
+    const matched: ControlId[] = [];
+
     for (const definition of CONTROL_DEFINITIONS) {
-        if (bindings[definition.id]?.gamepad?.includes(button)) return definition.id;
+        const inputs = bindings[definition.id]?.[device] as readonly string[] | undefined;
+        if (inputs?.includes(input)) matched.push(definition.id);
     }
 
-    return null;
+    return matched;
+}
+
+/** `true` when the input is also bound to another control — shared, not necessarily wrong. */
+export function isInputShared(id: ControlId, input: string, device: ControlInputDevice, bindings: ControlBindings): boolean {
+    return findControlsForInput(input, device, bindings).some((otherId) => otherId !== id);
 }

@@ -20,12 +20,17 @@ export const CONTROL_DEFINITIONS = [
     {
         id: 'confirm',
         label: 'settings.controls.confirm',
-        defaultBinding: { keyboard: ['Enter'], gamepad: ['south', 'east'] },
+        defaultBinding: { keyboard: ['Enter'], gamepad: ['south'] },
+    },
+    {
+        id: 'deny',
+        label: 'settings.controls.deny',
+        defaultBinding: { keyboard: ['Escape'], gamepad: ['east'] },
     },
     {
         id: 'advance',
         label: 'settings.controls.advance',
-        defaultBinding: { keyboard: ['Space'], gamepad: ['south', 'east'] },
+        defaultBinding: { keyboard: ['Space'], gamepad: ['south'] },
     },
 ] as const;
 

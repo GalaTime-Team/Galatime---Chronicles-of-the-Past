@@ -8,7 +8,7 @@ import {
 } from '../../../constants/ControlConstants';
 import { GAMEPAD_FAMILY_LABELS } from '../../../constants/GamepadConstants';
 import { useControls, useGamepadListener } from '../../../context/GameContext';
-import { formatControlKey, normalizeControlKeys } from '../../../utils/controlUtils';
+import { formatControlKey, isInputShared, normalizeControlKeys } from '../../../utils/controlUtils';
 import { getGamepadButtonLabel } from '../../../utils/gamepadUtils';
 import type { SettingsPanelProps } from './types';
 
@@ -16,11 +16,12 @@ import type { SettingsPanelProps } from './types';
 type RebindingDevice = 'keyboard' | 'gamepad';
 
 /** Badge shaped like a key cap; the `group-hover` tone comes from the button wrapping it. */
-function KeyCap({ variant = 'default', children }: { variant?: 'default' | 'listening' | 'empty'; children: ReactNode }) {
+function KeyCap({ variant = 'default', children }: { variant?: 'default' | 'listening' | 'empty' | 'conflict'; children: ReactNode }) {
     const variantStyles = {
         default: 'border-2 border-galatime-primary/50 text-galatime-accent group-hover:border-galatime-accent',
         listening: 'animate-pulse border-2 border-galatime-accent bg-galatime-primary/20 text-galatime-accent',
         empty: 'border-2 border-dashed border-white/30 text-white/40',
+        conflict: 'border-2 border-galatime-error/70 text-galatime-error group-hover:border-galatime-error',
     } as const;
 
     return <kbd className={`min-w-16 px-3 py-1 text-center ${variantStyles[variant]}`}>{children}</kbd>;
@@ -36,10 +37,6 @@ export function SettingsControlsPanel({ settings }: SettingsPanelProps) {
 
     //region — Helpers
     const bindingOf = (id: ControlId): ControlBinding => settings.controls[id] ?? { keyboard: [], gamepad: [] };
-
-    /** Every other control, so an input can be taken away from whoever held it. */
-    const otherControlIds = (id: ControlId): ControlId[] =>
-        CONTROL_DEFINITIONS.map((definition) => definition.id).filter((candidate) => candidate !== id);
 
     /**
      * While a control is being rebound the listener runs in the capture phase, so the
@@ -67,17 +64,8 @@ export function SettingsControlsPanel({ settings }: SettingsPanelProps) {
                 return;
             }
 
-            // A key triggers a single control, so it is dropped from whichever other control held it.
-            for (const otherId of otherControlIds(rebinding.id)) {
-                const other = bindingOf(otherId);
-                if (other.keyboard.includes(pressedCode)) {
-                    setControlBinding(otherId, {
-                        ...other,
-                        keyboard: other.keyboard.filter((code) => code !== pressedCode),
-                    });
-                }
-            }
-
+            // The same key may serve several controls — controllers have few buttons —
+            // so it is kept on whoever else holds it and only flagged as a conflict.
             setControlBinding(rebinding.id, { ...bindingOf(rebinding.id), keyboard: [pressedCode] });
             setRebinding(null);
         };
@@ -89,16 +77,6 @@ export function SettingsControlsPanel({ settings }: SettingsPanelProps) {
     // Same idea for controllers: the next button pressed becomes the binding.
     useGamepadListener((button) => {
         if (rebinding?.device !== 'gamepad') return;
-
-        for (const otherId of otherControlIds(rebinding.id)) {
-            const other = bindingOf(otherId);
-            if (other.gamepad.includes(button)) {
-                setControlBinding(otherId, {
-                    ...other,
-                    gamepad: other.gamepad.filter((candidate) => candidate !== button),
-                });
-            }
-        }
 
         setControlBinding(rebinding.id, { ...bindingOf(rebinding.id), gamepad: [button] });
         setRebinding(null);
@@ -133,6 +111,16 @@ export function SettingsControlsPanel({ settings }: SettingsPanelProps) {
                         <span className="text-lg text-white">{t(definition.label)}</span>
 
                         <span className="flex flex-wrap items-center justify-end gap-x-4 gap-y-2">
+                            {isCustom && (
+                                <button
+                                    type="button"
+                                    onClick={() => setControlBinding(definition.id, defaults)}
+                                    className="cursor-pointer text-xs uppercase tracking-widest text-white/40 transition-colors hover:text-white"
+                                >
+                                    {t('settings.controls.reset')}
+                                </button>
+                            )}
+                            
                             {gamepad ? (
                                 /* Gamepad connected — show only the controller binding. */
                                 <span className="flex items-center gap-2">
@@ -146,7 +134,12 @@ export function SettingsControlsPanel({ settings }: SettingsPanelProps) {
                                             <KeyCap variant="listening">{t('settings.controls.listeningGamepad')}</KeyCap>
                                         ) : binding.gamepad.length > 0 ? (
                                             binding.gamepad.map((button) => (
-                                                <KeyCap key={button}>{getGamepadButtonLabel(button, family)}</KeyCap>
+                                                <KeyCap
+                                                    key={button}
+                                                    variant={isInputShared(definition.id, button, 'gamepad', settings.controls) ? 'conflict' : 'default'}
+                                                >
+                                                    {getGamepadButtonLabel(button, family)}
+                                                </KeyCap>
                                             ))
                                         ) : (
                                             <KeyCap variant="empty">{t('settings.controls.unbound')}</KeyCap>
@@ -165,22 +158,19 @@ export function SettingsControlsPanel({ settings }: SettingsPanelProps) {
                                         {isListening('keyboard') ? (
                                             <KeyCap variant="listening">{t('settings.controls.listening')}</KeyCap>
                                         ) : binding.keyboard.length > 0 ? (
-                                            binding.keyboard.map((code) => <KeyCap key={code}>{formatControlKey(code)}</KeyCap>)
+                                            binding.keyboard.map((code) => (
+                                                <KeyCap
+                                                    key={code}
+                                                    variant={isInputShared(definition.id, code, 'keyboard', settings.controls) ? 'conflict' : 'default'}
+                                                >
+                                                    {formatControlKey(code)}
+                                                </KeyCap>
+                                            ))
                                         ) : (
                                             <KeyCap variant="empty">{t('settings.controls.unbound')}</KeyCap>
                                         )}
                                     </button>
                                 </span>
-                            )}
-
-                            {isCustom && (
-                                <button
-                                    type="button"
-                                    onClick={() => setControlBinding(definition.id, defaults)}
-                                    className="cursor-pointer text-xs uppercase tracking-widest text-white/40 transition-colors hover:text-white"
-                                >
-                                    {t('settings.controls.reset')}
-                                </button>
                             )}
                         </span>
                     </div>
