@@ -1,6 +1,7 @@
 import { useTranslation } from 'react-i18next';
 import { setChannelVolume, setMasterVolume } from '../../../controllers/audioController';
 import CommonSlider from '../../../components/common/CommonSlider';
+import CommonSwitch from '../../../components/common/CommonSwitch';
 import type { SettingsPanelProps } from './types';
 
 export function SettingsSoundPanel({ settings, updateSettings }: SettingsPanelProps) {
@@ -17,6 +18,17 @@ export function SettingsSoundPanel({ settings, updateSettings }: SettingsPanelPr
     //region — Render
     return (
         <div className="space-y-2">
+            {/* Now Playing Card Toggle */}
+            <CommonSwitch
+                key={`nowPlaying-${settings.showNowPlayingMusic}`}
+                title={t('settings.sound.nowPlaying.title')}
+                description={t('settings.sound.nowPlaying.description')}
+                defaultChecked={settings.showNowPlayingMusic}
+                onChange={(checked) => updateSettings({ showNowPlayingMusic: checked })}
+                showDescription
+                containerClassName="setting-line border-b-4 border-white/10 py-4"
+            />
+
             {/* Volume Sliders (master, music, sfx, ambient) */}
             {(['master', 'music', 'sfx', 'ambient'] as const).map((channel) => (
                 <div key={channel} className="border-b-4 border-white/10 py-4">

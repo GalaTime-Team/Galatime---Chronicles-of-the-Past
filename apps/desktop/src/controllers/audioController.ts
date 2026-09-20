@@ -5,7 +5,7 @@ import {
     SFX_TRACKS,
 } from '../constants/AudioConstants';
 import { AudioService } from '../services/audioService';
-import type { AudioChannel, AudioVolumes, PlayOptions, PlaySfxOptions } from '../types/AudioType';
+import type { AudioChannel, AudioTrackDefinition, AudioVolumes, PlayOptions, PlaySfxOptions } from '../types/AudioType';
 
 const audioService = new AudioService(
     {
@@ -38,6 +38,11 @@ export function setAllVolumes(volumes: Partial<AudioVolumes>): void {
 
 export async function playMusic(trackId: string, options?: PlayOptions): Promise<boolean> {
     return audioService.playMusic(trackId, options);
+}
+
+/** Notifies the caller every time a music track starts playing; returns an unsubscribe function. */
+export function subscribeToMusicStarted(listener: (track: AudioTrackDefinition) => void): () => void {
+    return audioService.subscribeToMusicStarted(listener);
 }
 
 export function stopMusic(): void {

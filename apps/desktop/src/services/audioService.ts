@@ -41,6 +41,9 @@ export class AudioService {
     private currentMusicTrackId: string | null = null;
     private currentAmbientTrackId: string | null = null;
 
+    /** Listeners notified whenever a music track actually starts playing. */
+    private readonly musicStartedListeners = new Set<(track: AudioTrackDefinition) => void>();
+
     constructor(catalog: AudioCatalog, initialVolumes: AudioVolumes) {
         this.trackMap = {
             music: new Map(catalog.music.map((track) => [track.id, track])),
@@ -62,6 +65,17 @@ export class AudioService {
 
     getCurrentMusicTrackId(): string | null {
         return this.currentMusicTrackId;
+    }
+
+    /**
+     * Subscribes to every music track that begins playing, including a restart of the
+     * current one. The returned function unsubscribes.
+     */
+    subscribeToMusicStarted(listener: (track: AudioTrackDefinition) => void): () => void {
+        this.musicStartedListeners.add(listener);
+        return () => {
+            this.musicStartedListeners.delete(listener);
+        };
     }
 
     setMasterVolume(value: number): void {
@@ -116,6 +130,7 @@ export class AudioService {
 
         try {
             await this.musicPlayer.play();
+            this.notifyMusicStarted(track);
             return true;
         } catch {
             return false;
@@ -225,6 +240,17 @@ export class AudioService {
         }
 
         this.activeSfxPlayers.clear();
+    }
+
+    /** Tells every subscriber which track just started; a listener must never break playback. */
+    private notifyMusicStarted(track: AudioTrackDefinition): void {
+        for (const listener of this.musicStartedListeners) {
+            try {
+                listener(track);
+            } catch {
+                // Ignore subscriber failures: playback has already begun.
+            }
+        }
     }
 
     private getEffectiveVolume(channel: Exclude<AudioChannel, 'master'>): number {

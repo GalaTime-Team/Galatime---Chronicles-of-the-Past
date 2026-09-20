@@ -13,12 +13,12 @@
     "windows": [
       {
         "title": "Galatime - Chronicles of the Past",
-        "width": 1440,
-        "height": 900,
-        "minWidth": 1100,
-        "minHeight": 700,
+        "width": 1280,
+        "height": 720,
+        "minWidth": 854,
+        "minHeight": 480,
         "center": true,
-        "resizable": false,
+        "resizable": true,
         "fullscreen": false,
         "visible": true
       }

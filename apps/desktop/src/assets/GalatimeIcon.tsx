@@ -84,6 +84,35 @@ export const SwitchIcon: React.FC<SwitchIconProps> = ({ checked, className = '' 
   )
 );
 
+// --- Music Note Icon ---
+interface MusicNoteIconProps {
+  className?: string;
+}
+
+/**
+ * Music note from `public/images/ui/misc/music_note.svg`, used by the "now playing" card.
+ *
+ * The file paints its own path white, so it is applied as a CSS mask and filled with
+ * `currentColor` instead of being embedded with `<img>`: that keeps it following the accent
+ * tone of whatever renders it, exactly like the inline icons above.
+ */
+export const MusicNote: React.FC<MusicNoteIconProps> = ({ className = '' }) => (
+  <span
+    aria-hidden="true"
+    className={`block h-[0.9em] w-[0.9em] bg-current ${className}`}
+    style={{
+      maskImage: 'url(/images/ui/misc/music_note.svg)',
+      WebkitMaskImage: 'url(/images/ui/misc/music_note.svg)',
+      maskRepeat: 'no-repeat',
+      WebkitMaskRepeat: 'no-repeat',
+      maskPosition: 'center',
+      WebkitMaskPosition: 'center',
+      maskSize: 'contain',
+      WebkitMaskSize: 'contain',
+    }}
+  />
+);
+
 // --- Element Icon ---
 interface ElementIconProps {
   id: string;

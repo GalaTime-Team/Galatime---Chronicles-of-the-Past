@@ -46,6 +46,8 @@ export interface GameSettings {
   difficulty: Difficulty;
   fightingTooltipVisible: boolean;
   actionsTooltipVisible: boolean;
+  /** Shows a card naming the track every time a music track starts playing. */
+  showNowPlayingMusic: boolean;
   audio: {
     master: number;
     music: number;
@@ -149,6 +151,7 @@ export const DEFAULT_SETTINGS: GameSettings = {
   difficulty: 'normal',
   fightingTooltipVisible: true,
   actionsTooltipVisible: true,
+  showNowPlayingMusic: false,
   audio: { ...DEFAULT_AUDIO_VOLUMES },
   currentMusicTrackId: DEFAULT_MUSIC_TRACK_ID,
   controls: buildDefaultControlBindings(),

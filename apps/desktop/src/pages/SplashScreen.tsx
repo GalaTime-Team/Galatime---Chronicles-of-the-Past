@@ -2,6 +2,7 @@ import { useCallback, useEffect, useRef, useState } from 'react';
 import { motion } from 'framer-motion';
 import { useTranslation } from 'react-i18next';
 import { DEFAULT_MUSIC_TRACK_ID } from '../constants/AudioConstants';
+import { SPLASH_TO_TITLE_DURATION } from '../constants/AnimationConstants';
 import { playMusic } from '../controllers/audioController';
 import { loadAndCacheBootstrap } from '../services/bootstrapService';
 
@@ -10,7 +11,7 @@ interface SplashScreenProps {
 }
 
 /** Fade-out duration (in seconds) before handing control to the title menu. */
-const FADE_DURATION = 0.5;
+const FADE_DURATION = SPLASH_TO_TITLE_DURATION;
 /** How long the splash lingers before auto-advancing once bootstrap is done (ms). */
 const AUTO_ADVANCE_DELAY = 2000;
 

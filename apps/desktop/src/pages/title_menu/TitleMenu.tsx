@@ -2,10 +2,17 @@ import { useCallback, useEffect, useRef, useState } from 'react';
 import { motion } from 'framer-motion';
 import { useTranslation } from 'react-i18next';
 import { DEFAULT_MUSIC_TRACK_ID } from '../../constants/AudioConstants';
-import { PAGE_ENTER_TRANSITION, PAGE_FADE_TRANSITION } from '../../constants/AnimationConstants';
+import {
+    SPLASH_TITLE_CONTAINER_VARIANTS,
+    SPLASH_TITLE_ITEM_VARIANTS,
+    SPLASH_TO_TITLE_TRANSITION,
+    PAGE_ENTER_TRANSITION,
+    PAGE_FADE_TRANSITION,
+} from '../../constants/AnimationConstants';
 import { playMusic } from '../../controllers/audioController';
 import CommonButton from '../../components/common/CommonButton';
 import { CommonPopup } from '../../components/common/CommonPopup';
+import { useControlListener } from '../../context/GameContext';
 import { invoke } from '@tauri-apps/api/core';
 
 interface TitleMenuProps {
@@ -32,9 +39,21 @@ async function exitGame(): Promise<void> {
 }
 //endregion — Helpers
 
+/**
+ * Tracks whether the splash -> title reveal has already played for this app session. Kept at module
+ * level so it survives `TitleMenu` re-mounts (returning from Settings/Credits) and the reveal stays
+ * exclusive to the very first handoff from the splash screen.
+ */
+let titleRevealed = false;
+
 export function TitleMenu({ onSettings, onCredits }: TitleMenuProps) {
     const { t } = useTranslation('common');
     const [confirmExit, setConfirmExit] = useState(false);
+
+    // `deny` (Escape / the east face button) mirrors the Exit button: it opens the very same
+    // confirmation. `mutedByModal` keeps this listener quiet while that popup is up, so the
+    // popup answers `deny` itself — cancelling — instead of the menu reopening the prompt.
+    useControlListener({ deny: () => setConfirmExit(true) }, { mutedByModal: true });
 
     //region — Music Hooks
     const musicStarted = useRef(false);
@@ -82,29 +101,58 @@ export function TitleMenu({ onSettings, onCredits }: TitleMenuProps) {
     //endregion — Menu Data
 
     //region — Render
+    // The splash -> title handoff is a one-time reveal: it plays only when the menu is reached
+    // straight from the splash and never again on later re-mounts (e.g. returning from Settings).
+    const [fromSplash] = useState(() => !titleRevealed);
+    if (fromSplash) titleRevealed = true;
+
     return (
         <motion.main
             className="relative flex min-h-screen items-center justify-center px-6 py-10"
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1, transition: PAGE_ENTER_TRANSITION }}
+            initial={fromSplash ? 'hidden' : { opacity: 0 }}
+            animate={fromSplash ? 'visible' : { opacity: 1, transition: PAGE_ENTER_TRANSITION }}
             exit={{ opacity: 0, transition: PAGE_FADE_TRANSITION }}
+            variants={fromSplash ? SPLASH_TITLE_CONTAINER_VARIANTS : undefined}
+            transition={fromSplash ? SPLASH_TO_TITLE_TRANSITION : undefined}
         >
             <div className="w-full max-w-sm text-center">
                 {/* Logo */}
-                <img src="/images/ui/menu-title.png" alt={t('titleMenu.logoAlt')} className="mx-auto mb-12 w-full max-w-76" />
+                <motion.img
+                    src="/images/ui/menu-title.png"
+                    alt={t('titleMenu.logoAlt')}
+                    className="mx-auto mb-12 w-full max-w-76"
+                    variants={SPLASH_TITLE_ITEM_VARIANTS}
+                />
 
                 {/* Menu Buttons */}
                 <div className="flex flex-col items-stretch gap-2">
                     {menuItems.map((item) => (
-                        <CommonButton key={item.label} variant="ghost" size="lg" disabled={item.disabled} onPress={item.onClick} particles={true} className="text-center uppercase tracking-[0.16em]">
-                            {item.label}
-                        </CommonButton>
+                        <motion.div key={item.label} variants={SPLASH_TITLE_ITEM_VARIANTS}>
+                            <CommonButton
+                                variant="ghost"
+                                size="lg"
+                                disabled={item.disabled}
+                                onPress={item.onClick}
+                                particles={true}
+                                className="w-full text-center uppercase tracking-[0.16em]"
+                            >
+                                {item.label}
+                            </CommonButton>
+                        </motion.div>
                     ))}
 
                     {/* Exit Button */}
-                    <CommonButton variant="ghost" size="lg" onPress={() => setConfirmExit(true)} particles={true} className="mt-4 text-center uppercase tracking-[0.16em]">
-                        {t('titleMenu.exit')}
-                    </CommonButton>
+                    <motion.div variants={SPLASH_TITLE_ITEM_VARIANTS}>
+                        <CommonButton
+                            variant="ghost"
+                            size="lg"
+                            onPress={() => setConfirmExit(true)}
+                            particles={true}
+                            className="mt-4 w-full text-center uppercase tracking-[0.16em]"
+                        >
+                            {t('titleMenu.exit')}
+                        </CommonButton>
+                    </motion.div>
                 </div>
             </div>
 

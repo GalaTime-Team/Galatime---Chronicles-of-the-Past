@@ -14,6 +14,7 @@ function pickSettings(raw: GameSettings): GameSettings {
     difficulty: raw.difficulty,
     fightingTooltipVisible: raw.fightingTooltipVisible,
     actionsTooltipVisible: raw.actionsTooltipVisible,
+    showNowPlayingMusic: raw.showNowPlayingMusic,
     audio: { ...raw.audio },
     currentMusicTrackId: raw.currentMusicTrackId,
     controls: raw.controls,

@@ -34,6 +34,9 @@ function loadAudioTracksFromYaml(yamlContent: string): AudioTrackDefinition[] {
         return parsed.map((item: any) => ({
             id: item.id,
             src: resolveAudioPath(item.src),
+            // YAML tracks declare their display name as `name`; `title` is kept as an alias.
+            title: item.title ?? item.name,
+            description: item.description,
             loop: item.loop ?? false,
         }));
     } catch {

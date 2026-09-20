@@ -152,7 +152,11 @@
 			"master": "Master",
 			"music": "Music",
 			"sfx": "Effects",
-			"ambient": "Ambient"
+			"ambient": "Ambient",
+			"nowPlaying": {
+				"title": "Now Playing",
+				"description": "Show a card naming the music that just started playing."
+			}
 		},
 		"language": {
 			"title": "Language",

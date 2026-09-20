@@ -5,6 +5,7 @@ import { TitleMenu } from './pages/title_menu/TitleMenu';
 import { SettingsScreen } from './pages/title_menu/SettingsScreen';
 import { CreditsScreen } from './pages/title_menu/CreditsScreen';
 import { TitleMenuLayout } from './pages/title_menu/layout';
+import { NowPlayingCard } from './components/common/NowPlayingCard';
 import { useControlListener, useGame } from './context/GameContext';
 
 type Screen = 'splash' | 'title' | 'settings' | 'credits';
@@ -73,6 +74,8 @@ function App() {
 
   return (
     <div className="min-h-screen bg-galatime-background font-custom text-white">
+      {/* Opt-in "now playing" card: lives at the root so it survives every screen change. */}
+      <NowPlayingCard />
       <AnimatePresence mode="wait">
         <motion.div key={screen === 'splash' ? 'splash' : 'menu'} initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} transition={{ duration: 0.35 }}>
           {currentScreen}

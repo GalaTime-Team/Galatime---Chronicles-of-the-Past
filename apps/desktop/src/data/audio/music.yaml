@@ -1,19 +1,24 @@
 - id: galatime_theme
+  name: Galatime Chronicles of the Past
   src: ../assets/music/Galatime - Chronicles of the Past.ogg
   loop: true
 
 - id: cellordion_forest
+  name: Cellordion Forest
   src: ../assets/music/Cellordion Forest.ogg
   loop: true
 
 - id: hivv_village
+  name: Hivv Village
   src: ../assets/music/Hivv Village.ogg
   loop: true
 
 - id: dream_world
+  name: Dream World
   src: ../assets/music/Dream World.ogg
   loop: true
 
 - id: deeper_meaning
+  name: Deeper Meaning
   src: ../assets/music/Deeper Meaning.ogg
   loop: true
