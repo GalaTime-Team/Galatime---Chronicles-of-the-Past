@@ -3,7 +3,7 @@ import { MoveDirection, OutMode, type Container, type ISourceOptions } from '@ts
 import { createParticleLayer } from '../../utils/particlesEngine';
 import { playSfx } from '../../controllers/audioController';
 
-type ButtonVariant = 'primary' | 'danger' | 'success' | 'outline' | 'ghost';
+type ButtonVariant = 'primary' | 'danger' | 'success' | 'outline' | 'ghost' | 'warning';
 type ButtonSize = 'sm' | 'md' | 'lg';
 /** Where the icon is rendered relative to the label. */
 type ButtonIconPosition = 'left' | 'right';
@@ -37,6 +37,7 @@ const PARTICLE_COLORS: Record<ButtonVariant, string> = {
     primary: '#C3C6F2',
     danger: '#E8556B',
     success: '#4FBF9F',
+    warning: '#FFE580',
     outline: '#6D72CA',
     ghost: '#6D72CA',
 };
@@ -197,6 +198,7 @@ const CommonButton: React.FC<CommonButtonProps> = ({
         outline: "bg-transparent border-white/30 text-white/70 hover:bg-white hover:border-white hover:text-galatime-dark",
         danger: "bg-galatime-error border-galatime-error text-white hover:bg-galatime-errorHover hover:border-galatime-errorHover",
         success: "bg-galatime-success border-galatime-success text-white hover:bg-galatime-successHover hover:border-galatime-successHover",
+        warning: "bg-galatime-warning border-galatime-warning text-galatime-dark hover:bg-galatime-warningHover hover:border-galatime-warningHover",
         ghost: "bg-transparent border-transparent text-white/60 hover:bg-white hover:border-white hover:text-galatime-dark",
     };
 

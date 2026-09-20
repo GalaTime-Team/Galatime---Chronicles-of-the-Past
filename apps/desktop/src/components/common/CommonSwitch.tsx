@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { playSfx } from '../../controllers/audioController';
 import { SwitchIcon } from '../../assets/GalatimeIcon';
+import CommonTooltip from './CommonTooltip';
 
 interface CommonSwitchProps {
     /** The title displayed above the switch */
@@ -72,34 +73,34 @@ const CommonSwitch: React.FC<CommonSwitchProps> = ({
             </h2>
 
             {/* Switch + Description wrapper */}
-            <div className={`group relative flex flex-col items-center ${isHorizontal ? '' : 'mt-3'}`}>
-                {/* Switch Toggle */}
-                <button
-                    onClick={handleToggle}
-                    onMouseEnter={handleMouseEnter}
-                    disabled={disabled}
-                    className={`text-2xl focus:outline-none hover:scale-105 active:scale-95 transition-all duration-150 ${disabled
-                        ? 'text-white/15 cursor-not-allowed'
-                        : 'text-white/70 cursor-pointer hover:text-white'
-                        } ${switchClassName}`}
-                    aria-label={`${t('switch.toggle')} ${title} ${isChecked ? t('switch.off') : t('switch.on')}`}
+            <div className={`relative flex flex-col items-center ${isHorizontal ? '' : 'mt-3'}`}>
+                {/* Switch Toggle — the description floats above the layout so it is never clipped */}
+                <CommonTooltip
+                    content={description}
+                    disabled={!isHorizontal || !showDescription}
+                    textClassName={descriptionClassName}
                 >
-                    <SwitchIcon checked={isChecked} />
-                </button>
-
-                {/* Description Section */}
-                {showDescription && description && (
-                    isHorizontal ? (
-                        <div
-                            className={`absolute top-full z-10 mt-1 text-galatime-accent text-xs text-center max-w-xs opacity-0 group-hover:opacity-100 transition-opacity duration-200 pointer-events-none ${descriptionClassName}`}
+                    <div className="flex flex-col items-center">
+                        <button
+                            onClick={handleToggle}
+                            onMouseEnter={handleMouseEnter}
+                            disabled={disabled}
+                            className={`text-2xl focus:outline-none hover:scale-105 active:scale-95 transition-all duration-150 ${disabled
+                                ? 'text-white/15 cursor-not-allowed'
+                                : 'text-white/70 cursor-pointer hover:text-white'
+                                } ${switchClassName}`}
+                            aria-label={`${t('switch.toggle')} ${title} ${isChecked ? t('switch.off') : t('switch.on')}`}
                         >
-                            {description}
-                        </div>
-                    ) : (
-                        <div className={`mt-1 text-galatime-accent text-xs text-center max-w-xs ${descriptionClassName}`}>
-                            {description}
-                        </div>
-                    )
+                            <SwitchIcon checked={isChecked} />
+                        </button>
+                    </div>
+                </CommonTooltip>
+
+                {/* Description Section — vertical layouts keep the text inline */}
+                {!isHorizontal && showDescription && description && (
+                    <div className={`mt-1 text-galatime-accent text-xs text-center max-w-md leading-2.5 ${descriptionClassName}`}>
+                        {description}
+                    </div>
                 )}
             </div>
         </div>

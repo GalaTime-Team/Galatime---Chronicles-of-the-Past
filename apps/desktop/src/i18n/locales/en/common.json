@@ -87,113 +87,102 @@
 			}
 		}
 	},
-		"splash": {
-			"loading": "Loading game data...",
-			"ready": "Chronicle ready",
-			"iconAlt": "Galatime icon",
-			"teamAlt": "GT Team logo",
-			"skip": "Skip intro"
+	"titleMenu": {
+		"newGame": "New Game",
+		"settings": "Settings",
+		"credits": "Credits",
+		"playground": "Test Playground",
+		"exit": "Exit",
+		"exitTitle": "Exit game?",
+		"exitMessage": "Are you sure you want to leave?",
+		"logoAlt": "Galatime: Chronicles of the Past"
+	},
+	"common": {
+		"back": "Back",
+		"apply": "Apply",
+		"cancel": "Cancel",
+		"confirm": "Confirm",
+		"on": "On",
+		"off": "Off"
+	},
+	"settings": {
+		"title": "Settings",
+		"restoreDefaults": "Restore Defaults",
+		"restoreTitle": "Restore defaults?",
+		"restoreMessage": "All game settings will return to their original values.",
+		"tabs": {
+			"game": "Game",
+			"controls": "Controls",
+			"display": "Display",
+			"sound": "Sound",
+			"language": "Language"
 		},
-		"titleMenu": {
-			"newGame": "New Game",
-			"settings": "Settings",
-			"credits": "Credits",
-			"playground": "Test Playground",
-			"exit": "Exit",
-			"exitTitle": "Exit game?",
-			"exitMessage": "Are you sure you want to leave the chronicle?",
-			"logoAlt": "Galatime: Chronicles of the Past",
-			"musicReady": "Main theme playing"
+		"game": {
+			"saveName": "Save name"
 		},
-		"common": {
-			"back": "Back",
-			"apply": "Apply",
-			"cancel": "Cancel",
+		"controls": {
 			"confirm": "Confirm",
-			"on": "On",
-			"off": "Off"
+			"advance": "Advance dialogue",
+			"keyboard": "Keyboard",
+			"gamepad": "Controller",
+			"changeKey": "Change the key for {{label}}",
+			"changeButton": "Change the controller button for {{label}}",
+			"listening": "Press a key…",
+			"listeningGamepad": "Press a button…",
+			"unbound": "Not bound",
+			"reset": "Reset",
+			"gamepadConnected": "{{family}} controller",
+			"gamepadMissing": "No controller detected"
 		},
-		"settings": {
-			"title": "Settings",
-			"restoreDefaults": "Restore Defaults",
-			"restoreTitle": "Restore defaults?",
-			"restoreMessage": "All game settings will return to their original values.",
-			"tabs": {
-				"game": "Game",
-				"controls": "Controls",
-				"display": "Display",
-				"sound": "Sound",
-				"language": "Language"
-			},
-			"game": {
-				"saveName": "Save name"
-			},
-			"controls": {
-				"description": "Click a binding and press a key or a controller button to change it. Escape cancels.",
-				"advance": "Advance dialogue",
-				"keyboard": "Keyboard",
-				"gamepad": "Controller",
-				"changeKey": "Change the key for {{label}}",
-				"changeButton": "Change the controller button for {{label}}",
-				"listening": "Press a key…",
-				"listeningGamepad": "Press a button…",
-				"unbound": "Not bound",
-				"reset": "Reset",
-				"gamepadConnected": "{{family}} controller",
-				"gamepadMissing": "No controller detected"
-			},
-			"display": {
-				"description": "Tune the way the world is presented on your screen.",
-				"fullscreen": "Fullscreen",
-				"fullscreenDescription": "Play the chronicle using the whole screen.",
-				"imageRendering": "Image rendering",
-				"imageRenderingPixelated": "Pixelated",
-				"imageRenderingPixelatedDescription": "Nearest-neighbour scaling: keeps the pixel art crisp and blocky.",
-				"imageRenderingSmooth": "Smooth",
-				"imageRenderingSmoothDescription": "Blends neighbouring pixels when scaling, softening the pixel art.",
-				"imageRenderingCrisp": "Crisp edges",
-				"imageRenderingCrispDescription": "Edge-preserving scaling: sharp lines without blurring the colours.",
-				"scale": "Scale",
-				"scaleDescription": "Renders the world at a smaller size and then enlarges it to fit the screen. Lower values enlarge the components and reduce the number of rendered pixels."
-			},
-			"sound": {
-				"master": "Master",
-				"music": "Music",
-				"sfx": "Effects",
-				"ambient": "Ambient"
-			},
-			"language": {
-				"title": "Language",
-				"description": "More translations will be added as the chronicle grows.",
-				"english": "English"
-			}
+		"display": {
+			"fullscreen": "Fullscreen",
+			"imageRendering": "Image rendering",
+			"imageRenderingPixelated": "Pixelated",
+			"imageRenderingPixelatedDescription": "Nearest-neighbour scaling: keeps the pixel art crisp and blocky.",
+			"imageRenderingSmooth": "Smooth",
+			"imageRenderingSmoothDescription": "Blends neighbouring pixels when scaling, softening the pixel art.",
+			"imageRenderingCrisp": "Crisp edges",
+			"imageRenderingCrispDescription": "Edge-preserving scaling: sharp lines without blurring the colours.",
+			"scale": "Scale",
+			"scaleDescription": "Reduce the number of rendered pixels."
 		},
-		"credits": {
-			"title": "Credits",
-			"madeWith": "GalaTime by GT Team — Developed with: Tauri, React & Tailwind",
-			"groups": {
-				"story": "Story",
-				"art": "Art",
-				"code": "Code",
-				"sound": "Sound",
-				"thanks": "Special Thanks"
-			},
-			"roles": {
-				"narrativeWriter": "Narrative Writer",
-				"storyWriter": "Story Writer",
-				"environment": "Environment",
-				"visualEffects": "Visual Effects",
-				"extras": "Extras",
-				"characterDesigner": "Character Designer",
-				"coder": "Coder / Programmer",
-				"gameEnvironmentDesigner": "Game Environment Designer",
-				"soundtrackComposer": "Soundtrack Composer",
-				"soundtrackProducer": "Soundtrack Producer",
-				"soundEffects": "Sound Effects"
-			},
-			"thanks": {
-				"playtesters": "All Playtesters",
-				"contributors": "All Contributors"
-			}
+		"sound": {
+			"master": "Master",
+			"music": "Music",
+			"sfx": "Effects",
+			"ambient": "Ambient"
+		},
+		"language": {
+			"title": "Language",
+			"english": "English"
 		}
+	},
+	"credits": {
+		"title": "Credits",
+		"madeWith": "GalaTime by GT Team — Developed with: Tauri, React & Tailwind",
+		"groups": {
+			"story": "Story",
+			"art": "Art",
+			"code": "Code",
+			"sound": "Sound",
+			"thanks": "Special Thanks"
+		},
+		"roles": {
+			"narrativeWriter": "Narrative Writer",
+			"storyWriter": "Story Writer",
+			"environment": "Environment",
+			"visualEffects": "Visual Effects",
+			"extras": "Extras",
+			"characterDesigner": "Character Designer",
+			"coder": "Coder / Programmer",
+			"gameEnvironmentDesigner": "Game Environment Designer",
+			"soundtrackComposer": "Soundtrack Composer",
+			"soundtrackProducer": "Soundtrack Producer",
+			"soundEffects": "Sound Effects"
+		},
+		"thanks": {
+			"playtesters": "All Playtesters",
+			"contributors": "All Contributors"
+		}
+	}
 }

@@ -1,4 +1,5 @@
-import React, { useMemo } from 'react';
+import React, { useId, useMemo } from 'react';
+import CommonTooltip from './CommonTooltip';
 
 interface CommonInputProps {
     /** Title displayed above the input */
@@ -67,6 +68,7 @@ const CommonInput: React.FC<CommonInputProps> = ({
     counterClassName = '',
 }) => {
     const isHorizontal = orientation === 'horizontal';
+    const descriptionId = useId();
 
     const characters = useMemo(() => splitGraphemes(value), [value]);
     const characterCount = characters.length;
@@ -100,43 +102,42 @@ const CommonInput: React.FC<CommonInputProps> = ({
             </div>
 
             <div
-                className={`group relative flex flex-col items-center justify-center ${isHorizontal ? '' : 'mt-1'}`}
+                className={`relative flex flex-col items-center justify-center ${isHorizontal ? '' : 'mt-1'}`}
             >
-                <input
-                    type={type}
-                    value={value}
-                    onChange={handleChange}
-                    disabled={disabled}
-                    placeholder={placeholder}
-                    aria-label={title}
-                    aria-describedby={
-                        description ? `${title}-description` : undefined
-                    }
-                    className={`bg-transparent border-0 border-b text-lg border-galatime-primary/40 text-white placeholder:text-galatime-primary/40 focus:outline-none focus:ring-0 px-0 w-auto min-w-[30px] leading-2.5 transition ${isHorizontal ? 'text-left' : 'text-center'} ${inputClassName}`}
-                />
+                {/* Description floats above the layout so it is never clipped by the tab panel */}
+                <CommonTooltip
+                    content={description}
+                    disabled={!isHorizontal || !showDescription}
+                    textClassName={descriptionClassName}
+                >
+                    <div className="flex flex-col items-center justify-center">
+                        <input
+                            type={type}
+                            value={value}
+                            onChange={handleChange}
+                            disabled={disabled}
+                            placeholder={placeholder}
+                            aria-label={title}
+                            aria-describedby={description ? descriptionId : undefined}
+                            className={`bg-transparent border-0 border-b text-lg border-galatime-primary/40 text-white placeholder:text-galatime-primary/40 focus:outline-none focus:ring-0 px-0 w-auto min-w-[30px] leading-2.5 transition ${isHorizontal ? 'text-left' : 'text-center'} ${inputClassName}`}
+                        />
 
-                {showCounter && (
-                    <div
-                        className={`mt-1 text-right text-xs text-white/60 ${counterClassName}`}
-                        aria-live="polite"
-                    >
-                        {characterCount} / {maxCharacters}
+                        {showCounter && (
+                            <div
+                                className={`mt-1 text-right text-xs text-white/60 ${counterClassName}`}
+                                aria-live="polite"
+                            >
+                                {characterCount} / {maxCharacters}
+                            </div>
+                        )}
                     </div>
-                )}
+                </CommonTooltip>
 
-                {/* Description Section */}
-                {showDescription && description && (
-                    isHorizontal ? (
-                        <div
-                            className={`absolute top-full z-10 mt-1 text-galatime-accent text-xs text-center max-w-xs opacity-0 group-hover:opacity-100 transition-opacity duration-200 pointer-events-none ${descriptionClassName}`}
-                        >
-                            {description}
-                        </div>
-                    ) : (
-                        <div className={`mt-1 text-galatime-accent text-xs text-center max-w-xs ${descriptionClassName}`}>
-                            {description}
-                        </div>
-                    )
+                {/* Description Section — vertical layouts keep the text inline */}
+                {!isHorizontal && showDescription && description && (
+                    <div id={descriptionId} className={`mt-1 text-galatime-accent text-xs text-center max-w-xs ${descriptionClassName}`}>
+                        {description}
+                    </div>
                 )}
             </div>
 

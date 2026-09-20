@@ -87,12 +87,12 @@ export function SettingsScreen({ onBack }: SettingsScreenProps) {
             {/* Confirmation Dialog — Restore Defaults */}
             <CommonPopup
                 open={confirmReset}
-                variant="danger"
+                variant="warning"
                 title={t('settings.restoreTitle')}
                 message={t('settings.restoreMessage')}
                 onDismiss={() => setConfirmReset(false)}
                 cancelAction={{ label: t('common.cancel'), onPress: () => setConfirmReset(false) }}
-                confirmAction={{ label: t('common.confirm'), variant: 'danger', onPress: restoreDefaults }}
+                confirmAction={{ label: t('common.confirm'), variant: 'warning', onPress: restoreDefaults }}
             />
         </motion.main>
     );

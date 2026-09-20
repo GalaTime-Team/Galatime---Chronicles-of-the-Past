@@ -3,6 +3,7 @@ import { useTranslation } from 'react-i18next';
 import { playSfx } from '../../controllers/audioController';
 import { BUTTON_SFX_ID } from '../../constants/AudioConstants';
 import { ChevronLeft, ChevronRight } from '../../assets/GalatimeIcon';
+import CommonTooltip from './CommonTooltip';
 
 interface SelectorItem {
     id: string;
@@ -55,6 +56,7 @@ const CommonSelector: React.FC<CommonSelectorProps> = ({
 
     const currentItem = items[currentIndex];
     const isHorizontal = orientation === 'horizontal';
+    const descriptionText = showDescription && currentItem?.description ? t(currentItem.description) : undefined;
 
     const handlePrev = () => {
         if (currentIndex > 0) {
@@ -92,57 +94,56 @@ const CommonSelector: React.FC<CommonSelectorProps> = ({
 
             {/* Options + Description wrapper */}
             <div
-                className={`group relative flex flex-col items-center justify-center ${isHorizontal ? '' : 'mt-1'}`}
+                className={`relative flex flex-col items-center justify-center ${isHorizontal ? '' : 'mt-1'}`}
             >
-                {/* Chevron + Option + Chevron */}
-                <div className="flex items-center justify-center">
-                    {/* Left Chevron */}
-                    <button
-                        onClick={handlePrev}
-                        onMouseEnter={() => playSfx(BUTTON_SFX_ID)}
-                        disabled={isAtStart}
-                        className={`mr-2 transition-colors duration-200 ${isAtStart
-                                ? 'text-white/15 cursor-not-allowed'
-                                : 'text-white/70 cursor-pointer hover:text-white'
-                            }`}
-                        aria-label={t('selector.previous')}
-                    >
-                        <ChevronLeft className="h-[0.80em] w-auto block" />
-                    </button>
-
-                    {/* Selected Option Title */}
-                    <div className={`text-lg text-white text-center ${optionsWidthClassName} ${optionsClassName}`}>
-                        {currentItem?.title ? t(currentItem.title) : currentItem?.id}
-                    </div>
-
-                    {/* Right Chevron */}
-                    <button
-                        onClick={handleNext}
-                        onMouseEnter={() => playSfx(BUTTON_SFX_ID)}
-                        disabled={isAtEnd}
-                        className={`ml-2 transition-colors duration-200 ${isAtEnd
-                                ? 'text-white/15 cursor-not-allowed'
-                                : 'text-white/70 cursor-pointer hover:text-white'
-                            }`}
-                        aria-label={t('selector.next')}
-                    >
-                        <ChevronRight className="h-[0.80em] w-auto block" />
-                    </button>
-                </div>
-
-                {/* Description Section */}
-                {showDescription && currentItem?.description && (
-                    isHorizontal ? (
-                        <div
-                            className={`absolute top-full z-10 mt-1 text-galatime-accent text-xs text-center max-w-xs leading-2.5 opacity-0 group-hover:opacity-100 transition-opacity duration-200 pointer-events-none ${descriptionClassName}`}
+                {/* Description floats above the layout so it is never clipped by the tab panel */}
+                <CommonTooltip
+                    content={descriptionText}
+                    disabled={!isHorizontal}
+                    textClassName={descriptionClassName}
+                >
+                    {/* Chevron + Option + Chevron */}
+                    <div className="flex items-center justify-center">
+                        {/* Left Chevron */}
+                        <button
+                            onClick={handlePrev}
+                            onMouseEnter={() => playSfx(BUTTON_SFX_ID)}
+                            disabled={isAtStart}
+                            className={`mr-2 transition-colors duration-200 ${isAtStart
+                                    ? 'text-white/15 cursor-not-allowed'
+                                    : 'text-white/70 cursor-pointer hover:text-white'
+                                }`}
+                            aria-label={t('selector.previous')}
                         >
-                            {t(currentItem.description)}
+                            <ChevronLeft className="h-[0.80em] w-auto block" />
+                        </button>
+
+                        {/* Selected Option Title */}
+                        <div className={`text-lg text-white text-center ${optionsWidthClassName} ${optionsClassName}`}>
+                            {currentItem?.title ? t(currentItem.title) : currentItem?.id}
                         </div>
-                    ) : (
-                        <div className={`mt-1 text-galatime-accent text-xs text-center max-w-xs leading-2.5 ${descriptionClassName}`}>
-                            {t(currentItem.description)}
-                        </div>
-                    )
+
+                        {/* Right Chevron */}
+                        <button
+                            onClick={handleNext}
+                            onMouseEnter={() => playSfx(BUTTON_SFX_ID)}
+                            disabled={isAtEnd}
+                            className={`ml-2 transition-colors duration-200 ${isAtEnd
+                                    ? 'text-white/15 cursor-not-allowed'
+                                    : 'text-white/70 cursor-pointer hover:text-white'
+                                }`}
+                            aria-label={t('selector.next')}
+                        >
+                            <ChevronRight className="h-[0.80em] w-auto block" />
+                        </button>
+                    </div>
+                </CommonTooltip>
+
+                {/* Description Section — vertical layouts keep the text inline */}
+                {!isHorizontal && descriptionText && (
+                    <div className={`mt-1 text-galatime-accent text-xs text-center max-w-md leading-2.5 ${descriptionClassName}`}>
+                        {descriptionText}
+                    </div>
                 )}
             </div>
         </div>

@@ -18,9 +18,9 @@ type RebindingDevice = 'keyboard' | 'gamepad';
 /** Badge shaped like a key cap; the `group-hover` tone comes from the button wrapping it. */
 function KeyCap({ variant = 'default', children }: { variant?: 'default' | 'listening' | 'empty'; children: ReactNode }) {
     const variantStyles = {
-        default: 'border border-galatime-primary/50 text-galatime-accent group-hover:border-galatime-accent',
-        listening: 'animate-pulse border border-galatime-accent bg-galatime-primary/20 text-galatime-accent',
-        empty: 'border border-dashed border-white/30 text-white/40',
+        default: 'border-2 border-galatime-primary/50 text-galatime-accent group-hover:border-galatime-accent',
+        listening: 'animate-pulse border-2 border-galatime-accent bg-galatime-primary/20 text-galatime-accent',
+        empty: 'border-2 border-dashed border-white/30 text-white/40',
     } as const;
 
     return <kbd className={`min-w-16 px-3 py-1 text-center ${variantStyles[variant]}`}>{children}</kbd>;
@@ -109,7 +109,6 @@ export function SettingsControlsPanel({ settings }: SettingsPanelProps) {
     return (
         <div className="space-y-1">
             <div className="flex flex-wrap items-baseline justify-between gap-x-4 gap-y-1 pb-2">
-                <p className="text-sm text-white/50">{t('settings.controls.description')}</p>
                 <span className="text-xs uppercase tracking-widest text-white/40">
                     {gamepad
                         ? t('settings.controls.gamepadConnected', { family: GAMEPAD_FAMILY_LABELS[gamepad.family] })
@@ -131,52 +130,48 @@ export function SettingsControlsPanel({ settings }: SettingsPanelProps) {
 
                 return (
                     <div key={definition.id} className="setting-line border-b-4 border-white/10 py-3">
-                        <span className="text-base uppercase tracking-widest text-white/75">{t(definition.label)}</span>
+                        <span className="text-lg text-white">{t(definition.label)}</span>
 
                         <span className="flex flex-wrap items-center justify-end gap-x-4 gap-y-2">
-                            {/* Keyboard — click the binding and press any key to reassign it. */}
-                            <span className="flex items-center gap-2">
-                                <span className="text-xs uppercase tracking-widest text-white/35">
-                                    {t('settings.controls.keyboard')}
+                            {gamepad ? (
+                                /* Gamepad connected — show only the controller binding. */
+                                <span className="flex items-center gap-2">
+                                    <button
+                                        type="button"
+                                        onClick={() => toggle('gamepad')}
+                                        aria-label={t('settings.controls.changeButton', { label: t(definition.label) })}
+                                        className="group flex cursor-pointer items-center gap-2"
+                                    >
+                                        {isListening('gamepad') ? (
+                                            <KeyCap variant="listening">{t('settings.controls.listeningGamepad')}</KeyCap>
+                                        ) : binding.gamepad.length > 0 ? (
+                                            binding.gamepad.map((button) => (
+                                                <KeyCap key={button}>{getGamepadButtonLabel(button, family)}</KeyCap>
+                                            ))
+                                        ) : (
+                                            <KeyCap variant="empty">{t('settings.controls.unbound')}</KeyCap>
+                                        )}
+                                    </button>
                                 </span>
-                                <button
-                                    type="button"
-                                    onClick={() => toggle('keyboard')}
-                                    aria-label={t('settings.controls.changeKey', { label: t(definition.label) })}
-                                    className="group flex cursor-pointer items-center gap-2"
-                                >
-                                    {isListening('keyboard') ? (
-                                        <KeyCap variant="listening">{t('settings.controls.listening')}</KeyCap>
-                                    ) : binding.keyboard.length > 0 ? (
-                                        binding.keyboard.map((code) => <KeyCap key={code}>{formatControlKey(code)}</KeyCap>)
-                                    ) : (
-                                        <KeyCap variant="empty">{t('settings.controls.unbound')}</KeyCap>
-                                    )}
-                                </button>
-                            </span>
-
-                            {/* Controller — click the binding and press any button to reassign it. */}
-                            <span className="flex items-center gap-2">
-                                <span className="text-xs uppercase tracking-widest text-white/35">
-                                    {t('settings.controls.gamepad')}
+                            ) : (
+                                /* No gamepad — show only the keyboard binding. */
+                                <span className="flex items-center gap-2">
+                                    <button
+                                        type="button"
+                                        onClick={() => toggle('keyboard')}
+                                        aria-label={t('settings.controls.changeKey', { label: t(definition.label) })}
+                                        className="group flex cursor-pointer items-center gap-2"
+                                    >
+                                        {isListening('keyboard') ? (
+                                            <KeyCap variant="listening">{t('settings.controls.listening')}</KeyCap>
+                                        ) : binding.keyboard.length > 0 ? (
+                                            binding.keyboard.map((code) => <KeyCap key={code}>{formatControlKey(code)}</KeyCap>)
+                                        ) : (
+                                            <KeyCap variant="empty">{t('settings.controls.unbound')}</KeyCap>
+                                        )}
+                                    </button>
                                 </span>
-                                <button
-                                    type="button"
-                                    onClick={() => toggle('gamepad')}
-                                    aria-label={t('settings.controls.changeButton', { label: t(definition.label) })}
-                                    className="group flex cursor-pointer items-center gap-2"
-                                >
-                                    {isListening('gamepad') ? (
-                                        <KeyCap variant="listening">{t('settings.controls.listeningGamepad')}</KeyCap>
-                                    ) : binding.gamepad.length > 0 ? (
-                                        binding.gamepad.map((button) => (
-                                            <KeyCap key={button}>{getGamepadButtonLabel(button, family)}</KeyCap>
-                                        ))
-                                    ) : (
-                                        <KeyCap variant="empty">{t('settings.controls.unbound')}</KeyCap>
-                                    )}
-                                </button>
-                            </span>
+                            )}
 
                             {isCustom && (
                                 <button

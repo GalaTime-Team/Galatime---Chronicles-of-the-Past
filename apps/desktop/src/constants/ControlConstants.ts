@@ -18,11 +18,14 @@ import type { GamepadButtonId } from './GamepadConstants';
  */
 export const CONTROL_DEFINITIONS = [
     {
+        id: 'confirm',
+        label: 'settings.controls.confirm',
+        defaultBinding: { keyboard: ['Enter'], gamepad: ['south', 'east'] },
+    },
+    {
         id: 'advance',
         label: 'settings.controls.advance',
-        // Bottom and right face buttons, which are A/B on Xbox, ✕/○ on PlayStation
-        // and B/A on Nintendo — the label follows the connected controller.
-        defaultBinding: { keyboard: ['Space', 'ArrowRight'], gamepad: ['south', 'east'] },
+        defaultBinding: { keyboard: ['Space'], gamepad: ['south', 'east'] },
     },
 ] as const;
 
