@@ -1,18 +1,18 @@
 import i18next from 'i18next';
 import { initReactI18next } from 'react-i18next';
-import commonEn from './locales/en-US/common.json';
+import commonEn from './locales/en/common.json';
 
 // i18next configuration
 i18next
   .use(initReactI18next)
   .init({
-    lng: 'en-US',
-    fallbackLng: 'en-US',
+    lng: 'en',
+    fallbackLng: 'en',
     defaultNS: 'common',
     ns: ['common'],
-    supportedLngs: ['en-US'],
+    supportedLngs: ['en'],
     resources: {
-      'en-US': {
+      'en': {
         common: commonEn,
       },
     },

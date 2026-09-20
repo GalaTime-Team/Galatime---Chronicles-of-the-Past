@@ -29,7 +29,7 @@ const ExtraMovementCard: React.FC<ExtraMovementCardProps> = ({
                 </div>
 
                 {/* Right: Name */}
-                <div className="flex-1 flex items-center text-lg leading-none text-left -translate-y-0.5">
+                <div className="flex-1 flex items-center text-lg leading-2.5 text-left -translate-y-0.5">
                     {title}
                 </div>
             </div>

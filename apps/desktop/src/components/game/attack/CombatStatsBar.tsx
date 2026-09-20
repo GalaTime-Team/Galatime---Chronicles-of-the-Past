@@ -219,7 +219,7 @@ const CombatStatsBar = forwardRef<CombatStatsBarRef, CombatStatsBarProps>(
             <div className={`w-full ${className} ${!isHorizontal ? 'h-full' : ''}`}>
                 <div className={`flex ${outerFlexClass} ${!isHorizontal ? 'flex-col h-full' : 'flex-row'} justify-center items-center`}>
                     {showTitle && (
-                        <div className={`text-white/40 text-sm whitespace-nowrap leading-none ${titleClass}`}>
+                        <div className={`text-white/40 text-sm whitespace-nowrap leading-2.5 ${titleClass}`}>
                             {title}
                         </div>
                     )}

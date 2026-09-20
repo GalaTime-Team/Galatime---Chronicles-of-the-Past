@@ -20,7 +20,12 @@ pub fn run() {
             Ok(())
         })
         .plugin(tauri_plugin_opener::init())
-        .invoke_handler(tauri::generate_handler![commands::game::get_initial_game_state])
+        .invoke_handler(tauri::generate_handler![
+            commands::game::get_initial_game_state,
+            commands::settings::read_settings,
+            commands::settings::write_settings,
+            commands::settings::exit_app
+        ])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");
 }

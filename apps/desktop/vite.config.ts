@@ -8,6 +8,26 @@ const host = process.env.TAURI_DEV_HOST;
 export default defineConfig(async () => ({
   plugins: [react()],
 
+  // React must resolve to exactly one physical copy. This workspace contains both
+  // an npm-hoisted tree (`node_modules/react`) and a pnpm virtual store
+  // (`node_modules/.pnpm/react@.../node_modules/react`). Without pinning them,
+  // Vite can pre-bundle `react-dom` and the app code against different copies,
+  // which surfaces at runtime as "Invalid hook call" /
+  // `Cannot read properties of null (reading 'useState')`.
+  resolve: {
+    dedupe: ["react", "react-dom"],
+  },
+
+  optimizeDeps: {
+    include: [
+      "react",
+      "react-dom",
+      "react-dom/client",
+      "react/jsx-runtime",
+      "react/jsx-dev-runtime",
+    ],
+  },
+
   // Vite options tailored for Tauri development and only applied in `tauri dev` or `tauri build`
   //
   // 1. prevent Vite from obscuring rust errors

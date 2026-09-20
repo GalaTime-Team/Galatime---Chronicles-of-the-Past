@@ -36,7 +36,6 @@ const AttackCard: React.FC<AttackCardProps> = ({
 
     const assetPath = "/images/elements";
     const typeIconPath = `${assetPath}/type/${type}.svg`;
-    const elementIconPath = `${assetPath}/${elementId}.png`;
     const mainIconPath = `${assetPath}/attacks/${attack.id}.png`;
 
     const { gameState } = useGame();
@@ -124,7 +123,7 @@ const AttackCard: React.FC<AttackCardProps> = ({
                 {/* Bottom Half */}
                 <div className="flex flex-1 w-full">
                     {/* Bottom Left: Relevant stats */}
-                    <div className="flex-1 flex items-center pl-14 pb-1 gap-2 text-sm text-white/40 leading-none">
+                    <div className="flex-1 flex items-center pl-14 pb-1 gap-2 text-sm text-white/40 leading-2.5">
                         <div className="flex gap-1">
                             <span>PW</span>
                             <span className="text-white">{power}</span>

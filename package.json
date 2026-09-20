@@ -8,7 +8,9 @@
   ],
   "scripts": {
     "dev": "npm run dev --workspace desktop",
+    "dev:desktop": "npm run dev:desktop --workspace desktop",
     "build": "npm run build --workspace desktop",
+    "build:desktop": "npm run build:desktop --workspace desktop",
     "test": "npm run test --workspace desktop"
   },
   "dependencies": {

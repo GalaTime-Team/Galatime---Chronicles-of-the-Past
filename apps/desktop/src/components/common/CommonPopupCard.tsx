@@ -72,7 +72,7 @@ const CommonPopupCard: React.FC<CommonPopupCardProps> = ({
 				>
 					<div className="flex items-center justify-center gap-4 m-2">
 						{showLoading && <Loading imageClassName="h-5 " />}
-						<span className="leading-none">{message}</span>
+						<span className="leading-2.5">{message}</span>
 					</div>
 				</motion.div>
 			)}

@@ -12,12 +12,54 @@
 :root {
   font-size: 20px;
   color-scheme: dark;
+  /* Global typography scale: every Tailwind `text-*` utility multiplies its base size by this
+     factor, so the whole platform's letter size can be tuned from this single value.
+     1 = original size, 1.15 = +15%, 1.25 = +25%, etc. */
+  --font-scale: 1.15;
+  /* Render scale: 1 renders at native resolution; values above 1 lay the interface out on a
+     smaller surface and then magnify it, enlarging components and rendering fewer pixels. */
+  --render-zoom: 1;
+  /* Image scaling algorithm driven by the "Image rendering" display setting. */
+  --image-rendering: auto;
+}
+
+/* Tailwind v4 exposes its font sizes as `--text-*` theme variables. Rescaling them here enlarges
+   EVERY `text-*` utility at once (and its paired line-height, since those are unitless ratios),
+   without touching spacing, paddings or layout. These rules are unlayered, so they always win
+   over Tailwind's `@layer theme` defaults. */
+:root {
+  --text-xs: calc(0.75rem * var(--font-scale));
+  --text-sm: calc(0.875rem * var(--font-scale));
+  --text-base: calc(1rem * var(--font-scale));
+  --text-lg: calc(1.125rem * var(--font-scale));
+  --text-xl: calc(1.25rem * var(--font-scale));
+  --text-2xl: calc(1.5rem * var(--font-scale));
+  --text-3xl: calc(1.875rem * var(--font-scale));
+  --text-4xl: calc(2.25rem * var(--font-scale));
+  --text-5xl: calc(3rem * var(--font-scale));
+  --text-6xl: calc(3.75rem * var(--font-scale));
+  --text-7xl: calc(4.5rem * var(--font-scale));
+  --text-8xl: calc(6rem * var(--font-scale));
+  --text-9xl: calc(8rem * var(--font-scale));
 }
 
 html,
 body,
 #root {
   height: 100%;
+}
+
+@supports (zoom: 2) {
+  /* The magnified interface must still fit the window, so the zoomed boxes shrink accordingly. */
+  html {
+    zoom: var(--render-zoom);
+    height: calc(100% / var(--render-zoom));
+  }
+
+  /* Tailwind utilities live in a cascade layer, so these unlayered overrides always win. */
+  .min-h-screen {
+    min-height: calc(100vh / var(--render-zoom));
+  }
 }
 
 body {
@@ -30,8 +72,15 @@ body {
   background: #09091A;
 }
 
-img {
-  image-rendering: pixelated;
+img,
+canvas {
+  image-rendering: var(--image-rendering);
+}
+
+/* Click-burst particle overlays sit on top of buttons; they must never swallow
+   the button's own clicks. `!important` also beats the engine's inline style. */
+.common-button-particles canvas {
+  pointer-events: none !important;
 }
 
 @layer base {
@@ -54,4 +103,31 @@ img {
     background: rgba(255, 255, 255, 0.35);
     background-clip: padding-box;
   }
+}
+
+.screen-center {
+  display: flex;
+  min-height: calc(100vh / var(--render-zoom, 1));
+  align-items: center;
+  justify-content: center;
+}
+
+.settings-label {
+  color: rgb(255 255 255 / 0.8);
+  font-size: calc(1.1rem * var(--font-scale));
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+
+.setting-line {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+}
+
+.setting-line p {
+  margin-top: 0.35rem;
+  color: rgb(255 255 255 / 0.45);
+  font-size: calc(0.85rem * var(--font-scale));
 }

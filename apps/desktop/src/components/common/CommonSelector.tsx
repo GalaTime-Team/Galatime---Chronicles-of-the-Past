@@ -25,6 +25,8 @@ interface CommonSelectorProps {
     titleClassName?: string;
     /** Custom class for the options text container */
     optionsClassName?: string;
+    /** Custom width class for the options text container (keeps chevrons from shifting) */
+    optionsWidthClassName?: string;
     /** Custom class for the description text */
     descriptionClassName?: string;
     /** Orientation of the selector: 'horizontal' or 'vertical' */
@@ -42,6 +44,7 @@ const CommonSelector: React.FC<CommonSelectorProps> = ({
     containerClassName = '',
     titleClassName = '',
     optionsClassName = '',
+    optionsWidthClassName = '',
     descriptionClassName = '',
     showDescription = false,
 }) => {
@@ -108,7 +111,7 @@ const CommonSelector: React.FC<CommonSelectorProps> = ({
                     </button>
 
                     {/* Selected Option Title */}
-                    <div className={`text-lg text-white text-center ${optionsClassName}`}>
+                    <div className={`text-lg text-white text-center ${optionsWidthClassName} ${optionsClassName}`}>
                         {currentItem?.title ? t(currentItem.title) : currentItem?.id}
                     </div>
 

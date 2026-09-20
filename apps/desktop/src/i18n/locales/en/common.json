@@ -1,0 +1,199 @@
+{
+	"loading": {
+		"text": "Loading...",
+		"alt": "Loading animation"
+	},
+	"selector": {
+		"previous": "Previous option",
+		"next": "Next option",
+		"chevronLeft": "<",
+		"chevronRight": ">"
+	},
+	"switch": {
+		"toggle": "Toggle",
+		"on": "on",
+		"off": "off",
+		"altOn": "ON",
+		"altOff": "OFF"
+	},
+	"game": {
+		"header": {
+			"tagline": "GalaTime",
+			"title": "Chronicles of the Past",
+			"subtitle": "Tailwind CSS + Tauri"
+		},
+		"settings": {
+			"saveFile": {
+				"title": "Title",
+				"default": "Untitled1",
+				"placeholder": "Save file title"
+			},
+			"gametype": {
+				"title": "Game Type",
+				"storyMode": {
+					"label": "Story Mode",
+					"description": "Skip battles, focus on the narrative and the characters."
+				},
+				"fullGameplay": {
+					"label": "Full Gameplay",
+					"description": "Includes story and battle mechanics."
+				},
+				"battleMode": {
+					"label": "Battle Mode",
+					"description": "Fight waves of enemies."
+				}
+			},
+			"difficulty": {
+				"title": "Difficulty",
+				"easy": {
+					"label": "Easy",
+					"description": "For those who want to relax."
+				},
+				"normal": {
+					"label": "Normal",
+					"description": "The standard experience."
+				},
+				"hard": {
+					"label": "Hard",
+					"description": "A true challenge awaits."
+				},
+				"hardcore": {
+					"label": "Hardcore",
+					"description": "You and your allies only have one life."
+				}
+			},
+			"allyControl": {
+				"title": "Ally Control",
+				"alliesPlayer": {
+					"label": "Allies + Player",
+					"description": "You control your allies and yourself."
+				},
+				"player": {
+					"label": "Player",
+					"description": "You control yourself and allies act on their own."
+				},
+				"playerOnly": {
+					"label": "Player Only",
+					"description": "You control yourself and there are no allies."
+				}
+			},
+			"fightingTips": {
+				"title": "Fighting Tool tip",
+				"description": "Display details about attacks."
+			},
+			"actionTips": {
+				"title": "Action Tool tip",
+				"description": "Display all the interactable objects."
+			}
+		}
+	},
+		"splash": {
+			"loading": "Loading game data...",
+			"ready": "Chronicle ready",
+			"iconAlt": "Galatime icon",
+			"teamAlt": "GT Team logo",
+			"skip": "Skip intro"
+		},
+		"titleMenu": {
+			"newGame": "New Game",
+			"settings": "Settings",
+			"credits": "Credits",
+			"playground": "Test Playground",
+			"exit": "Exit",
+			"exitTitle": "Exit game?",
+			"exitMessage": "Are you sure you want to leave the chronicle?",
+			"logoAlt": "Galatime: Chronicles of the Past",
+			"musicReady": "Main theme playing"
+		},
+		"common": {
+			"back": "Back",
+			"apply": "Apply",
+			"cancel": "Cancel",
+			"confirm": "Confirm",
+			"on": "On",
+			"off": "Off"
+		},
+		"settings": {
+			"title": "Settings",
+			"restoreDefaults": "Restore Defaults",
+			"restoreTitle": "Restore defaults?",
+			"restoreMessage": "All game settings will return to their original values.",
+			"tabs": {
+				"game": "Game",
+				"controls": "Controls",
+				"display": "Display",
+				"sound": "Sound",
+				"language": "Language"
+			},
+			"game": {
+				"saveName": "Save name"
+			},
+			"controls": {
+				"description": "Click a binding and press a key or a controller button to change it. Escape cancels.",
+				"advance": "Advance dialogue",
+				"keyboard": "Keyboard",
+				"gamepad": "Controller",
+				"changeKey": "Change the key for {{label}}",
+				"changeButton": "Change the controller button for {{label}}",
+				"listening": "Press a key…",
+				"listeningGamepad": "Press a button…",
+				"unbound": "Not bound",
+				"reset": "Reset",
+				"gamepadConnected": "{{family}} controller",
+				"gamepadMissing": "No controller detected"
+			},
+			"display": {
+				"description": "Tune the way the world is presented on your screen.",
+				"fullscreen": "Fullscreen",
+				"fullscreenDescription": "Play the chronicle using the whole screen.",
+				"imageRendering": "Image rendering",
+				"imageRenderingPixelated": "Pixelated",
+				"imageRenderingPixelatedDescription": "Nearest-neighbour scaling: keeps the pixel art crisp and blocky.",
+				"imageRenderingSmooth": "Smooth",
+				"imageRenderingSmoothDescription": "Blends neighbouring pixels when scaling, softening the pixel art.",
+				"imageRenderingCrisp": "Crisp edges",
+				"imageRenderingCrispDescription": "Edge-preserving scaling: sharp lines without blurring the colours.",
+				"scale": "Scale",
+				"scaleDescription": "Renders the world at a smaller size and then enlarges it to fit the screen. Lower values enlarge the components and reduce the number of rendered pixels."
+			},
+			"sound": {
+				"master": "Master",
+				"music": "Music",
+				"sfx": "Effects",
+				"ambient": "Ambient"
+			},
+			"language": {
+				"title": "Language",
+				"description": "More translations will be added as the chronicle grows.",
+				"english": "English"
+			}
+		},
+		"credits": {
+			"title": "Credits",
+			"madeWith": "GalaTime by GT Team — Developed with: Tauri, React & Tailwind",
+			"groups": {
+				"story": "Story",
+				"art": "Art",
+				"code": "Code",
+				"sound": "Sound",
+				"thanks": "Special Thanks"
+			},
+			"roles": {
+				"narrativeWriter": "Narrative Writer",
+				"storyWriter": "Story Writer",
+				"environment": "Environment",
+				"visualEffects": "Visual Effects",
+				"extras": "Extras",
+				"characterDesigner": "Character Designer",
+				"coder": "Coder / Programmer",
+				"gameEnvironmentDesigner": "Game Environment Designer",
+				"soundtrackComposer": "Soundtrack Composer",
+				"soundtrackProducer": "Soundtrack Producer",
+				"soundEffects": "Sound Effects"
+			},
+			"thanks": {
+				"playtesters": "All Playtesters",
+				"contributors": "All Contributors"
+			}
+		}
+}
