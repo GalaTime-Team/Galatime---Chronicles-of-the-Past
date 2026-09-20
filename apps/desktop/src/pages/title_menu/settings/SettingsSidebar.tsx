@@ -20,8 +20,11 @@ export function SettingsSidebar({ activeTab, onChange, labels }: SettingsSidebar
                     <button
                         type="button"
                         key={tab}
-                        onMouseEnter={() => playSfx('button_sfx')}
-                        onClick={() => onChange(tab)}
+                        onMouseEnter={() => playSfx('hover')}
+                        onClick={() => {
+                            playSfx('click');
+                            onChange(tab);
+                        }}
                         aria-current={isActive ? 'page' : undefined}
                         className={`whitespace-nowrap px-3 py-1.5 text-left text-xs uppercase tracking-[0.15em] transition-colors duration-300 ease-out md:w-full ${isActive
                                 ? 'bg-white font-semibold text-galatime-dark'

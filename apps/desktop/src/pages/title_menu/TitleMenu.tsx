@@ -2,6 +2,7 @@ import { useCallback, useEffect, useRef, useState } from 'react';
 import { motion } from 'framer-motion';
 import { useTranslation } from 'react-i18next';
 import { DEFAULT_MUSIC_TRACK_ID } from '../../constants/AudioConstants';
+import { PAGE_ENTER_TRANSITION, PAGE_FADE_TRANSITION } from '../../constants/AnimationConstants';
 import { playMusic } from '../../controllers/audioController';
 import CommonButton from '../../components/common/CommonButton';
 import { CommonPopup } from '../../components/common/CommonPopup';
@@ -82,7 +83,12 @@ export function TitleMenu({ onSettings, onCredits }: TitleMenuProps) {
 
     //region — Render
     return (
-        <motion.main className="relative flex min-h-screen items-center justify-center px-6 py-10" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}>
+        <motion.main
+            className="relative flex min-h-screen items-center justify-center px-6 py-10"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1, transition: PAGE_ENTER_TRANSITION }}
+            exit={{ opacity: 0, transition: PAGE_FADE_TRANSITION }}
+        >
             <div className="w-full max-w-sm text-center">
                 {/* Logo */}
                 <img src="/images/ui/menu-title.png" alt={t('titleMenu.logoAlt')} className="mx-auto mb-12 w-full max-w-76" />

@@ -134,6 +134,14 @@ interface GameContextType {
   subscribeToControl: (listener: (id: ControlId) => void) => () => void;
   /** Subscribes to raw controller buttons, for interfaces that bind them. */
   subscribeToButton: (listener: (button: GamepadButtonId) => void) => () => void;
+  /**
+   * Registers a modal surface — a popup — as the owner of the controls while it is on
+   * screen; the returned function releases it. Listeners declared with `mutedByModal`
+   * stay silent for as long as one is registered.
+   */
+  registerModalLayer: () => () => void;
+  /** `true` while a modal surface is registered, so controls must reach only it. */
+  isModalLayerOpen: () => boolean;
 }
 
 export const DEFAULT_SETTINGS: GameSettings = {
@@ -225,6 +233,19 @@ export function GameProvider({ children }: { children: ReactNode }) {
       buttonSubscribers.current.delete(listener);
     };
   }, []);
+
+  /** Modal surfaces currently on screen, counted so overlapping popups release correctly. */
+  const modalLayers = useRef(0);
+
+  const registerModalLayer = useCallback(() => {
+    modalLayers.current += 1;
+    return () => {
+      // Clamped: a double release must not leave the counter negative and mute listeners forever.
+      modalLayers.current = Math.max(0, modalLayers.current - 1);
+    };
+  }, []);
+
+  const isModalLayerOpen = useCallback(() => modalLayers.current > 0, []);
 
   const rumble = useCallback(async (effect: GamepadVibrationEffect = {}) => {
     const active = activeGamepadRef.current;
@@ -323,6 +344,8 @@ export function GameProvider({ children }: { children: ReactNode }) {
         rumble,
         subscribeToControl,
         subscribeToButton,
+        registerModalLayer,
+        isModalLayerOpen,
       }}
     >
       {children}
@@ -352,6 +375,73 @@ export function useControls() {
 /** Handlers keyed by the control they respond to. */
 export type ControlHandlers = Partial<Record<ControlId, () => void>>;
 
+/** Tuning shared by the control-listener hooks. */
+export interface ControlListenerOptions {
+  /**
+   * Stops the browser from acting on keys the game already handled, such as scrolling
+   * with Space or the arrow keys. Default: `true`.
+   */
+  preventDefault?: boolean;
+  /**
+   * Keeps the listener silent while a modal surface is open (see `useModalControls`).
+   * The screen behind a popup declares this so a single `deny` press cancels the popup
+   * instead of also meaning what that control means on the screen itself — going back,
+   * for instance. Default: `false`.
+   */
+  mutedByModal?: boolean;
+}
+
+/** Handlers of a surface that is currently closed; a stable stand-in for "handle nothing". */
+const NO_HANDLERS: ControlHandlers = {};
+
+/**
+ * Plumbing shared by `useControlListener` and `useModalControls`: resolves keyboard and
+ * controller input into control ids and runs the handler of each one this caller
+ * declares, skipping every control it must stay silent about.
+ *
+ * Handlers and options are read through refs, so callers never have to memoise them and a
+ * subscription is never torn down while an input is being held.
+ */
+function useControlEvents(handlers: ControlHandlers, options: ControlListenerOptions = {}) {
+  const { getControlIds, subscribeToControl, isModalLayerOpen } = useGame();
+  const { preventDefault = true, mutedByModal = false } = options;
+
+  const handlersRef = useRef(handlers);
+  const getControlIdsRef = useRef(getControlIds);
+  const isModalLayerOpenRef = useRef(isModalLayerOpen);
+  const optionsRef = useRef({ preventDefault, mutedByModal });
+
+  useEffect(() => {
+    handlersRef.current = handlers;
+    getControlIdsRef.current = getControlIds;
+    isModalLayerOpenRef.current = isModalLayerOpen;
+    optionsRef.current = { preventDefault, mutedByModal };
+  });
+
+  useEffect(() => {
+    const handleKeyDown = (event: KeyboardEvent) => {
+      // A popup is on screen: it owns the controls, so this listener stays out of its way.
+      if (optionsRef.current.mutedByModal && isModalLayerOpenRef.current()) return;
+
+      // A shared key fires every control bound to it, so each listening component reacts.
+      const triggered = getControlIdsRef.current(event).filter((controlId) => handlersRef.current[controlId]);
+      if (triggered.length === 0) return;
+
+      if (optionsRef.current.preventDefault) event.preventDefault();
+      for (const controlId of triggered) handlersRef.current[controlId]?.();
+    };
+
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, []);
+
+  // Controller input is polled centrally, so only the resolved control is handled here.
+  useEffect(() => subscribeToControl((controlId) => {
+    if (optionsRef.current.mutedByModal && isModalLayerOpenRef.current()) return;
+    handlersRef.current[controlId]?.();
+  }), [subscribeToControl]);
+}
+
 /**
  * Runs the handler registered for each control when it is triggered — the source is
  * abstracted away, so the same `advance` handler answers a key, a face button or a
@@ -361,36 +451,29 @@ export type ControlHandlers = Partial<Record<ControlId, () => void>>;
  * re-subscribing. `preventDefault` (on by default) stops the browser from acting on
  * keys the game already handled, such as scrolling with Space or the arrow keys.
  */
-export function useControlListener(handlers: ControlHandlers, options: { preventDefault?: boolean } = {}) {
-  const { getControlIds, subscribeToControl } = useGame();
-  const { preventDefault = true } = options;
+export function useControlListener(handlers: ControlHandlers, options: ControlListenerOptions = {}) {
+  useControlEvents(handlers, options);
+}
 
-  const handlersRef = useRef(handlers);
-  const getControlIdsRef = useRef(getControlIds);
-  const preventDefaultRef = useRef(preventDefault);
+/**
+ * Controls owned by a modal surface — a popup — which take precedence over the screen it
+ * covers.
+ *
+ * While `active`, the surface registers a modal layer, and every listener declared with
+ * `mutedByModal` stops answering. That is what lets one `deny` press cancel the popup
+ * instead of also triggering what the same control means underneath it, such as a Back
+ * button leaving the screen. The surface itself handles nothing while `active` is `false`
+ * and releases the layer as soon as it closes.
+ */
+export function useModalControls(handlers: ControlHandlers, active: boolean, options: ControlListenerOptions = {}) {
+  const { registerModalLayer } = useGame();
 
   useEffect(() => {
-    handlersRef.current = handlers;
-    getControlIdsRef.current = getControlIds;
-    preventDefaultRef.current = preventDefault;
-  });
+    if (!active) return;
+    return registerModalLayer();
+  }, [active, registerModalLayer]);
 
-  useEffect(() => {
-    const handleKeyDown = (event: KeyboardEvent) => {
-      // A shared key fires every control bound to it, so each listening component reacts.
-      const triggered = getControlIdsRef.current(event).filter((controlId) => handlersRef.current[controlId]);
-      if (triggered.length === 0) return;
-
-      if (preventDefaultRef.current) event.preventDefault();
-      for (const controlId of triggered) handlersRef.current[controlId]?.();
-    };
-
-    window.addEventListener('keydown', handleKeyDown);
-    return () => window.removeEventListener('keydown', handleKeyDown);
-  }, []);
-
-  // Controller input is polled centrally, so only the resolved control is handled here.
-  useEffect(() => subscribeToControl((controlId) => handlersRef.current[controlId]?.()), [subscribeToControl]);
+  useControlEvents(active ? handlers : NO_HANDLERS, options);
 }
 
 /**

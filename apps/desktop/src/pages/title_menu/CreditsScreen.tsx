@@ -1,28 +1,58 @@
+import { Fragment } from 'react';
 import { motion } from 'framer-motion';
 import { useTranslation } from 'react-i18next';
+import { PAGE_ENTER_TRANSITION, PAGE_FADE_TRANSITION } from '../../constants/AnimationConstants';
 import { BackButton } from '../../components/common/BackButton';
 
-interface CreditsScreenProps { onBack: () => void; }
-
-/** A single credited line: an optional role label plus the people who filled it. */
 interface CreditEntry {
     role?: string;
     names: string[];
 }
 
-/** One section of the credits (Story, Art, Code, Sound, Thanks). */
 interface CreditGroup {
     key: string;
     title: string;
     entries: CreditEntry[];
-    /** Wide sections stretch across the whole grid instead of one column. */
     wide?: boolean;
+}
+
+interface CreditsScreenProps {
+    onBack: () => void;
+}
+
+function CreditSection({ group, className = '' }: { group: CreditGroup; className?: string }) {
+    return (
+        <section className={className}>
+            <div className="flex items-center justify-center mb-4">
+                <h2 className="whitespace-nowrap text-sm uppercase tracking-[0.28em] text-galatime-warning sm:text-base">
+                    {group.title}
+                </h2>
+            </div>
+
+            <ul className="space-y-3 text-center">
+                {group.entries.map((entry) => (
+                    <li key={entry.role ?? entry.names.join(', ')} className="flex flex-col items-center gap-0.5">
+                        {entry.role && <span className="text-xs tracking-wide text-white/40">{entry.role}</span>}
+                        <span className="flex flex-wrap items-center justify-center gap-x-2.5 text-[15px] leading-snug text-white/90 sm:text-base">
+                            {entry.names.map((name, i) => (
+                                <Fragment key={name}>
+                                    {i > 0 && (
+                                        <span className="size-1 rotate-45 bg-galatime-warning/60" aria-hidden="true" />
+                                    )}
+                                    <span className="whitespace-nowrap">{name}</span>
+                                </Fragment>
+                            ))}
+                        </span>
+                    </li>
+                ))}
+            </ul>
+        </section>
+    );
 }
 
 export function CreditsScreen({ onBack }: CreditsScreenProps) {
     const { t } = useTranslation('common');
 
-    //region — Credits Data
     const groups: CreditGroup[] = [
         {
             key: 'story',
@@ -66,56 +96,57 @@ export function CreditsScreen({ onBack }: CreditsScreenProps) {
             entries: [{ names: [t('credits.thanks.playtesters'), t('credits.thanks.contributors')] }],
         },
     ];
-    //endregion — Credits Data
 
-    //region — Render
+    const columns = groups.filter((group) => !group.wide);
+    const finale = groups.filter((group) => group.wide);
+
     return (
-        <motion.main className="min-h-screen px-5 py-6 sm:px-10 sm:py-10" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}>
-            <div className="mx-auto flex w-full max-w-5xl flex-col">
-                {/* Header — Back | Title */}
-                <header className="mb-10 mt-8 flex items-center gap-3">
-                    <BackButton label={t('common.back')} onClick={onBack} />
-                    <span className="h-6 w-1 bg-white/20" aria-hidden="true" />
-                    <h1 className="text-4xl uppercase tracking-[0.14em] text-white">{t('credits.title')}</h1>
+        <motion.main
+            className="relative h-dvh overflow-y-auto overflow-x-hidden"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1, transition: PAGE_ENTER_TRANSITION }}
+            exit={{ opacity: 0, transition: PAGE_FADE_TRANSITION }}
+        >
+            <div className="relative z-10 mx-auto flex min-h-full w-full max-w-7xl flex-col px-6 py-5 sm:px-10 sm:py-6">
+                <header className="grid shrink-0 grid-cols-[1fr_auto_1fr] items-center">
+                    <div className="justify-self-start">
+                        <BackButton label={t('common.back')} onClick={onBack} />
+                    </div>
+                    <div className="text-center">
+                        <h1 className="pl-[0.18em] text-3xl uppercase text-white sm:text-4xl">
+                            {t('credits.title')}
+                        </h1>
+                    </div>
+                    <span aria-hidden="true" />
                 </header>
 
-                {/* Credits Grid */}
-                <div className="grid gap-x-16 gap-y-10 sm:grid-cols-2">
-                    {groups.map((group, index) => (
-                        <motion.section
-                            key={group.key}
-                            initial={{ opacity: 0, y: 12 }}
-                            animate={{ opacity: 1, y: 0 }}
-                            transition={{ delay: 0.06 * index, duration: 0.35, ease: 'easeOut' }}
-                            className={group.wide ? 'sm:col-span-2' : ''}
-                        >
-                            {/* Section Title — flanked by fading rules */}
-                            <div className="flex items-center gap-4">
-                                <span className="h-px flex-1 bg-linear-to-r from-transparent to-galatime-warning/50" aria-hidden="true" />
-                                <h2 className="whitespace-nowrap text-lg uppercase tracking-[0.22em] text-galatime-warning">{group.title}</h2>
-                                <span className="h-px flex-1 bg-linear-to-l from-transparent to-galatime-warning/50" aria-hidden="true" />
-                            </div>
+                <div className="flex flex-1 flex-col justify-center gap-8 py-6">
+                    <div className="grid gap-x-10 gap-y-8 sm:grid-cols-2 lg:grid-cols-4 lg:gap-x-0 lg:gap-y-0">
+                        {columns.map((group) => (
+                            <CreditSection
+                                key={group.key}
+                                group={group}
+                                className="lg:border-l lg:border-white/10 lg:px-4 lg:first:border-l-0"
+                            />
+                        ))}
+                    </div>
 
-                            {/* Entries — Role: Names */}
-                            <ul className="mt-5 space-y-2 text-center leading-relaxed">
-                                {group.entries.map((entry) => (
-                                    <li key={entry.role ?? entry.names.join(', ')}>
-                                        {entry.role && <span className="text-white/40">{entry.role}: </span>}
-                                        <span className="text-white/80">{entry.names.join(', ')}</span>
-                                    </li>
-                                ))}
-                            </ul>
-                        </motion.section>
+                    {finale.map((group) => (
+                        <CreditSection key={group.key} group={group} className="mx-auto w-full max-w-2xl" />
                     ))}
                 </div>
 
-                {/* Footer — Logo | Credits */}
-                <footer className="mt-14 border-t border-white/10 pt-8 text-center">
-                    <img src="/GT_Team_logo.png" alt={t('splash.teamAlt')} className="mx-auto h-20 w-auto max-w-[80vw] object-contain" />
-                    <p className="mt-6 text-sm uppercase tracking-[0.22em] text-white/45">{t('credits.madeWith')}</p>
+                <footer className="shrink-0 border-t border-white/10 pt-4 text-center">
+                    <img
+                        src="/GT_Team_logo.png"
+                        alt={t('splash.teamAlt')}
+                        className="mx-auto h-14 w-auto max-w-[70vw] object-contain sm:h-16"
+                    />
+                    <p className="mt-3 text-xs uppercase tracking-[0.25em] text-white/45">
+                        {t('credits.madeWith')}
+                    </p>
                 </footer>
             </div>
         </motion.main>
     );
-    //endregion — Render
 }

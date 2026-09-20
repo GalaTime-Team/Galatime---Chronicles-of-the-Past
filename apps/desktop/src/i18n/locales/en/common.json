@@ -124,6 +124,7 @@
 			"confirm": "Confirm",
 			"deny": "Deny",
 			"advance": "Advance dialogue",
+			"fullscreen": "Toggle fullscreen",
 			"keyboard": "Keyboard",
 			"gamepad": "Controller",
 			"changeKey": "Change the key for {{label}}",
@@ -144,7 +145,7 @@
 			"imageRenderingSmoothDescription": "Blends neighbouring pixels when scaling, softening the pixel art.",
 			"imageRenderingCrisp": "Crisp edges",
 			"imageRenderingCrispDescription": "Edge-preserving scaling: sharp lines without blurring the colours.",
-			"scale": "Scale",
+			"scale": "Window Scale",
 			"scaleDescription": "Reduce the number of rendered pixels."
 		},
 		"sound": {

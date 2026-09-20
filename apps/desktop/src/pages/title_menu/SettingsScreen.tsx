@@ -3,6 +3,7 @@ import { AnimatePresence, motion } from 'framer-motion';
 import { useTranslation } from 'react-i18next';
 import { useGame, DEFAULT_SETTINGS } from '../../context/GameContext';
 import { cloneControlBindings } from '../../constants/ControlConstants';
+import { PAGE_ENTER_TRANSITION, PAGE_FADE_TRANSITION } from '../../constants/AnimationConstants';
 import { BackButton } from '../../components/common/BackButton';
 import CommonButton from '../../components/common/CommonButton';
 import { CommonPopup } from '../../components/common/CommonPopup';
@@ -54,30 +55,43 @@ export function SettingsScreen({ onBack }: SettingsScreenProps) {
 
     //region — Render
     return (
-        <motion.main className="fixed inset-0 z-10 flex flex-col overflow-hidden px-5 py-6 sm:px-10 sm:py-10" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}>
-            <div className="mx-auto flex w-full max-w-5xl flex-1 flex-col overflow-hidden">
-                {/* Header — Back | Title */}
-                <header className="mb-8 mt-8 flex items-center gap-3">
-                    <BackButton label={t('common.back')} onClick={onBack} />
-                    <span className="h-6 w-1 bg-white/20" aria-hidden="true" />
-                    <h1 className="text-4xl uppercase tracking-[0.14em] text-white">{t('settings.title')}</h1>
+        <motion.main
+            className="relative h-dvh overflow-hidden"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1, transition: PAGE_ENTER_TRANSITION }}
+            exit={{ opacity: 0, transition: PAGE_FADE_TRANSITION }}
+        >
+            <div className="relative z-10 mx-auto flex h-full w-full max-w-7xl flex-col overflow-hidden px-6 py-5 sm:px-10 sm:py-6">
+                {/* Header — Credits style */}
+                <header className="grid shrink-0 grid-cols-[1fr_auto_1fr] items-center">
+                    <div className="justify-self-start">
+                        <BackButton label={t('common.back')} onClick={onBack} />
+                    </div>
+                    <div className="text-center">
+                        <h1 className="pl-[0.18em] text-3xl uppercase text-white sm:text-4xl">
+                            {t('settings.title')}
+                        </h1>
+                    </div>
+                    <span aria-hidden="true" />
                 </header>
 
-                {/* Left Column — Sidebar | Right Column — Tab Panel */}
-                <div className="flex min-h-0 flex-1 flex-col gap-4 md:flex-row md:gap-4">
-                    {/* Left Column — Sidebar */}
-                    <SettingsSidebar activeTab={activeTab} onChange={setActiveTab} labels={labels} />
+                {/* Content — Sidebar + Panel: the only scrollable region */}
+                <div className="flex min-h-0 flex-1 flex-col justify-center gap-8 py-6">
+                    <div className="flex min-h-0 flex-1 flex-col gap-4 md:flex-row md:gap-4">
+                        {/* Left Column — Sidebar */}
+                        <SettingsSidebar activeTab={activeTab} onChange={setActiveTab} labels={labels} />
 
-                    {/* Right Column — Tab Panel */}
-                    <section className="min-w-0 flex-1 overflow-x-hidden overflow-y-auto pb-4 pr-2">
-                        <AnimatePresence mode="wait">
-                            <motion.div key={activeTab} initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} transition={{ duration: 0.18 }}>{panel}</motion.div>
-                        </AnimatePresence>
-                    </section>
+                        {/* Right Column — Tab Panel */}
+                        <section className="min-h-0 min-w-0 flex-1 overflow-x-hidden overflow-y-auto pb-4 pr-2">
+                            <AnimatePresence mode="wait">
+                                <motion.div key={activeTab} initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} transition={{ duration: 0.18 }}>{panel}</motion.div>
+                            </AnimatePresence>
+                        </section>
+                    </div>
                 </div>
 
-                {/* Footer — Restore Defaults (right, below everything) */}
-                <footer className="mt-4 flex justify-end border-t border-white/10 pt-4">
+                {/* Footer — Credits style */}
+                <footer className="shrink-0 border-t border-white/10 pt-4 text-center">
                     <CommonButton variant="ghost" size="sm" onPress={() => setConfirmReset(true)}>
                         {t('settings.restoreDefaults')}
                     </CommonButton>

@@ -13,6 +13,7 @@ export default {
                     accent: '#C5B4E9',
                     dark: '#09091A',
                     darkHover: '#14152E',
+                    background: '#04040C',
                     success: '#236050',
                     successHover: '#36967C',
                     warning: '#FFBB00',

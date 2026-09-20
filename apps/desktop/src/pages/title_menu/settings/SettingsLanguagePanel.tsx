@@ -18,7 +18,7 @@ export function SettingsLanguagePanel({ settings, updateSettings }: SettingsPane
                 onChange={(item) => updateSettings({ language: item.id })}
                 orientation="horizontal"
                 containerClassName="setting-line border-b-4 border-white/10 py-4"
-                optionsWidthClassName="w-40 flex-none"
+                optionsWidthClassName="w-20 flex-none"
             />
         </div>
     );

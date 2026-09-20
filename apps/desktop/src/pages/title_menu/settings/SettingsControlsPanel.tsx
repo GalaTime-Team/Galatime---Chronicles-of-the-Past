@@ -6,7 +6,6 @@ import {
     type ControlBinding,
     type ControlId,
 } from '../../../constants/ControlConstants';
-import { GAMEPAD_FAMILY_LABELS } from '../../../constants/GamepadConstants';
 import { useControls, useGamepadListener } from '../../../context/GameContext';
 import { formatControlKey, isInputShared, normalizeControlKeys } from '../../../utils/controlUtils';
 import { getGamepadButtonLabel } from '../../../utils/gamepadUtils';
@@ -47,8 +46,11 @@ export function SettingsControlsPanel({ settings }: SettingsPanelProps) {
         if (!rebinding) return;
 
         const handleKeyDown = (event: KeyboardEvent) => {
-            // Escape always aborts the rebinding instead of being bound.
+            // Escape always aborts the rebinding instead of being bound. It stops here — this
+            // runs in the capture phase — so it does not also reach the game controls behind
+            // the panel, where `deny` would step back out of the Settings screen.
             if (event.code === 'Escape') {
+                event.stopPropagation();
                 setRebinding(null);
                 return;
             }
@@ -86,13 +88,6 @@ export function SettingsControlsPanel({ settings }: SettingsPanelProps) {
     //region — Render
     return (
         <div className="space-y-1">
-            <div className="flex flex-wrap items-baseline justify-between gap-x-4 gap-y-1 pb-2">
-                <span className="text-xs uppercase tracking-widest text-white/40">
-                    {gamepad
-                        ? t('settings.controls.gamepadConnected', { family: GAMEPAD_FAMILY_LABELS[gamepad.family] })
-                        : t('settings.controls.gamepadMissing')}
-                </span>
-            </div>
 
             {/* Controls List — comes from the registry, so a new control is listed as soon as it is declared. */}
             {CONTROL_DEFINITIONS.map((definition) => {
@@ -120,7 +115,7 @@ export function SettingsControlsPanel({ settings }: SettingsPanelProps) {
                                     {t('settings.controls.reset')}
                                 </button>
                             )}
-                            
+
                             {gamepad ? (
                                 /* Gamepad connected — show only the controller binding. */
                                 <span className="flex items-center gap-2">

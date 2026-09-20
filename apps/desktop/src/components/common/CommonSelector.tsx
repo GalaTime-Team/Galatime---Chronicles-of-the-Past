@@ -63,6 +63,7 @@ const CommonSelector: React.FC<CommonSelectorProps> = ({
             const nextIndex = currentIndex - 1;
             setCurrentIndex(nextIndex);
             onChange(items[nextIndex]);
+            playSfx('click');
         }
     };
 
@@ -71,6 +72,7 @@ const CommonSelector: React.FC<CommonSelectorProps> = ({
             const nextIndex = currentIndex + 1;
             setCurrentIndex(nextIndex);
             onChange(items[nextIndex]);
+            playSfx('click');
         }
     };
 

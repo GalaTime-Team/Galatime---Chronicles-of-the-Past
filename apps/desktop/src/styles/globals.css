@@ -61,6 +61,12 @@ body,
   .min-h-screen {
     min-height: calc(100vh / var(--render-zoom));
   }
+
+  /* Viewport units are NOT divided by `zoom`, so a `h-dvh` box would be `zoom`x taller than the
+     window and push the page footer out of view (visible when reducing the render scale). */
+  .h-dvh {
+    height: calc(100dvh / var(--render-zoom));
+  }
 }
 
 body {

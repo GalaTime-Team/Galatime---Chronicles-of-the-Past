@@ -46,7 +46,7 @@ export const SFX_TRACKS: AudioTrackDefinition[] = loadAudioTracksFromYaml(sfxYam
 export const AMBIENT_TRACKS: AudioTrackDefinition[] = loadAudioTracksFromYaml(ambientYamlRaw);
 
 export const DEFAULT_MUSIC_TRACK_ID = MUSIC_TRACKS[0]?.id ?? 'galatime_theme';
-export const BUTTON_SFX_ID = 'button_sfx';
+export const BUTTON_SFX_ID = 'hover';
 
 export const DEFAULT_AUDIO_VOLUMES: AudioVolumes = {
     master: 80,

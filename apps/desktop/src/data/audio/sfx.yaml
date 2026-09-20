@@ -1,3 +1,9 @@
-- id: button_sfx
-  src: ../assets/sounds/button_sfx.ogg
+- id: hover
+  src: ../assets/sounds/hover.ogg
+  loop: false
+- id: click
+  src: ../assets/sounds/click.ogg
+  loop: false
+- id: denied
+  src: ../assets/sounds/denied.ogg
   loop: false

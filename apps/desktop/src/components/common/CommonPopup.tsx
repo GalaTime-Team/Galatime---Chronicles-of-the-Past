@@ -2,6 +2,7 @@ import React, { useCallback, useEffect, useId, useMemo, useRef } from 'react';
 import { LimitMode, MoveDirection, OutMode, type Container, type ISourceOptions } from '@tsparticles/engine';
 import { AnimatePresence, motion } from 'framer-motion';
 import CommonButton from './CommonButton';
+import { useModalControls } from '../../context/GameContext';
 import { createParticleLayer } from '../../utils/particlesEngine';
 
 //region — Types
@@ -77,8 +78,6 @@ export interface CommonPopupProps {
     onDismiss?: () => void;
     /** Close when the backdrop is clicked. Default: `true`. */
     closeOnBackdrop?: boolean;
-    /** Close when Escape is pressed. Default: `true`. */
-    closeOnEscape?: boolean;
     /** Show the top-right close button. Default: `false`. */
     showCloseButton?: boolean;
     /** Auto-dismiss after N milliseconds. Disabled by default. */
@@ -251,7 +250,6 @@ export function CommonPopup({
     actions,
     onDismiss,
     closeOnBackdrop = true,
-    closeOnEscape = true,
     showCloseButton = false,
     autoCloseMs,
     lockScroll = true,
@@ -292,6 +290,25 @@ export function CommonPopup({
         if (action.autoClose !== false) onDismiss?.();
     }, [onDismiss]);
     //endregion — Resolved actions
+
+    //region — Controls
+    // The controls the popup answers to while it is open: `confirm` presses the primary
+    // action and `deny` the secondary one — the same two the Settings screen binds to
+    // Enter and Escape — so a dialog can be answered without a pointer. Claiming a modal
+    // layer is what keeps the press from reaching the screen behind it, so one `deny`
+    // cancels this dialog instead of also, say, leaving the screen that opened it.
+    const confirmTarget = confirmAction ?? resolvedActions[resolvedActions.length - 1];
+    // A single-action alert has nothing to cancel, so `deny` simply closes it.
+    const cancelTarget = cancelAction ?? (resolvedActions.length > 1 ? resolvedActions[0] : undefined);
+
+    useModalControls(
+        {
+            confirm: () => { if (confirmTarget) handleAction(confirmTarget); },
+            deny: () => { if (cancelTarget) handleAction(cancelTarget); else onDismiss?.(); },
+        },
+        open,
+    );
+    //endregion — Controls
 
     //region — Glow options
     // Kept memoised on purpose: the engine rebuilds the container whenever the options
@@ -355,19 +372,6 @@ export function CommonPopup({
     useEffect(() => {
         if (open) dialogRef.current?.focus();
     }, [open]);
-
-    // Close on Escape.
-    useEffect(() => {
-        if (!open || !closeOnEscape) return;
-        const onKeyDown = (event: KeyboardEvent) => {
-            if (event.key === 'Escape') {
-                event.stopPropagation();
-                onDismiss?.();
-            }
-        };
-        window.addEventListener('keydown', onKeyDown);
-        return () => window.removeEventListener('keydown', onKeyDown);
-    }, [open, closeOnEscape, onDismiss]);
 
     // Optional auto-dismiss timer.
     useEffect(() => {

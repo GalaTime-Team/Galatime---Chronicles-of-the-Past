@@ -178,6 +178,14 @@ const CommonButton: React.FC<CommonButtonProps> = ({
         container.particles.push(PARTICLE_COUNT, { x, y });
     };
 
+    const handlePointerDown = () => {
+        if (disabled) {
+            playSfx('denied');
+        } else {
+            playSfx('click');
+        }
+    };
+
     const handleClick = (event: React.MouseEvent<HTMLButtonElement>) => {
         if (particles) {
             spawnBurst(event);
@@ -187,7 +195,7 @@ const CommonButton: React.FC<CommonButtonProps> = ({
     };
 
     const handleMouseEnter = () => {
-        playSfx('button_sfx');
+        playSfx('hover');
     };
     // Base styles — color-based transitions on hover/active
     const baseStyles = "relative inline-flex items-center justify-center gap-2 whitespace-nowrap uppercase tracking-widest transition-colors duration-300 ease-out disabled:opacity-50 disabled:cursor-not-allowed select-none rounded-none border-4 leading-2.5";
@@ -213,6 +221,7 @@ const CommonButton: React.FC<CommonButtonProps> = ({
         <button
             type={type}
             onClick={handleClick}
+            onPointerDown={handlePointerDown}
             onMouseEnter={handleMouseEnter}
             disabled={disabled}
             className={`${baseStyles} ${variants[variant]} ${sizes[size]} ${className}`}

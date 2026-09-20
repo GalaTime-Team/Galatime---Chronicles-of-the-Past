@@ -46,6 +46,14 @@ const CommonSwitch: React.FC<CommonSwitchProps> = ({
     const [isChecked, setIsChecked] = useState(defaultChecked);
     const isHorizontal = orientation === 'horizontal';
 
+    const handlePointerDown = () => {
+        if (disabled) {
+            playSfx('denied');
+        } else {
+            playSfx('click');
+        }
+    };
+
     const handleToggle = () => {
         if (disabled) return;
         const newState = !isChecked;
@@ -54,7 +62,7 @@ const CommonSwitch: React.FC<CommonSwitchProps> = ({
     };
 
     const handleMouseEnter = () => {
-        if (!disabled) playSfx('button_sfx');
+        if (!disabled) playSfx('hover');
     };
 
     return (
@@ -83,6 +91,7 @@ const CommonSwitch: React.FC<CommonSwitchProps> = ({
                     <div className="flex flex-col items-center">
                         <button
                             onClick={handleToggle}
+                            onPointerDown={handlePointerDown}
                             onMouseEnter={handleMouseEnter}
                             disabled={disabled}
                             className={`text-2xl focus:outline-none hover:scale-105 active:scale-95 transition-all duration-150 ${disabled

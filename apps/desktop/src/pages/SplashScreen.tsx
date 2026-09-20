@@ -70,7 +70,7 @@ export function SplashScreen({ onComplete }: SplashScreenProps) {
             onKeyDown={leave}
         >
             <motion.div initial={{ scale: 0.9, opacity: 0 }} animate={{ scale: 1, opacity: 1 }} transition={{ duration: 0.7 }}>
-                <img src="/GT_Team_logo.png" alt={t('splash.teamAlt')} className="mx-auto h-50 w-auto object-contain" />
+                <img src="/GT_Team_logo.png" alt={t('splash.teamAlt')} className="mx-auto h-64 w-auto object-contain" />
             </motion.div>
         </motion.main>
     );

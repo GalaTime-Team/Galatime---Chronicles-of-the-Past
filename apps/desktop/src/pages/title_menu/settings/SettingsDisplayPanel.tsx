@@ -42,7 +42,7 @@ export function SettingsDisplayPanel({ settings, updateSettings }: SettingsPanel
                 orientation="horizontal"
                 showDescription
                 containerClassName="setting-line border-b-4 border-white/10 py-4"
-                optionsWidthClassName="w-40 flex-none"
+                optionsWidthClassName="w-20 flex-none"
             />
 
             {/* Render Scale Slider */}

@@ -32,6 +32,13 @@ export const CONTROL_DEFINITIONS = [
         label: 'settings.controls.advance',
         defaultBinding: { keyboard: ['Space'], gamepad: ['south'] },
     },
+    {
+        id: 'fullscreen',
+        label: 'settings.controls.fullscreen',
+        // A window shortcut rather than a gameplay action: bound to F11 on the keyboard and
+        // deliberately unbound on a controller, where no button is lost to it by default.
+        defaultBinding: { keyboard: ['F11'], gamepad: [] },
+    },
 ] as const;
 
 export type ControlDefinition = (typeof CONTROL_DEFINITIONS)[number];

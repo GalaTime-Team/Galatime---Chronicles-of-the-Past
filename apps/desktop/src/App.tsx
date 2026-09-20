@@ -4,11 +4,29 @@ import { SplashScreen } from './pages/SplashScreen';
 import { TitleMenu } from './pages/title_menu/TitleMenu';
 import { SettingsScreen } from './pages/title_menu/SettingsScreen';
 import { CreditsScreen } from './pages/title_menu/CreditsScreen';
+import { TitleMenuLayout } from './pages/title_menu/layout';
+import { useControlListener, useGame } from './context/GameContext';
 
 type Screen = 'splash' | 'title' | 'settings' | 'credits';
 
 function App() {
   const [screen, setScreen] = useState<Screen>('splash');
+  const { setGameState } = useGame();
+
+  // The fullscreen shortcut is offered wherever the game is: it is a display setting like the
+  // one in Settings, so it goes through the same state and is applied/persisted from there.
+  // Fullscreen is a native window mode, which is why leaving it is only possible here — `deny`
+  // (Escape) reaches the screen behind without the window reacting to it.
+  useControlListener({
+    fullscreen: () =>
+      setGameState((previous) => ({
+        ...previous,
+        settings: {
+          ...previous.settings,
+          display: { ...previous.settings.display, fullscreen: !previous.settings.display.fullscreen },
+        },
+      })),
+  });
 
   useEffect(() => {
     if (import.meta.env.DEV) return;
@@ -34,17 +52,29 @@ function App() {
     };
   }, []);
 
-  const currentScreen = {
-    splash: <SplashScreen onComplete={() => setScreen('title')} />,
-    title: <TitleMenu onSettings={() => setScreen('settings')} onCredits={() => setScreen('credits')} />,
-    settings: <SettingsScreen onBack={() => setScreen('title')} />,
-    credits: <CreditsScreen onBack={() => setScreen('title')} />
-  }[screen];
+  const titleScreens = {
+    title: <TitleMenu key="title" onSettings={() => setScreen('settings')} onCredits={() => setScreen('credits')} />,
+    settings: <SettingsScreen key="settings" onBack={() => setScreen('title')} />,
+    credits: <CreditsScreen key="credits" onBack={() => setScreen('title')} />
+  };
+
+  // During exit transitions the previous screen keeps rendering, so fall back to the title menu.
+  const currentScreen =
+    screen === 'splash' ? (
+      <SplashScreen onComplete={() => setScreen('title')} />
+    ) : (
+      <TitleMenuLayout>
+        {/* Keyed by screen so TitleMenu, Settings and Credits really swap: the leaving page fades
+            out completely (`mode="wait"`) before the next one fades in. The layout itself is not
+            re-keyed, so the background and the particles survive the transition untouched. */}
+        <AnimatePresence mode="wait">{titleScreens[screen] ?? titleScreens.title}</AnimatePresence>
+      </TitleMenuLayout>
+    );
 
   return (
-    <div className="min-h-screen bg-galatime-dark font-custom text-white">
+    <div className="min-h-screen bg-galatime-background font-custom text-white">
       <AnimatePresence mode="wait">
-        <motion.div key={screen} initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} transition={{ duration: 0.35 }}>
+        <motion.div key={screen === 'splash' ? 'splash' : 'menu'} initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} transition={{ duration: 0.35 }}>
           {currentScreen}
         </motion.div>
       </AnimatePresence>
