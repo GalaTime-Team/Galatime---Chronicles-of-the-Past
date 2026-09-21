@@ -5,7 +5,7 @@ import { TitleMenu } from './pages/title_menu/TitleMenu';
 import { SettingsScreen } from './pages/title_menu/SettingsScreen';
 import { CreditsScreen } from './pages/title_menu/CreditsScreen';
 import { NewGameScreen } from './pages/title_menu/NewGameScreen';
-import { TestPlaygroundScreen } from './pages/title_menu/test_playground/TestPlaygroundScreen';
+import { TestPlaygroundScreen } from './pages/title_menu/TestPlaygroundScreen';
 import { TitleMenuLayout } from './pages/title_menu/layout';
 import { NowPlayingCard } from './components/common/NowPlayingCard';
 import { useControlListener, useGame } from './context/GameContext';

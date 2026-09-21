@@ -10,28 +10,13 @@ description: >
   how crystal mages are the souls of people that died buried
   alive...
 
-
-age: null
-birthday: null
-origin: Atlaria
-starting_relationships:
-  liking: 0
-  trust: 0
-
-
-ai:
-  personality: balanced
-
 elements:
   - lapis
 
 base_stats:
   hp: 315
-  max_hp: 315
   mana: 75
-  max_mana: 75
   stamina: 22
-  max_stamina: 22
   physical_attack: 36
   magical_attack: 73
   physical_defense: 14

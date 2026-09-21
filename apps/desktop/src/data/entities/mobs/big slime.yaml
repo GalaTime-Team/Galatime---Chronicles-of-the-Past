@@ -7,27 +7,13 @@ description: >
   A large gelatinous creature that can be found in various environments.
   Despite their simple appearance, big slimes are surprisingly resilient.
 
-age: null
-birthday: null
-origin: Atlaria
-starting_relationships:
-  liking: 0
-  trust: 0
-
-
-ai:
-  personality: aggressive
-
 elements:
   - aqua
 
 base_stats:
   hp: 445
-  max_hp: 445
   mana: 25
-  max_mana: 25
   stamina: 31
-  max_stamina: 31
   physical_attack: 25
   magical_attack: 28
   physical_defense: 18

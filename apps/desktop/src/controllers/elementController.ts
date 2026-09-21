@@ -65,11 +65,21 @@ export async function getElementsWeaknesses(
     // Consolidate weaknesses
     let consolidated = consolidateScores(allWeaknesses);
 
+    // The tooltip lists every common element, exactly like the attack tooltip does, so the
+    // elements that no relationship mentions are completed here as neutral (score 0 -> x1).
+    // Corrupted elements are left out, matching the filter the attack tooltip applies.
+    const allElements = await getAllElementsDataService();
+    const completeScores: Record<string, { type: string; score: number }> = {};
+    for (const element of allElements) {
+        if (element.type !== "common") continue;
+        completeScores[element.id] = consolidated[element.id] ?? { type: "none", score: 0 };
+    }
+
     // Convert to damage multipliers
-    const multipliers = scoresToMultipliers(consolidated);
+    const multipliers = scoresToMultipliers(completeScores);
 
     // Sort by elementId (alphabetically)
-    const sortedMultipliers: Record<string, { type: string; score: number }> = Object.keys(consolidated)
+    const sortedMultipliers: Record<string, { type: string; score: number }> = Object.keys(completeScores)
         .sort((a, b) => a.localeCompare(b))
         .reduce((acc, elementId) => {
             acc[elementId] = multipliers[elementId] ?? { type: "none", score: 1 };

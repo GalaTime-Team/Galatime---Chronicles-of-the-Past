@@ -5,6 +5,7 @@ import { DEFAULT_MUSIC_TRACK_ID } from '../constants/AudioConstants';
 import { SPLASH_TO_TITLE_DURATION } from '../constants/AnimationConstants';
 import { playMusic } from '../controllers/audioController';
 import { loadAndCacheBootstrap } from '../services/bootstrapService';
+import CommonImage from '../components/common/CommonImage';
 
 interface SplashScreenProps {
     onComplete: () => void;
@@ -71,7 +72,7 @@ export function SplashScreen({ onComplete }: SplashScreenProps) {
             onKeyDown={leave}
         >
             <motion.div initial={{ scale: 0.9, opacity: 0 }} animate={{ scale: 1, opacity: 1 }} transition={{ duration: 0.7 }}>
-                <img src="/GT_Team_logo.png" alt={t('splash.teamAlt')} className="mx-auto h-64 w-auto object-contain" />
+                <CommonImage src="/GT_Team_logo.png" alt={t('splash.teamAlt')} className="mx-auto h-64 w-auto" />
             </motion.div>
         </motion.main>
     );

@@ -11,28 +11,14 @@ description: >
   Extroverted and quick-witted alchemist. Though he appears carefree,
   he's actually quite knowledgeable and skilled in his craft.
 
-starting_relationships:
-  liking: 0
-  trust: 0
-
-scenes:
-  - scene_id: null
-    dialog: null
-
-ai:
-  personality: balanced
-
 elements:
   - lapis
   - florere
 
 base_stats:
   hp: 1080
-  max_hp: 1080
   mana: 109
-  max_mana: 109
   stamina: 43
-  max_stamina: 43
   physical_attack: 46
   magical_attack: 54
   physical_defense: 109
@@ -128,5 +114,3 @@ weapon:
       debuff:
         physical_attack: 15
         magical_attack: 15
-
-tags: [extroverted, quick-witted, alchemist]

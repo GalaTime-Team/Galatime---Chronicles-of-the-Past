@@ -7,31 +7,13 @@ description: >
   A greedy soul that has abandoned all restraint. It tears at life
   energy with ruthless hunger and grows stronger with every theft.
 
-age: null
-birthday: null
-origin: Atlaria
-starting_relationships:
-  liking: 0
-  trust: 0
-
-
-ai:
-  personality: aggressive
-  conditions:
-    - condition: default
-      action: strongest_attack
-      priority: 65
-
 elements:
   - umbra
 
 base_stats:
   hp: 360
-  max_hp: 360
   mana: 60
-  max_mana: 60
   stamina: 24
-  max_stamina: 24
   physical_attack: 20
   magical_attack: 56
   physical_defense: 35
@@ -87,4 +69,3 @@ abilities:
       new_template: good_soul
     keep_triggered_after_once: false
     activation_message: "The Bad Soul's aggression ebbs... it reforms into a Good Soul."
-

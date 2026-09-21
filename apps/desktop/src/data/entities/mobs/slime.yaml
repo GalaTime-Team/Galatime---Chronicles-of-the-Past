@@ -7,27 +7,13 @@ description: >
   A gelatinous creature that can be found in various environments.
   Despite their simple appearance, slimes are surprisingly resilient.
 
-age: null
-birthday: null
-origin: Atlaria
-starting_relationships:
-  liking: 0
-  trust: 0
-
-
-ai:
-  personality: aggressive
-
 elements:
   - aqua
 
 base_stats:
   hp: 98
-  max_hp: 98
   mana: 19
-  max_mana: 19
   stamina: 15
-  max_stamina: 15
   physical_attack: 17
   magical_attack: 25
   physical_defense: 10

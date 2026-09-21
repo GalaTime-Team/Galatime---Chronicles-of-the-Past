@@ -11,51 +11,13 @@ description: >
   A beautiful and innocent-looking commander of the Imperial Guards.
   I still think her job is too dangerous for someone like her...
 
-starting_relationships:
-  liking: -30        
-  trust: 0
-
-scenes:
-  - scene_id: null
-    dialog: null
-
-ai:
-  personality: balanced
-  conditions:
-    - condition: critical_hp
-      threshold: 0.10
-      action: heal_self
-      priority: 95
-    - condition: low_hp
-      threshold: 0.30
-      action: rest
-      priority: 80
-    - condition: low_mana
-      threshold: 0.15
-      action: physical_attack
-      priority: 65
-    - condition: low_stamina
-      threshold: 0.15
-      action: magical_attack
-      priority: 65
-    - condition: enemy_low_hp
-      threshold: 0.20
-      action: strongest_attack
-      priority: 85
-    - condition: default
-      action: strongest_attack
-      priority: 50
-
 elements:
   - corrupted_void
 
 base_stats:
   hp: 1000
-  max_hp: 1000
   mana: 62
-  max_mana: 62
   stamina: 61
-  max_stamina: 61
   physical_attack: 83
   magical_attack: 96
   physical_defense: 90
@@ -136,5 +98,4 @@ loot:
   - item: potion_small
     chance: 0.6
 
-tags: [boss, imperial_guard, female, cute]
 

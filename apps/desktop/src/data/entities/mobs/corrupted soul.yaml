@@ -7,31 +7,13 @@ description: >
   A soul consumed by endless avarice. Its touch withers resolve, and
   its hunger feeds on any fading spark nearby.
 
-age: null
-birthday: null
-origin: Atlaria
-starting_relationships:
-  liking: 0
-  trust: 0
-
-
-ai:
-  personality: aggressive
-  conditions:
-    - condition: default
-      action: strongest_attack
-      priority: 80
-
 elements:
   - umbra
 
 base_stats:
   hp: 500
-  max_hp: 500
   mana: 85
-  max_mana: 85
   stamina: 30
-  max_stamina: 30
   physical_attack: 28
   magical_attack: 72
   physical_defense: 46

@@ -1,5 +1,6 @@
+import { CSS_IMAGE_RENDERING } from '../constants/DisplayConstants';
 import type { GameSettings } from '../context/GameContext';
-
+import { notifyDisplaySettingsChanged } from './imageRenderingService';
 export type DisplaySettings = GameSettings['display'];
 
 /** CSS custom property consumed by `image-rendering` for images and canvases. */
@@ -14,7 +15,8 @@ export const RENDER_ZOOM_VAR = '--render-zoom';
 /**
  * Applies the display settings to the actual game presentation:
  * - `fullscreen` toggles the native Tauri window fullscreen (browser fallback in Vite mode).
- * - `imageRendering` feeds the `image-rendering` used by images and canvases.
+ * - `imageRendering` selects the sprite filter used by `CommonImage`, and its closest CSS
+ *   equivalent feeds the `image-rendering` used by the images that are still plain `<img>`.
  * - `renderScale` is converted into a zoom factor: at 50% the interface is laid out on half of
  *   the screen and then enlarged, so fewer pixels are rendered and components look bigger.
  */
@@ -22,8 +24,12 @@ export async function applyDisplaySettings(display: DisplaySettings): Promise<vo
   if (typeof document !== 'undefined') {
     const root = document.documentElement;
     const renderScale = display.renderScale > 0 ? display.renderScale : 100;
-    root.style.setProperty(IMAGE_RENDERING_VAR, display.imageRendering);
-    root.style.setProperty(RENDER_ZOOM_VAR, String(100 / renderScale));
+    const renderZoom = 100 / renderScale;
+    root.style.setProperty(IMAGE_RENDERING_VAR, CSS_IMAGE_RENDERING[display.imageRendering] ?? 'auto');
+    root.style.setProperty(RENDER_ZOOM_VAR, String(renderZoom));
+    // Sprites compensate for the zoom themselves: it scales their box visually without changing
+    // the size any measurement reports, so the canvas would otherwise be upscaled by the browser.
+    notifyDisplaySettingsChanged(display.imageRendering, renderZoom);
   }
 
   try {

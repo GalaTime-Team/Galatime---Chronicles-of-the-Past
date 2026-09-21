@@ -87,8 +87,10 @@ function normalizeDisplay(raw: unknown): Partial<GameSettings['display']> {
     normalized.fullscreen = fullscreen;
   }
 
+  // Builds that predate the current modes stored a boolean; those stored `'pixelated'`, which no
+  // longer exists, and resolve to the default instead.
   const legacyMode: ImageRenderingMode | undefined = typeof pixelScale === 'boolean'
-    ? (pixelScale ? 'pixelated' : 'smooth')
+    ? (pixelScale ? 'crisp-edges' : 'smooth')
     : undefined;
   const mode = IMAGE_RENDERING_MODES.find((candidate) => candidate === imageRendering) ?? legacyMode;
   if (mode) {

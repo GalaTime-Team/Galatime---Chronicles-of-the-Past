@@ -9,28 +9,14 @@ description: >
   however, that if you gain their trust, they'll guide you around
   the snowy mountains.
 
-age: null
-birthday: null
-origin: Atlaria
-starting_relationships:
-  liking: 0
-  trust: 0
-
-
-ai:
-  personality: aggressive
-
 elements:
   - corporis
   - aqua
 
 base_stats:
   hp: 340
-  max_hp: 340
   mana: 6
-  max_mana: 6
   stamina: 88
-  max_stamina: 88
   physical_attack: 69
   magical_attack: 9
   physical_defense: 58

@@ -7,35 +7,13 @@ description: >
   A charitable soul that learned to wield its light with precision.
   Its glow restores allies while weakening hostile intent.
 
-age: null
-birthday: null
-origin: Atlaria
-starting_relationships:
-  liking: 0
-  trust: 0
-
-
-ai:
-  personality: support
-  conditions:
-    - condition: ally_low_hp
-      threshold: 0.65
-      action: heal_ally
-      priority: 92
-    - condition: default
-      action: strongest_attack
-      priority: 55
-
 elements:
   - lux
 
 base_stats:
   hp: 340
-  max_hp: 340
   mana: 62
-  max_mana: 62
   stamina: 22
-  max_stamina: 22
   physical_attack: 58
   magical_attack: 16
   physical_defense: 32

@@ -12,28 +12,14 @@ description: >
   discipline. But she sure acts different around Pacci, like she's a completely
   different person... was he some sort of mentor?
 
-starting_relationships:
-  liking: 0
-  trust: 0
-
-scenes:
-  - scene_id: null
-    dialog: null
-
-ai:
-  personality: support
-
 elements:
   - aqua
   - lux
 
 base_stats:
   hp: 1010
-  max_hp: 1010
   mana: 91
-  max_mana: 91
   stamina: 61
-  max_stamina: 61
   physical_attack: 42
   magical_attack: 62
   physical_defense: 60
@@ -122,5 +108,3 @@ weapon:
   power: 40
   stamina_cost: 2
   damage_variance: [0.7, 1.0]
-
-tags: []

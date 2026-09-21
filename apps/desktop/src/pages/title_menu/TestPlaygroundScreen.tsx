@@ -1,14 +1,14 @@
 import { useState } from 'react';
 import { AnimatePresence, motion } from 'framer-motion';
 import { useTranslation } from 'react-i18next';
-import { PAGE_ENTER_TRANSITION, PAGE_FADE_TRANSITION } from '../../../constants/AnimationConstants';
-import { BackButton } from '../../../components/common/BackButton';
-import { TestPlaygroundSidebar } from './TestPlaygroundSidebar';
-import type { PlaygroundTab } from './types';
-import { TestPlaygroundHeaderTitle } from './TestPlaygroundHeaderTitle';
-import { TestMusicPanel } from './TestMusicPanel';
-import { TestDialoguePanel } from './TestDialoguePanel';
-import { TestCombatPanel, TestObjectivesPanel, TestMovementPanel } from './TestPlaceholderPanels';
+import { PAGE_ENTER_TRANSITION, PAGE_FADE_TRANSITION } from '../../constants/AnimationConstants';
+import { BackButton } from '../../components/common/BackButton';
+import { TestPlaygroundSidebar } from './test_playground/TestPlaygroundSidebar';
+import type { PlaygroundTab } from './test_playground/types';
+import { TestMusicPanel } from './test_playground/TestMusicPanel';
+import { TestDialoguePanel } from './test_playground/TestDialoguePanel';
+import { TestCombatPanel, TestObjectivesPanel, TestMovementPanel } from './test_playground/TestPlaceholderPanels';
+import { TestEntitiesPanel } from './test_playground/TestEntitiesPanel';
 
 interface TestPlaygroundScreenProps {
     onBack: () => void;
@@ -25,6 +25,7 @@ export function TestPlaygroundScreen({ onBack }: TestPlaygroundScreenProps) {
         combat: t('playground.tabs.combat'),
         objectives: t('playground.tabs.objectives'),
         movement: t('playground.tabs.movement'),
+        entities: t('playground.tabs.entities'),
     };
 
     const panels: Record<PlaygroundTab, React.ReactNode> = {
@@ -40,6 +41,7 @@ export function TestPlaygroundScreen({ onBack }: TestPlaygroundScreenProps) {
         combat: <TestCombatPanel />,
         objectives: <TestObjectivesPanel />,
         movement: <TestMovementPanel />,
+        entities: <TestEntitiesPanel />,
     };
 
     const panel = panels[activeTab];
@@ -59,8 +61,12 @@ export function TestPlaygroundScreen({ onBack }: TestPlaygroundScreenProps) {
                     <div className="justify-self-start">
                         <BackButton label={t('common.back')} onClick={onBack} />
                     </div>
-                    <div className="text-center">
-                        <TestPlaygroundHeaderTitle />
+                    <div
+                        className="relative inline-flex items-center text-center justify-center"
+                    >
+                        <h1 className="relative z-10 pl-[0.18em] text-3xl uppercase text-white sm:text-4xl">
+                            {t('playground.title')}
+                        </h1>
                     </div>
                     <span aria-hidden="true" />
                 </header>
@@ -72,20 +78,22 @@ export function TestPlaygroundScreen({ onBack }: TestPlaygroundScreenProps) {
                         <TestPlaygroundSidebar activeTab={activeTab} onChange={setActiveTab} labels={labels} />
 
                         {/* Right Column — Tab Panel */}
-                        <section className="min-h-0 min-w-0 flex-1 overflow-x-hidden overflow-y-auto pb-4 pr-2">
+                        <section className="min-h-0 min-w-0 flex-1 overflow-x-hidden overflow-y-auto p-2">
                             <AnimatePresence mode="wait">
-                                <motion.div key={activeTab} initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} transition={{ duration: 0.18 }}>{panel}</motion.div>
+                                <motion.div
+                                    key={activeTab}
+                                    className="h-full"
+                                    initial={{ opacity: 0 }}
+                                    animate={{ opacity: 1 }}
+                                    exit={{ opacity: 0 }}
+                                    transition={{ duration: 0.18 }}
+                                >
+                                    {panel}
+                                </motion.div>
                             </AnimatePresence>
                         </section>
                     </div>
                 </div>
-
-                {/* Footer */}
-                <footer className="shrink-0 border-t border-white/10 pt-4 text-center">
-                    <p className="text-xs uppercase tracking-[0.15em] text-white/25">
-                        {t('playground.footer')}
-                    </p>
-                </footer>
             </div>
         </motion.main>
     );

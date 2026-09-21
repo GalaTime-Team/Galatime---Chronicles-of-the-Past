@@ -4,6 +4,7 @@ import { createPortal } from 'react-dom';
 
 import CommonHoverElement from '../../common/CommonHoverElement';
 import CommonHoverAttackType from '../../common/CommonHoverAttackType';
+import CommonImage from '../../common/CommonImage';
 import { ElementIcon } from '../../../assets/GalatimeIcon';
 
 import { useGame } from '../../../context/GameContext';
@@ -65,18 +66,11 @@ const AttackCard: React.FC<AttackCardProps> = ({
             {/* The image on the left - positioned above the box */}
             <div className="absolute left-0 z-10 w-20 h-20 flex items-center justify-center">
                 <div className="w-20 h-20 overflow-hidden flex items-center justify-center">
-                    <img
+                    <CommonImage
                         src={mainIconPath}
                         alt={title}
+                        fallbackSrc="/images/elements/unknown.png"
                         className="w-full h-full object-contain"
-                        onError={(e) => {
-                            const target = e.target as HTMLImageElement;
-                            if (!target.src.includes('/images/elements/unknown.png')) {
-                                target.src = '/images/elements/unknown.png';
-                            } else {
-                                target.style.display = 'none';
-                            }
-                        }}
                     />
                 </div>
             </div>
@@ -149,18 +143,10 @@ const AttackCard: React.FC<AttackCardProps> = ({
                         onMouseLeave={() => setIsAttackTypeTooltipVisible(false)}
                         className="flex items-center justify-end p-1"
                     >
-                        <img
+                        <CommonImage
                             src={typeIconPath}
                             alt={type}
                             className="h-3 w-3 object-contain"
-                            onError={(e) => {
-                                const target = e.target as HTMLImageElement;
-                                if (!target.src.includes('/images/elements/unknown.png')) {
-                                    target.src = '/images/elements/unknown.png';
-                                } else {
-                                    target.style.display = 'none';
-                                }
-                            }}
                         />
                     </div>
 

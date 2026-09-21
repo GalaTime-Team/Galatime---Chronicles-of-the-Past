@@ -161,12 +161,18 @@
 		"display": {
 			"fullscreen": "Fullscreen",
 			"imageRendering": "Image rendering",
-			"imageRenderingPixelated": "Pixelated",
-			"imageRenderingPixelatedDescription": "Nearest-neighbour scaling: keeps the pixel art crisp and blocky.",
+			"imageRenderingSharp": "Sharp",
+			"imageRenderingSharpDescription": "Enlarges to a whole multiple and then shrinks with a high-quality filter: the pixel art stays crisp, but no pixel is wider than its neighbours.",
 			"imageRenderingSmooth": "Smooth",
-			"imageRenderingSmoothDescription": "Blends neighbouring pixels when scaling, softening the pixel art.",
+			"imageRenderingSmoothDescription": "Blends neighbouring pixels when scaling. The softest result, and never uneven.",
+			"imageRenderingLanczos": "Lanczos",
+			"imageRenderingLanczosDescription": "High-quality resampling that keeps fine detail sharp while removing the uneven pixels.",
+			"imageRenderingScale2x": "Pixel art",
+			"imageRenderingScale2xDescription": "Edge-aware pixel art scaling: rounds off staircase diagonals and keeps flat colours perfectly flat.",
+			"imageRenderingCrt": "Retro CRT",
+			"imageRenderingCrtDescription": "Pixel art scaling with faint scanlines, like an old monitor.",
 			"imageRenderingCrisp": "Crisp edges",
-			"imageRenderingCrispDescription": "Edge-preserving scaling: sharp lines without blurring the colours.",
+			"imageRenderingCrispDescription": "Keeps lines sharp without blurring the colours. At fractional zoom some pixels can still look wider than others.",
 			"scale": "Window Scale",
 			"scaleDescription": "Reduce the number of rendered pixels."
 		},
@@ -193,7 +199,6 @@
 	"playground": {
 		"title": "Test Playground",
 		"openFolder": "Open the test playground folder",
-		"footer": "Testing environment — not part of the game",
 		"check": "Check",
 		"comingSoon": "This test panel is coming soon.",
 		"tabs": {
@@ -201,7 +206,8 @@
 			"dialogue": "Dialogue",
 			"combat": "Combat",
 			"objectives": "Objectives",
-			"movement": "Movement"
+			"movement": "Movement",
+			"entities": "Entities"
 		},
 		"music": {
 			"nowPlaying": "Now Playing",

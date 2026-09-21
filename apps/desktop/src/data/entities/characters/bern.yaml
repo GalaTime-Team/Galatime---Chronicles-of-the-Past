@@ -10,29 +10,14 @@ origin: Lotipel
 description: >
   Add description here.
 
-starting_relationships:
-  liking: 0
-  trust: 0
-
-scenes:
-  - scene_id: null
-    dialog: null
-
-ai:
-  personality: aggressive
-
 elements:
   - lapis
   - corporis
 
 base_stats:
-
   hp: 810
-  max_hp: 810
   mana: 41
-  max_mana: 41
   stamina: 65
-  max_stamina: 65
   physical_attack: 103
   magical_attack: 54
   physical_defense: 91
@@ -107,5 +92,3 @@ weapon:
   accuracy: 0.95
   power: 40
   stamina_cost: 2
-
-tags: [support, healer, lux]

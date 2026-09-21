@@ -9,27 +9,13 @@ description: >
   Elder Snowvers use their power to protect their young and to ward
   off predators from afar.
 
-age: null
-birthday: null
-origin: Atlaria
-starting_relationships:
-  liking: 0
-  trust: 0
-
-
-ai:
-  personality: defensive
-
 elements:
   - aqua
 
 base_stats:
   hp: 336
-  max_hp: 336
   mana: 91
-  max_mana: 91
   stamina: 38
-  max_stamina: 38
   physical_attack: 8
   magical_attack: 70
   physical_defense: 46

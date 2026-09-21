@@ -3,6 +3,7 @@ import { motion } from 'framer-motion';
 import { useTranslation } from 'react-i18next';
 import { PAGE_ENTER_TRANSITION, PAGE_FADE_TRANSITION } from '../../constants/AnimationConstants';
 import { BackButton } from '../../components/common/BackButton';
+import CommonImage from '../../components/common/CommonImage';
 
 interface CreditEntry {
     role?: string;
@@ -137,10 +138,10 @@ export function CreditsScreen({ onBack }: CreditsScreenProps) {
                 </div>
 
                 <footer className="shrink-0 border-t border-white/10 pt-4 text-center">
-                    <img
+                    <CommonImage
                         src="/GT_Team_logo.png"
                         alt={t('splash.teamAlt')}
-                        className="mx-auto h-14 w-auto max-w-[70vw] object-contain sm:h-16"
+                        className="mx-auto h-14 w-auto max-w-[70vw] sm:h-16"
                     />
                     <p className="mt-3 text-xs uppercase tracking-[0.25em] text-white/45">
                         {t('credits.madeWith')}

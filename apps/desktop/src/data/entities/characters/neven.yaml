@@ -12,28 +12,14 @@ description: >
   Raphael seems to always know what he's thinking... I can barely believe he's 
   Pacci's brother, they seem so different.
 
-starting_relationships:
-  liking: 50
-  trust: 50
-
-scenes:
-  - scene_id: null
-    dialog: null
-
-ai:
-  personality: aggressive
-
 elements:
   - umbra
   - spatium
 
 base_stats:
   hp: 480
-  max_hp: 480
   mana: 122
-  max_mana: 122
   stamina: 35
-  max_stamina: 35
   physical_attack: 25
   magical_attack: 97
   physical_defense: 74
@@ -100,5 +86,3 @@ weapon:
   power: 30
   stamina_cost: 2
   damage_variance: [0.8, 1.1]
-
-tags: [mute, cold, enigmatic]

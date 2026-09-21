@@ -11,27 +11,14 @@ description: >
   Calm and empathetic, Pacci is a reliable and warm person. He
   has helped me from the start, I hope I can repay him in the future. 
 
-starting_relationships:
-  liking: 0
-  trust: 0
-
-scenes:
-  - scene_id: pacci_living_room
-
-ai:
-  personality: balanced
-
 elements:
   - florere
   - umbra
 
 base_stats:
   hp: 800
-  max_hp: 800
   mana: 82
-  max_mana: 82
   stamina: 85
-  max_stamina: 85
   physical_attack: 67
   magical_attack: 65
   physical_defense: 65
@@ -106,5 +93,3 @@ weapon:
   power: 40
   stamina_cost: 2
   damage_variance: [0.7, 1.0]
-
-tags: [empathetic, reliable, warm]

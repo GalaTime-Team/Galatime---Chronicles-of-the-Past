@@ -10,28 +10,13 @@ origin: Sedra
 description: >
   Add description here.
 
-starting_relationships:
-  liking: 0
-  trust: 0
-
-scenes:
-  - scene_id: null
-    dialog: null
-
-ai:
-  personality: balanced
-
 elements:
   - caeli
 
 base_stats:
-
   hp: 700
-  max_hp: 700
   mana: 87
-  max_mana: 87
   stamina: 74
-  max_stamina: 74
   physical_attack: 52
   magical_attack: 83
   physical_defense: 45
@@ -97,5 +82,3 @@ weapon:
   accuracy: 0.9
   power: 30
   stamina_cost: 2
-
-tags: [support, healer, lux]

@@ -79,8 +79,10 @@ body {
   background: #09091A;
 }
 
-img,
-canvas {
+/* Plain images follow the "Image rendering" display setting. Sprites go through `CommonImage`,
+   which rasterises them at their exact device-pixel size and pins `image-rendering: auto` inline,
+   so this rule only covers images the canvas pipeline does not handle. */
+img {
   image-rendering: var(--image-rendering);
 }
 

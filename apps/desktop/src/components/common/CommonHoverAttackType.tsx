@@ -1,3 +1,5 @@
+import CommonImage from './CommonImage';
+
 interface CommonHoverAttackTypeProps {
     typeName: string;
     typeIconPath: string;
@@ -21,18 +23,10 @@ const CommonHoverAttackType: React.FC<CommonHoverAttackTypeProps> = ({
                 <h2 className="text-lg font-bold text-white uppercase tracking-wider">
                     {typeName}
                 </h2>
-                <img
+                <CommonImage
                     src={typeIconPath}
                     alt={typeName}
-                    className="w-5 h-5 pixelated items-center justify-center"
-                    onError={(e) => {
-                        const target = e.target as HTMLImageElement;
-                        if (!target.src.includes('/images/elements/unknown.png')) {
-                            target.src = '/images/elements/unknown.png';
-                        } else {
-                            target.style.display = 'none';
-                        }
-                    }}
+                    className="w-5 h-5 items-center justify-center"
                 />
             </div>
         </div>

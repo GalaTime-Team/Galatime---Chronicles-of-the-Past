@@ -9,28 +9,14 @@ description: >
   found roaming the snowy mountains. That's why the others don't know
   much about them.
 
-age: null
-birthday: null
-origin: Atlaria
-starting_relationships:
-  liking: 0
-  trust: 0
-
-
-ai:
-  personality: balanced
-
 elements:
   - aqua
   - caeli
 
 base_stats:
   hp: 600
-  max_hp: 600
   mana: 43
-  max_mana: 43
   stamina: 71
-  max_stamina: 71
   physical_attack: 29
   magical_attack: 40
   physical_defense: 42

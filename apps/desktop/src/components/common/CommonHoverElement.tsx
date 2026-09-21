@@ -3,8 +3,12 @@ import { getElementsWeaknesses, ElementMultiplierResult, getElementsDamage } fro
 import { ElementIcon } from '../../assets/GalatimeIcon';
 
 interface CommonHoverElementProps {
-    elementId: string;
-    elementName?: string;
+    /** Single element ID (backwards-compatible) */
+    elementId?: string;
+    /** Multiple element IDs — takes precedence over elementId */
+    elementIds?: string[];
+    /** Display name(s) for the element(s). String for single, array for multi. */
+    elementName?: string | string[];
     isVisible: boolean;
     isTooltip?: boolean;
     isAttack?: boolean;
@@ -13,6 +17,7 @@ interface CommonHoverElementProps {
 
 const CommonHoverElement: React.FC<CommonHoverElementProps> = ({
     elementId,
+    elementIds,
     elementName,
     isVisible,
     isTooltip = false,
@@ -22,17 +27,22 @@ const CommonHoverElement: React.FC<CommonHoverElementProps> = ({
     const [data, setData] = useState<ElementMultiplierResult | null>(null);
     const [loading, setLoading] = useState<boolean>(false);
 
+    // Resolve to a normalised array of element IDs
+    const resolvedIds: string[] = elementIds ?? (elementId ? [elementId] : []);
+    // Stable key so we re-fetch when the combination changes
+    const idsKey = resolvedIds.join(',');
+
     // Fetch tooltip data
     useEffect(() => {
-        if (isVisible && elementId && isTooltip && !data && !loading) {
+        if (isVisible && resolvedIds.length > 0 && isTooltip && !loading) {
             const fetchData = async () => {
                 setLoading(true);
                 try {
                     let result: any;
                     if (isAttack) {
-                        result = await getElementsDamage([elementId]);
+                        result = await getElementsDamage(resolvedIds);
                     } else {
-                        result = await getElementsWeaknesses([elementId]);
+                        result = await getElementsWeaknesses(resolvedIds);
                     }
                     setData(result);
                 } catch (error) {
@@ -43,7 +53,7 @@ const CommonHoverElement: React.FC<CommonHoverElementProps> = ({
             };
             fetchData();
         }
-    }, [elementId, isVisible, isTooltip, data, loading]);
+    }, [idsKey, isVisible, isTooltip, isAttack]);
 
     if (!isVisible || loading) return null;
 
@@ -63,22 +73,34 @@ const CommonHoverElement: React.FC<CommonHoverElementProps> = ({
     // Split the weakness entries into two columns
     const getSplitWeaknessEntries = () => {
         if (!data) return [[], []];
+        // Attack tooltips are built from the target elements, so `type` holds the
+        // element's own type and the filter keeps the corrupted ones out. Defence
+        // tooltips carry the relationship itself (immune_to, strong_vs, weak_to...)
+        // in `type`, but the controller already returns only common elements, so
+        // every combined entry must be kept.
         const entries = Object.entries(data.multipliers)
-            .filter(([_, multiplier]) => multiplier.type === 'common');
+            .filter(([_, multiplier]) => (isAttack ? multiplier.type === 'common' : true));
         const half = Math.ceil(entries.length / 2);
         return [entries.slice(0, half), entries.slice(half)];
     };
 
     const [leftColumn, rightColumn] = getSplitWeaknessEntries();
 
+    // Resolve display names
+    const displayName = Array.isArray(elementName)
+        ? elementName.join(' / ')
+        : (elementName || resolvedIds.join(' / ') || elementId || '');
+
     return (
         <div className={`flex flex-col border-2 border-white bg-galatime-dark z-50 pointer-events-none select-none ${className}`}>
-            {/* Header: Name and Main Icon */}
+            {/* Header: Name(s) and Icon(s) */}
             <div className="flex items-center justify-center gap-2 mx-4">
                 <h2 className="text-lg font-bold text-white uppercase tracking-wider">
-                    {elementName || elementId}
+                    {displayName}
                 </h2>
-                <ElementIcon id={elementId} className="w-5 h-5 pixelated" />
+                {resolvedIds.map((id) => (
+                    <ElementIcon key={id} id={id} className="w-5 h-5" />
+                ))}
             </div>
 
             {/* Weakness Table */}
@@ -89,7 +111,7 @@ const CommonHoverElement: React.FC<CommonHoverElementProps> = ({
                         {leftColumn.map(([id, multiplier]) => (
                             <div key={id} className="flex items-center justify-between mb-[-10px] whitespace-nowrap">
                                 <div className="flex items-center w-4 h-4 mr-1">
-                                    <ElementIcon id={id} className="w-4 h-4 pixelated" />
+                                    <ElementIcon id={id} className="w-4 h-4" />
                                 </div>
                                 <span className={`text-lg ${getMultiplierStyle(multiplier.score)}`}>
                                     x{multiplier.score}
@@ -103,7 +125,7 @@ const CommonHoverElement: React.FC<CommonHoverElementProps> = ({
                         {rightColumn.map(([id, multiplier]) => (
                             <div key={id} className="flex items-center justify-between mb-[-10px] whitespace-nowrap">
                                 <div className="flex items-center w-4 h-4 mr-1">
-                                    <ElementIcon id={id} className="w-4 h-4 pixelated" />
+                                    <ElementIcon id={id} className="w-4 h-4" />
                                 </div>
                                 <span className={`text-lg ${getMultiplierStyle(multiplier.score)}`}>
                                     x{multiplier.score}

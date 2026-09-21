@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
+import CommonImage from '../components/common/CommonImage';
 
 // --- App Icon (Genérico) ---
 interface AppIconProps {
@@ -9,18 +10,11 @@ interface AppIconProps {
 }
 
 export const AppIcon: React.FC<AppIconProps> = ({ src, alt = '', className = '' }) => (
-  <img
+  <CommonImage
     src={src}
     alt={alt}
+    fallbackSrc="/images/elements/unknown.png"
     className={`object-contain ${className}`}
-    onError={(e) => {
-      const target = e.target as HTMLImageElement;
-      if (!target.src.includes('/images/elements/unknown.png')) {
-        target.src = '/images/elements/unknown.png';
-      } else {
-        target.style.display = 'none';
-      }
-    }}
   />
 );
 
@@ -204,18 +198,11 @@ interface ElementIconProps {
 }
 
 export const ElementIcon: React.FC<ElementIconProps> = ({ id, className = '' }) => (
-  <img
+  <CommonImage
     src={`/images/elements/${id}.png`}
     alt={id}
+    fallbackSrc="/images/elements/unknown.png"
     className={`object-contain ${className}`}
-    onError={(e) => {
-      const target = e.target as HTMLImageElement;
-      if (!target.src.includes('/images/elements/unknown.png')) {
-        target.src = '/images/elements/unknown.png';
-      } else {
-        target.style.display = 'none';
-      }
-    }}
   />
 );
 
@@ -265,7 +252,7 @@ export const Loading: React.FC<LoadingProps> = ({
       className={`flex flex-col items-center justify-center select-none ${containerClassName}`}
     >
       <div className="flex items-center justify-center">
-        <img
+        <CommonImage
           src={images[currentIndex]}
           alt={altText}
           className={`h-12 w-auto transition-all duration-75 ${imageClassName}`}

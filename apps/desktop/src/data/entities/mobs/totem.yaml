@@ -7,35 +7,13 @@ description: >
   A carved relic left in forgotten shrines. The totem's body is made of
   cracked wood, but its core glows mending its cracks.
 
-age: null
-birthday: null
-origin: Atlaria
-starting_relationships:
-  liking: 0
-  trust: 0
-
-
-ai:
-  personality: support
-  conditions:
-    - condition: low_hp
-      threshold: 0.4
-      action: heal_self
-      priority: 90
-    - condition: default
-      action: strongest_attack
-      priority: 50
-
 elements:
   - lux
 
 base_stats:
   hp: 260
-  max_hp: 260
   mana: 36
-  max_mana: 36
   stamina: 10
-  max_stamina: 10
   physical_attack: 8
   magical_attack: 39
   physical_defense: 22

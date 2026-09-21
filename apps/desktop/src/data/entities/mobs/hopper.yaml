@@ -7,27 +7,13 @@ description: >
   A small, agile creature that hops around. They seem to only
   attack to defend their babies... I feel bad for them...
 
-age: null
-birthday: null
-origin: Atlaria
-starting_relationships:
-  liking: 0
-  trust: 0
-
-
-ai:
-  personality: aggressive
-
 elements:
   - corporis
 
 base_stats:
   hp: 36
-  max_hp: 36
   mana: 8
-  max_mana: 8
   stamina: 32
-  max_stamina: 32
   physical_attack: 38
   magical_attack: 10
   physical_defense: 25

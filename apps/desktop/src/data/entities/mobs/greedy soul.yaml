@@ -8,31 +8,13 @@ description: >
   the life force of others. I hope these things aren't actual
   souls...
 
-age: null
-birthday: null
-origin: Atlaria
-starting_relationships:
-  liking: 0
-  trust: 0
-
-
-ai:
-  personality: aggressive
-  conditions:
-    - condition: default
-      action: strongest_attack
-      priority: 50
-
 elements:
   - umbra
 
 base_stats:
   hp: 250
-  max_hp: 250
   mana: 40
-  max_mana: 40
   stamina: 18
-  max_stamina: 18
   physical_attack: 14
   magical_attack: 42
   physical_defense: 28

@@ -7,31 +7,16 @@ description: >
   Besides being a living fire, this creature also wears a cloak
   that doesn't burn.
 
-
-age: null
-birthday: null
-origin: Atlaria
-starting_relationships:
-  liking: 0
-  trust: 0
-
-
-ai:
-  personality: balanced
-
 elements:
   - ignis
 
 base_stats:
   hp: 264
-  max_hp: 264
   mana: 47
-  max_mana: 47
   stamina: 8
-  max_stamina: 8
   physical_attack: 40
   magical_attack: 70
-  physical_defense: 290
+  physical_defense: 29
   magical_defense: 39
   speed: 50
 

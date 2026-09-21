@@ -11,6 +11,7 @@ import {
 } from '../../constants/AnimationConstants';
 import { playMusic } from '../../controllers/audioController';
 import CommonButton from '../../components/common/CommonButton';
+import CommonImage from '../../components/common/CommonImage';
 import { CommonPopup } from '../../components/common/CommonPopup';
 import { useControlListener } from '../../context/GameContext';
 import { invoke } from '@tauri-apps/api/core';
@@ -119,12 +120,16 @@ export function TitleMenu({ onNewGame, onSettings, onCredits, onPlayground }: Ti
         >
             <div className="w-full max-w-sm text-center">
                 {/* Logo */}
-                <motion.img
-                    src="/images/ui/menu-title.png"
-                    alt={t('titleMenu.logoAlt')}
+                <motion.div
                     className="mx-auto mb-12 w-full max-w-76"
                     variants={SPLASH_TITLE_ITEM_VARIANTS}
-                />
+                >
+                    <CommonImage
+                        src="/images/ui/menu-title.png"
+                        alt={t('titleMenu.logoAlt')}
+                        className="w-full"
+                    />
+                </motion.div>
 
                 {/* Menu Buttons */}
                 <div className="flex flex-col items-stretch gap-2">
