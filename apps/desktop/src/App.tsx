@@ -5,11 +5,12 @@ import { TitleMenu } from './pages/title_menu/TitleMenu';
 import { SettingsScreen } from './pages/title_menu/SettingsScreen';
 import { CreditsScreen } from './pages/title_menu/CreditsScreen';
 import { NewGameScreen } from './pages/title_menu/NewGameScreen';
+import { TestPlaygroundScreen } from './pages/title_menu/test_playground/TestPlaygroundScreen';
 import { TitleMenuLayout } from './pages/title_menu/layout';
 import { NowPlayingCard } from './components/common/NowPlayingCard';
 import { useControlListener, useGame } from './context/GameContext';
 
-type Screen = 'splash' | 'title' | 'newGame' | 'settings' | 'credits';
+type Screen = 'splash' | 'title' | 'newGame' | 'settings' | 'credits' | 'playground';
 
 function App() {
   const [screen, setScreen] = useState<Screen>('splash');
@@ -54,12 +55,13 @@ function App() {
     };
   }, []);
 
-  const titleScreens = {
-    title: <TitleMenu key="title" onNewGame={() => setScreen('newGame')} onSettings={() => setScreen('settings')} onCredits={() => setScreen('credits')} />,
-    newGame: <NewGameScreen key="newGame" onBack={() => setScreen('title')} />,
-    settings: <SettingsScreen key="settings" onBack={() => setScreen('title')} />,
-    credits: <CreditsScreen key="credits" onBack={() => setScreen('title')} />
-  };
+    const titleScreens = {
+        title: <TitleMenu key="title" onNewGame={() => setScreen('newGame')} onSettings={() => setScreen('settings')} onCredits={() => setScreen('credits')} onPlayground={() => setScreen('playground')} />,
+        newGame: <NewGameScreen key="newGame" onBack={() => setScreen('title')} />,
+        settings: <SettingsScreen key="settings" onBack={() => setScreen('title')} />,
+        credits: <CreditsScreen key="credits" onBack={() => setScreen('title')} />,
+        playground: <TestPlaygroundScreen key="playground" onBack={() => setScreen('title')} />,
+    };
 
   // During exit transitions the previous screen keeps rendering, so fall back to the title menu.
   const currentScreen =

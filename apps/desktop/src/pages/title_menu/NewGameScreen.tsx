@@ -178,7 +178,6 @@ export function NewGameScreen({ onBack }: { onBack: () => void }) {
                 variant="danger"
                 title={t('newGame.removeTitle')}
                 message={t('newGame.removeMessage')}
-                icon={<TrashIcon className="h-10! w-10!" />}
                 onDismiss={() => setDeleteSlot(null)}
                 cancelAction={{ label: t('common.cancel'), onPress: () => setDeleteSlot(null) }}
                 confirmAction={{ label: t('common.confirm'), variant: 'danger', onPress: () => void removeSave() }}

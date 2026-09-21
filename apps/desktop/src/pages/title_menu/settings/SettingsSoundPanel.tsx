@@ -135,7 +135,7 @@ export function SettingsSoundPanel({ settings, updateSettings }: SettingsPanelPr
                     message={t(`settings.sound.hints.${hint.id}`)}
                     showLoading={false}
                     position="bottom-right"
-                    autoCloseTime={2000}
+                    autoCloseTime={3000}
                     messageClassName="whitespace-normal leading-snug"
                     onClose={() => setHintOpen(false)}
                 />

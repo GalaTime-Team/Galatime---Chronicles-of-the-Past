@@ -19,6 +19,7 @@ interface TitleMenuProps {
     onNewGame: () => void;
     onSettings: () => void;
     onCredits: () => void;
+    onPlayground: () => void;
 }
 
 //region — Helpers
@@ -47,7 +48,7 @@ async function exitGame(): Promise<void> {
  */
 let titleRevealed = false;
 
-export function TitleMenu({ onNewGame, onSettings, onCredits }: TitleMenuProps) {
+export function TitleMenu({ onNewGame, onSettings, onCredits, onPlayground }: TitleMenuProps) {
     const { t } = useTranslation('common');
     const [confirmExit, setConfirmExit] = useState(false);
 
@@ -93,11 +94,11 @@ export function TitleMenu({ onNewGame, onSettings, onCredits }: TitleMenuProps) 
     //endregion — Music Hooks
 
     //region — Menu Data
-    const menuItems = [
+    const menuItems: { label: string; onClick: () => void; disabled?: boolean }[] = [
         { label: t('titleMenu.newGame'), onClick: onNewGame },
         { label: t('titleMenu.settings'), onClick: onSettings },
         { label: t('titleMenu.credits'), onClick: onCredits },
-        { label: t('titleMenu.playground'), disabled: true },
+        { label: t('titleMenu.playground'), onClick: onPlayground },
     ];
     //endregion — Menu Data
 

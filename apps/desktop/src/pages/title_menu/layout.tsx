@@ -1,4 +1,5 @@
 import { useEffect, useRef } from 'react';
+import { useTranslation } from 'react-i18next';
 import type { Container, ISourceOptions } from '@tsparticles/engine';
 import { createParticleLayer } from '../../utils/particlesEngine';
 
@@ -42,6 +43,7 @@ const PARTICLES_OPTIONS: ISourceOptions = {
  * page content changes.
  */
 export function TitleMenuLayout({ children }: TitleMenuLayoutProps) {
+    const { t } = useTranslation();
     const particlesRef = useRef<HTMLDivElement>(null);
     // tsParticles container behind every page, kept so it can be torn down on unmount.
     const particlesContainer = useRef<Container | null>(null);
@@ -92,6 +94,15 @@ export function TitleMenuLayout({ children }: TitleMenuLayoutProps) {
             {/* Particles layer — decorative, always behind page content. */}
             <div ref={particlesRef} aria-hidden="true" className="pointer-events-none absolute inset-0 z-0" />
             <div className="relative z-10">{children}</div>
+
+            {/* Build stamp — pinned to the shell's bottom-left corner (rather than the page's), so it
+                survives the page transitions untouched. Kept faint and non-interactive on purpose: it
+                is a signature, not a control, so it must never steal a click from the page above. */}
+            <p className="pointer-events-none absolute bottom-2 left-3 z-20 select-none text-[0.6rem] uppercase tracking-[0.2em] text-white/25">
+                {t('buildInfo.version', { version: __APP_VERSION__ })}
+                <span aria-hidden="true"> · </span>
+                {t('buildInfo.developedBy')}
+            </p>
         </div>
     );
 }

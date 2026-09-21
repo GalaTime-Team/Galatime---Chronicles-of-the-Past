@@ -97,11 +97,16 @@
 		"exitMessage": "Are you sure you want to leave?",
 		"logoAlt": "Galatime: Chronicles of the Past"
 	},
+	"buildInfo": {
+		"version": "v{{version}}",
+		"developedBy": "Developed by GT Team"
+	},
 	"common": {
 		"back": "Back",
 		"apply": "Apply",
 		"cancel": "Cancel",
 		"confirm": "Confirm",
+		"close": "Close",
 		"on": "On",
 		"off": "Off"
 	},
@@ -183,6 +188,34 @@
 		"language": {
 			"title": "Language",
 			"english": "English"
+		}
+	},
+	"playground": {
+		"title": "Test Playground",
+		"openFolder": "Open the test playground folder",
+		"footer": "Testing environment — not part of the game",
+		"check": "Check",
+		"comingSoon": "This test panel is coming soon.",
+		"tabs": {
+			"music": "Music",
+			"dialogue": "Dialogue",
+			"combat": "Combat",
+			"objectives": "Objectives",
+			"movement": "Movement"
+		},
+		"music": {
+			"nowPlaying": "Now Playing",
+			"nothingPlaying": "Nothing playing",
+			"play": "Play",
+			"playing": "Playing",
+			"stop": "Stop"
+		},
+		"dialogue": {
+			"inputTitle": "Dialogue ID",
+			"inputDescription": "Enter the dialogue ID to check if it exists.",
+			"placeholder": "e.g. intro_ch1_npc_hello",
+			"notFound": "Dialogue ID not found.",
+			"found": "Dialogue ID found!"
 		}
 	},
 	"credits": {

@@ -53,6 +53,28 @@ export const ChevronRight: React.FC<ChevronIconProps> = ({ className = '' }) => 
   </svg>
 );
 
+// --- Arrow Icon ---
+interface ArrowIconProps {
+  className?: string;
+}
+
+export const ArrowRight: React.FC<ArrowIconProps> = ({ className = '' }) => (
+  <span
+    aria-hidden="true"
+    className={`block h-[0.8em] w-[0.8em] bg-current ${className}`}
+    style={{
+      maskImage: 'url(/images/ui/arrow/arrow_right.svg)',
+      WebkitMaskImage: 'url(/images/ui/arrow/arrow_right.svg)',
+      maskRepeat: 'no-repeat',
+      WebkitMaskRepeat: 'no-repeat',
+      maskPosition: 'center',
+      WebkitMaskPosition: 'center',
+      maskSize: 'contain',
+      WebkitMaskSize: 'contain',
+    }}
+  />
+);
+
 // --- Switch Icon ---
 interface SwitchIconProps {
   checked: boolean;
@@ -173,6 +195,7 @@ export const AddIcon: React.FC<SaveActionIconProps> = ({ className = '' }) => <S
 export const EditIcon: React.FC<SaveActionIconProps> = ({ className = '' }) => <SaveActionIcon file="edit" className={className} />;
 export const RemoveIcon: React.FC<SaveActionIconProps> = ({ className = '' }) => <SaveActionIcon file="remove" className={className} />;
 export const TrashIcon: React.FC<SaveActionIconProps> = ({ className = '' }) => <SaveActionIcon file="trash" className={className} />;
+export const CloseIcon: React.FC<SaveActionIconProps> = ({ className = '' }) => <SaveActionIcon file="close" className={className} />;
 
 // --- Element Icon ---
 interface ElementIconProps {

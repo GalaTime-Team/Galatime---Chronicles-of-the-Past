@@ -1,9 +1,11 @@
 import React, { useCallback, useEffect, useId, useMemo, useRef } from 'react';
+import { useTranslation } from 'react-i18next';
 import { LimitMode, MoveDirection, OutMode, type Container, type ISourceOptions } from '@tsparticles/engine';
 import { AnimatePresence, motion } from 'framer-motion';
 import CommonButton from './CommonButton';
 import { useModalControls } from '../../context/GameContext';
 import { createParticleLayer } from '../../utils/particlesEngine';
+import { CloseIcon } from '../../assets/GalatimeIcon';
 
 //region — Types
 /** Visual theme of the popup (drives accent colors + default confirm button). */
@@ -40,8 +42,6 @@ export interface CommonPopupProps {
     message?: React.ReactNode;
     /** Extra content rendered below the message. */
     children?: React.ReactNode;
-    /** Optional icon/illustration rendered above the title. */
-    icon?: React.ReactNode;
     //endregion — Content
 
     //region — Appearance
@@ -78,7 +78,7 @@ export interface CommonPopupProps {
     onDismiss?: () => void;
     /** Close when the backdrop is clicked. Default: `true`. */
     closeOnBackdrop?: boolean;
-    /** Show the top-right close button. Default: `false`. */
+    /** Show the top-right close button. Default: `true`. */
     showCloseButton?: boolean;
     /** Auto-dismiss after N milliseconds. Disabled by default. */
     autoCloseMs?: number;
@@ -235,7 +235,6 @@ export function CommonPopup({
     title,
     message,
     children,
-    icon,
     variant = 'normal',
     size = 'md',
     verticalActions = false,
@@ -250,12 +249,13 @@ export function CommonPopup({
     actions,
     onDismiss,
     closeOnBackdrop = true,
-    showCloseButton = false,
+    showCloseButton = true,
     autoCloseMs,
     lockScroll = true,
     glow = true,
     glowColor,
 }: CommonPopupProps) {
+    const { t } = useTranslation();
     const titleId = useId();
     const messageId = useId();
     const dialogRef = useRef<HTMLDivElement>(null);
@@ -491,24 +491,33 @@ export function CommonPopup({
                             onClick={(event) => event.stopPropagation()}
                             /* The halo is the card's shadow, tinted with the popup's own variant tone. */
                             style={glow ? { boxShadow: glowShadow(haloTone) } : undefined}
-                            className={`relative z-10 w-full border-3 bg-galatime-dark p-6 outline-none ${glow ? '' : 'shadow-2xl'} ${styles.border} ${className}`}
+                            className={`relative z-10 w-full border-3 bg-galatime-dark p-4 outline-none ${glow ? '' : 'shadow-2xl'} ${styles.border} ${className}`}
                         >
-                            {showCloseButton && (
-                                <CommonButton
-                                    variant="ghost"
-                                    size="sm"
-                                    className="absolute right-2 top-2 border-2! px-2!"
-                                    aria-label="close"
-                                    onPress={() => onDismiss?.()}
-                                >
-                                    ×
-                                </CommonButton>
-                            )}
-
-                            {icon && <div className={`mb-4 flex justify-center text-4xl ${styles.accent}`}>{icon}</div>}
-
-                            {title && (
-                                <h2 id={titleId} className={`text-2xl uppercase tracking-[0.12em] text-white ${titleClassName}`}>{title}</h2>
+                            {/* Header row: the title keeps the top-left corner, the close control the
+                                top-right one. `ml-auto` is what pins the button to that corner even when
+                                there is no title beside it, and `flex-1` lets a long title wrap instead of
+                                pushing the button out of place. */}
+                            {(title || showCloseButton) && (
+                                <div className="flex items-start gap-4">
+                                    {title && (
+                                        <h2
+                                            id={titleId}
+                                            className={`min-w-0 flex-1 text-left text-2xl uppercase tracking-[0.12em] text-white ${titleClassName}`}
+                                        >
+                                            {title}
+                                        </h2>
+                                    )}
+                                    {showCloseButton && (
+                                        <button
+                                            type="button"
+                                            className="ml-auto flex h-8 w-8 shrink-0 items-center justify-center text-white/55 transition-colors duration-200 hover:text-white"
+                                            aria-label={t('common.close')}
+                                            onClick={() => onDismiss?.()}
+                                        >
+                                            <CloseIcon className="h-3! w-3!" />
+                                        </button>
+                                    )}
+                                </div>
                             )}
 
                             {message && (
@@ -526,7 +535,7 @@ export function CommonPopup({
                                             <CommonButton
                                                 key={action.id ?? `${action.label}-${index}`}
                                                 variant={actionVariant}
-                                                size="sm"
+                                                size="md"
                                                 disabled={action.disabled}
                                                 className={verticalActions ? 'w-full' : ''}
                                                 onPress={() => handleAction(action)}
