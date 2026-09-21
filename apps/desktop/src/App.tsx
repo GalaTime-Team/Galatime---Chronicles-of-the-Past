@@ -4,11 +4,12 @@ import { SplashScreen } from './pages/SplashScreen';
 import { TitleMenu } from './pages/title_menu/TitleMenu';
 import { SettingsScreen } from './pages/title_menu/SettingsScreen';
 import { CreditsScreen } from './pages/title_menu/CreditsScreen';
+import { NewGameScreen } from './pages/title_menu/NewGameScreen';
 import { TitleMenuLayout } from './pages/title_menu/layout';
 import { NowPlayingCard } from './components/common/NowPlayingCard';
 import { useControlListener, useGame } from './context/GameContext';
 
-type Screen = 'splash' | 'title' | 'settings' | 'credits';
+type Screen = 'splash' | 'title' | 'newGame' | 'settings' | 'credits';
 
 function App() {
   const [screen, setScreen] = useState<Screen>('splash');
@@ -54,7 +55,8 @@ function App() {
   }, []);
 
   const titleScreens = {
-    title: <TitleMenu key="title" onSettings={() => setScreen('settings')} onCredits={() => setScreen('credits')} />,
+    title: <TitleMenu key="title" onNewGame={() => setScreen('newGame')} onSettings={() => setScreen('settings')} onCredits={() => setScreen('credits')} />,
+    newGame: <NewGameScreen key="newGame" onBack={() => setScreen('title')} />,
     settings: <SettingsScreen key="settings" onBack={() => setScreen('title')} />,
     credits: <CreditsScreen key="credits" onBack={() => setScreen('title')} />
   };

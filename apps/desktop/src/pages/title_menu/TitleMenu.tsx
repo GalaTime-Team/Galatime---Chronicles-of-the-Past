@@ -16,6 +16,7 @@ import { useControlListener } from '../../context/GameContext';
 import { invoke } from '@tauri-apps/api/core';
 
 interface TitleMenuProps {
+    onNewGame: () => void;
     onSettings: () => void;
     onCredits: () => void;
 }
@@ -46,7 +47,7 @@ async function exitGame(): Promise<void> {
  */
 let titleRevealed = false;
 
-export function TitleMenu({ onSettings, onCredits }: TitleMenuProps) {
+export function TitleMenu({ onNewGame, onSettings, onCredits }: TitleMenuProps) {
     const { t } = useTranslation('common');
     const [confirmExit, setConfirmExit] = useState(false);
 
@@ -93,7 +94,7 @@ export function TitleMenu({ onSettings, onCredits }: TitleMenuProps) {
 
     //region — Menu Data
     const menuItems = [
-        { label: t('titleMenu.newGame'), disabled: true },
+        { label: t('titleMenu.newGame'), onClick: onNewGame },
         { label: t('titleMenu.settings'), onClick: onSettings },
         { label: t('titleMenu.credits'), onClick: onCredits },
         { label: t('titleMenu.playground'), disabled: true },

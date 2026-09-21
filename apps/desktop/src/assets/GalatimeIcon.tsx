@@ -113,6 +113,67 @@ export const MusicNote: React.FC<MusicNoteIconProps> = ({ className = '' }) => (
   />
 );
 
+// --- Folder Icon ---
+interface FolderIconProps {
+  className?: string;
+}
+
+/**
+ * Folder from `public/images/ui/misc/folder.svg`, used by the Settings header to open the
+ * folder that stores `settings.json`.
+ *
+ * Like {@link MusicNote}, the file paints its own path white, so it is applied as a CSS mask
+ * and filled with `currentColor` instead of being embedded with `<img>`: that keeps it
+ * following the accent tone of whatever renders it.
+ *
+ * The default size is deliberately small and relative (`em`), so the icon scales with the text
+ * it sits next to while staying a quiet accent rather than a second focal point. Pass a
+ * `h-*`/`w-*` class to resize it for other uses.
+ */
+export const FolderIcon: React.FC<FolderIconProps> = ({ className = '' }) => (
+  <span
+    aria-hidden="true"
+    className={`block h-[0.4em] w-[0.4em] bg-current ${className}`}
+    style={{
+      maskImage: 'url(/images/ui/misc/folder.svg)',
+      WebkitMaskImage: 'url(/images/ui/misc/folder.svg)',
+      maskRepeat: 'no-repeat',
+      WebkitMaskRepeat: 'no-repeat',
+      maskPosition: 'center',
+      WebkitMaskPosition: 'center',
+      maskSize: 'contain',
+      WebkitMaskSize: 'contain',
+    }}
+  />
+);
+
+// --- Save-slot action icons ---
+interface SaveActionIconProps {
+  className?: string;
+}
+
+const SaveActionIcon: React.FC<SaveActionIconProps & { file: string }> = ({ file, className = '' }) => (
+  <span
+    aria-hidden="true"
+    className={`block h-[1em] w-[1em] bg-current ${className}`}
+    style={{
+      maskImage: `url(/images/ui/misc/${file}.svg)`,
+      WebkitMaskImage: `url(/images/ui/misc/${file}.svg)`,
+      maskRepeat: 'no-repeat',
+      WebkitMaskRepeat: 'no-repeat',
+      maskPosition: 'center',
+      WebkitMaskPosition: 'center',
+      maskSize: 'contain',
+      WebkitMaskSize: 'contain',
+    }}
+  />
+);
+
+export const AddIcon: React.FC<SaveActionIconProps> = ({ className = '' }) => <SaveActionIcon file="add" className={className} />;
+export const EditIcon: React.FC<SaveActionIconProps> = ({ className = '' }) => <SaveActionIcon file="edit" className={className} />;
+export const RemoveIcon: React.FC<SaveActionIconProps> = ({ className = '' }) => <SaveActionIcon file="remove" className={className} />;
+export const TrashIcon: React.FC<SaveActionIconProps> = ({ className = '' }) => <SaveActionIcon file="trash" className={className} />;
+
 // --- Element Icon ---
 interface ElementIconProps {
   id: string;

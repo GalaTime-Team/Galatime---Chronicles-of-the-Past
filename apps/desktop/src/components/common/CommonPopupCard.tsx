@@ -31,6 +31,11 @@ export interface CommonPopupCardProps {
     position?: PopupPosition;
     /** Extra classes for the card surface. */
     className?: string;
+    /**
+     * Extra classes for the message line. Defaults to `truncate` (single-line ellipsis),
+     * which suits short labels like track names; pass `whitespace-normal` for longer copy.
+     */
+    messageClassName?: string;
 }
 
 /** Placement classes per corner, so a card can live anywhere without touching the layout. */
@@ -96,6 +101,7 @@ const CommonPopupCard: React.FC<CommonPopupCardProps> = ({
     iconAnimation = 'none',
     position = 'bottom-right',
     className = '',
+    messageClassName = 'truncate',
 }) => {
     const timerRef = useRef<NodeJS.Timeout | null>(null);
 
@@ -185,7 +191,7 @@ const CommonPopupCard: React.FC<CommonPopupCardProps> = ({
                             {title && (
                                 <span className={`text-xs uppercase tracking-[0.2em] ${styles.accent}`}>{title}</span>
                             )}
-                            <span className={`truncate text-lg ${styles.text}`}>{message}</span>
+                            <span className={`${messageClassName} text-lg ${styles.text}`}>{message}</span>
                             {subtitle && <span className="text-xs text-white/60">{subtitle}</span>}
                         </div>
                     </div>

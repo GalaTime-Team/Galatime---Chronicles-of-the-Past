@@ -8,6 +8,7 @@ import { BackButton } from '../../components/common/BackButton';
 import CommonButton from '../../components/common/CommonButton';
 import { CommonPopup } from '../../components/common/CommonPopup';
 import { SettingsSidebar, type SettingsTab } from './settings/SettingsSidebar';
+import { SettingsHeaderTitle } from './settings/SettingsHeaderTitle';
 import { SettingsControlsPanel } from './settings/SettingsControlsPanel';
 import { SettingsDisplayPanel } from './settings/SettingsDisplayPanel';
 import { SettingsGamePanel } from './settings/SettingsGamePanel';
@@ -68,9 +69,7 @@ export function SettingsScreen({ onBack }: SettingsScreenProps) {
                         <BackButton label={t('common.back')} onClick={onBack} />
                     </div>
                     <div className="text-center">
-                        <h1 className="pl-[0.18em] text-3xl uppercase text-white sm:text-4xl">
-                            {t('settings.title')}
-                        </h1>
+                        <SettingsHeaderTitle />
                     </div>
                     <span aria-hidden="true" />
                 </header>

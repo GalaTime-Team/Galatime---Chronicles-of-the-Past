@@ -64,3 +64,19 @@ export async function saveSettings(settings: GameSettings): Promise<void> {
 
   writeLocalSettings(safe);
 }
+
+/**
+ * Asks the desktop shell to open the OS folder where `settings.json` is stored.
+ *
+ * Returns `false` when there is no Tauri bridge (Vite/browser mode) or the shell refused
+ * to open the folder, so callers can decide whether to surface a message.
+ */
+export async function revealSettingsFolder(): Promise<boolean> {
+  try {
+    await invoke('reveal_settings_folder');
+    return true;
+  } catch {
+    // Vite/browser mode has no Tauri command bridge.
+    return false;
+  }
+}

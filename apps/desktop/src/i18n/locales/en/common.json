@@ -105,8 +105,25 @@
 		"on": "On",
 		"off": "Off"
 	},
+	"newGame": {
+		"title": "New Game",
+		"openFolder": "Open the saves folder",
+		"slot": "Save {{slot}}",
+		"emptySlot": "Empty slot {{slot}}",
+		"create": "Create save in slot {{slot}}",
+		"edit": "Edit",
+		"remove": "Remove",
+		"removeTitle": "Remove save?",
+		"removeMessage": "Are you sure you want to permanently remove this save?",
+		"labels": {
+			"elements": "Elements",
+			"money": "Money",
+			"mainObjective": "Main objective"
+		}
+	},
 	"settings": {
 		"title": "Settings",
+		"openFolder": "Open the settings folder",
 		"restoreDefaults": "Restore Defaults",
 		"restoreTitle": "Restore defaults?",
 		"restoreMessage": "All game settings will return to their original values.",
@@ -156,6 +173,11 @@
 			"nowPlaying": {
 				"title": "Now Playing",
 				"description": "Show a card naming the music that just started playing."
+			},
+			"hints": {
+				"turnItUp": "Pst, hey... what you want is to turn it UP, not down!",
+				"sneaky": "...I know what you're doing. If the music is that bad, at least tell me the truth...",
+				"fullBlast": "Haha, come on, you flatter me... hihihi"
 			}
 		},
 		"language": {
