@@ -1,17 +1,33 @@
 import React, { cloneElement, useId, useState } from 'react';
 import { createPortal } from 'react-dom';
-import { autoUpdate, flip, offset, shift, useFloating, type Placement, type Rect } from '@floating-ui/react';
+import { autoUpdate, flip, offset, shift, useFloating, type Rect } from '@floating-ui/react';
 
 /** Props the anchor element must accept so the tooltip can hook into it. */
 type CommonTooltipAnchorProps = React.HTMLAttributes<HTMLElement> & React.RefAttributes<HTMLElement>;
+
+/**
+ * Only vertical sides are allowed. A tooltip placed beside the anchor (left/right) ends up
+ * overlapping the element the pointer is hovering, so those placements are not supported.
+ */
+export type TooltipPlacement =
+    | 'top'
+    | 'top-start'
+    | 'top-end'
+    | 'bottom'
+    | 'bottom-start'
+    | 'bottom-end';
 
 interface CommonTooltipProps {
     /** Text (or node) rendered inside the floating bubble. When empty, the anchor is rendered untouched. */
     content?: React.ReactNode;
     /** Single element the tooltip is anchored to; it reacts to hover and focus. */
     children: React.ReactElement<CommonTooltipAnchorProps>;
-    /** Preferred side of the anchor. Defaults to `top`. */
-    placement?: Placement;
+    /**
+     * Preferred side of the anchor. Defaults to `top`; when there is not enough room above,
+     * the bubble flips to `bottom`. Horizontal placements (`left`/`right`) are not supported
+     * so the bubble never covers the pointer.
+     */
+    placement?: TooltipPlacement;
     /** Gap in pixels between the anchor and the bubble. Defaults to `10`. */
     gap?: number;
     /** Extra classes for the bubble (background, border, padding, ...). */
@@ -80,6 +96,11 @@ const CommonTooltip: React.FC<CommonTooltipProps> = ({
     /** Boundary kept for the overflow maths, in the same pixels as the element rects. */
     const viewportRect = getViewportRect();
 
+    // The only placement the bubble may flip to is the opposite vertical side, keeping the
+    // caller's alignment suffix (e.g. `top-start` flips to `bottom-start`).
+    const isOnTop = placement.startsWith('top');
+    const fallbackPlacement = `${isOnTop ? 'bottom' : 'top'}${placement.replace(/^(top|bottom)/, '')}` as TooltipPlacement;
+
     const { refs, floatingStyles } = useFloating({
         open: isOpen,
         onOpenChange: setIsOpen,
@@ -87,7 +108,18 @@ const CommonTooltip: React.FC<CommonTooltipProps> = ({
         whileElementsMounted: autoUpdate,
         middleware: [
             offset(gap),
-            flip({ padding: VIEWPORT_PADDING, rootBoundary: viewportRect }),
+            flip({
+                padding: VIEWPORT_PADDING,
+                rootBoundary: viewportRect,
+                // Overrides the default fallback list, which would also try the left/right sides.
+                fallbackPlacements: [fallbackPlacement],
+                flipAlignment: false,
+            }),
+            // `shift` names the axes from the placement side: for `top`/`bottom` its `mainAxis`
+            // is the HORIZONTAL one. The defaults (`mainAxis: true`, `crossAxis: false`) are
+            // therefore exactly what is needed: slide the bubble left/right back inside the
+            // viewport, and never clamp it vertically (pulling it up/down to fit would lay it
+            // over the anchor and the pointer).
             shift({ padding: VIEWPORT_PADDING, rootBoundary: viewportRect }),
         ],
     });
