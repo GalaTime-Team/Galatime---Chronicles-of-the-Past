@@ -2,10 +2,15 @@ import { useState } from 'react';
 import { useFloating, autoUpdate, offset, flip, shift } from '@floating-ui/react';
 import { createPortal } from 'react-dom';
 import type { AbilityEntry, BaseStats, CharacterData, LootEntry, MobData } from '../../../../types/EntityDataType';
-import { ElementIcon } from '../../../../assets/GalatimeIcon';
+import type { EntityImage } from '../../../../types/EntityImageType';
+import { ChevronLeft, ChevronRight, ElementIcon, UnknownIcon } from '../../../../assets/GalatimeIcon';
 import CommonHoverElement from '../../../../components/common/CommonHoverElement';
+import CommonImage from '../../../../components/common/CommonImage';
 import StatBar from '../../../../components/common/StatBar';
+import { playSfx } from '../../../../controllers/audioController';
+import { BUTTON_SFX_ID } from '../../../../constants/AudioConstants';
 import { useGame } from '../../../../context/GameContext';
+import { getEntityImages } from '../../../../services/entityImageService';
 import type { EntityItem } from '../types';
 
 /**
@@ -34,7 +39,8 @@ export function TestEntitiesTab({ item }: TestEntitiesTabProps) {
     return (
         <div className="min-w-0 flex-1 overflow-y-auto">
             {item ? (
-                <EntityDetail item={item} />
+                // Keyed by entity so the gallery page and the element tooltip reset with it.
+                <EntityDetail key={`${item.type}-${item.id}`} item={item} />
             ) : (
                 <p className="text-sm text-white/40">Select an entity to view details.</p>
             )}
@@ -60,6 +66,9 @@ function EntityDetail({ item }: { item: EntityItem }) {
     const weapon = data.weapon ?? null;
     const weaponLabel = toText(weapon?.name ?? weapon?.id, 'None');
 
+    // Sprites are discovered from the files on disk, not declared in the YAML.
+    const images = getEntityImages(item);
+
     // Whether the multipliers table should be shown on hover is decided in Settings.
     const { gameState } = useGame();
     const fightingTooltipVisible = gameState.settings.fightingTooltipVisible;
@@ -75,44 +84,60 @@ function EntityDetail({ item }: { item: EntityItem }) {
 
     return (
         <div className="space-y-6 p-2">
-            {/* Header */}
-            <div>
-                <h2 className="text-2xl font-bold text-white">{item.name}</h2>
-                <p className="text-sm text-white/50">{toText(data.description, '')}</p>
-            </div>
+            {/* Name, description and elements on the left; the entity's sprites sit to their right.
+                The row wraps so a narrow window drops the gallery below instead of squeezing the
+                text into a column one word wide. */}
+            <div className="flex flex-wrap items-start gap-6">
+                <div className="min-w-48 flex-1 space-y-6">
+                    {/* Header */}
+                    <div>
+                        <h2 className="text-2xl font-bold text-white">{item.name}</h2>
+                        <p className="text-sm text-white/50">{toText(data.description, '')}</p>
+                    </div>
 
-            {/* Elements */}
-            <div
-                ref={elementRefs.setReference}
-                onMouseEnter={() => setIsElementTooltipVisible(true)}
-                onMouseLeave={() => setIsElementTooltipVisible(false)}
-            >
-                <h3 className="mb-2 text-xs uppercase tracking-[0.15em] text-white/40">Elements</h3>
-                <div className="flex gap-2">
-                    {elements.length > 0 ? (
-                        elements.map((el) => <ElementIcon key={el} id={el} className="h-8 w-8" />)
-                    ) : (
-                        <span className="text-sm text-white/40">None</span>
-                    )}
+                    {/* Elements.
+                        `w-fit` matters: the anchor for the tooltip must hug the heading and the
+                        icons. While this box still stretched across the full column, `right-end`
+                        anchored the tooltip to that full-width edge and it opened far to the right,
+                        detached from the icons. */}
+                    <div
+                        ref={elementRefs.setReference}
+                        onMouseEnter={() => setIsElementTooltipVisible(true)}
+                        onMouseLeave={() => setIsElementTooltipVisible(false)}
+                        className="w-fit"
+                    >
+                        <h3 className="mb-2 text-xs uppercase tracking-[0.15em] text-white/40">Elements</h3>
+                        <div className="flex gap-2">
+                            {elements.length > 0 ? (
+                                elements.map((el) => <ElementIcon key={el} id={el} className="h-8 w-8" />)
+                            ) : (
+                                <span className="text-sm text-white/40">None</span>
+                            )}
+                        </div>
+
+                        {/* Tooltip. Portalled to `<body>`, so it escapes the panel's `overflow-y-auto`
+                            and may spill past the tab, over the sidebar — `flip()`/`shift()` only
+                            measure against the viewport, not against the tab. */}
+                        {isElementTooltipVisible && elements.length > 0 && createPortal(
+                            <div
+                                ref={elementRefs.setFloating}
+                                style={elementFloatingStyles}
+                                className="z-50 pointer-events-none"
+                            >
+                                <CommonHoverElement
+                                    elementIds={elements}
+                                    elementName={elements}
+                                    isVisible={true}
+                                    isTooltip={fightingTooltipVisible}
+                                    isAttack={false}
+                                />
+                            </div>,
+                            document.body
+                        )}
+                    </div>
                 </div>
 
-                {/* Tooltip */}
-                {isElementTooltipVisible && elements.length > 0 && createPortal(
-                    <div
-                        ref={elementRefs.setFloating}
-                        style={elementFloatingStyles}
-                        className="z-50 pointer-events-none"
-                    >
-                        <CommonHoverElement
-                            elementIds={elements}
-                            elementName={elements}
-                            isVisible={true}
-                            isTooltip={fightingTooltipVisible}
-                            isAttack={false}
-                        />
-                    </div>,
-                    document.body
-                )}
+                <EntityImageGallery images={images} />
             </div>
 
             {/* Character-specific */}
@@ -217,5 +242,96 @@ function InfoRow({ label, value }: { label: string; value: string }) {
             <span className="text-white/50">{label}</span>
             <span className="text-white">{value}</span>
         </div>
+    );
+}
+
+/** Height of the sprite box: the sprites are 250x300, so this shows them near native size. */
+const GALLERY_HEIGHT = 'h-72';
+
+/**
+ * Sprites of one entity, one at a time, with the file name underneath.
+ *
+ * Entities whose folder holds more than one sprite get chevrons to page through them; those
+ * without any fall back to the "unknown" glyph, since a missing sprite is worth showing.
+ */
+function EntityImageGallery({ images }: { images: EntityImage[] }) {
+    // The list already starts on the resting sprite, so paging opens on it and steps from there.
+    const [index, setIndex] = useState(0);
+
+    const current = images[index] ?? null;
+    const hasMultiple = images.length > 1;
+
+    const step = (delta: number) => {
+        const next = index + delta;
+        if (next < 0 || next >= images.length) {
+            return;
+        }
+        setIndex(next);
+        playSfx('click');
+    };
+
+    return (
+        <div className="flex w-72 max-w-full shrink-0 flex-col items-center gap-2">
+            <div className="flex w-full items-center gap-1">
+                {hasMultiple && (
+                    <GalleryChevron direction="left" disabled={index === 0} onClick={() => step(-1)} />
+                )}
+
+                <div className={`flex ${GALLERY_HEIGHT} min-w-0 flex-1 items-center justify-center`}>
+                    {current ? (
+                        <CommonImage
+                            src={current.url}
+                            alt={current.name}
+                            title={current.name}
+                            className="h-full w-full"
+                        />
+                    ) : (
+                        <UnknownIcon className="h-24 w-24 text-white/25" />
+                    )}
+                </div>
+
+                {hasMultiple && (
+                    <GalleryChevron
+                        direction="right"
+                        disabled={index === images.length - 1}
+                        onClick={() => step(1)}
+                    />
+                )}
+            </div>
+
+            {current && (
+                <span className="w-full truncate text-center text-sm text-white/60" title={current.name}>
+                    {current.name}
+                </span>
+            )}
+        </div>
+    );
+}
+
+/**
+ * Chevron that pages the gallery, sized and coloured like the ones in `CommonSelector` so both
+ * read as the same control.
+ */
+function GalleryChevron({ direction, disabled, onClick }: {
+    direction: 'left' | 'right';
+    disabled: boolean;
+    onClick: () => void;
+}) {
+    const Chevron = direction === 'left' ? ChevronLeft : ChevronRight;
+
+    return (
+        <button
+            type="button"
+            onClick={onClick}
+            onMouseEnter={() => playSfx(BUTTON_SFX_ID)}
+            disabled={disabled}
+            aria-label={direction === 'left' ? 'Previous image' : 'Next image'}
+            className={`shrink-0 transition-colors duration-200 ${disabled
+                ? 'cursor-not-allowed text-white/15'
+                : 'cursor-pointer text-white/70 hover:text-white'
+                }`}
+        >
+            <Chevron className="h-[0.80em] w-auto block" />
+        </button>
     );
 }

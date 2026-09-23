@@ -163,6 +163,36 @@ export const FolderIcon: React.FC<FolderIconProps> = ({ className = '' }) => (
   />
 );
 
+// --- Unknown Icon ---
+interface UnknownIconProps {
+  className?: string;
+}
+
+/**
+ * Question mark from `public/images/ui/misc/unknown.svg`, shown wherever an entity has no
+ * sprite of its own.
+ *
+ * Like {@link MusicNote}, the file paints its own path white, so it is applied as a CSS mask
+ * and filled with `currentColor` instead of being embedded with `<img>`: that keeps it
+ * following the tone of whatever renders it. Pass a `h-*`/`w-*` class to size it.
+ */
+export const UnknownIcon: React.FC<UnknownIconProps> = ({ className = '' }) => (
+  <span
+    aria-hidden="true"
+    className={`block h-[1em] w-[1em] bg-current ${className}`}
+    style={{
+      maskImage: 'url(/images/ui/misc/unknown.svg)',
+      WebkitMaskImage: 'url(/images/ui/misc/unknown.svg)',
+      maskRepeat: 'no-repeat',
+      WebkitMaskRepeat: 'no-repeat',
+      maskPosition: 'center',
+      WebkitMaskPosition: 'center',
+      maskSize: 'contain',
+      WebkitMaskSize: 'contain',
+    }}
+  />
+);
+
 // --- Save-slot action icons ---
 interface SaveActionIconProps {
   className?: string;
