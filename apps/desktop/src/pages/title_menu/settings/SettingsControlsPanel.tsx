@@ -27,7 +27,7 @@ function KeyCap({ variant = 'default', children }: { variant?: 'default' | 'list
 }
 
 export function SettingsControlsPanel({ settings }: SettingsPanelProps) {
-    const { t } = useTranslation('common');
+    const { t } = useTranslation('settings');
     const { setControlBinding, gamepad } = useControls();
     const [rebinding, setRebinding] = useState<{ id: ControlId; device: RebindingDevice } | null>(null);
 

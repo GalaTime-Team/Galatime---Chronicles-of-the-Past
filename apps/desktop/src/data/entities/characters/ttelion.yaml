@@ -1,0 +1,93 @@
+id: ttelion
+name: Ttelion
+surname: Loke
+gender: Male
+age: 32
+height: "188 cm"
+weight: "88 kg"
+birthday: "December 3"
+origin: Lotipel
+description: >
+  Add description here.
+
+elements:
+  - corrupted_forest
+
+base_stats:
+  hp: 780
+  mana: 25
+  stamina: 97
+  physical_attack: 82
+  magical_attack: 86
+  physical_defense: 68  
+  magical_defense: 55
+  speed: 88
+
+skills:
+  - id: focus
+    name: Focus
+    element: lapis
+    damage_type: status
+    target: self
+    power: 0
+    mana_cost: 8
+    effects:
+      - effect_id: focus
+        status_effect: Focused
+        apply_to: self
+        turns: [1, 4]
+        buff:
+          physical_attack: 15
+
+  - id: stone_body
+    name: Stone Body
+    element: corporis
+    damage_type: status
+    target: self
+    power: 0
+    mana_cost: 14
+    effects:
+      - effect_id: stone_body
+        status_effect: Stone Body
+        apply_to: self
+        turns: [1, 5]
+        buff:
+          physical_defense: 30
+          magical_defense: 15
+
+  - id: mega_punch
+    name: Mega Punch
+    element: lapis
+    damage_type: physical
+    target: enemy_one
+    power: 140
+    stamina_cost: 18
+
+  - id: earthen_roar
+    name: Earthen Roar
+    element: corporis
+    damage_type: magical
+    target: enemies_all
+    power: 70
+    mana_cost: 22
+    effects:
+      - effect_id: earthen_roar
+        status_effect: Staggered
+        apply_to: enemies_all
+        turns: 1
+        apply_chance: 0.80
+        debuff:
+          speed: 20
+          physical_attack: 15
+        effect_hit_chance: 0.7
+
+weapon:
+  id: punch
+  name: Fist Punch
+  element: lapis
+  damage_type: physical
+  target: enemy_one
+  hits: 2
+  accuracy: 0.95
+  power: 40
+  stamina_cost: 2

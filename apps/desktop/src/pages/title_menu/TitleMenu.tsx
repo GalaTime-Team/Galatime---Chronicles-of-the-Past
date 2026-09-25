@@ -50,7 +50,7 @@ async function exitGame(): Promise<void> {
 let titleRevealed = false;
 
 export function TitleMenu({ onNewGame, onSettings, onCredits, onPlayground }: TitleMenuProps) {
-    const { t } = useTranslation('common');
+    const { t } = useTranslation(['titleMenu', 'common']);
     const [confirmExit, setConfirmExit] = useState(false);
 
     // `deny` (Escape / the east face button) mirrors the Exit button: it opens the very same
@@ -170,8 +170,8 @@ export function TitleMenu({ onNewGame, onSettings, onCredits, onPlayground }: Ti
                 title={t('titleMenu.exitTitle')}
                 message={t('titleMenu.exitMessage')}
                 onDismiss={() => setConfirmExit(false)}
-                cancelAction={{ label: t('common.cancel'), onPress: () => setConfirmExit(false) }}
-                confirmAction={{ label: t('common.confirm'), variant: 'danger', onPress: () => void exitGame() }}
+                cancelAction={{ label: t('cancel'), onPress: () => setConfirmExit(false) }}
+                confirmAction={{ label: t('confirm'), variant: 'danger', onPress: () => void exitGame() }}
             />
         </motion.main>
     );

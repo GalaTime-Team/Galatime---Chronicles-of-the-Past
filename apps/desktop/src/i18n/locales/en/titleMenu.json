@@ -1,0 +1,12 @@
+{
+	"titleMenu": {
+		"newGame": "New Game",
+		"settings": "Settings",
+		"credits": "Credits",
+		"playground": "Test Playground",
+		"exit": "Exit",
+		"exitTitle": "Exit game?",
+		"exitMessage": "Are you sure you want to leave?",
+		"logoAlt": "Galatime: Chronicles of the Past"
+	}
+}

@@ -14,7 +14,7 @@ import CommonSwitch from '../../../components/common/CommonSwitch';
 import type { SettingsPanelProps } from './types';
 
 export function SettingsDisplayPanel({ settings, updateSettings }: SettingsPanelProps) {
-    const { t } = useTranslation('common');
+    const { t } = useTranslation('settings');
 
     //region — Helpers
     const [draftScale, setDraftScale] = useState(settings.display.renderScale);
@@ -41,6 +41,7 @@ export function SettingsDisplayPanel({ settings, updateSettings }: SettingsPanel
                 onChange={(item) => updateDisplay({ imageRendering: item.id as ImageRenderingMode })}
                 orientation="horizontal"
                 showDescription
+                ns="settings"
                 containerClassName="setting-line border-b-4 border-white/10 py-4"
                 optionsWidthClassName="w-20 flex-none"
             />

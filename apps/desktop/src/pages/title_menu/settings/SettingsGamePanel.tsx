@@ -3,7 +3,7 @@ import CommonSwitch from '../../../components/common/CommonSwitch';
 import type { SettingsPanelProps } from './types';
 
 export function SettingsGamePanel({ settings, updateSettings }: SettingsPanelProps) {
-    const { t } = useTranslation('common');
+    const { t } = useTranslation('game');
 
     //region — Render
     return (
@@ -26,6 +26,17 @@ export function SettingsGamePanel({ settings, updateSettings }: SettingsPanelPro
                 description={t('game.settings.actionTips.description')}
                 defaultChecked={settings.actionsTooltipVisible}
                 onChange={(checked) => updateSettings({ actionsTooltipVisible: checked })}
+                showDescription
+                containerClassName="setting-line border-b-4 border-white/10 py-4"
+            />
+
+            {/* Dialogue Tips Toggle */}
+            <CommonSwitch
+                key={`dialogueTips-${settings.dialogueTooltipVisible}`}
+                title={t('game.settings.dialogueTips.title')}
+                description={t('game.settings.dialogueTips.description')}
+                defaultChecked={settings.dialogueTooltipVisible}
+                onChange={(checked) => updateSettings({ dialogueTooltipVisible: checked })}
                 showDescription
                 containerClassName="setting-line border-b-4 border-white/10 py-4"
             />

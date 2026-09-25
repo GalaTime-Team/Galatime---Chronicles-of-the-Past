@@ -119,7 +119,7 @@ const CommonInput: React.FC<CommonInputProps> = ({
                             placeholder={placeholder}
                             aria-label={title}
                             aria-describedby={description ? descriptionId : undefined}
-                            className={`bg-transparent border-0 border-b text-lg border-galatime-primary/40 text-white placeholder:text-galatime-primary/40 focus:outline-none focus:ring-0 px-0 w-auto min-w-[30px] leading-2.5 transition ${isHorizontal ? 'text-left' : 'text-center'} ${inputClassName}`}
+                            className={`bg-transparent border-0 border-b text-lg border-galatime-primary/40 text-white placeholder:text-galatime-primary/40 focus:outline-none focus:ring-0 px-0 w-auto min-w-7.5 leading-2.5 transition ${isHorizontal ? 'text-left' : 'text-center'} ${inputClassName}`}
                         />
 
                         {showCounter && (

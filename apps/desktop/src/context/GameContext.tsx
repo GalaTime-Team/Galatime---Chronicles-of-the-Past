@@ -46,6 +46,8 @@ export interface GameSettings {
   difficulty: Difficulty;
   fightingTooltipVisible: boolean;
   actionsTooltipVisible: boolean;
+  /** Highlights the phrases inside a dialogue that the player can click. */
+  dialogueTooltipVisible: boolean;
   /** Shows a card naming the track every time a music track starts playing. */
   showNowPlayingMusic: boolean;
   audio: {
@@ -153,6 +155,7 @@ export const DEFAULT_SETTINGS: GameSettings = {
   difficulty: 'normal',
   fightingTooltipVisible: true,
   actionsTooltipVisible: true,
+  dialogueTooltipVisible: true,
   showNowPlayingMusic: false,
   audio: { ...DEFAULT_AUDIO_VOLUMES },
   currentMusicTrackId: DEFAULT_MUSIC_TRACK_ID,
@@ -394,6 +397,15 @@ export interface ControlListenerOptions {
    * for instance. Default: `false`.
    */
   mutedByModal?: boolean;
+  /**
+   * Ignores the operating system's key-repeat while a key is held down.
+   *
+   * Off by default, because most controls are idempotent: holding `deny` on a popup
+   * does nothing more than the first press did. It is worth turning on wherever
+   * repeating would skip past states the player meant to stop at — a dialogue
+   * advancing several lines, or a list highlight running away from them.
+   */
+  ignoreRepeat?: boolean;
 }
 
 /** Handlers of a surface that is currently closed; a stable stand-in for "handle nothing". */
@@ -409,24 +421,27 @@ const NO_HANDLERS: ControlHandlers = {};
  */
 function useControlEvents(handlers: ControlHandlers, options: ControlListenerOptions = {}) {
   const { getControlIds, subscribeToControl, isModalLayerOpen } = useGame();
-  const { preventDefault = true, mutedByModal = false } = options;
+  const { preventDefault = true, mutedByModal = false, ignoreRepeat = false } = options;
 
   const handlersRef = useRef(handlers);
   const getControlIdsRef = useRef(getControlIds);
   const isModalLayerOpenRef = useRef(isModalLayerOpen);
-  const optionsRef = useRef({ preventDefault, mutedByModal });
+  const optionsRef = useRef({ preventDefault, mutedByModal, ignoreRepeat });
 
   useEffect(() => {
     handlersRef.current = handlers;
     getControlIdsRef.current = getControlIds;
     isModalLayerOpenRef.current = isModalLayerOpen;
-    optionsRef.current = { preventDefault, mutedByModal };
+    optionsRef.current = { preventDefault, mutedByModal, ignoreRepeat };
   });
 
   useEffect(() => {
     const handleKeyDown = (event: KeyboardEvent) => {
       // A popup is on screen: it owns the controls, so this listener stays out of its way.
       if (optionsRef.current.mutedByModal && isModalLayerOpenRef.current()) return;
+
+      // The key is still being held down; this is a repeat of a press already handled.
+      if (optionsRef.current.ignoreRepeat && event.repeat) return;
 
       // A shared key fires every control bound to it, so each listening component reacts.
       const triggered = getControlIdsRef.current(event).filter((controlId) => handlersRef.current[controlId]);

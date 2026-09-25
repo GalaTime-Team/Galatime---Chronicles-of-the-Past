@@ -6,7 +6,7 @@ import { MusicNote } from '../../../assets/GalatimeIcon';
 import CommonButton from '../../../components/common/CommonButton';
 
 export function TestMusicPanel() {
-    const { t } = useTranslation('common');
+    const { t } = useTranslation('playground');
     const [currentTrackId, setCurrentTrackId] = useState<string | null>(getCurrentMusicTrackId());
 
     useEffect(() => {

@@ -1,0 +1,49 @@
+{
+	"dialogue": {
+		"interactiveHint": "Follow: {{text}}",
+		"choicesHint": "Choose an option",
+		"locked": "Locked",
+		"loading": "Loading dialogue…",
+		"close": "Close",
+		"result": {
+			"title": "Conversation over",
+			"good": "Good outcome",
+			"neutral": "Neutral outcome",
+			"bad": "Bad outcome",
+			"unknown": "Outcome"
+		},
+		"changes": {
+			"title": "What changed",
+			"empty": "Nothing changed."
+		},
+		"error": {
+			"title": "The dialogue could not continue",
+			"dialogue_not_found": "No dialogue with that id exists.",
+			"dialogue_invalid": "That dialogue file has validation errors and cannot be started.",
+			"incompatible_state": "The current world state does not satisfy this dialogue's entry conditions.",
+			"node_not_found": "The dialogue points at a node that does not exist.",
+			"choice_not_found": "That option is not part of this dialogue.",
+			"choice_unavailable": "That option is not available yet.",
+			"interaction_not_found": "That phrase does not lead anywhere.",
+			"insufficient_item": "The player does not have what that option costs.",
+			"session_not_found": "The conversation is no longer running.",
+			"session_expired": "The conversation was left idle for too long.",
+			"session_completed": "The conversation has already ended.",
+			"duplicate_action": "That action was already applied.",
+			"unknown": "Something went wrong."
+		},
+		"debug": {
+			"title": "Session",
+			"node": "Node",
+			"waitingFor": "Waiting for",
+			"speaker": "Speaker",
+			"cast": "Cast",
+			"choices": "Choices",
+			"changes": "Changes",
+			"warnings": "Warnings",
+			"none": "None",
+			"enabled": "enabled",
+			"locked": "locked"
+		}
+	}
+}

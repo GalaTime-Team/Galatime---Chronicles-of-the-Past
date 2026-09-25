@@ -1,0 +1,18 @@
+{
+	"newGame": {
+		"title": "New Game",
+		"openFolder": "Open the saves folder",
+		"slot": "Save {{slot}}",
+		"emptySlot": "Empty slot {{slot}}",
+		"create": "Create save in slot {{slot}}",
+		"edit": "Edit",
+		"remove": "Remove",
+		"removeTitle": "Remove save?",
+		"removeMessage": "Are you sure you want to permanently remove this save?",
+		"labels": {
+			"elements": "Elements",
+			"money": "Money",
+			"mainObjective": "Main objective"
+		}
+	}
+}

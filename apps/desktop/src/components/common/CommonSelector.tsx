@@ -34,6 +34,8 @@ interface CommonSelectorProps {
     orientation?: 'horizontal' | 'vertical';
     /** Whether to show the description or not */
     showDescription?: boolean;
+    /** i18n namespace used to resolve item `title`/`description` keys. Defaults to 'common'. */
+    ns?: string;
 }
 
 const CommonSelector: React.FC<CommonSelectorProps> = ({
@@ -48,6 +50,7 @@ const CommonSelector: React.FC<CommonSelectorProps> = ({
     optionsWidthClassName = '',
     descriptionClassName = '',
     showDescription = false,
+    ns = 'common',
 }) => {
     const { t } = useTranslation('common');
     // Find the initial index based on defaultId or fallback to 0
@@ -56,7 +59,7 @@ const CommonSelector: React.FC<CommonSelectorProps> = ({
 
     const currentItem = items[currentIndex];
     const isHorizontal = orientation === 'horizontal';
-    const descriptionText = showDescription && currentItem?.description ? t(currentItem.description) : undefined;
+    const descriptionText = showDescription && currentItem?.description ? t(currentItem.description, { ns }) : undefined;
 
     const handlePrev = () => {
         if (currentIndex > 0) {
@@ -122,7 +125,7 @@ const CommonSelector: React.FC<CommonSelectorProps> = ({
 
                         {/* Selected Option Title */}
                         <div className={`text-lg text-white text-center ${optionsWidthClassName} ${optionsClassName}`}>
-                            {currentItem?.title ? t(currentItem.title) : currentItem?.id}
+                            {currentItem?.title ? t(currentItem.title, { ns }) : currentItem?.id}
                         </div>
 
                         {/* Right Chevron */}

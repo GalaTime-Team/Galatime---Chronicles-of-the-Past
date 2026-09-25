@@ -1,0 +1,77 @@
+{
+	"game": {
+		"header": {
+			"tagline": "GalaTime",
+			"title": "Chronicles of the Past",
+			"subtitle": "Tailwind CSS + Tauri"
+		},
+		"settings": {
+			"saveFile": {
+				"title": "Title",
+				"default": "Untitled1",
+				"placeholder": "Save file title"
+			},
+			"gametype": {
+				"title": "Game Type",
+				"storyMode": {
+					"label": "Story Mode",
+					"description": "Skip battles, focus on the narrative and the characters."
+				},
+				"fullGameplay": {
+					"label": "Full Gameplay",
+					"description": "Includes story and battle mechanics."
+				},
+				"battleMode": {
+					"label": "Battle Mode",
+					"description": "Fight waves of enemies."
+				}
+			},
+			"difficulty": {
+				"title": "Difficulty",
+				"easy": {
+					"label": "Easy",
+					"description": "For those who want to relax."
+				},
+				"normal": {
+					"label": "Normal",
+					"description": "The standard experience."
+				},
+				"hard": {
+					"label": "Hard",
+					"description": "A true challenge awaits."
+				},
+				"hardcore": {
+					"label": "Hardcore",
+					"description": "You and your allies only have one life."
+				}
+			},
+			"allyControl": {
+				"title": "Ally Control",
+				"alliesPlayer": {
+					"label": "Allies + Player",
+					"description": "You control your allies and yourself."
+				},
+				"player": {
+					"label": "Player",
+					"description": "You control yourself and allies act on their own."
+				},
+				"playerOnly": {
+					"label": "Player Only",
+					"description": "You control yourself and there are no allies."
+				}
+			},
+			"fightingTips": {
+				"title": "Fighting Tool tip",
+				"description": "Display details about attacks."
+			},
+			"actionTips": {
+				"title": "Action Tool tip",
+				"description": "Display all the interactable objects."
+			},
+			"dialogueTips": {
+				"title": "Dialogue Tool tip",
+				"description": "Highlight the phrases in a dialogue that you can interact."
+			}
+		}
+	}
+}

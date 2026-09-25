@@ -47,7 +47,25 @@ export const CSS_IMAGE_RENDERING: Record<ImageRenderingMode, string> = {
 
 /** Render scale is a percentage: 100 renders at native resolution, lower values zoom the world in. */
 export const DEFAULT_RENDER_SCALE = 100;
-export const RENDER_SCALE_MIN = 50;
+
+/**
+ * The lowest render scale the interface is allowed to use.
+ *
+ * It is a layout floor, not a taste one. The scale magnifies the interface with a
+ * CSS `zoom`, so the surface the components are actually laid out on is the window
+ * divided by the zoom — and the game window cannot be smaller than 854x480 (see
+ * `src-tauri/tauri.conf.json`).
+ *
+ * The dialogue surface is what sets the limit: its box alone (name plate, two rows
+ * of `--dialogue-text-size` and the `>>` strip) is roughly 145px of layout height,
+ * and it has to leave a stage behind it with room for a character. At 50% the
+ * minimum window becomes a 427x240 layout surface and the box takes all of it; at
+ * 75% it is 640x360, which is the smallest case that still works.
+ *
+ * Anything below this has to be refused rather than laid out, because there is no
+ * arrangement of a 240px-tall surface that fits a dialogue.
+ */
+export const RENDER_SCALE_MIN = 75;
 export const RENDER_SCALE_MAX = 100;
 export const RENDER_SCALE_STEP = 5;
 

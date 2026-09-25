@@ -21,6 +21,19 @@
   --render-zoom: 1;
   /* Image scaling algorithm driven by the "Image rendering" display setting. */
   --image-rendering: auto;
+  /* Spoken-line typography. The dialogue line is the text the player reads at length, so it
+     follows the window instead of sitting at a fixed size — at a large proportion the box held
+     the smallest text on screen. Written against `--text-base` so the global typography scale
+     still applies, and clamped so a small window keeps its current size while a very wide one
+     stops growing. `--dialogue-line-height` is derived from it and never set by hand: the box is
+     exactly `maxRows` of these rows tall and the hidden measuring mirror reads the same value,
+     which is what keeps pagination in step with the render. */
+  --dialogue-text-size: clamp(
+    calc(var(--text-base) * 1.1),
+    calc(var(--text-base) * 0.6 + 0.8vw),
+    calc(var(--text-base) * 1.6)
+  );
+  --dialogue-line-height: calc(var(--dialogue-text-size) * 1.4);
 }
 
 /* Tailwind v4 exposes its font sizes as `--text-*` theme variables. Rescaling them here enlarges

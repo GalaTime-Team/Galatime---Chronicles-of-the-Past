@@ -8,7 +8,7 @@ interface TestPlaygroundSidebarProps {
 }
 
 export function TestPlaygroundSidebar({ activeTab, onChange, labels }: TestPlaygroundSidebarProps) {
-    const tabs: PlaygroundTab[] = ['music', 'dialogue', 'combat', 'objectives', 'movement', 'entities'];
+    const tabs: PlaygroundTab[] = ['music', 'entities', 'dialogue', 'combat', 'objectives', 'movement'];
 
     return (
         <nav aria-label="Test Playground" className="grid shrink-0 grid-cols-2 gap-1 border-b border-white/10 pb-2 sm:flex sm:flex-row md:flex-col md:gap-2 md:overflow-y-auto md:border-b-0 md:pb-0 md:pr-2">

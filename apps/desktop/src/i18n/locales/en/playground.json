@@ -1,0 +1,34 @@
+{
+	"playground": {
+		"title": "Test Playground",
+		"openFolder": "Open the test playground folder",
+		"comingSoon": "This test panel is coming soon.",
+		"tabs": {
+			"music": "Music",
+			"dialogue": "Dialogue",
+			"combat": "Combat",
+			"objectives": "Objectives",
+			"movement": "Movement",
+			"entities": "Entities"
+		},
+		"music": {
+			"nowPlaying": "Now Playing",
+			"nothingPlaying": "Nothing playing",
+			"play": "Play",
+			"playing": "Playing",
+			"stop": "Stop"
+		},
+		"dialogue": {
+			"inputTitle": "Dialogue ID",
+			"placeholder": "e.g. test-1",
+			"load": "Load",
+			"notFound": "No dialogue with that id exists.",
+			"back": "Change dialogue",
+			"variables": "Variables",
+			"variablesDescription": "Only the values this dialogue branches on. They are applied when the conversation starts.",
+			"noVariables": "This dialogue branches on nothing, so there is nothing to set.",
+			"start": "Start",
+			"idle": "Press Start to play it here."
+		}
+	}
+}

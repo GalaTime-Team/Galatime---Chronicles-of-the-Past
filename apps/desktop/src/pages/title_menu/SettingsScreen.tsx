@@ -20,7 +20,7 @@ interface SettingsScreenProps {
 }
 
 export function SettingsScreen({ onBack }: SettingsScreenProps) {
-    const { t } = useTranslation('common');
+    const { t } = useTranslation(['settings', 'common']);
     const { gameState, setGameState } = useGame();
     const [activeTab, setActiveTab] = useState<SettingsTab>('game');
     const [confirmReset, setConfirmReset] = useState(false);
@@ -66,7 +66,7 @@ export function SettingsScreen({ onBack }: SettingsScreenProps) {
                 {/* Header — Credits style */}
                 <header className="grid shrink-0 grid-cols-[1fr_auto_1fr] items-center">
                     <div className="justify-self-start">
-                        <BackButton label={t('common.back')} onClick={onBack} />
+                        <BackButton label={t('back')} onClick={onBack} />
                     </div>
                     <div className="text-center">
                         <SettingsHeaderTitle />
@@ -104,8 +104,8 @@ export function SettingsScreen({ onBack }: SettingsScreenProps) {
                 title={t('settings.restoreTitle')}
                 message={t('settings.restoreMessage')}
                 onDismiss={() => setConfirmReset(false)}
-                cancelAction={{ label: t('common.cancel'), onPress: () => setConfirmReset(false) }}
-                confirmAction={{ label: t('common.confirm'), variant: 'warning', onPress: restoreDefaults }}
+                cancelAction={{ label: t('cancel'), onPress: () => setConfirmReset(false) }}
+                confirmAction={{ label: t('confirm'), variant: 'warning', onPress: restoreDefaults }}
             />
         </motion.main>
     );

@@ -7,7 +7,7 @@ import { TestEntitiesSidebar } from './components/TestEntitiesSidebar';
 import { TestEntitiesTab } from './components/TestEntitiesTab';
 
 export function TestEntitiesPanel() {
-    const { t } = useTranslation('common');
+    const { t } = useTranslation('playground');
     const [characters, setCharacters] = useState<CharacterData[]>([]);
     const [mobs, setMobs] = useState<MobData[]>([]);
     const [selected, setSelected] = useState<EntityItem | null>(null);

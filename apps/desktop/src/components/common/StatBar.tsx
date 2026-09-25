@@ -14,7 +14,7 @@ const StatBar: React.FC<StatBarProps> = ({ label, value, max }) => {
         barColor = 'bg-galatime-error';
     } else if (percentage < 50) {
         barColor = 'bg-galatime-warning';
-    } else if (percentage < 100) {
+    } else if (percentage < 80) {
         barColor = 'bg-galatime-success';
     }
 

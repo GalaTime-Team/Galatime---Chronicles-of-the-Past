@@ -1,0 +1,520 @@
+/*
+ * Layout and components.
+ *
+ * Three columns (nodes / editor / checks+preview) plus a header. Everything is
+ * plain blocks and borders — the point is to fit a lot of information on screen
+ * at once, not to look good.
+ */
+
+/* ---------------------------------------------------------------- layout */
+
+.app {
+    display: grid;
+    grid-template-columns: 260px minmax(0, 1fr) 340px;
+    grid-template-rows: auto minmax(0, 1fr);
+    grid-template-areas:
+        "head head head"
+        "nodes editor side";
+    height: 100vh;
+    gap: 1px;
+    background: var(--border);
+}
+
+.app > header {
+    grid-area: head;
+}
+
+#panel-nodes {
+    grid-area: nodes;
+}
+
+#panel-editor {
+    grid-area: editor;
+}
+
+#panel-side {
+    grid-area: side;
+}
+
+.app > header,
+.app > section {
+    background: var(--panel);
+    min-height: 0;
+    overflow: auto;
+    padding: 10px;
+}
+
+/* ---------------------------------------------------------------- header */
+
+/*
+ * The header is one row of controls on the same three tracks the fields use:
+ * the two fields hang under their labels, and the title, the button group and
+ * the status sit on the control line. Nothing is aligned by its bottom edge, so
+ * nothing moves when a control is a couple of pixels taller than its neighbour.
+ */
+header {
+    display: grid;
+    grid-template-columns: auto minmax(0, auto) minmax(0, auto) minmax(0, 1fr) auto auto;
+    grid-template-rows: auto auto auto auto;
+    align-items: start;
+    align-content: start;
+    column-gap: 10px;
+    row-gap: var(--field-track-gap);
+}
+
+/* The offline banner, when it appears, takes a line of its own. */
+header > #banner {
+    grid-column: 1 / -1;
+}
+
+header > .field {
+    display: grid;
+    grid-template-rows: subgrid;
+    grid-row: 2 / span 3;
+}
+
+/*
+ * Neither the title nor the status is a control, but both start on the control
+ * line so the header always reads as one row — even when the button group needs
+ * a second line at a narrow window.
+ */
+header > h1,
+header > #status {
+    grid-row: 3;
+    align-self: start;
+}
+
+header > .toolbar {
+    grid-row: 3;
+    align-content: start;
+}
+
+/* Empty; it only keeps the status off the button group. */
+header > .spacer {
+    grid-row: 3;
+}
+
+.toolbar {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 4px;
+    align-items: center;
+}
+
+/* ---------------------------------------------------------------- fields */
+
+/*
+ * Layout constants for the form tracks. They describe the form, not the palette,
+ * so they stay next to the rules that use them rather than in theme.css.
+ */
+:root {
+    --field-line: 16px;      /* one label line, and the line box of a control */
+    --field-control: 24px;   /* one control: a line box plus padding and border */
+    --field-track-gap: 2px;  /* label → control → hint, inside a field */
+    --field-row-gap: 8px;    /* between two rows of fields */
+    --field-col-gap: 6px;    /* between two fields of a row */
+    --field-min: 88px;       /* narrowest a field gets before a row wraps */
+}
+
+/*
+ * A field is three stacked tracks: label / control / hint. On its own it is a
+ * plain three-row grid; inside a row it borrows the row's tracks with `subgrid`
+ * (see `.inline`), which is what stops a wrapped hint from lifting its own
+ * control out of line — the whole reason the rows used to read as ragged.
+ */
+.field {
+    display: grid;
+    grid-template-rows: auto auto auto;
+    gap: var(--field-track-gap);
+    min-width: 0;
+}
+
+.field-label {
+    color: var(--muted);
+    font-size: 11px;
+    line-height: var(--field-line);
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+}
+
+.field-hint {
+    color: var(--muted);
+    font-size: 11px;
+    /*
+     * A path such as `relationship.pacci.friendship` offers no break
+     * opportunity and would otherwise run across the neighbouring column. The
+     * hint may grow as tall as it likes — it just cannot move a control or widen
+     * the row.
+     */
+    overflow-wrap: anywhere;
+}
+
+.input {
+    background: var(--panel-alt);
+    color: var(--text);
+    border: 1px solid var(--border);
+    border-radius: 3px;
+    padding: 3px 5px;
+    min-width: 0;
+    width: 100%;
+    /* A control keeps its own height; it never stretches to fill a taller
+       neighbouring track. Rows line up on the controls' top edge. */
+    align-self: start;
+}
+
+/*
+ * A dropdown is a couple of pixels taller than a text input by default, which
+ * leaves a row of mixed controls looking uneven even when the tracks line up.
+ * One line box for both makes every control in a row the same height.
+ */
+input.input,
+select.input {
+    line-height: var(--field-line);
+}
+
+textarea.input {
+    resize: vertical;
+    line-height: 1.5;
+}
+
+.input:focus {
+    outline: 1px solid var(--accent);
+    border-color: var(--accent);
+}
+
+/*
+ * A row of fields. Every child sits on the same three tracks, so the row reads
+ * as a table: labels on one line, controls on the next, hints on the next.
+ *
+ * The columns are as many as fit and never narrower than a label, and `auto-fit`
+ * collapses the ones left empty, so a two-field row still fills its width. When
+ * the width cannot hold a field per column the row stacks, it does not squeeze.
+ */
+.inline {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(min(var(--field-min), 100%), 1fr));
+    align-items: start;
+    column-gap: var(--field-col-gap);
+    row-gap: var(--field-row-gap);
+    min-width: 0;
+}
+
+.inline > .field {
+    grid-row: span 3;
+    grid-template-rows: subgrid;
+}
+
+/*
+ * A button group or a bare checkbox in a row is not a field, but it belongs on
+ * the control line: it spans the row's three tracks and starts where the
+ * controls start, whatever the height of the label track above it. The offset is
+ * a margin rather than padding so the element itself stays control-heighted.
+ */
+.inline > .toolbar,
+.inline > .checkbox {
+    grid-row: span 3;
+    align-content: start;
+    margin-top: calc(var(--field-line) + var(--field-track-gap));
+}
+
+/* Three buttons do not fit in one field column. */
+.inline > .toolbar {
+    grid-column: span 2;
+}
+
+.checkbox {
+    display: inline-flex;
+    gap: 4px;
+    align-items: center;
+    /* Matches a control's height, so its label sits on the same line as the
+       text inside the neighbouring inputs. */
+    min-height: var(--field-control);
+    color: var(--muted);
+    font-size: 12px;
+}
+
+/* ---------------------------------------------------------------- buttons */
+
+.btn {
+    background: var(--panel-alt);
+    color: var(--text);
+    border: 1px solid var(--border);
+    border-radius: 3px;
+    padding: 4px 8px;
+    cursor: pointer;
+}
+
+.btn:hover {
+    border-color: var(--accent);
+}
+
+.btn:disabled {
+    opacity: 0.45;
+    cursor: default;
+}
+
+.btn-primary {
+    border-color: var(--accent);
+}
+
+.btn-danger:hover {
+    border-color: var(--error);
+    color: var(--error);
+}
+
+.btn-tiny {
+    padding: 1px 6px;
+    font-size: 11px;
+}
+
+/* ---------------------------------------------------------------- panels */
+
+.panel-title {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    margin-bottom: 8px;
+    padding-bottom: 4px;
+    border-bottom: 1px solid var(--border);
+}
+
+.panel-title .spacer {
+    flex: 1;
+}
+
+.muted {
+    color: var(--muted);
+}
+
+.small {
+    font-size: 11px;
+}
+
+/* ---------------------------------------------------------------- node list */
+
+.node-list {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+}
+
+.node-item {
+    display: block;
+    width: 100%;
+    text-align: left;
+    background: var(--panel-alt);
+    border: 1px solid transparent;
+    border-radius: 3px;
+    padding: 4px 6px;
+    color: var(--text);
+    cursor: pointer;
+}
+
+.node-item:hover {
+    border-color: var(--border);
+}
+
+.node-item.is-selected {
+    border-color: var(--accent);
+}
+
+.node-item .node-id {
+    font-family: var(--mono);
+    font-size: 12px;
+}
+
+.node-item .node-meta {
+    color: var(--muted);
+    font-size: 11px;
+}
+
+.node-item .badge {
+    color: var(--error);
+}
+
+/* ---------------------------------------------------------------- editor */
+
+.block {
+    border: 1px solid var(--border);
+    border-radius: 3px;
+    padding: 8px;
+    margin-bottom: 8px;
+    background: var(--panel-alt);
+}
+
+.block > h3 {
+    margin-bottom: 6px;
+}
+
+details.block > summary {
+    cursor: pointer;
+    color: var(--muted);
+    font-size: 12px;
+    margin: -2px 0 6px;
+}
+
+.row {
+    display: flex;
+    gap: 6px;
+    align-items: flex-start;
+    border-top: 1px solid var(--border);
+    padding-top: 6px;
+    margin-top: 6px;
+}
+
+.row:first-child {
+    border-top: none;
+    padding-top: 0;
+    margin-top: 0;
+}
+
+.row-body {
+    flex: 1;
+    min-width: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+}
+
+.repeater-actions {
+    margin-top: 8px;
+}
+
+/* ---------------------------------------------------------------- legend */
+
+.legend {
+    background: var(--panel);
+    border: 1px dashed var(--border);
+    border-radius: 3px;
+    padding: 6px 8px;
+    margin-top: 4px;
+}
+
+.legend code {
+    color: var(--accent);
+}
+
+/* ---------------------------------------------------------------- issues */
+
+.issue {
+    display: flex;
+    gap: 6px;
+    padding: 3px 0;
+    border-top: 1px solid var(--border);
+    font-size: 12px;
+}
+
+.issue:first-child {
+    border-top: none;
+}
+
+.issue-error .issue-kind {
+    color: var(--error);
+}
+
+.issue-warning .issue-kind {
+    color: var(--warning);
+}
+
+.issue-kind {
+    flex: 0 0 auto;
+    text-transform: uppercase;
+    font-size: 10px;
+    padding-top: 2px;
+}
+
+.issue-body {
+    flex: 1;
+    min-width: 0;
+}
+
+.issue-path {
+    color: var(--muted);
+    font-size: 11px;
+    font-family: var(--mono);
+}
+
+/* ---------------------------------------------------------------- preview */
+
+.preview-node {
+    font-family: var(--mono);
+    font-size: 12px;
+    background: var(--panel-alt);
+    border: 1px solid var(--border);
+    border-radius: 3px;
+    padding: 6px;
+    white-space: pre-wrap;
+}
+
+.preview-node .speaker {
+    color: var(--accent);
+    text-transform: uppercase;
+    font-size: 11px;
+}
+
+.preview-choices {
+    display: flex;
+    flex-direction: column;
+    gap: 3px;
+    margin-top: 6px;
+}
+
+.preview-choice {
+    text-align: left;
+}
+
+.preview-choice:disabled {
+    opacity: 0.5;
+}
+
+.log {
+    font-family: var(--mono);
+    font-size: 11px;
+    max-height: 160px;
+    overflow: auto;
+    border-top: 1px solid var(--border);
+    margin-top: 6px;
+    padding-top: 4px;
+}
+
+.log div {
+    color: var(--muted);
+}
+
+/* ---------------------------------------------------------------- misc */
+
+.banner {
+    padding: 6px 8px;
+    border-radius: 3px;
+    border: 1px solid var(--warning);
+    color: var(--warning);
+    font-size: 12px;
+    margin-bottom: 8px;
+}
+
+.stack {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.cast-chips {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 4px;
+}
+
+.chip {
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 1px 7px;
+    font-size: 11px;
+    font-family: var(--mono);
+    color: var(--muted);
+}
+
+/* The character whose line is on screen. */
+.chip-on {
+    color: var(--ok);
+    border-color: var(--ok);
+}

@@ -511,7 +511,7 @@ export function CommonPopup({
                                         <button
                                             type="button"
                                             className="ml-auto flex h-8 w-8 shrink-0 items-center justify-center text-white/55 transition-colors duration-200 hover:text-white"
-                                            aria-label={t('common.close')}
+                                            aria-label={t('close')}
                                             onClick={() => onDismiss?.()}
                                         >
                                             <CloseIcon className="h-3! w-3!" />

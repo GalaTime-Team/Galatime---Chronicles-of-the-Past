@@ -31,7 +31,7 @@ const FOLDER_HIDE_TRANSITION = { ...FOLDER_REVEAL_TRANSITION, delay: FOLDER_HIDE
  * mouse.
  */
 export function SettingsHeaderTitle() {
-    const { t } = useTranslation('common');
+    const { t } = useTranslation('settings');
     const [hovered, setHovered] = useState(false);
     const [focused, setFocused] = useState(false);
     const revealed = hovered || focused;

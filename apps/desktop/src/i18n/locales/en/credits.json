@@ -1,0 +1,30 @@
+{
+	"credits": {
+		"title": "Credits",
+		"madeWith": "GalaTime by GT Team — Developed with: Tauri, React & Tailwind",
+		"groups": {
+			"story": "Story",
+			"art": "Art",
+			"code": "Code",
+			"sound": "Sound",
+			"thanks": "Special Thanks"
+		},
+		"roles": {
+			"narrativeWriter": "Narrative Writer",
+			"storyWriter": "Story Writer",
+			"environment": "Environment",
+			"visualEffects": "Visual Effects",
+			"extras": "Extras",
+			"characterDesigner": "Character Designer",
+			"coder": "Coder / Programmer",
+			"gameEnvironmentDesigner": "Game Environment Designer",
+			"soundtrackComposer": "Soundtrack Composer",
+			"soundtrackProducer": "Soundtrack Producer",
+			"soundEffects": "Sound Effects"
+		},
+		"thanks": {
+			"playtesters": "All Playtesters",
+			"contributors": "All Contributors"
+		}
+	}
+}

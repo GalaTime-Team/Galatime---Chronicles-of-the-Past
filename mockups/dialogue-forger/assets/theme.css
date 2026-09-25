@@ -1,0 +1,67 @@
+/*
+ * Minimal theme: variables and a plain reset.
+ *
+ * The Forger is an internal authoring tool, so this deliberately stays out of
+ * the way — no branding, no decoration, just enough to keep the panels legible.
+ */
+
+:root {
+    --bg: #1b1d22;
+    --panel: #23262d;
+    --panel-alt: #2a2e36;
+    --border: #3a3f49;
+    --text: #e6e8ec;
+    --muted: #9aa1ad;
+    --accent: #7aa2f7;
+    --error: #f7768e;
+    --warning: #e0af68;
+    --ok: #9ece6a;
+    --mono: ui-monospace, "Cascadia Mono", Consolas, monospace;
+}
+
+* {
+    box-sizing: border-box;
+}
+
+html,
+body {
+    margin: 0;
+    padding: 0;
+    height: 100%;
+}
+
+body {
+    background: var(--bg);
+    color: var(--text);
+    font: 14px/1.45 system-ui, "Segoe UI", sans-serif;
+}
+
+h1,
+h2,
+h3,
+h4 {
+    margin: 0;
+    font-weight: 600;
+}
+
+h1 {
+    font-size: 16px;
+}
+
+h2 {
+    font-size: 14px;
+}
+
+h3 {
+    font-size: 13px;
+}
+
+code,
+pre,
+input,
+select,
+textarea,
+button {
+    font-family: var(--mono);
+    font-size: 12px;
+}

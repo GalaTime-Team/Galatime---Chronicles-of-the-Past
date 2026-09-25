@@ -1,0 +1,477 @@
+﻿# Diálogo: test-1
+# Gerado pelo Dialogue Forger. Comentários do ficheiro original não são preservados.
+
+dialogue_id: test-1
+start_node: entrada-1
+nodes:
+  node-1:
+    type: line
+    speaker_id: arthur
+    emotion: thinking
+    animation_id: idle
+    text:
+      - type: text
+        value: "So... "
+      - type: pause
+        duration_ms: 500
+      - type: text
+        value: " Why are we here?"
+    next: node-2
+  node-2:
+    type: line
+    speaker_id: pacci
+    emotion: relaxed
+    animation_id: idle
+    text:
+      - type: text
+        value: "To see if you got everything we "
+      - type: interactive_text
+        interaction_id: id
+        value: taught you
+        optional: true
+        on_click:
+          next: node-21
+      - type: text
+        value: .
+    next: node-3
+  node-21:
+    type: line
+    speaker_id: arthur
+    emotion: thinking
+    animation_id: idle
+    text:
+      - type: text
+        value: ... taught... me?
+    next: node-22
+  node-22:
+    type: line
+    speaker_id: neven
+    emotion: thinking
+    animation_id: idle
+    text:
+      - type: text
+        value: ...
+    next: node-23
+  node-23:
+    type: line
+    speaker_id: pacci
+    emotion: concerned
+    animation_id: idle
+    text:
+      - type: text
+        value: Please don't tell me you also forgot about that...
+    next: node-24
+  node-24:
+    type: line
+    speaker_id: raphael
+    emotion: trusting
+    animation_id: idle
+    text:
+      - type: text
+        value: "This "
+      - type: styled_text
+        value: free loaders'
+        style:
+          bold: true
+      - type: text
+        value: " memory is "
+      - type: styled_text
+        value: waaaaaaay
+        style:
+          wave: normal
+          speed_multiplier: 0.5
+      - type: text
+        value: " too selective..."
+    next: node-25
+  node-25:
+    type: line
+    speaker_id: arthur
+    emotion: stressed
+    animation_id: idle
+    text:
+      - type: text
+        value: Anyways...
+    next: node-3
+  node-3:
+    type: line
+    speaker_id: arthur
+    emotion: stressed
+    animation_id: idle
+    text:
+      - type: text
+        value: Is it really necessary?
+    next: node-4
+  node-4:
+    type: line
+    speaker_id: pacci
+    emotion: relaxed
+    animation_id: idle
+    text:
+      - type: text
+        value: Of course. We don't want you to be unprepared, right?
+    next: node-5
+  node-5:
+    type: choice
+    prompt:
+      speaker_id: neven
+      emotion: thinking
+      text:
+        - type: text
+          value: ...
+    choices:
+      - choice_id: accept
+        text: Accept
+        next: node-6
+  node-6:
+    type: line
+    speaker_id: arthur
+    emotion: annoyed
+    animation_id: idle
+    text:
+      - type: text
+        value: Alright... And how are you going to test that?
+    next: node-7
+  node-7:
+    type: line
+    speaker_id: raphael
+    emotion: trusting
+    animation_id: idle
+    text:
+      - type: text
+        value: You'll see.
+    next: ramificacao-1
+  ramificacao-1:
+    type: conditional
+    branches:
+      - branch_id: pacci_e_neven
+        if:
+          all:
+            - condition: greater_than
+              left: relationship.pacci.friendship
+              right: 10
+            - condition: greater_than
+              left: relationship.neven.friendship
+              right: 10
+        next: node-PN8-1
+      - branch_id: pacci
+        if:
+          condition: greater_than
+          left: relationship.pacci.friendship
+          right: 10
+        next: node-P8-1
+      - branch_id: neven
+        if:
+          condition: greater_than
+          left: relationship.neven.friendship
+          right: 10
+        next: node-N8-1
+      - branch_id: caso_padrao
+        next: node-8
+  node-PN8-1:
+    type: line
+    speaker_id: pacci
+    emotion: relaxed
+    animation_id: idle
+    auto_advance: true
+    text:
+      - type: text
+        value: Arthur, luckily, you're with me
+    next: node-PN8-2
+  node-PN8-2:
+    type: line
+    speaker_id: neven
+    emotion: like
+    animation_id: idle
+    text:
+      - type: text
+        value: ...
+    next: node-PN8-3
+  node-PN8-3:
+    type: line
+    speaker_id: arthur
+    emotion: neutral
+    animation_id: idle
+    text:
+      - type: text
+        value: ...
+    next: node-PN8-4
+  node-PN8-5:
+    type: line
+    speaker_id: pacci
+    emotion: surprised
+    animation_id: idle
+    text:
+      - type: text
+        value: Oh... sorry, brother, I didn't know you wanted to go with him...
+    next: node-PN8-6
+  node-PN8-6:
+    type: line
+    speaker_id: neven
+    emotion: relaxing
+    animation_id: idle
+    text:
+      - type: text
+        value: ...
+    next: node-PN8-7
+  node-PN8-7:
+    type: line
+    speaker_id: pacci
+    emotion: surprised
+    animation_id: idle
+    text:
+      - type: text
+        value: No no, you can have him!
+    next: node-PN8-8
+  node-PN8-8:
+    type: line
+    speaker_id: arthur
+    emotion: stressed
+    animation_id: idle
+    text:
+      - type: text
+        value: Can we maybe just-
+    next: node-PN8-9
+  node-PN8-9:
+    type: line
+    speaker_id: neven
+    emotion: suspicious
+    animation_id: idle
+    text:
+      - type: text
+        value: ...
+    next: node-PN8-10
+  node-PN8-10:
+    type: line
+    speaker_id: raphael
+    emotion: trusting
+    animation_id: idle
+    text:
+      - type: text
+        value: Alright, enough. You two can co-parent Arthur after the fight.
+    next: fim
+  node-P8-1:
+    type: line
+    speaker_id: pacci
+    emotion: relaxed
+    animation_id: idle
+    text:
+      - type: text
+        value: Arthur, luckily, you're with me
+    next: node-P8-2
+  node-P8-2:
+    type: line
+    speaker_id: neven
+    emotion: suspicious
+    animation_id: idle
+    text:
+      - type: text
+        value: ...
+    next: node-P8-3
+  node-P8-3:
+    type: line
+    speaker_id: raphael
+    emotion: neutral
+    animation_id: idle
+    text:
+      - type: text
+        value: Yeah, I get you...
+    next: node-P8-4
+  node-P8-4:
+    type: line
+    speaker_id: raphael
+    emotion: serious
+    animation_id: idle
+    text:
+      - type: styled_text
+        value: I can't believe he'd ditch his day ones
+        style:
+          shake: light
+    next: node-P8-5
+  node-P8-5:
+    type: line
+    speaker_id: neven
+    emotion: suspicious
+    animation_id: idle
+    text:
+      - type: text
+        value: ...
+    next: node-P8-6
+  node-P8-6:
+    type: line
+    speaker_id: pacci
+    emotion: concerned
+    animation_id: idle
+    text:
+      - type: text
+        value: Don't be like that...
+    next: node-P8-7
+  node-P8-7:
+    type: line
+    speaker_id: pacci
+    emotion: concerned
+    animation_id: idle
+    text:
+      - type: text
+        value: It's just to help Arthur defend himself!
+    next: node-P8-8
+  node-P8-8:
+    type: line
+    speaker_id: neven
+    emotion: thinking
+    animation_id: idle
+    text:
+      - type: text
+        value: ...
+    next: fim
+  node-N8-1:
+    type: line
+    speaker_id: neven
+    emotion: like
+    animation_id: idle
+    text:
+      - type: text
+        value: ...
+    next: node-N8-2
+  node-N8-2:
+    type: line
+    speaker_id: raphael
+    emotion: trusting
+    animation_id: idle
+    text:
+      - type: text
+        value: Arthur, you're rather famous aren't you?
+    next: node-N8-3
+  node-N8-3:
+    type: line
+    speaker_id: pacci
+    emotion: surprised
+    animation_id: idle
+    text:
+      - type: text
+        value: "Wait, "
+      - type: styled_text
+        value: what?
+        style:
+          bold: true
+    next: node-N8-4
+  node-N8-4:
+    type: line
+    speaker_id: pacci
+    emotion: surprised
+    animation_id: idle
+    text:
+      - type: text
+        value: I thought you were going with your brother!?
+    next: node-N8-5
+  node-N8-5:
+    type: line
+    speaker_id: neven
+    emotion: kyun
+    animation_id: idle
+    text:
+      - type: text
+        value: ...
+    next: node-N8-6
+  node-N8-6:
+    type: line
+    speaker_id: raphael
+    emotion: surprised
+    animation_id: idle
+    text:
+      - type: text
+        value: Apparently he's been training...
+    next: node-N8-7
+  node-N8-7:
+    type: line
+    speaker_id: pacci
+    emotion: thinking
+    animation_id: idle
+    text:
+      - type: text
+        value: ... reading?
+    next: node-N8-8
+  node-N8-8:
+    type: line
+    speaker_id: neven
+    emotion: thinking
+    animation_id: idle
+    text:
+      - type: text
+        value: ...
+    next: node-N8-9
+  node-N8-9:
+    type: line
+    speaker_id: arthur
+    emotion: stressed
+    animation_id: idle
+    text:
+      - type: text
+        value: Yeah... haha
+    next: node-N8-10
+  node-N8-10:
+    type: line
+    speaker_id: arthur
+    emotion: stressed
+    animation_id: idle
+    text:
+      - type: text
+        value: Just don't kill me...
+    next: fim
+  node-8:
+    type: line
+    speaker_id: raphael
+    emotion: trusting
+    animation_id: idle
+    text:
+      - type: text
+        value: Neven, Pacci. You'll be a team. Arthur, you're with me.
+    next: node-9
+  node-9:
+    type: line
+    speaker_id: arthur
+    emotion: stressed
+    animation_id: idle
+    text:
+      - type: text
+        value: What are we doing exactly?
+    next: node-010
+  node-010:
+    type: line
+    speaker_id: raphael
+    emotion: serious
+    animation_id: idle
+    text:
+      - type: text
+        value: We'll be beating their asses...
+    next: fim
+  fim:
+    type: end
+  entrada-1:
+    type: character_enter
+    character_id: arthur
+    emotion: neutral
+    next: entrada-2
+  entrada-2:
+    type: character_enter
+    character_id: pacci
+    emotion: neutral
+    next: entrada-3
+  entrada-3:
+    type: character_enter
+    character_id: raphael
+    emotion: neutral
+    next: entrada-4
+  entrada-4:
+    type: character_enter
+    character_id: neven
+    emotion: neutral
+    next: node-1
+  node-PN8-4:
+    type: line
+    speaker_id: raphael
+    emotion: nervous
+    animation_id: idle
+    text:
+      - type: text
+        value: ... Really? Nobody want me?
+    next: node-PN8-5

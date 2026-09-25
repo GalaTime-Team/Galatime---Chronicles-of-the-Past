@@ -1,0 +1,213 @@
+<!DOCTYPE html>
+<html lang="pt">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Dialogue Forger — Galatime</title>
+
+    <link rel="stylesheet" href="assets/theme.css">
+    <link rel="stylesheet" href="assets/forger.css">
+
+    <!--
+      js-yaml from a CDN. The tool is meant to be opened by double-clicking this
+      file, so there is no bundler to pull the dependency in. If the page is
+      opened without a network connection the library is missing; the app detects
+      that, says so in a banner, and keeps working for everything except
+      import/export. To run fully offline, drop a copy of `js-yaml.min.js` next
+      to this file and point the tag below at it.
+    -->
+    <script src="https://cdn.jsdelivr.net/npm/js-yaml@4.1.0/dist/js-yaml.min.js" defer></script>
+
+    <!--
+      Plain scripts, loaded in dependency order, all sharing `window.DialogueForger`.
+      Deliberately not ES modules: modules are blocked for `file://` pages, and
+      being openable from disk with no server is the whole point of a mockup.
+    -->
+    <script src="scripts/yaml-parser.js" defer></script>
+    <script src="scripts/segments.js" defer></script>
+    <script src="scripts/local-draft-storage.js" defer></script>
+    <script src="scripts/dialogue-model.js" defer></script>
+    <script src="scripts/yaml-serializer.js" defer></script>
+    <script src="scripts/templates.js" defer></script>
+    <script src="scripts/catalogue.js" defer></script>
+    <script src="scripts/ui-common.js" defer></script>
+    <script src="scripts/editors/condition-editor.js" defer></script>
+    <script src="scripts/editors/effect-editor.js" defer></script>
+    <script src="scripts/editors/choice-editor.js" defer></script>
+    <script src="scripts/editors/node-editor.js" defer></script>
+    <script src="scripts/dialogue-validator.js" defer></script>
+    <script src="scripts/preview-runner.js" defer></script>
+    <script src="scripts/app.js" defer></script>
+</head>
+
+<body>
+    <noscript>
+        <p>O Forger precisa de JavaScript.</p>
+    </noscript>
+
+    <div class="app">
+        <header>
+            <div id="banner"></div>
+
+            <h1>Dialogue Forger</h1>
+
+            <label class="field">
+                <span class="field-label">ID do diálogo</span>
+                <input id="dialogue-id" class="input" type="text" placeholder="encontro_floresta">
+            </label>
+
+            <label class="field">
+                <span class="field-label">Nó inicial</span>
+                <select id="start-node" class="input"></select>
+            </label>
+
+            <div class="toolbar">
+                <button id="btn-new" class="btn" type="button">Novo</button>
+                <button id="btn-import" class="btn" type="button">Importar</button>
+                <button id="btn-load-fixture" class="btn" type="button"
+                    title="Lê apps/desktop/src/data/dialogues/test-1.yaml. Alguns navegadores bloqueiam esta leitura em páginas abertas do disco.">
+                    Ler test-1
+                </button>
+                <button id="btn-copy" class="btn" type="button">Copiar YAML</button>
+                <button id="btn-download" class="btn btn-primary" type="button">Descarregar .yml</button>
+                <button id="btn-validate" class="btn" type="button">Validar</button>
+                <button id="btn-undo" class="btn" type="button">↶</button>
+                <button id="btn-redo" class="btn" type="button">↷</button>
+            </div>
+
+            <div class="spacer"></div>
+            <div id="status" class="small muted"></div>
+
+            <!-- Kept out of the way: a plain file input, driven by the button above. -->
+            <input id="file-input" type="file" accept=".yaml,.yml" hidden>
+        </header>
+
+        <section id="panel-nodes">
+            <div class="panel-title">
+                <h2>Nós</h2>
+            </div>
+
+            <div class="stack">
+                <label class="field">
+                    <span class="field-label">Modelo</span>
+                    <select id="node-template" class="input">
+                        <option value="">— nenhum —</option>
+                    </select>
+                </label>
+
+                <label class="field">
+                    <span class="field-label">…ou tipo simples</span>
+                    <select id="node-type" class="input"></select>
+                </label>
+
+                <button id="btn-add-node" class="btn btn-primary" type="button">Adicionar</button>
+            </div>
+
+            <div class="panel-title" style="margin-top: 12px;">
+                <h2>Lista</h2>
+            </div>
+
+            <div id="node-list" class="node-list"></div>
+        </section>
+
+        <section id="panel-editor">
+            <div class="panel-title">
+                <h2>Editor</h2>
+            </div>
+
+            <div id="editor"></div>
+
+            <details class="block">
+                <summary>Condições de entrada do diálogo</summary>
+                <div id="entry-conditions"></div>
+                <p class="muted small">O diálogo só começa quando estas condições passarem.</p>
+            </details>
+        </section>
+
+        <section id="panel-side">
+            <div class="panel-title">
+                <h2>Verificação</h2>
+            </div>
+
+            <div id="issues"></div>
+
+            <div class="panel-title" style="margin-top: 12px;">
+                <h2>Catálogo</h2>
+            </div>
+
+            <div id="catalogue-status" class="small muted"></div>
+
+            <div class="toolbar" style="margin-top: 6px;">
+                <button id="btn-catalogue-import" class="btn btn-tiny" type="button">Importar catálogo</button>
+                <button id="btn-catalogue-reset" class="btn btn-tiny" type="button">Repor</button>
+            </div>
+
+            <p class="muted small">
+                Escolhe a pasta <code>src/data/entities</code> (ou <code>src/data</code>) para
+                preencher as listas de personagens e itens com o que existe no projeto.
+            </p>
+
+            <input id="catalogue-input" type="file" webkitdirectory directory multiple hidden>
+
+            <div class="panel-title" style="margin-top: 12px;">
+                <h2>Pré-visualização</h2>
+            </div>
+
+            <label class="field">
+                <span class="field-label">Estado inicial (YAML)</span>
+                <textarea id="preview-state" class="input" rows="8"></textarea>
+                <p class="muted small">
+                    O <code>relationship</code> tem duas camadas:
+                    <code>personagem: { friendship: 10 }</code>.
+                </p>
+            </label>
+
+            <div class="toolbar" style="margin-top: 6px;">
+                <button id="btn-preview-start" class="btn btn-primary" type="button">Começar</button>
+                <button id="btn-preview-continue" class="btn" type="button">Continuar ▸</button>
+                <button id="btn-preview-reset" class="btn" type="button">Parar</button>
+            </div>
+
+            <div id="preview-output" style="margin-top: 8px;"></div>
+
+            <details id="export-details" class="block" style="margin-top: 12px;">
+                <summary>YAML gerado</summary>
+                <textarea id="export-output" class="input" rows="12" spellcheck="false"></textarea>
+                <p class="muted small">
+                    Isto é o que sai em "Copiar YAML" / "Descarregar .yml". Os comentários do
+                    ficheiro original não são preservados.
+                </p>
+            </details>
+        </section>
+    </div>
+
+    <!--
+      Populated by `app.js`: the node type picker, the template picker and the
+      catalogue folder input are filled from the modules so there is a single
+      source of truth for those lists.
+    -->
+    <script defer>
+        document.addEventListener('DOMContentLoaded', function () {
+            var Forger = window.DialogueForger;
+
+            var typeSelect = document.getElementById('node-type');
+            Forger.model.NODE_TYPES.forEach(function (type) {
+                var option = document.createElement('option');
+                option.value = type;
+                option.textContent = Forger.model.NODE_TYPE_LABELS[type];
+                typeSelect.appendChild(option);
+            });
+
+            var templateSelect = document.getElementById('node-template');
+            Forger.templates.TEMPLATES.forEach(function (template) {
+                var option = document.createElement('option');
+                option.value = template.id;
+                option.textContent = template.label;
+                templateSelect.appendChild(option);
+            });
+        });
+    </script>
+</body>
+
+</html>

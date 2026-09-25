@@ -5,7 +5,7 @@ import type { SettingsPanelProps } from './types';
 const LANGUAGES = [{ id: 'en-US', title: 'settings.language.english' }];
 
 export function SettingsLanguagePanel({ settings, updateSettings }: SettingsPanelProps) {
-    const { t } = useTranslation('common');
+    const { t } = useTranslation('settings');
 
     //region — Render
     return (
@@ -17,6 +17,7 @@ export function SettingsLanguagePanel({ settings, updateSettings }: SettingsPane
                 defaultId={settings.language}
                 onChange={(item) => updateSettings({ language: item.id })}
                 orientation="horizontal"
+                ns="settings"
                 containerClassName="setting-line border-b-4 border-white/10 py-4"
                 optionsWidthClassName="w-20 flex-none"
             />

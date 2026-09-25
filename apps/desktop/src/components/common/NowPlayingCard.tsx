@@ -13,7 +13,7 @@ import type { AudioTrackDefinition } from '../../types/AudioType';
  * on every screen — splash, title menu, settings and credits alike.
  */
 export function NowPlayingCard() {
-    const { t } = useTranslation('common');
+    const { t } = useTranslation('settings');
     const { gameState } = useGame();
     const enabled = gameState.settings.showNowPlayingMusic;
 

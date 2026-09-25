@@ -15,7 +15,7 @@ interface TestPlaygroundScreenProps {
 }
 
 export function TestPlaygroundScreen({ onBack }: TestPlaygroundScreenProps) {
-    const { t } = useTranslation('common');
+    const { t } = useTranslation(['playground', 'common']);
     const [activeTab, setActiveTab] = useState<PlaygroundTab>('music');
 
     //region — Tab Data
@@ -30,14 +30,9 @@ export function TestPlaygroundScreen({ onBack }: TestPlaygroundScreenProps) {
 
     const panels: Record<PlaygroundTab, React.ReactNode> = {
         music: <TestMusicPanel />,
-        dialogue: (
-            <TestDialoguePanel
-                title={t('playground.dialogue.inputTitle')}
-                placeholder={t('playground.dialogue.placeholder')}
-                notFoundMessage={t('playground.dialogue.notFound')}
-                foundMessage={t('playground.dialogue.found')}
-            />
-        ),
+        // Resolves its own labels, like the music and entities panels: the dialogue
+        // panel now owns enough strings that passing them all down would be noise.
+        dialogue: <TestDialoguePanel />,
         combat: <TestCombatPanel />,
         objectives: <TestObjectivesPanel />,
         movement: <TestMovementPanel />,
@@ -59,7 +54,7 @@ export function TestPlaygroundScreen({ onBack }: TestPlaygroundScreenProps) {
                 {/* Header */}
                 <header className="grid shrink-0 grid-cols-[1fr_auto_1fr] items-center">
                     <div className="justify-self-start">
-                        <BackButton label={t('common.back')} onClick={onBack} />
+                        <BackButton label={t('back')} onClick={onBack} />
                     </div>
                     <div
                         className="relative inline-flex items-center text-center justify-center"
@@ -78,7 +73,19 @@ export function TestPlaygroundScreen({ onBack }: TestPlaygroundScreenProps) {
                         <TestPlaygroundSidebar activeTab={activeTab} onChange={setActiveTab} labels={labels} />
 
                         {/* Right Column — Tab Panel */}
-                        <section className="min-h-0 min-w-0 flex-1 overflow-x-hidden overflow-y-auto p-2">
+                        {/*
+                          `scrollbar-gutter: stable` is load-bearing, not cosmetic. This
+                          section is what scrolls the panels, and a panel inside it can
+                          decide its own layout from its own measured width — the dialogue
+                          panel stacks its halves below a threshold. Without the reserved
+                          gutter the two feed each other: the panel's content height decides
+                          whether this section scrolls, the scrollbar then takes 10px off
+                          the width the panel measures, and a threshold inside that 10px band
+                          makes the layout flip back — forever, several times a second. The
+                          reserved gutter keeps the measured width constant whether or not
+                          there is a scrollbar.
+                        */}
+                        <section className="min-h-0 min-w-0 flex-1 [scrollbar-gutter:stable] overflow-x-hidden overflow-y-auto p-2">
                             <AnimatePresence mode="wait">
                                 <motion.div
                                     key={activeTab}

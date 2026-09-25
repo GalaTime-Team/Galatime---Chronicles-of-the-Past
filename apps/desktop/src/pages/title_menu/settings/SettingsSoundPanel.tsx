@@ -30,7 +30,7 @@ interface VolumeHint {
 }
 
 export function SettingsSoundPanel({ settings, updateSettings }: SettingsPanelProps) {
-    const { t } = useTranslation('common');
+    const { t } = useTranslation('settings');
 
     //region — Bits of state the joke needs to remember
     // Last value of every channel, so a raise can be told from a drop without trusting the

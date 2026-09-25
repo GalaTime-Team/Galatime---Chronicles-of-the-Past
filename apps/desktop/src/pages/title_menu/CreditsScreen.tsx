@@ -52,7 +52,7 @@ function CreditSection({ group, className = '' }: { group: CreditGroup; classNam
 }
 
 export function CreditsScreen({ onBack }: CreditsScreenProps) {
-    const { t } = useTranslation('common');
+    const { t } = useTranslation('credits');
 
     const groups: CreditGroup[] = [
         {
@@ -111,7 +111,7 @@ export function CreditsScreen({ onBack }: CreditsScreenProps) {
             <div className="relative z-10 mx-auto flex min-h-full w-full max-w-7xl flex-col px-6 py-5 sm:px-10 sm:py-6">
                 <header className="grid shrink-0 grid-cols-[1fr_auto_1fr] items-center">
                     <div className="justify-self-start">
-                        <BackButton label={t('common.back')} onClick={onBack} />
+                        <BackButton label={t('back')} onClick={onBack} />
                     </div>
                     <div className="text-center">
                         <h1 className="pl-[0.18em] text-3xl uppercase text-white sm:text-4xl">

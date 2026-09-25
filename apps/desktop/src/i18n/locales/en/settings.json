@@ -1,0 +1,74 @@
+{
+	"settings": {
+		"title": "Settings",
+		"openFolder": "Open the settings folder",
+		"restoreDefaults": "Restore Defaults",
+		"restoreTitle": "Restore defaults?",
+		"restoreMessage": "All game settings will return to their original values.",
+		"tabs": {
+			"game": "Game",
+			"controls": "Controls",
+			"display": "Display",
+			"sound": "Sound",
+			"language": "Language"
+		},
+		"game": {
+			"saveName": "Save name"
+		},
+		"controls": {
+			"confirm": "Confirm",
+			"deny": "Deny",
+			"advance": "Advance dialogue",
+			"up": "Move up",
+			"down": "Move down",
+			"fullscreen": "Toggle fullscreen",
+			"keyboard": "Keyboard",
+			"gamepad": "Controller",
+			"changeKey": "Change the key for {{label}}",
+			"changeButton": "Change the controller button for {{label}}",
+			"listening": "Press a key…",
+			"listeningGamepad": "Press a button…",
+			"unbound": "Not bound",
+			"reset": "Reset",
+			"gamepadConnected": "{{family}} controller",
+			"gamepadMissing": "No controller detected"
+		},
+		"display": {
+			"fullscreen": "Fullscreen",
+			"imageRendering": "Image rendering",
+			"imageRenderingSharp": "Sharp",
+			"imageRenderingSharpDescription": "Enlarges to a whole multiple and then shrinks with a high-quality filter: the pixel art stays crisp, but no pixel is wider than its neighbours.",
+			"imageRenderingSmooth": "Smooth",
+			"imageRenderingSmoothDescription": "Blends neighbouring pixels when scaling. The softest result, and never uneven.",
+			"imageRenderingLanczos": "Lanczos",
+			"imageRenderingLanczosDescription": "High-quality resampling that keeps fine detail sharp while removing the uneven pixels.",
+			"imageRenderingScale2x": "Pixel art",
+			"imageRenderingScale2xDescription": "Edge-aware pixel art scaling: rounds off staircase diagonals and keeps flat colours perfectly flat.",
+			"imageRenderingCrt": "Retro CRT",
+			"imageRenderingCrtDescription": "Pixel art scaling with faint scanlines, like an old monitor.",
+			"imageRenderingCrisp": "Crisp edges",
+			"imageRenderingCrispDescription": "Keeps lines sharp without blurring the colours. At fractional zoom some pixels can still look wider than others.",
+			"scale": "Window Scale",
+			"scaleDescription": "Reduce the number of rendered pixels."
+		},
+		"sound": {
+			"master": "Master",
+			"music": "Music",
+			"sfx": "Effects",
+			"ambient": "Ambient",
+			"nowPlaying": {
+				"title": "Now Playing",
+				"description": "Show a card naming the music that just started playing."
+			},
+			"hints": {
+				"turnItUp": "Pst, hey... what you want is to turn it UP, not down!",
+				"sneaky": "...I know what you're doing. If the music is that bad, at least tell me the truth...",
+				"fullBlast": "Haha, come on, you flatter me... hihihi"
+			}
+		},
+		"language": {
+			"title": "Language",
+			"english": "English"
+		}
+	}
+}

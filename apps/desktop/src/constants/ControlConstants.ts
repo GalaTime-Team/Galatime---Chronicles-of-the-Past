@@ -33,6 +33,18 @@ export const CONTROL_DEFINITIONS = [
         defaultBinding: { keyboard: ['Space'], gamepad: ['south'] },
     },
     {
+        // Moving the highlight in a dialogue's choice list. The arrow keys are the
+        // obvious default; the D-pad is where a controller expects them.
+        id: 'up',
+        label: 'settings.controls.up',
+        defaultBinding: { keyboard: ['ArrowUp'], gamepad: ['dpadUp'] },
+    },
+    {
+        id: 'down',
+        label: 'settings.controls.down',
+        defaultBinding: { keyboard: ['ArrowDown'], gamepad: ['dpadDown'] },
+    },
+    {
         id: 'fullscreen',
         label: 'settings.controls.fullscreen',
         // A window shortcut rather than a gameplay action: bound to F11 on the keyboard and

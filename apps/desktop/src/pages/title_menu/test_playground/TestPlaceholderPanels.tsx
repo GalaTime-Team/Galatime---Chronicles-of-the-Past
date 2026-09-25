@@ -1,7 +1,7 @@
 import { useTranslation } from 'react-i18next';
 
 export function TestCombatPanel() {
-    const { t } = useTranslation('common');
+    const { t } = useTranslation('playground');
 
     return (
         <div className="space-y-4">
@@ -11,7 +11,7 @@ export function TestCombatPanel() {
 }
 
 export function TestObjectivesPanel() {
-    const { t } = useTranslation('common');
+    const { t } = useTranslation('playground');
 
     return (
         <div className="space-y-4">
@@ -21,7 +21,7 @@ export function TestObjectivesPanel() {
 }
 
 export function TestMovementPanel() {
-    const { t } = useTranslation('common');
+    const { t } = useTranslation('playground');
 
     return (
         <div className="space-y-4">

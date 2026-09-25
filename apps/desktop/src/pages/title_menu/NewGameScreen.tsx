@@ -31,7 +31,7 @@ const Diamond = () => (
 );
 
 export function NewGameScreen({ onBack }: { onBack: () => void }) {
-    const { t } = useTranslation('common');
+    const { t } = useTranslation(['newGame', 'common']);
     const [occupied, setOccupied] = useState<Record<SaveSlot, boolean>>({ 1: false, 2: false, 3: false, 4: false, 5: false });
     const [deleteSlot, setDeleteSlot] = useState<SaveSlot | null>(null);
     const [hovered, setHovered] = useState(false);
@@ -74,7 +74,7 @@ export function NewGameScreen({ onBack }: { onBack: () => void }) {
         >
             <div className="relative z-10 mx-auto flex min-h-full w-full max-w-7xl flex-col px-6 py-5 sm:px-10 sm:py-6">
                 <header className="grid shrink-0 grid-cols-[1fr_auto_1fr] items-center">
-                    <div className="justify-self-start"><BackButton label={t('common.back')} onClick={onBack} /></div>
+                    <div className="justify-self-start"><BackButton label={t('back')} onClick={onBack} /></div>
                     <div
                         className="relative inline-flex items-center justify-center"
                         onMouseEnter={() => setHovered(true)}
@@ -179,8 +179,8 @@ export function NewGameScreen({ onBack }: { onBack: () => void }) {
                 title={t('newGame.removeTitle')}
                 message={t('newGame.removeMessage')}
                 onDismiss={() => setDeleteSlot(null)}
-                cancelAction={{ label: t('common.cancel'), onPress: () => setDeleteSlot(null) }}
-                confirmAction={{ label: t('common.confirm'), variant: 'danger', onPress: () => void removeSave() }}
+                cancelAction={{ label: t('cancel'), onPress: () => setDeleteSlot(null) }}
+                confirmAction={{ label: t('confirm'), variant: 'danger', onPress: () => void removeSave() }}
             />
         </motion.main>
     );
