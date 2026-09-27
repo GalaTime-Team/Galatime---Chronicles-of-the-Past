@@ -21,44 +21,9 @@ base_stats:
   speed: 14
 
 skills:
-  - id: light_ball
-    name: Light Ball
-    element: lux
-    damage_type: magical
-    target: individual
-    power: 20
-    mana_cost: 4
-
-  - id: light_energy
-    name: Light Energy
-    element: lux
-    damage_type: magical
-    target: all
-    power: 25
-    mana_cost: 7
-    effects:
-      - effect_id: light_energy
-        status_effect: Light Energy
-        apply_to: enemies_all
-        turns: 2
-        debuff:
-          magical_defense: 8
-        apply_chance: 0.5
-
-  - id: light_heal
-    name: Light Heal
-    element: lux
-    damage_type: status
-    target: self
-    power: 0
-    mana_cost: 8
-    effects:
-      - effect_id: light_heal
-        status_effect: Light Heal
-        apply_to: self
-        resource_regen:
-          hp: 18
-        regen_variance: [0.8, 1.2]
+  - light_ball
+  - light_energy
+  - light_heal
 
 weapon:
   id: radiant_core

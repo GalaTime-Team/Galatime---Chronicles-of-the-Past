@@ -26,58 +26,10 @@ base_stats:
   speed: 70
 
 skills:
-  - id: recognition
-    name: Recognition
-    element: lux
-    damage_type: status
-    target: self
-    power: 0
-    mana_cost: 2
-    effects:
-      - effect_id: recognition_buff
-        status_effect: Recognition
-        apply_to: self
-        turns: 10
-        buff:
-          physical_attack: 10
-          speed: 10
-        effect_hit_chance: 1.0
-
-  - id: celestial_strike
-    name: Celestial Strike
-    element: lux
-    damage_type: magical
-    target: all
-    hits: 6
-    hit_chance: 0.4
-    power: 50
-    mana_cost: 10
-
-  - id: mana50
-    name: Mana 50
-    element: vis
-    damage_type: magical
-    target: individual
-    power: 50
-    mana_cost: 10
-
-  - id: recover
-    name: Recover
-    element: lux
-    damage_type: status
-    target: self
-    power: 0
-    mana_cost: 10
-    effects:
-      - effect_id: recover
-        status_effect: Recover
-        apply_to: self
-        resource_regen:
-          hp: 20
-          mana: 10
-          stamina: 10
-        regen_variance: [0.5, 1.0]
-        effect_hit_chance: 1.0
+  - recognition
+  - celestial_strike
+  - mana50
+  - recover
 
 
 weapon:

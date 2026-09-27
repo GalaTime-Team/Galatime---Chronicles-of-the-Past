@@ -2,6 +2,7 @@ import { defineConfig, type Plugin } from "vite";
 import react from "@vitejs/plugin-react";
 import { existsSync, readdirSync, readFileSync } from "node:fs";
 import { basename, join, relative, sep } from "node:path";
+import { fileURLToPath, URL } from "node:url";
 
 // @ts-expect-error process is a nodejs global
 const host = process.env.TAURI_DEV_HOST;
@@ -150,6 +151,10 @@ export default defineConfig(async () => ({
   // `Cannot read properties of null (reading 'useState')`.
   resolve: {
     dedupe: ["react", "react-dom"],
+    // `@/…` always points at `src/…`, so imports never need `../../../`.
+    alias: {
+      "@": fileURLToPath(new URL("./src", import.meta.url)),
+    },
   },
 
   optimizeDeps: {

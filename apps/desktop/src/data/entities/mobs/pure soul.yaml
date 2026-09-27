@@ -21,52 +21,9 @@ base_stats:
   speed: 39
 
 skills:
-  - id: radiant_restoration
-    name: Radiant Restoration
-    element: lux
-    damage_type: status
-    target: allies_all
-    power: 0
-    mana_cost: 16
-    effects:
-      - effect_id: radiant_restoration
-        status_effect: Radiant Restoration
-        apply_to: allies_all
-        resource_regen:
-          hp: 24
-        regen_variance: [0.95, 1.2]
-
-  - id: sanctified_aegis
-    name: Sanctified Aegis
-    element: lux
-    damage_type: status
-    target: allies_all
-    power: 0
-    mana_cost: 16
-    effects:
-      - effect_id: sanctified_aegis
-        status_effect: Sanctified Aegis
-        apply_to: allies_all
-        turns: 3
-        buff:
-          physical_defense: 12
-          magical_defense: 14
-
-  - id: dawnflare
-    name: Dawnflare
-    element: lux
-    damage_type: magical
-    target: all
-    power: 34
-    mana_cost: 16
-    effects:
-      - effect_id: dawnflare
-        status_effect: Dawnflare
-        apply_to: enemies_all
-        turns: 2
-        debuff:
-          magical_attack: 10
-        apply_chance: 0.45
+  - radiant_restoration
+  - sanctified_aegis
+  - dawnflare
 
 loot:
   - item_id: gold_coin

@@ -1,0 +1,191 @@
+<!doctype html>
+<html lang="pt">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Skill Forger</title>
+    <link rel="stylesheet" href="assets/forger.css">
+    <script src="https://cdn.jsdelivr.net/npm/js-yaml@4.1.0/dist/js-yaml.min.js" defer></script>
+    <script src="scripts/model.js" defer></script>
+    <script src="scripts/app.js" defer></script>
+</head>
+<body>
+    <div class="app-shell">
+        <header class="topbar">
+            <div class="brand-lockup"><strong>Skill Forger</strong></div>
+            <nav class="view-switch" aria-label="Área de trabalho">
+                <button class="view-tab is-active" data-view="skills" type="button">Skills <span id="skill-count">0</span></button>
+                <button class="view-tab" data-view="trees" type="button">Skill-trees <span id="tree-count">0</span></button>
+            </nav>
+            <div class="top-actions">
+                <span id="save-state" class="save-state"><i></i> Guardado neste dispositivo</span>
+                <button id="btn-import" class="button button-quiet" type="button">Importar YAML <span>↑</span></button>
+                <button id="btn-export" class="button button-primary" type="button">Exportar YAML <span>↓</span></button>
+                <input id="file-input" type="file" accept=".yaml,.yml" hidden>
+            </div>
+        </header>
+
+        <main id="skills-view" class="workspace">
+            <aside class="library-panel panel">
+                <div class="panel-heading">
+                    <div><span class="eyebrow">CATÁLOGO DE JOGO</span><h1>Skills</h1></div>
+                </div>
+                <div class="new-actions">
+                    <select id="create-template" class="control control-small" aria-label="Modelo da nova skill"></select>
+                    <button id="btn-new-skill" class="icon-button" type="button" title="Criar skill a partir do modelo selecionado">＋</button>
+                </div>
+                <label class="search-box"><span>⌕</span><input id="skill-search" type="search" placeholder="Procurar nome ou ID…"></label>
+                <label class="filter-label" for="element-filter">ELEMENTO</label>
+                <select id="element-filter" class="control control-small"></select>
+                <div class="list-caption"><span>SKILLS</span><span id="visible-count">0</span></div>
+                <div id="skill-list" class="skill-list"></div>
+            </aside>
+
+            <section class="editor-panel panel">
+                <div class="editor-topline">
+                    <div><span class="eyebrow">DEFINIÇÃO DA SKILL</span><div class="id-line"><code id="current-id">—</code></div></div>
+                    <div class="topline-actions">
+                        <button id="btn-duplicate-skill" class="button button-quiet" type="button">Duplicar</button>
+                        <button id="btn-delete-skill" class="button button-danger-quiet" type="button">Apagar</button>
+                    </div>
+                </div>
+                <div id="empty-editor" class="empty-state" hidden>
+                    <h2>Começa uma nova skill</h2><p>O ID é criado a partir do nome e mantém-se estável depois da criação.</p>
+                    <button id="btn-empty-new" class="button button-primary" type="button">Criar skill</button>
+                </div>
+                <form id="skill-editor" autocomplete="off">
+                    <section class="form-section basics-section">
+                        <div class="section-heading"><div><span class="step-number">01</span><div><h2>Identidade</h2><p>O elemento decide em que árvore a skill aparece.</p></div></div></div>
+                        <div class="form-grid identity-grid">
+                            <label class="field field-wide"><span>Nome da skill <b>*</b></span><input class="control" name="name" placeholder="Ex.: Lança de Aqua" required></label>
+                            <label class="field"><span>Elemento <b>*</b></span><select class="control" name="element_id" required></select></label>
+                            <label class="field field-wide"><span>Descrição</span><textarea class="control" name="description" rows="2" placeholder="O que faz esta skill?"></textarea></label>
+                        </div>
+                    </section>
+
+                    <section class="form-section">
+                        <div class="section-heading"><div><span class="step-number">02</span><div><h2>Aprendizagem</h2><p>Os pré-requisitos podem vir de qualquer elemento.</p></div></div><div id="direct-cost" class="cost-pill">0 XP</div></div>
+                        <div class="form-grid learn-grid">
+                            <label class="field"><span>Custo para aprender</span><div class="input-suffix"><input class="control" name="xp_cost" type="number" min="0" step="1" value="1"><span>XP</span></div></label>
+                        </div>
+                        <div class="prerequisite-header"><label class="field-label" for="prerequisite-search">SKILLS NECESSÁRIAS</label><span id="prerequisite-count" class="muted-label">Nenhuma selecionada</span></div>
+                        <input id="prerequisite-search" class="control prerequisite-search" type="search" placeholder="Procurar skill por nome, ID ou elemento…">
+                        <div id="prerequisite-selected" class="prerequisite-selected"></div>
+                        <div id="prerequisite-list" class="prerequisite-list"></div>
+                    </section>
+
+                    <section class="form-section combat-section">
+                        <div class="section-heading"><div><span class="step-number">03</span><div><h2>Combate</h2><p>Escolhe o alvo e descreve o que acontece, por ordem.</p></div></div></div>
+
+                        <div class="combat-step target-step">
+                            <div class="step-copy"><span class="mini-step">1</span><div><h3>Quem é o alvo?</h3><p>A skill aplica o resultado direto a esta seleção.</p></div></div>
+                            <label class="field target-field"><span>Alvo principal</span><select class="control" name="targeting">
+                                <option value="enemy_one">Um inimigo</option>
+                                <option value="enemies_all">Todos os inimigos</option>
+                                <option value="ally_one">Um aliado</option>
+                                <option value="allies_all">Todos os aliados</option>
+                                <option value="self">O próprio atacante</option>
+                                <option value="both_teams">Ambas as equipas</option>
+                            </select></label>
+                        </div>
+
+                        <div class="combat-step direct-step">
+                            <div class="step-copy"><span class="mini-step">2</span><div><h3>O que acontece no impacto?</h3><p>Se a skill só aplicar efeitos, escolhe “Sem dano direto”.</p></div></div>
+                            <div class="form-grid direct-grid">
+                                <label class="field"><span>Resultado direto</span><select class="control" name="direct_action"><option value="damage">Causar dano</option><option value="none">Sem dano direto</option></select></label>
+                                <div class="field damage-type-field" data-direct-damage><span>Tipo de dano</span><select class="control" name="damage_type"><option value="magical">Mágico</option><option value="physical">Físico</option></select></div>
+                                <label class="field damage-field" data-direct-damage><span>Força</span><select class="control" name="power_kind"><option value="fixed">Fixa</option><option value="random">Variável</option><option value="attribute">Escala por atributo</option></select></label>
+                                <label class="field damage-field" data-direct-damage><span id="power-label">Poder</span><input class="control" name="power_value" type="number" min="0" step="1" value="20"></label>
+                                <label class="field damage-field" data-direct-damage><span>Precisão</span><div class="input-suffix"><input class="control" name="accuracy" type="number" min="0" max="100" step="1" value="100"><span>%</span></div></label>
+                                <label class="field damage-field" data-direct-damage><span>Número de golpes</span><input class="control" name="hit_count" type="number" min="1" step="1" value="1"></label>
+                            </div>
+                            <div id="power-extra" class="form-grid power-extra" hidden></div>
+                        </div>
+
+                        <div class="combat-step costs-step">
+                            <div class="step-copy"><span class="mini-step">3</span><div><h3>O que custa usar a skill?</h3><p>Deixa a zero o recurso que não for consumido.</p></div></div>
+                            <div class="form-grid cost-grid">
+                                <label class="field"><span>Mana</span><div class="input-suffix"><input class="control" name="mana_cost" type="number" min="0" step="1" value="0"><span>MP</span></div></label>
+                                <label class="field"><span>Stamina</span><div class="input-suffix"><input class="control" name="stamina_cost" type="number" min="0" step="1" value="0"><span>ST</span></div></label>
+                                <label class="field"><span>Cooldown</span><div class="input-suffix"><input class="control" name="cooldown" type="number" min="0" step="1" value="0"><span>turnos</span></div></label>
+                            </div>
+                        </div>
+
+                        <div id="attacker-effect-section" class="effect-scope-section">
+                            <div class="scope-heading"><span class="mini-step">4</span><div><h3>O atacante recebe algum efeito?</h3><p>Por exemplo: recuperar vida ou aumentar atributos como a velocidade.</p></div></div>
+                            <label class="toggle-row"><input type="checkbox" name="self_effects_enabled"><span class="toggle-track"></span><span>Adicionar efeito ao atacante</span></label>
+                            <div class="scope-content" data-effects-scope="self" hidden><div class="effect-patterns" data-pattern-buttons="self"></div><div class="effects-list" id="self-effects"></div></div>
+                        </div>
+
+                        <div class="effect-scope-section target-effects-section">
+                            <div class="scope-heading"><span class="mini-step">5</span><div><h3 id="target-effects-title">O alvo sofre algum efeito?</h3><p>Escolhe um padrão; a skill prepara os campos necessários.</p></div></div>
+                            <label class="toggle-row"><input type="checkbox" name="target_effects_enabled"><span class="toggle-track"></span><span>Adicionar efeito ao alvo</span></label>
+                            <div class="scope-content" data-effects-scope="target" hidden><div class="effect-patterns" data-pattern-buttons="target"></div><div class="effects-list" id="target-effects"></div></div>
+                        </div>
+
+                        <div class="effect-scope-section team-effects-section">
+                            <div class="scope-heading"><span class="mini-step">6</span><div><h3 id="team-effects-title">Alguma equipa sofre um efeito?</h3><p id="team-effects-help">Aplica um efeito à equipa aliada, adversária ou a ambas.</p></div></div>
+                            <label class="toggle-row"><input type="checkbox" name="team_effects_enabled"><span class="toggle-track"></span><span>Adicionar efeito a uma equipa</span></label>
+                            <div class="scope-content" data-effects-scope="team" hidden>
+                                <div class="effect-patterns" data-pattern-buttons="team"></div><div class="effects-list" id="team-effects"></div>
+                            </div>
+                        </div>
+
+                        <details class="collateral-section">
+                            <summary><span class="collateral-title">Dano colateral</span><span class="summary-chevron">⌄</span></summary>
+                            <p>Define quem mais pode ser atingido pelo dano da skill. Isto é independente do alvo principal.</p>
+                            <label class="toggle-row"><input type="checkbox" name="collateral_enabled"><span class="toggle-track"></span><span>Atinge também outras entidades</span></label>
+                            <div class="collateral-fields" hidden>
+                                <label class="field"><span>Entidades adicionais</span><select class="control" name="collateral_target"><option value="both_teams">Ambas as equipas</option><option value="allies_all">Aliados</option><option value="enemies_all">Inimigos</option></select></label>
+                                <label class="field"><span>Probabilidade</span><div class="input-suffix"><input class="control" name="collateral_chance" type="number" min="0" max="100" value="100"><span>%</span></div></label>
+                                <label class="field"><span>Multiplicador mín. / máx.</span><div class="range-pair"><input class="control" name="collateral_multiplier_min" type="number" min="0" step="0.1" value="0.4" aria-label="Multiplicador mínimo"><input class="control" name="collateral_multiplier_max" type="number" min="0" step="0.1" value="0.6" aria-label="Multiplicador máximo"></div></label>
+                                <label class="toggle-row"><input type="checkbox" name="collateral_include_primary"><span class="toggle-track"></span><span>Incluir o alvo principal</span></label>
+                                <label class="toggle-row"><input type="checkbox" name="collateral_include_caster"><span class="toggle-track"></span><span>Incluir o atacante</span></label>
+                            </div>
+                        </details>
+                    </section>
+                    <div id="editor-message" class="editor-message" role="status"></div>
+                </form>
+            </section>
+
+            <aside class="inspector-panel panel">
+                <div class="panel-heading"><div><span class="eyebrow">VALIDAÇÃO</span><h2>Referências e aprendizagem</h2></div><span id="validation-mark" class="validation-mark">✓</span></div>
+                <div id="validation-summary" class="validation-summary"></div>
+                <div id="validation-list" class="validation-list"></div>
+                <div class="inspector-divider"></div>
+                <div class="panel-heading compact-heading"><div><span class="eyebrow">PRÉ-REQUISITOS</span><h2>Caminho até à skill</h2></div></div>
+                <div id="path-preview" class="path-preview"></div>
+                <div class="inspector-divider"></div>
+            </aside>
+        </main>
+
+        <main id="trees-view" class="tree-workspace" hidden>
+            <aside class="tree-sidebar panel">
+                <span class="eyebrow">ÁRVORE DE APRENDIZAGEM</span><h1>Skill-trees</h1>
+                <label class="field tree-element-field"><span>Elemento</span><select id="tree-element" class="control"></select></label>
+                <div class="tree-stat"><span>SKILLS NESTA ÁRVORE</span><strong id="tree-skill-count">0</strong></div>
+                <div class="tree-legend"><span><i class="legend-dot"></i> Nesta árvore</span><span><i class="legend-line"></i> Dependência</span><span><i class="legend-cross">↗</i> Outra árvore</span></div>
+            </aside>
+            <section class="tree-canvas-panel panel">
+                <div class="tree-toolbar"><div><span class="eyebrow" id="tree-subtitle">aqua</span><h2 id="tree-title">Progressão de aprendizagem</h2></div><div class="tree-toolbar-actions"><div class="canvas-hint">Pré-requisitos no topo · clica para selecionar · duplo-clique para editar · Ctrl+scroll faz zoom</div><div class="zoom-controls"><button id="btn-zoom-out" class="button button-quiet zoom-button" type="button" aria-label="Reduzir zoom">−</button><button id="zoom-level" class="zoom-button zoom-level" type="button" title="Repor zoom a 100%">100%</button><button id="btn-zoom-in" class="button button-quiet zoom-button" type="button" aria-label="Aumentar zoom">＋</button><button id="btn-zoom-reset" class="button zoom-button" type="button">Ajustar</button></div></div></div>
+                <div id="tree-canvas" class="tree-canvas" aria-label="Canvas da skill-tree"><div class="canvas-scroll-cue">↔ <span>Desliza para explorar toda a árvore</span></div><svg id="tree-edges" class="tree-edges"></svg><div id="tree-nodes" class="tree-nodes"></div><div id="tree-empty" class="canvas-empty" hidden><h3>Esta árvore ainda não tem skills</h3><p>Cria uma skill deste elemento ou importa o ficheiro YAML.</p><button id="btn-tree-first-skill" class="button button-primary" type="button">Criar primeira skill</button></div></div>
+                <div class="tree-footer"><span id="tree-footer-note">A pertença à árvore deriva do elemento da skill.</span></div>
+            </section>
+        </main>
+
+        <div id="confirm-backdrop" class="confirm-backdrop" hidden>
+            <div class="confirm-card" role="alertdialog" aria-modal="true" aria-labelledby="confirm-title" aria-describedby="confirm-message">
+                <span class="eyebrow" id="confirm-eyebrow">CONFIRMAR</span>
+                <h2 id="confirm-title">Confirmar</h2>
+                <p id="confirm-message"></p>
+                <div class="confirm-actions">
+                    <button id="btn-confirm-cancel" class="button button-quiet" type="button">Cancelar</button>
+                    <button id="btn-confirm-ok" class="button button-primary" type="button">Confirmar</button>
+                </div>
+            </div>
+        </div>
+
+        <div id="toast" class="toast" role="status" aria-live="polite"></div>
+    </div>
+</body>
+</html>

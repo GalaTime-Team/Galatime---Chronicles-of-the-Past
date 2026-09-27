@@ -22,20 +22,7 @@ base_stats:
   speed: 38
 
 skills:
-  - id: soul_drain
-    name: Soul Drain
-    element: umbra
-    damage_type: magical
-    target: individual
-    power: 25
-    stamina_cost: 8
-    effects:
-      - effect_id: soul_drain_heal
-        status_effect: Soul Drain
-        apply_to: self
-        resource_regen:
-          hp: 10
-        regen_variance: [0.2, 1.0]
+  - soul_drain
 
 loot:
   - item_id: gold_coin

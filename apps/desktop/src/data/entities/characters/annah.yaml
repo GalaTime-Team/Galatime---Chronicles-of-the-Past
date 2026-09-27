@@ -27,77 +27,10 @@ base_stats:
   speed: 59
 
 skills:
-  - id: light_heal
-    name: Light Heal
-    element: lux
-    damage_type: status
-    target: self
-    hits: 1
-    power: 0
-    mana_cost: 10
-    stamina_cost: 0
-    effects:
-      - apply_to: self
-        resource_regen:
-          hp: 10
-        regen_variance: [0.5, 1.2]
-
-  - id: ice_barrage
-    name: Ice Barrage
-    element: vetus
-    damage_type: magical
-    target: individual
-    hits: 20
-    hit_chance: 0.6
-    power: 20
-    mana_cost: 24
-    stamina_cost: 0
-    effects:
-      - effect_id: ice_barrage
-        status_effect: Ice Barrage
-        apply_to: enemy_one
-        turns: [1, 3]
-        debuff:
-          speed: 10
-          physical_attack: 10
-
-  - id: frost
-    name: Frost
-    element: aqua
-    damage_type: magical
-    target: individual
-    hits: 1
-    power: 60
-    mana_cost: 9
-    stamina_cost: 1
-    effects:
-      - apply_to: enemy_one
-        effect_id: frost
-        status_effect: Frost
-        can_stack: false
-        turns: [1, 3]
-        debuff:
-          speed: 10
-        effect_hit_chance: 1.0
-
-  - id: angels_judgement
-    name: Angel's Judgement
-    element: vetus
-    damage_type: magical
-    target: individual
-    hits: 1
-    power: 90
-    mana_cost: 18
-    stamina_cost: 4
-    effects:
-      - apply_to: enemy_one
-        effect_id: angels_judgement
-        status_effect: Angel's Judgement
-        turns: [1, 3]
-        debuff:
-          magical_attack: 10
-          physical_attack: 10
-        effect_hit_chance: 1.0
+  - light_heal
+  - ice_barrage
+  - frost
+  - angels_judgement
 
 weapon:
   id: iron_sword

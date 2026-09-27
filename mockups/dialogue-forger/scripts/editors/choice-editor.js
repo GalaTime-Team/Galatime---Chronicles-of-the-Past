@@ -132,7 +132,7 @@
         });
 
         var main = ui.inline([
-            ui.field('ID', idInput),
+            ui.field('ID', idInput, undefined, { required: true }),
             ui.field('Texto', labelInput),
             ui.field('Destino', ui.listInput('nodes', {
                 value: current.next,
@@ -142,7 +142,7 @@
                     current.next = value;
                     publish();
                 },
-            })),
+            }), undefined, { required: true }),
         ]);
 
         var advanced = [

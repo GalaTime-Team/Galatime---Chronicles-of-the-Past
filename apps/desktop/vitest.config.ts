@@ -1,4 +1,5 @@
 import { defineConfig } from 'vitest/config';
+import { fileURLToPath, URL } from 'node:url';
 
 /**
  * Test configuration for the desktop app.
@@ -12,6 +13,12 @@ import { defineConfig } from 'vitest/config';
  * relying on globals, so no extra type wiring is needed.
  */
 export default defineConfig({
+    resolve: {
+        // Same `@` → `src` alias as vite.config.ts, so tests can import app code without `../../`.
+        alias: {
+            '@': fileURLToPath(new URL('./src', import.meta.url)),
+        },
+    },
     test: {
         environment: 'node',
         include: ['__tests__/**/*.test.ts'],

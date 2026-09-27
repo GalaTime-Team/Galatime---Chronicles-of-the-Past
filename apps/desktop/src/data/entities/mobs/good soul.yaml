@@ -21,44 +21,9 @@ base_stats:
   speed: 34
 
 skills:
-  - id: radiant_mend_plus
-    name: Radiant Mend+
-    element: lux
-    damage_type: status
-    target: allies_all
-    power: 0
-    mana_cost: 12
-    effects:
-      - effect_id: radiant_mend_plus
-        status_effect: Radiant Mend+
-        apply_to: allies_all
-        resource_regen:
-          hp: 16
-        regen_variance: [0.9, 1.2]
-
-  - id: luminous_blessing
-    name: Luminous Blessing
-    element: lux
-    damage_type: status
-    target: allies_all
-    power: 0
-    mana_cost: 14
-    effects:
-      - effect_id: luminous_blessing
-        status_effect: Luminous Blessing
-        apply_to: allies_all
-        turns: 2
-        buff:
-          magical_defense: 10
-          physical_defense: 6
-
-  - id: gleam_lance
-    name: Gleam Lance
-    element: lux
-    damage_type: magical
-    target: individual
-    power: 28
-    mana_cost: 8
+  - radiant_mend_plus
+  - luminous_blessing
+  - gleam_lance
 
 loot:
   - item_id: gold_coin

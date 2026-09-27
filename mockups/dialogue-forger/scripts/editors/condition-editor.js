@@ -72,7 +72,7 @@
                     current.left = value;
                     publish();
                 },
-            }), 'relação: personagem.tipo, ex.: relationship.pacci.friendship'),
+            }), 'relação: personagem.tipo, ex.: relationship.pacci.friendship', { required: true }),
             ui.field('Operador', ui.select({
                 value: current.condition,
                 options: OPERATORS,

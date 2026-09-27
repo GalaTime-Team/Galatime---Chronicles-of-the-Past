@@ -9,6 +9,7 @@ import { TestMusicPanel } from './test_playground/TestMusicPanel';
 import { TestDialoguePanel } from './test_playground/TestDialoguePanel';
 import { TestCombatPanel, TestObjectivesPanel, TestMovementPanel } from './test_playground/TestPlaceholderPanels';
 import { TestEntitiesPanel } from './test_playground/TestEntitiesPanel';
+import { TestSkillTreePanel } from './test_playground/TestSkillTreePanel';
 
 interface TestPlaygroundScreenProps {
     onBack: () => void;
@@ -26,6 +27,7 @@ export function TestPlaygroundScreen({ onBack }: TestPlaygroundScreenProps) {
         objectives: t('playground.tabs.objectives'),
         movement: t('playground.tabs.movement'),
         entities: t('playground.tabs.entities'),
+        skills: t('playground.tabs.skills'),
     };
 
     const panels: Record<PlaygroundTab, React.ReactNode> = {
@@ -37,6 +39,7 @@ export function TestPlaygroundScreen({ onBack }: TestPlaygroundScreenProps) {
         objectives: <TestObjectivesPanel />,
         movement: <TestMovementPanel />,
         entities: <TestEntitiesPanel />,
+        skills: <TestSkillTreePanel />,
     };
 
     const panel = panels[activeTab];
@@ -73,19 +76,7 @@ export function TestPlaygroundScreen({ onBack }: TestPlaygroundScreenProps) {
                         <TestPlaygroundSidebar activeTab={activeTab} onChange={setActiveTab} labels={labels} />
 
                         {/* Right Column — Tab Panel */}
-                        {/*
-                          `scrollbar-gutter: stable` is load-bearing, not cosmetic. This
-                          section is what scrolls the panels, and a panel inside it can
-                          decide its own layout from its own measured width — the dialogue
-                          panel stacks its halves below a threshold. Without the reserved
-                          gutter the two feed each other: the panel's content height decides
-                          whether this section scrolls, the scrollbar then takes 10px off
-                          the width the panel measures, and a threshold inside that 10px band
-                          makes the layout flip back — forever, several times a second. The
-                          reserved gutter keeps the measured width constant whether or not
-                          there is a scrollbar.
-                        */}
-                        <section className="min-h-0 min-w-0 flex-1 [scrollbar-gutter:stable] overflow-x-hidden overflow-y-auto p-2">
+                        <section className="min-h-0 min-w-0 flex-1 scrollbar-gutter-stable overflow-x-hidden overflow-y-auto p-2">
                             <AnimatePresence mode="wait">
                                 <motion.div
                                     key={activeTab}

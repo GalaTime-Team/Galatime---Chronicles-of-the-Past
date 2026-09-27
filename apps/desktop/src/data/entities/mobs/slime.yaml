@@ -21,21 +21,8 @@ base_stats:
   speed: 37
 
 skills:
-  - id: headbutt
-    name: Headbutt
-    element: corporis
-    damage_type: physical
-    target: individual
-    power: 10
-    stamina_cost: 3
-
-  - id: splash
-    name: Splash
-    element: aqua
-    damage_type: magical
-    target: individual
-    power: 20
-    mana_cost: 3
+  - headbutt
+  - splash
 
 weapon: null
 

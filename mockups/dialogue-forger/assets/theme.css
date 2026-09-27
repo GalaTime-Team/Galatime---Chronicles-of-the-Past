@@ -1,67 +1,91 @@
-/*
- * Minimal theme: variables and a plain reset.
- *
- * The Forger is an internal authoring tool, so this deliberately stays out of
- * the way — no branding, no decoration, just enough to keep the panels legible.
- */
-
 :root {
-    --bg: #1b1d22;
-    --panel: #23262d;
-    --panel-alt: #2a2e36;
-    --border: #3a3f49;
-    --text: #e6e8ec;
-    --muted: #9aa1ad;
-    --accent: #7aa2f7;
-    --error: #f7768e;
-    --warning: #e0af68;
-    --ok: #9ece6a;
-    --mono: ui-monospace, "Cascadia Mono", Consolas, monospace;
+    color-scheme: dark;
+    --page: #1b2229;
+    --surface: #181e25;
+    --surface-raised: #1d242c;
+    --surface-soft: #222b34;
+    --surface-inset: #141a20;
+    --surface-blue: rgba(77, 137, 232, .11);
+    --border: #303944;
+    --border-soft: #272f38;
+    --ink: #cbd2d9;
+    --ink-strong: #f0f2f3;
+    --muted: #a0aab4;
+    --muted-soft: #87929e;
+    --accent: #78a9f8;
+    --accent-strong: #9bc0ff;
+    --accent-wash: rgba(77, 137, 232, .1);
+    --error: #df8b86;
+    --warning: #deb274;
+    --success: #8dc4a1;
+    --mono: ui-monospace, "Cascadia Mono", "Segoe UI Mono", Consolas, monospace;
+    --sans: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
 }
 
-* {
+*,
+*::before,
+*::after {
     box-sizing: border-box;
 }
 
-html,
-body {
-    margin: 0;
-    padding: 0;
-    height: 100%;
+html {
+    min-width: 320px;
+    min-height: 100%;
+    background: var(--page);
 }
 
 body {
-    background: var(--bg);
-    color: var(--text);
-    font: 14px/1.45 system-ui, "Segoe UI", sans-serif;
+    min-width: 320px;
+    min-height: 100vh;
+    margin: 0;
+    color: var(--ink);
+    background: #1b2229;
+    font: 13px/1.5 var(--sans);
+    -webkit-font-smoothing: antialiased;
+}
+
+button,
+input,
+select,
+textarea {
+    color: inherit;
+    font: inherit;
+}
+
+button {
+    cursor: pointer;
+}
+
+button:focus-visible,
+input:focus-visible,
+select:focus-visible,
+textarea:focus-visible,
+summary:focus-visible,
+a:focus-visible,
+[role="tab"]:focus-visible,
+[tabindex="0"]:focus-visible {
+    outline: 2px solid var(--accent);
+    outline-offset: 2px;
+}
+
+code,
+pre {
+    font-family: var(--mono);
+}
+
+[hidden] {
+    display: none !important;
 }
 
 h1,
 h2,
 h3,
-h4 {
-    margin: 0;
-    font-weight: 600;
+h4,
+p {
+    margin-top: 0;
 }
 
-h1 {
-    font-size: 16px;
-}
-
-h2 {
-    font-size: 14px;
-}
-
-h3 {
-    font-size: 13px;
-}
-
-code,
-pre,
-input,
-select,
-textarea,
-button {
-    font-family: var(--mono);
-    font-size: 12px;
+::selection {
+    color: #eaf2ff;
+    background: #325c94;
 }

@@ -20,8 +20,10 @@
         '{pause:400} — pausa de 400 ms',
         '{click id|texto|no_destino} — texto clicável (opcional)',
         '{click! id|texto|no_destino} — texto clicável (obrigatório)',
-        '{style bold italic color=#D88CFF speed=0.8|texto} — texto com estilo',
-        '{style wave/shake/jitter=normal wave/shake/jitter_speed=0.8|texto} — letras animadas, aceitam off / light / normal / strong',
+        '{style bold italic color=#D88CFF speed=0.8|texto} — texto com estilo; speed ajusta a velocidade da escrita.',
+        '{style wave=normal wave_speed=0.8|texto} — ondulação lenta; níveis off / light / normal / strong, com wave_speed próprio.',
+        '{style shake=light shake_speed=1.2|texto} — vibração leve e rápida.',
+        '{style jitter=normal jitter_speed=0.8|texto} — tremor normal, mais lento.',
         '\\{ — chaveta literal',
     ];
 
@@ -70,6 +72,7 @@
         var initial = Forger.segments.parse(source);
 
         var area = ui.textarea({
+            id: 'forger-node-text',
             value: source,
             rows: 6,
             placeholder: 'Escreve aqui.',
@@ -115,12 +118,7 @@
         return {
             area: area,
             errorBox: errorBox,
-            legendBlock: ui.block('Sintaxe do texto', [
-                ui.el('div', {}, TEXT_LEGEND.map(function (line) {
-                    return ui.el('div', { class: 'small muted', text: line });
-                })),
-            ], { collapsible: true }),
-            previewBlock: ui.block('Segmentos gerados', [preview], { collapsible: true, open: true }),
+            previewBlock: ui.block('Pré-visualização dos segmentos', [preview], { collapsible: true }),
         };
     }
 
@@ -137,11 +135,11 @@
 
         return ui.field('Avanço automático', ui.checkbox({
             checked: node.auto_advance === true,
-            label: 'skip input',
+            label: 'auto skip',
             onChange: function (checked) {
                 options.patch({ auto_advance: checked });
             },
-        }), 'não espera por input');
+        }));
     }
 
     /** A spoken line: speaker, delivery, text, destination, effects. */
@@ -157,39 +155,33 @@
             },
         );
 
-        return ui.el('div', {}, [
-            ui.inline([
-                ui.field('Falante', ui.listInput('sceneCharacters', {
-                    value: node.speaker_id,
-                    extra: lists.characters,
-                    onInput: function (value) {
+        return ui.el('div', { class: 'node-body' }, [
+            ui.el('div', { class: 'node-core' }, [
+                ui.inline([
+                    characterField('Falante', node.speaker_id, function (value) {
                         options.patch({ speaker_id: value });
-                    },
-                })),
-                ui.field('Emoção', ui.listInput('emotions', {
-                    value: node.emotion,
-                    extra: lists.emotions,
-                    onInput: function (value) {
+                    }),
+                    emotionField('Emoção', node.emotion, lists, function (value) {
                         options.patch({ emotion: value });
-                    },
-                })),
-                ui.field('Animação', ui.listInput('animations', {
-                    value: node.animation_id,
-                    extra: lists.animations,
-                    onInput: function (value) {
-                        options.patch({ animation_id: value });
-                    },
-                })),
-                autoAdvanceField(options),
+                    }),
+                ]),
+                textField('Texto da fala', text.area),
+                text.errorBox,
             ]),
-
-            ui.field('Texto', text.area),
-            text.errorBox,
-            text.legendBlock,
-            text.previewBlock,
-
-            ui.inline([destinationField(options)]),
-            effectsAfterBlock(options, 'Efeitos depois desta fala'),
+            advancedSection('Animação, avanço e efeitos', [
+                ui.inline([
+                    ui.field('Animação tsp', ui.listInput('animations', {
+                        value: node.animation_id,
+                        extra: lists.animations,
+                        onInput: function (value) {
+                            options.patch({ animation_id: value });
+                        },
+                    })),
+                    autoAdvanceField(options),
+                ]),
+                effectsAfterBlock(options, 'Efeitos depois desta fala'),
+                text.previewBlock,
+            ]),
         ]);
     }
 
@@ -228,39 +220,32 @@
             },
         );
 
-        return ui.el('div', {}, [
-            ui.inline([
-                ui.field('Falante', ui.listInput('sceneCharacters', {
-                    value: prompt.speaker_id,
-                    extra: options.lists.characters,
-                    onInput: function (value) {
+        return ui.el('div', { class: 'node-body' }, [
+            ui.el('div', { class: 'node-core' }, [
+                ui.inline([
+                    characterField('Falante da pergunta', prompt.speaker_id, function (value) {
                         prompt.speaker_id = value;
                         publish();
-                    },
-                })),
-                ui.field('Emoção', ui.listInput('emotions', {
-                    value: prompt.emotion,
-                    extra: options.lists.emotions,
-                    onInput: function (value) {
+                    }),
+                    emotionField('Emoção', prompt.emotion, options.lists, function (value) {
                         prompt.emotion = value;
                         publish();
-                    },
-                })),
+                    }),
+                ]),
+                textField('Pergunta', text.area, 'Obrigatória.'),
+                text.errorBox,
+                ui.block('Opções de resposta', [
+                    Forger.choiceEditor.render(node, function (next) {
+                        options.patch({ choices: next });
+                    }, {
+                        nodeIds: options.lists.nodes,
+                        suggestedPaths: options.suggestedPaths,
+                        settings: Forger.effectEditor.settings(options.lists),
+                    }),
+                ]),
             ]),
-
-            ui.field('Pergunta', text.area),
-            text.errorBox,
-            text.legendBlock,
-            text.previewBlock,
-
-            ui.block('Opções', [
-                Forger.choiceEditor.render(node, function (next) {
-                    options.patch({ choices: next });
-                }, {
-                    nodeIds: options.lists.nodes,
-                    suggestedPaths: options.suggestedPaths,
-                    settings: Forger.effectEditor.settings(options.lists),
-                }),
+            advancedSection('Formato da pergunta', [
+                text.previewBlock,
             ]),
         ]);
     }
@@ -276,42 +261,38 @@
     function renderCharacterEnter(options) {
         var node = options.node;
         var lists = options.lists;
+        var entryFields = ui.inline([
+            characterField('Personagem', node.character_id, function (value) {
+                options.patch({ character_id: value });
+            }),
+            emotionField('Emoção', node.emotion, lists, function (value) {
+                options.patch({ emotion: value });
+            }),
+        ]);
 
-        return ui.el('div', {}, [
-            ui.inline([
-                ui.field('Personagem', ui.listInput('allCharacters', {
-                    value: node.character_id,
-                    extra: lists.allCharacters || lists.characters,
-                    onInput: function (value) {
-                        options.patch({ character_id: value });
-                    },
-                })),
-                ui.field('Posição', ui.listInput('positions', {
-                    value: node.position,
-                    extra: lists.positions,
-                    onInput: function (value) {
-                        options.patch({ position: value });
-                    },
-                }), 'ordem, não coordenada'),
-                ui.field('Animação', ui.listInput('animations', {
-                    value: node.animation_id,
-                    extra: lists.animations,
-                    onInput: function (value) {
-                        options.patch({ animation_id: value });
-                    },
-                })),
+        return ui.el('div', { class: 'node-body' }, [
+            ui.el('div', { class: 'node-core' }, [
+                entryFields,
             ]),
-            ui.inline([
-                ui.field('Emoção', ui.listInput('emotions', {
-                    value: node.emotion,
-                    extra: lists.emotions,
-                    onInput: function (value) {
-                        options.patch({ emotion: value });
-                    },
-                }), 'uma fala com emoção sobrepõe-se a esta'),
-                destinationField(options),
+            advancedSection('Animação, avanço e efeitos', [
+                ui.inline([
+                    ui.field('Animação tsp', ui.listInput('animations', {
+                        value: node.animation_id,
+                        extra: lists.animations,
+                        onInput: function (value) {
+                            options.patch({ animation_id: value });
+                        },
+                    })),
+                    ui.field('Posição', ui.listInput('positions', {
+                        value: node.position || 'center',
+                        extra: lists.positions,
+                        onInput: function (value) {
+                            options.patch({ position: value });
+                        },
+                    })),
+                ]),
+                effectsAfterBlock(options, 'Efeitos depois da entrada'),
             ]),
-            effectsAfterBlock(options, 'Efeitos depois da entrada'),
         ]);
     }
 
@@ -320,32 +301,31 @@
         var node = options.node;
         var lists = options.lists;
 
-        return ui.el('div', {}, [
-            ui.inline([
-                ui.field('Personagem', ui.listInput('allCharacters', {
-                    value: node.character_id,
-                    extra: lists.allCharacters || lists.characters,
-                    onInput: function (value) {
-                        options.patch({ character_id: value });
-                    },
-                })),
-                ui.field('Animação', ui.listInput('animations', {
-                    value: node.animation_id,
-                    extra: lists.animations,
-                    onInput: function (value) {
-                        options.patch({ animation_id: value });
-                    },
-                })),
-                ui.field('Direção', ui.listInput('directions', {
-                    value: node.direction,
-                    extra: lists.directions,
-                    onInput: function (value) {
-                        options.patch({ direction: value });
-                    },
-                })),
-                destinationField(options),
+        return ui.el('div', { class: 'node-body' }, [
+            ui.el('div', { class: 'node-core' }, [
+                characterField('Personagem', node.character_id, function (value) {
+                    options.patch({ character_id: value });
+                }),
             ]),
-            effectsAfterBlock(options, 'Efeitos depois da saída'),
+            advancedSection('Animação, direção e efeitos', [
+                ui.inline([
+                    ui.field('Animação tsp', ui.listInput('animations', {
+                        value: node.animation_id,
+                        extra: lists.animations,
+                        onInput: function (value) {
+                            options.patch({ animation_id: value });
+                        },
+                    })),
+                    ui.field('Direção', ui.listInput('directions', {
+                        value: node.direction,
+                        extra: lists.directions,
+                        onInput: function (value) {
+                            options.patch({ direction: value });
+                        },
+                    })),
+                ]),
+                effectsAfterBlock(options, 'Efeitos depois da saída'),
+            ]),
         ]);
     }
 
@@ -364,9 +344,11 @@
 
         rebuild(node.branches || []);
 
-        return ui.el('div', {}, [
-            ui.hint('Os ramos são avaliados por ordem. O primeiro que passar ganha; um ramo sem condição é o caso padrão.'),
-            container,
+        return ui.el('div', { class: 'node-body' }, [
+            ui.el('div', { class: 'node-core' }, [
+                ui.hint('Os ramos são avaliados por ordem. O primeiro que passar ganha; um ramo sem condição é o caso padrão.'),
+                container,
+            ]),
         ]);
     }
 
@@ -401,7 +383,7 @@
                             current.branch_id = value;
                             publish();
                         },
-                    })),
+                    }), undefined, { required: true }),
                     ui.field('Destino', ui.listInput('nodes', {
                         value: current.next,
                         extra: options.lists.nodes,
@@ -409,7 +391,7 @@
                             current.next = value;
                             publish();
                         },
-                    })),
+                    }), undefined, { required: true }),
                 ]),
                 ui.block('Condição (vazio = caso padrão)', [
                     Forger.conditionEditor.render(current.if, function (next) {
@@ -452,8 +434,8 @@
     function renderEnd(options) {
         var node = options.node;
 
-        return ui.el('div', {}, [
-            ui.inline([
+        return ui.el('div', { class: 'node-body' }, [
+            ui.el('div', { class: 'node-core' }, [
                 ui.field('Resultado', ui.listInput('results', {
                     value: node.result,
                     extra: options.lists.results,
@@ -462,24 +444,103 @@
                     },
                 }), 'etiqueta livre, ex.: good / neutral / bad'),
             ]),
-            ui.block('Efeitos ao terminar', [
+            advancedSection('Efeitos ao terminar', [
                 Forger.effectEditor.render(node.effects || [], function (next) {
                     options.patch({ effects: next });
                 }, Forger.effectEditor.settings(options.lists)),
-            ], { collapsible: true }),
+            ]),
         ]);
     }
 
-    /** The "next node" field, shared by every node kind that has one. */
-    function destinationField(options) {
-        return ui.field('Próximo nó', ui.listInput('nodes', {
-            value: options.node.next,
-            placeholder: 'id_do_no',
-            extra: options.lists.nodes,
-            onInput: function (value) {
-                options.patch({ next: value });
-            },
-        }));
+    /**
+     * A character id with the built-in list as suggestions.
+     *
+     * Nothing stops a free-typed id: a character created outside the tool is
+     * written by hand, and the validator warns about it rather than the control
+     * refusing it.
+     */
+    function characterField(label, value, onChange) {
+        // Required in every node that has one: the validator refuses a line
+        // without a speaker and an enter/exit without a character.
+        return ui.field(label, ui.characterSelect({
+            value: value,
+            onChange: onChange,
+        }), undefined, { required: true });
+    }
+
+    /**
+     * An emotion, offered as suggestions rather than as a closed list.
+     *
+     * The game matches the value against the character's own art and falls back
+     * to neutral, so an emotion it does not know is a hint the engine ignores,
+     * not an error worth blocking.
+     */
+    function emotionField(label, value, lists, onInput, hint) {
+        return ui.field(label, ui.listInput('emotions', {
+            value: value,
+            extra: lists ? lists.emotions : [],
+            onInput: onInput,
+        }), hint);
+    }
+
+    /** A visually emphasized essential field. */
+    function emphasisField(label, control, hint) {
+        var field = ui.field(label, control, hint);
+        field.classList.add('field-primary');
+        return field;
+    }
+
+    /** Text input with accessible, always-discoverable syntax help. */
+    function textField(label, area, hint) {
+        var tooltipId = 'forger-text-syntax-tooltip';
+        var hintId = 'forger-node-text-hint';
+        var tips = TEXT_LEGEND.map(function (line) {
+            var separator = line.indexOf(' — ');
+
+            return ui.el('div', { class: 'syntax-tip-row' }, [
+                ui.el('code', { text: separator === -1 ? line : line.slice(0, separator) }),
+                ui.el('span', { text: separator === -1 ? '' : line.slice(separator + 3) }),
+            ]);
+        });
+
+        area.id = 'forger-node-text';
+        area.setAttribute('aria-describedby', tooltipId + (hint ? ' ' + hintId : ''));
+
+        var node = ui.el('div', { class: 'field text-field' }, [
+            ui.el('div', { class: 'field-label-row' }, [
+                ui.el('label', { class: 'field-label', for: area.id, text: label }),
+                ui.el('div', { class: 'syntax-help' }, [
+                    ui.el('button', {
+                        type: 'button',
+                        class: 'info-button',
+                        'aria-label': 'Ajuda para a sintaxe do texto',
+                        'aria-describedby': tooltipId,
+                        title: 'Ver exemplos de formatação',
+                        text: 'i',
+                    }),
+                    ui.el('div', { id: tooltipId, class: 'syntax-popover', role: 'tooltip' }, [
+                        ui.el('h4', { text: 'Marcação suportada' }),
+                        ui.el('div', { class: 'syntax-tip-list' }, tips),
+                    ]),
+                ]),
+            ]),
+            area,
+            hint ? ui.el('span', { id: hintId, class: 'field-hint', text: hint }) : null,
+        ]);
+
+        // A line or a question with no text is an error, not a preference.
+        return ui.markRequired(node);
+    }
+
+    /** A labelled disclosure for optional node configuration. */
+    function advancedSection(title, children) {
+        return ui.el('details', { class: 'node-advanced' }, [
+            ui.el('summary', {}, [
+                ui.el('span', { text: title }),
+                ui.el('span', { class: 'summary-note', text: 'Opcional' }),
+            ]),
+            ui.el('div', { class: 'node-advanced-content' }, children),
+        ]);
     }
 
     /** The "effects after this node" block, shared by the auto nodes. */

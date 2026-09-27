@@ -24,55 +24,9 @@ base_stats:
   speed: 50
 
 skills:
-  - id: freeze_ii
-    name: Freeze II
-    element: aqua
-    damage_type: magical
-    target: individual
-    power: 20
-    mana_cost: 8
-    effects:
-      - effect_id: freeze_ii
-        status_effect: Freeze II
-        apply_to: enemy_one
-        turns: 2
-        debuff:
-          speed: 25
-        apply_chance: 0.75
-
-  - id: icy_wind
-    name: Icy Wind
-    element: caeli
-    damage_type: magical
-    target: all
-    power: 20
-    mana_cost: 12
-    effects:
-      - effect_id: icy_wind
-        status_effect: Icy Wind
-        apply_to: enemies_all
-        turns: 2
-        debuff:
-          speed: 8
-          magical_attack: 8
-        apply_chance: 0.55
-
-  - id: frost
-    name: Frost
-    element: aqua
-    damage_type: magical
-    target: individual
-    power: 60
-    mana_cost: 9
-    effects:
-      - effect_id: frost
-        status_effect: Frost
-        apply_to: enemy_one
-        turns: 2
-        lower_accuracy: 0.15
-        debuff:
-          speed: 10
-        apply_chance: 0.6
+  - freeze_ii
+  - icy_wind
+  - frost
 
 weapon:
   id: wyvern_talon

@@ -22,30 +22,8 @@ base_stats:
   speed: 20
 
 skills:
-  - id: vine
-    name: Vine
-    element: florere
-    damage_type: physical
-    target: individual
-    power: 30
-    mana_cost: 4
-    effects:
-      - effect_id: vine
-        status_effect: Vine
-        apply_to: enemy_one
-        turns: 3
-        debuff:
-          speed: 10
-          physical_attack: 10
-        effect_hit_chance: 0.7
-
-  - id: vine_whip
-    name: Vine Whip
-    element: florere
-    damage_type: physical
-    target: individual
-    power: 35
-    mana_cost: 4
+  - vine
+  - vine_whip
 
 weapon:
   id: thorny_vine

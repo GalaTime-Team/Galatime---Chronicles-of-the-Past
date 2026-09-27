@@ -25,59 +25,10 @@ base_stats:
   speed: 60
 
 skills:
-  - id: chaos_mark
-    name: Chaos Mark
-    element: chaos
-    damage_type: status
-    target: individual
-    power: 0
-    mana_cost: 6
-    effects:
-      - effect_id: chaos_mark_debuff
-        status_effect: Chaos Mark
-        apply_to: target
-        turns: 4
-        debuff:
-          magical_defense: 15
-          speed: 10
-        effect_hit_chance: 0.9
-
-  - id: chaotic_barrage
-    name: Chaotic Barrage
-    element: chaos
-    damage_type: magical
-    target: all
-    hits: 3
-    hit_chance: 0.75
-    power: 40
-    mana_cost: 12
-
-  - id: floral_barrage
-    name: Floral Barrage
-    element: florere
-    damage_type: physical
-    target: individual
-    hits: 3
-    hit_chance: 0.85
-    power: 40
-    stamina_cost: 6
-
-  - id: nature_surge
-    name: Nature's Surge
-    element: florere
-    damage_type: status
-    target: self
-    power: 0
-    mana_cost: 5
-    effects:
-      - effect_id: natures_surge_buff
-        status_effect: Nature's Surge
-        apply_to: self
-        turns: 5
-        buff:
-          physical_attack: 8
-          magical_attack: 8
-        effect_hit_chance: 1.0
+  - chaos_mark
+  - chaotic_barrage
+  - floral_barrage
+  - nature_surge
 
 
 weapon:

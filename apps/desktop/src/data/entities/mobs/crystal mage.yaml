@@ -24,23 +24,8 @@ base_stats:
   speed: 24
 
 skills:
-  - id: vine
-    name: Vine
-    element: florere
-    damage_type: physical
-    target: individual
-    hits: 1
-    power: 30
-    mana_cost: 4
-
-  - id: vine_whip
-    name: Vine Whip
-    element: florere
-    damage_type: physical
-    target: individual
-    hits: 1
-    power: 35
-    mana_cost: 4
+  - vine
+  - vine_whip
 
 weapon:
   id: crystal_edge

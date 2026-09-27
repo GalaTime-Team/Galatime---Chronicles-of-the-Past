@@ -21,36 +21,8 @@ base_stats:
   speed: 42
 
 skills:
-  - id: ravenous_drain
-    name: Ravenous Drain
-    element: umbra
-    damage_type: magical
-    target: individual
-    power: 34
-    stamina_cost: 9
-    effects:
-      - effect_id: ravenous_drain_heal
-        status_effect: Ravenous Drain
-        apply_to: self
-        resource_regen:
-          hp: 16
-        regen_variance: [0.3, 1.1]
-
-  - id: avarice_burst
-    name: Avarice Burst
-    element: umbra
-    damage_type: magical
-    target: all
-    power: 22
-    mana_cost: 12
-    effects:
-      - effect_id: avarice_burst
-        status_effect: Avarice Burst
-        apply_to: enemies_all
-        turns: 2
-        debuff:
-          magical_defense: 6
-        apply_chance: 0.35
+  - ravenous_drain
+  - avarice_burst
 
 loot:
   - item_id: gold_coin

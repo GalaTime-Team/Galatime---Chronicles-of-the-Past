@@ -24,31 +24,8 @@ base_stats:
   speed: 35
 
 skills:
-  - id: ice_cube
-    name: Ice Cube
-    element: aqua
-    damage_type: magical
-    target: individual
-    power: 20
-    mana_cost: 2
-    effects:
-      - effect_id: freeze
-        status_effect: Freeze
-        apply_to: enemy_one
-        turns: 2
-        debuff:
-          speed: 8
-        apply_chance: 0.2
-
-  - id: roll
-    name: Roll
-    element: corporis
-    damage_type: physical
-    target: individual
-    hits: 2
-    hit_chance: 0.85
-    power: 35
-    stamina_cost: 8
+  - ice_cube
+  - roll
 
 weapon:
   id: icy_horns

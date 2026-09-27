@@ -8,8 +8,8 @@
  * other**.
  *
  * Errors block; warnings describe something suspicious that still works. Unknown
- * characters are warnings on purpose, matching the engine, which tolerates a
- * character the catalogue has not caught up with.
+ * characters are warnings on purpose, matching the engine, which tolerates ids
+ * outside the fixed in-tool character list.
  */
 (function (Forger) {
     'use strict';
@@ -714,7 +714,7 @@
         return segments.length === 2 && segments[0] === 'relationship' && Boolean(segments[1]);
     }
 
-    /** Warns when a character is not in the loaded catalogue. */
+    /** Warns when a character id is not in the fixed built-in list. */
     function warnIfUnknownCharacter(characterId, path, warn) {
         if (Forger.catalogue.hasCharacter(characterId)) {
             return;
@@ -722,8 +722,8 @@
 
         warn(
             'unknown_character',
-            'O personagem "' + characterId + '" não está no catálogo carregado. '
-            + 'Importa a pasta do catálogo, ou adiciona o id à mão, se ele existir mesmo.',
+            'O personagem "' + characterId + '" não pertence à lista integrada de 12 personagens. '
+            + 'Confirma se o id está correto ou escreve um id da lista integrada.',
             path,
         );
     }

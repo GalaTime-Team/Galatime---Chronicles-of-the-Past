@@ -21,21 +21,8 @@ base_stats:
   speed: 20
 
 skills:
-  - id: headbutt_II
-    name: Headbutt II
-    element: corporis
-    damage_type: physical
-    target: individual
-    power: 20
-    stamina_cost: 4
-
-  - id: splash_II
-    name: Splash II
-    element: aqua
-    damage_type: magical
-    target: individual
-    power: 25
-    mana_cost: 4
+  - headbutt_II
+  - splash_II
 
 weapon: null
 

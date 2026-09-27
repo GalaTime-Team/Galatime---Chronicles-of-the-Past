@@ -12,11 +12,11 @@
 
     /** Node kinds the engine can resolve. Mirrors the backend validator. */
     var NODE_TYPES = [
+        'character_enter',
         'line',
         'choice',
-        'character_enter',
-        'character_exit',
         'conditional',
+        'character_exit',
         'end',
     ];
 
@@ -31,11 +31,11 @@
 
     /** Portuguese labels for the node type picker. */
     var NODE_TYPE_LABELS = {
+        character_enter: 'Entrada de personagem',
         line: 'Fala',
         choice: 'Escolha',
-        character_enter: 'Entrada de personagem',
+        conditional: 'Ramificação',
         character_exit: 'Saída de personagem',
-        conditional: 'Condição',
         end: 'Fim',
     };
 
@@ -153,7 +153,7 @@
 
             case 'character_enter':
                 result.character_id = node.character_id || '';
-                result.position = node.position || '';
+                result.position = node.position || 'center';
                 result.animation_id = node.animation_id || '';
                 result.emotion = node.emotion || '';
                 result.next = node.next || '';

@@ -193,12 +193,12 @@ export const UnknownIcon: React.FC<UnknownIconProps> = ({ className = '' }) => (
   />
 );
 
-// --- Save-slot action icons ---
-interface SaveActionIconProps {
+// --- Misc UI icons (public/images/ui/misc) ---
+interface MiscIconProps {
   className?: string;
 }
 
-const SaveActionIcon: React.FC<SaveActionIconProps & { file: string }> = ({ file, className = '' }) => (
+const MiscIcon: React.FC<MiscIconProps & { file: string }> = ({ file, className = '' }) => (
   <span
     aria-hidden="true"
     className={`block h-[1em] w-[1em] bg-current ${className}`}
@@ -215,11 +215,12 @@ const SaveActionIcon: React.FC<SaveActionIconProps & { file: string }> = ({ file
   />
 );
 
-export const AddIcon: React.FC<SaveActionIconProps> = ({ className = '' }) => <SaveActionIcon file="add" className={className} />;
-export const EditIcon: React.FC<SaveActionIconProps> = ({ className = '' }) => <SaveActionIcon file="edit" className={className} />;
-export const RemoveIcon: React.FC<SaveActionIconProps> = ({ className = '' }) => <SaveActionIcon file="remove" className={className} />;
-export const TrashIcon: React.FC<SaveActionIconProps> = ({ className = '' }) => <SaveActionIcon file="trash" className={className} />;
-export const CloseIcon: React.FC<SaveActionIconProps> = ({ className = '' }) => <SaveActionIcon file="close" className={className} />;
+export const AddIcon: React.FC<MiscIconProps> = ({ className = '' }) => <MiscIcon file="add" className={className} />;
+export const EditIcon: React.FC<MiscIconProps> = ({ className = '' }) => <MiscIcon file="edit" className={className} />;
+export const RemoveIcon: React.FC<MiscIconProps> = ({ className = '' }) => <MiscIcon file="remove" className={className} />;
+export const TrashIcon: React.FC<MiscIconProps> = ({ className = '' }) => <MiscIcon file="trash" className={className} />;
+export const CloseIcon: React.FC<MiscIconProps> = ({ className = '' }) => <MiscIcon file="close" className={className} />;
+export const FitIcon: React.FC<MiscIconProps> = ({ className = '' }) => <MiscIcon file="fit" className={className} />;
 
 // --- Element Icon ---
 interface ElementIconProps {

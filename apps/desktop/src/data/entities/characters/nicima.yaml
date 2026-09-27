@@ -24,65 +24,10 @@ base_stats:
   speed: 75
 
 skills:
-  - id: dazzling_gleam
-    name: Dazzling Gleam
-    element: lux
-    damage_type: magical
-    target: all
-    power: 100
-    mana_cost: 19
-    collateral:
-      chance: 0.8
-      apply_to: both_teams
-      include_primary_targets: false
-      include_caster: true
-      damage_multiplier: [0.4, 0.6]
-
-  - id: angels_blessing
-    name: Angel's Blessing
-    element: lux
-    damage_type: status
-    target: allies_all
-    power: 0
-    mana_cost: 40
-    effects:
-      - effect_id: angels_blessing
-        status_effect: Angel's Blessing
-        apply_to: allies_all
-        resource_regen:
-          hp: 120
-        regen_variance: [0.9, 1.1]
-
-  - id: angels_guard
-    name: Angel's Guard
-    element: lux
-    damage_type: status
-    target: allies_all
-    power: 0
-    mana_cost: 10
-    effects:
-      - effect_id: angels_guard
-        status_effect: Angel's Guard
-        apply_to: allies_all
-        turns: 5
-        buff:
-          magical_defense: 25
-
-  - id: serene_shroud
-    name: Serene Shroud
-    element: lux
-    damage_type: status
-    target: all
-    power: 0
-    mana_cost: 12
-    effects:
-      - effect_id: serene_shroud
-        status_effect: Serene Shroud
-        apply_to: enemies_all
-        turns: 3
-        debuff:
-          magical_attack: 10
-        effect_hit_chance: 0.9
+  - dazzling_gleam
+  - angels_blessing
+  - angels_guard
+  - serene_shroud
 
 weapon:
   id: golden_scepter

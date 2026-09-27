@@ -17,23 +17,6 @@ export interface LootEntry {
     chance: number;
 }
 
-export interface SkillEntry {
-    id: string;
-    name: string;
-    element?: string;
-    damage_type?: string;
-    target?: string;
-    power?: number;
-    stamina_cost?: number;
-    mana_cost?: number;
-    hits?: number;
-    hit_chance?: number;
-    accuracy?: number;
-    damage_variance?: number[];
-    effects?: Record<string, unknown>[];
-    collateral?: Record<string, unknown>;
-}
-
 /** A passive/triggered mob ability (not a skill: it has a condition and an action). */
 export interface AbilityEntry {
     ability_name: string;
@@ -51,7 +34,9 @@ export interface EntitiesData {
     description: string;
     elements: string[];
     base_stats: BaseStats;
-    skills: SkillEntry[];
+    /** Skill ids only — the full definitions live in the shared catalogue
+     *  (`data/combat/skills/skills.yaml`) and are read through `attackController`. */
+    skills: string[];
     /** Not every entity defines loot. */
     loot?: LootEntry[];
     /** Both characters and mobs can carry a weapon; some declare none. */

@@ -21,21 +21,8 @@ base_stats:
   speed: 11
 
 skills:
-  - id: bite
-    name: Bite
-    element: corporis
-    damage_type: physical
-    target: individual
-    power: 20
-    stamina_cost: 3
-
-  - id: dig
-    name: Dig
-    element: lapis
-    damage_type: physical
-    target: individual
-    power: 55
-    stamina_cost: 4
+  - bite
+  - dig
 
 weapon:
   id: mandibles

@@ -23,48 +23,9 @@ base_stats:
   speed: 51
 
 skills:
-  - id: dark_ball
-    name: Dark Ball
-    element: umbra
-    damage_type: magical
-    target: individual
-    power: 30
-    mana_cost: 4
-
-  - id: bloodthirsty
-    name: Bloodthirsty
-    element: umbra
-    damage_type: physical
-    target: individual
-    power: 20
-    mana_cost: 2
-    stamina_cost: 4
-    effects:
-      - effect_id: bloodthirsty
-        status_effect: Bloodthirsty
-        apply_to: self
-        resource_regen:
-          hp: 10
-        regen_variance: [0.8, 1.2]
-
-  - id: fear
-    name: Fear
-    element: umbra
-    damage_type: status
-    target: individual
-    power: 0
-    mana_cost: 5
-    effects:
-      - effect_id: fear
-        status_effect: Fear
-        apply_to: enemy_one
-        turns: 2
-        lower_accuracy: 0.25
-        debuff:
-          physical_attack: 10
-          magical_attack: 10
-          speed: 10
-        apply_chance: 0.75
+  - dark_ball
+  - hunger
+  - fear
 
 weapon:
   id: barbed_tail

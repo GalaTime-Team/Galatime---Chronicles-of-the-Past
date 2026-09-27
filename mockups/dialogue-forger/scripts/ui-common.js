@@ -5,10 +5,10 @@
  * `createElement` noise. Everything returns a detached node; the caller decides
  * where it goes.
  *
- * Suggestion lists are `datalist`s rather than `<select>`s on purpose: an id the
- * catalogue does not know about can still be typed, which matches the engine,
- * where an unknown character or a forward reference to a node is a warning and
- * not a failure.
+ * Free-form suggestions use `datalist`s so ids and forward node references can
+ * still be typed. `characterSelect` follows the same rule over the built-in
+ * character list: those ids are suggestions, not a gate, so an id the tool does
+ * not know can still be written by hand.
  */
 (function (Forger) {
     'use strict';
@@ -100,13 +100,44 @@
         parent.appendChild(document.createTextNode(String(children)));
     }
 
-    /** A labelled control. */
-    function field(label, control, hint) {
-        return el('label', { class: 'field' }, [
+    /**
+     * A labelled control.
+     *
+     * `options.required` marks it with the same `*` the identity panel shows on
+     * "ID do diálogo", via `markRequired` so both paths look identical.
+     */
+    function field(label, control, hint, options) {
+        var node = el('label', { class: 'field' }, [
             el('span', { class: 'field-label', text: label }),
             control,
             hint ? el('span', { class: 'field-hint', text: hint }) : null,
         ]);
+
+        return options && options.required ? markRequired(node) : node;
+    }
+
+    /**
+     * Marks an already-built `.field` as required.
+     *
+     * The `*` is decorative (`aria-hidden`, exactly like the static identity
+     * fields); the control itself gets `aria-required`, so the marker still
+     * means something to a screen reader.
+     */
+    function markRequired(node) {
+        var label = node.querySelector('.field-label');
+        var control = node.querySelector('.input');
+
+        if (label && !label.querySelector('b')) {
+            // The space mirrors the static `ID do diálogo <b>` in index.html.
+            append(label, ' ');
+            label.appendChild(el('b', { 'aria-hidden': 'true', text: '*' }));
+        }
+
+        if (control) {
+            control.setAttribute('aria-required', 'true');
+        }
+
+        return node;
     }
 
     /** A wrapping flex row of fields. */
@@ -287,6 +318,27 @@
         });
     }
 
+    /**
+     * A character picker over the built-in ids that still accepts free typing.
+     *
+     * The built-in list arrives as datalist suggestions rather than as a closed
+     * `<select>`, so a character created outside the tool can be written by
+     * hand; the validator is what flags an id it does not recognise, not the
+     * control.
+     */
+    function characterSelect(options) {
+        var node = listInput('characters', {
+            value: options.value,
+            placeholder: 'ex.: pacci',
+            extra: Forger.catalogue.characters(),
+            onInput: options.onChange,
+        });
+
+        node.classList.add('character-select');
+
+        return node;
+    }
+
     /** Creates or refreshes the datalist for a kind, returning its id. */
     function ensureList(kind, values) {
         var listId = 'forger-dl-' + kind;
@@ -324,6 +376,7 @@
         el: el,
         append: append,
         field: field,
+        markRequired: markRequired,
         inline: inline,
         text: text,
         textarea: textarea,
@@ -333,6 +386,7 @@
         row: row,
         block: block,
         listInput: listInput,
+        characterSelect: characterSelect,
         hint: hint,
         notice: notice,
     };

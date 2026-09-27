@@ -21,20 +21,7 @@ base_stats:
   speed: 30
 
 skills:
-  - id: radiant_mend
-    name: Radiant Mend
-    element: lux
-    damage_type: status
-    target: allies_all
-    power: 0
-    mana_cost: 10
-    effects:
-      - effect_id: radiant_mend
-        status_effect: Radiant Mend
-        apply_to: allies_all
-        resource_regen:
-          hp: 10
-        regen_variance: [0.8, 1.2]
+  - radiant_mend
 
 loot:
   - item_id: gold_coin

@@ -124,6 +124,15 @@
 
                 onChange(copy);
                 rebuild(copy);
+            }, function (next) {
+                // A type change swaps the whole field set, so the row has to be
+                // redrawn — publishing alone would leave the previous type's
+                // inputs on screen while the model already moved on.
+                var copy = effects.slice();
+                copy[index] = next;
+
+                onChange(copy);
+                rebuild(copy);
             }, settings));
         });
 
@@ -144,7 +153,7 @@
     }
 
     /** One effect row: the type picker plus only that type's fields. */
-    function renderRow(effect, onReplace, onRemove, settings) {
+    function renderRow(effect, onReplace, onRemove, onRetype, settings) {
         var current = {};
 
         Object.keys(effect || {}).forEach(function (key) {
@@ -170,8 +179,8 @@
                     options: TYPE_OPTIONS,
                     onChange: function (value) {
                         // A new type needs a different field set, so the row is
-                        // replaced rather than patched.
-                        onReplace(defaultEffect(value));
+                        // rebuilt rather than patched.
+                        onRetype(defaultEffect(value));
                     },
                 })),
                 fields,
@@ -179,8 +188,21 @@
         ], onRemove);
     }
 
-    /** Renders one field of an effect. */
+    /**
+     * Renders one field of an effect.
+     *
+     * Every field a type declares is required — the validator refuses an effect
+     * missing one — except the ones the spec marks `optional`, which keep their
+     * own "opcional" hint and no `*`.
+     */
     function renderField(field, current, publish, settings) {
+        var node = buildField(field, current, publish, settings);
+
+        return field.optional ? node : ui.markRequired(node);
+    }
+
+    /** The control for one effect field, without the required marker. */
+    function buildField(field, current, publish, settings) {
         var value = current[field.key];
 
         switch (field.kind) {
@@ -224,14 +246,13 @@
                 }));
 
             case 'character':
-                return ui.field(field.label, ui.listInput('characters', {
+                return ui.field(field.label, ui.characterSelect({
                     value: value || '',
-                    extra: settings.characters,
-                    onInput: function (raw) {
-                        current[field.key] = raw;
+                    onChange: function (selected) {
+                        current[field.key] = selected;
                         publish();
                     },
-                }));
+                }), 'Sugestões da lista integrada · outros IDs podem ser escritos.');
 
             // No `extra`: the kinds come from the shared suggestion list, so
             // there is one place to add one.

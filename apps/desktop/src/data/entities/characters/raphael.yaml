@@ -26,72 +26,10 @@ base_stats:
   speed: 32
 
 skills:
-  - id: dig
-    name: Dig
-    element: lapis
-    damage_type: physical
-    target: individual
-    power: 55
-    stamina_cost: 4
-
-  - id: stone_minion
-    name: Stone Minion
-    element: lapis
-    damage_type: physical
-    target: all
-    power: 30
-    mana_cost: 6
-    stamina_cost: 4
-    effects:
-      - effect_id: stone_minion
-        status_effect: Stone Minion
-        apply_to: enemies_all
-        turns: [1, 3]
-        can_stack: true
-        damage: 5
-        damage_variance: [0.5, 1.2]
-        effect_hit_chance: 0.8
-
-  - id: vine_II
-    name: Vine II
-    element: florere
-    damage_type: physical
-    target: individual
-    power: 45
-    mana_cost: 5
-    effects:
-      - effect_id: vine
-        status_effect: Vine
-        apply_to: enemy_one
-        turns: 3
-        lower_accuracy: 0.25
-        apply_chance: 0.7
-        debuff:
-          speed: 10
-          physical_attack: 10
-
-  - id: nature_absorption
-    name: Nature Absorption
-    element: florere
-    damage_type: magical
-    target: individual
-    power: 125
-    mana_cost: 16
-    stamina_cost: 16
-    effects:
-      - effect_id: nature_mend
-        status_effect: Nature Mend
-        apply_to: allies_all
-        resource_regen:
-          hp: 20
-        regen_variance: [0.5, 1.2]
-    collateral:
-      chance: 0.4
-      apply_to: enemy_all
-      include_primary_target: false
-      include_caster: false
-      target_hit_chance: 0.5
-      damage_multiplier: [0.1, 0.2]
+  - dig
+  - stone_minion
+  - vine
+  - nature_absorption
 
 weapon:
   id: peace_maker

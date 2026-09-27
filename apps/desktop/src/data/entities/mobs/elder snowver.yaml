@@ -23,53 +23,9 @@ base_stats:
   speed: 16
 
 skills:
-  - id: ice_thorns
-    name: Ice Thorns
-    element: aqua
-    damage_type: physical
-    target: individual
-    power: 45
-    mana_cost: 6
-    stamina_cost: 2
-    effects:
-      - effect_id: freeze
-        status_effect: Freeze
-        apply_to: enemy_one
-        turns: 2
-        debuff:
-          speed: 10
-        effect_hit_chance: 0.75
-
-  - id: iceberg
-    name: Iceberg
-    element: aqua
-    damage_type: magical
-    target: all_enemies
-    power: 85
-    mana_cost: 11
-    effects:
-      - effect_id: freeze
-        status_effect: Freeze
-        apply_to: enemy_one
-        turns: 2
-        debuff:
-          speed: 10
-        effect_hit_chance: 0.75
-
-  - id: water_absorption
-    name: Water Absorption
-    element: aqua
-    damage_type: status
-    target: self
-    power: 0
-    mana_cost: 9
-    effects:
-      - effect_id: water_absorb
-        status_effect: Regenerate
-        apply_to: self
-        turns: 3
-        resource_regen:
-          hp: 10
+  - ice_thorns
+  - iceberg
+  - water_absorption
 
 weapon:
   id: frozen_talon

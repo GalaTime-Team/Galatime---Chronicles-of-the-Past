@@ -20,6 +20,11 @@
     "noUnusedParameters": true,
     "noFallthroughCasesInSwitch": true,
 
+    /* `@/…` resolves to `src/…` (mirrored in vite.config.ts) */
+    "paths": {
+      "@/*": ["./src/*"]
+    },
+
     "types": ["node"]
   },
   "include": ["src", "__tests__"],

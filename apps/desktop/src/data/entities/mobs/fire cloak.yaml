@@ -21,47 +21,9 @@ base_stats:
   speed: 50
 
 skills:
-  - id: fire_ball
-    name: Fire Ball
-    element: ignis
-    damage_type: magical
-    target: individual
-    hits: 1
-    power: 25
-    mana_cost: 2
-
-  - id: fire_tornado
-    name: Fire Tornado
-    element: ignis
-    damage_type: magical
-    target: individual
-    hits: 1
-    power: 70
-    mana_cost: 13
-    collateral:
-      chance: 0.9
-      apply_to: enemies_all
-      include_primary_targets: false
-      include_caster: false
-      target_hit_chance: 1.0
-      damage_multiplier: [0.2, 0.4]
-
-  - id: commet_dash
-    name: Commet Dash
-    element: ignis
-    damage_type: physical
-    target: individual
-    hits: 1
-    power: 30
-    mana_cost: 4
-    stamina_cost: 2
-    collateral:
-      chance: 0.15
-      apply_to: enemies_all
-      include_primary_targets: false
-      include_caster: false
-      target_hit_chance: 0.8
-      damage_multiplier: [0.75, 1.0]
+  - fire_ball
+  - fire_tornado
+  - commet_dash
 
 weapon:
   id: hit

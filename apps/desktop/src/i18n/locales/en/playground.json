@@ -9,7 +9,8 @@
 			"combat": "Combat",
 			"objectives": "Objectives",
 			"movement": "Movement",
-			"entities": "Entities"
+			"entities": "Entities",
+			"skills": "Skill Tree"
 		},
 		"music": {
 			"nowPlaying": "Now Playing",
@@ -29,6 +30,14 @@
 			"noVariables": "This dialogue branches on nothing, so there is nothing to set.",
 			"start": "Start",
 			"idle": "Press Start to play it here."
+		},
+		"skillTree": {
+			"zoomIn": "Zoom in",
+			"zoomOut": "Zoom out",
+			"fitView": "Fit the whole tree",
+			"loading": "Loading skill catalogue…",
+			"loadError": "The skill catalogue could not be loaded.",
+			"empty": "No learnable skills were found for this selection."
 		}
 	}
 }

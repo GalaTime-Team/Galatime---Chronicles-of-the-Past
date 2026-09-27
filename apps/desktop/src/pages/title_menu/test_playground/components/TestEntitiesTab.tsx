@@ -1,8 +1,10 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useFloating, autoUpdate, offset, flip, shift } from '@floating-ui/react';
 import { createPortal } from 'react-dom';
 import type { AbilityEntry, BaseStats, CharacterData, LootEntry, MobData } from '../../../../types/EntityDataType';
 import type { EntityImage } from '../../../../types/EntityImageType';
+import type { PublicAttack } from '../../../../types/AttackDataType';
+import { fetchAttacks } from '../../../../controllers/attackController';
 import { ChevronLeft, ChevronRight, ElementIcon, UnknownIcon } from '../../../../assets/GalatimeIcon';
 import CommonHoverElement from '../../../../components/common/CommonHoverElement';
 import CommonImage from '../../../../components/common/CommonImage';
@@ -59,7 +61,10 @@ function EntityDetail({ item }: { item: EntityItem }) {
         (el): el is string => typeof el === 'string'
     );
     const baseStats = (data.base_stats ?? {}) as BaseStats;
-    const skills = Array.isArray(data.skills) ? data.skills : [];
+    // Entities reference skills by id only; the definitions are resolved through attackController.
+    const skills = (Array.isArray(data.skills) ? data.skills : []).filter(
+        (id): id is string => typeof id === 'string'
+    );
     const abilities: AbilityEntry[] = Array.isArray(data.abilities) ? data.abilities : [];
     const loot: LootEntry[] = Array.isArray(data.loot) ? data.loot : [];
 
@@ -81,6 +86,23 @@ function EntityDetail({ item }: { item: EntityItem }) {
         whileElementsMounted: autoUpdate,
         middleware: [offset(8), flip(), shift()],
     });
+
+    // Resolve skill ids against the shared attack catalogue (skills.yaml).
+    const [attacksById, setAttacksById] = useState<Map<string, PublicAttack>>(new Map());
+    const skillsKey = skills.join(',');
+    useEffect(() => {
+        if (skillsKey === '') return;
+        let cancelled = false;
+        fetchAttacks()
+            .then((attacks) => {
+                if (cancelled) return;
+                setAttacksById(new Map(attacks.map((attack) => [attack.id, attack])));
+            })
+            .catch((error) => console.error('Failed to resolve entity skills:', error));
+        return () => {
+            cancelled = true;
+        };
+    }, [skillsKey]);
 
     return (
         <div className="space-y-6 p-2">
@@ -188,11 +210,17 @@ function EntityDetail({ item }: { item: EntityItem }) {
                 <div className="space-y-2">
                     <h3 className="text-xs uppercase tracking-[0.15em] text-white/40">Skills</h3>
                     <div className="flex flex-col gap-1">
-                        {skills.map((skill, i) => (
-                            <div key={toText(skill?.id, `skill-${i}`)} className="flex justify-between text-sm">
-                                <span className="text-white">{toText(skill?.id, 'Unnamed')}</span>
-                            </div>
-                        ))}
+                        {skills.map((id) => {
+                            const attack = attacksById.get(id);
+                            return (
+                                <div key={id} className="flex justify-between text-sm">
+                                    <span className="text-white">{attack ? attack.name : id}</span>
+                                    <span className="text-white/40">
+                                        {attack ? id : 'not in catalogue'}
+                                    </span>
+                                </div>
+                            );
+                        })}
                     </div>
                 </div>
             )}

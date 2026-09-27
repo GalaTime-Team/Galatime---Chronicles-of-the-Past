@@ -21,48 +21,9 @@ base_stats:
   speed: 47
 
 skills:
-  - id: abyssal_drain
-    name: Abyssal Drain
-    element: umbra
-    damage_type: magical
-    target: individual
-    power: 46
-    stamina_cost: 10
-    effects:
-      - effect_id: abyssal_drain_heal
-        status_effect: Abyssal Drain
-        apply_to: self
-        resource_regen:
-          hp: 24
-          mana: 6
-        regen_variance: [0.4, 1.2]
-
-  - id: corruptive_wail
-    name: Corruptive Wail
-    element: umbra
-    damage_type: magical
-    target: all
-    power: 30
-    mana_cost: 15
-    effects:
-      - effect_id: corruptive_wail
-        status_effect: Corruptive Wail
-        apply_to: enemies_all
-        turns: 2
-        debuff:
-          physical_attack: 10
-          magical_attack: 10
-        apply_chance: 0.4
-
-  - id: desolate_claw
-    name: Desolate Claw
-    element: umbra
-    damage_type: physical
-    target: individual
-    power: 40
-    stamina_cost: 12
-    hits: 2
-    hit_chance: 0.9
+  - abyssal_drain
+  - corruptive_wail
+  - desolate_claw
 
 loot:
   - item_id: gold_coin
