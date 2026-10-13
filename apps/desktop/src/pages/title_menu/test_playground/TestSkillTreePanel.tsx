@@ -63,7 +63,7 @@ export function TestSkillTreePanel() {
             .then(([attackList, elementList]) => {
                 if (cancelled) return;
                 setAttacks(attackList);
-                setElements(elementList.filter((element) => element.type === 'common'));
+                setElements(elementList.filter((element) => element.type === 'natural'));
                 setLoading(false);
             })
             .catch((error: unknown) => {

@@ -40,6 +40,7 @@
 			"cast": "Cast",
 			"choices": "Choices",
 			"changes": "Changes",
+			"relationships": "Relationships",
 			"warnings": "Warnings",
 			"none": "None",
 			"enabled": "enabled",

@@ -9,6 +9,13 @@ import type { WorldStateInput } from '../types/WorldStateType';
 import { subscribeToDialogueEvents } from '../services/dialogue/eventService';
 import { loadDialogue } from '../services/dialogue/loaderService';
 import {
+    adoptWorldInventories,
+    getInventory,
+    PLAYER_ENTITY_ID,
+    setInventory,
+    snapshotWorldInventories,
+} from '../services/inventory/entityInventoryStore';
+import {
     continueSession,
     endSession,
     followSessionInteraction,
@@ -40,7 +47,20 @@ export async function startDialogue(
     dialogueId: string,
     worldState: WorldStateInput = {},
 ): Promise<DialogueResult<DialogueResponse>> {
-    return startSession(dialogueId, worldState);
+    // The entity inventory store is the source of truth between systems, so a
+    // conversation starts from it: the player's items come from the store's
+    // `player` entry and every other entity's from `entityInventories`. A caller
+    // that supplies its own slice still wins.
+    const seeded: WorldStateInput = {
+        ...worldState,
+        inventory: worldState.inventory ?? getInventory(PLAYER_ENTITY_ID),
+        entityInventories: {
+            ...snapshotWorldInventories(),
+            ...worldState.entityInventories,
+        },
+    };
+
+    return startSession(dialogueId, seeded);
 }
 
 /** Advances past the current line. */
@@ -76,7 +96,16 @@ export function triggerDialogueInteraction(
  * never persists narrative state itself.
  */
 export function endDialogue(sessionId: string): DialogueResult<DialogueEndResult> {
-    return endSession(sessionId);
+    const result = endSession(sessionId);
+
+    if (result.ok) {
+        // Publish what the conversation changed: the player's items and every
+        // entity's, so the next fight and the next scene see them.
+        setInventory(PLAYER_ENTITY_ID, { ...result.data.world_state.inventory });
+        adoptWorldInventories(result.data.world_state.entityInventories);
+    }
+
+    return result;
 }
 
 /** Validates a dialogue file without starting it. */

@@ -1,6 +1,7 @@
 import type {
     DialogueEffect,
     DialogueEffectType,
+    DialogueErrorCode,
     EffectOutcome,
 } from '../../types/DialogueType';
 import type { WorldState } from '../../types/WorldStateType';
@@ -28,6 +29,8 @@ export const SUPPORTED_EFFECT_TYPES: readonly DialogueEffectType[] = [
     'add',
     'add_item',
     'remove_item',
+    'add_item_to_entity',
+    'remove_item_from_entity',
     'unlock_objective',
     'complete_objective',
     'unlock_dialogue',
@@ -42,6 +45,8 @@ const REQUIRED_STRING_FIELDS: Record<DialogueEffectType, readonly string[]> = {
     add: ['target'],
     add_item: ['item_id'],
     remove_item: ['item_id'],
+    add_item_to_entity: ['entity_id', 'item_id'],
+    remove_item_from_entity: ['entity_id', 'item_id'],
     unlock_objective: ['objective_id'],
     complete_objective: ['objective_id'],
     unlock_dialogue: ['dialogue_id'],
@@ -56,6 +61,8 @@ const REQUIRED_NUMBER_FIELDS: Record<DialogueEffectType, readonly string[]> = {
     add: ['value'],
     add_item: [],
     remove_item: [],
+    add_item_to_entity: [],
+    remove_item_from_entity: [],
     unlock_objective: [],
     complete_objective: [],
     unlock_dialogue: [],
@@ -196,6 +203,50 @@ function applyEffect(effect: DialogueEffect, context: EffectContext, outcome: Ef
             pushResult(removeItem(state, effect.item_id, effect.quantity ?? DEFAULT_ITEM_QUANTITY, source), outcome);
             return;
 
+        case 'add_item_to_entity': {
+            const entityInventory = getEntityInventory(state, effect.entity_id);
+            const result = addItemToEntityInventory(entityInventory, effect.item_id, effect.quantity ?? DEFAULT_ITEM_QUANTITY);
+            if (result.ok) {
+                outcome.changes.push({
+                    kind: 'item_added',
+                    target: `entity.${effect.entity_id}.inventory.${effect.item_id}`,
+                    previous: result.data.previous,
+                    next: result.data.next,
+                    delta: effect.quantity ?? DEFAULT_ITEM_QUANTITY,
+                    source,
+                });
+            } else {
+                outcome.errors.push(createDialogueError(
+                    result.error.code,
+                    result.error.message,
+                    { entity_id: effect.entity_id, item_id: effect.item_id },
+                ));
+            }
+            return;
+        }
+
+        case 'remove_item_from_entity': {
+            const entityInventory = getEntityInventory(state, effect.entity_id);
+            const result = removeItemFromEntityInventory(entityInventory, effect.item_id, effect.quantity ?? DEFAULT_ITEM_QUANTITY);
+            if (result.ok) {
+                outcome.changes.push({
+                    kind: 'item_removed',
+                    target: `entity.${effect.entity_id}.inventory.${effect.item_id}`,
+                    previous: result.data.previous,
+                    next: result.data.next,
+                    delta: -(effect.quantity ?? DEFAULT_ITEM_QUANTITY),
+                    source,
+                });
+            } else {
+                outcome.errors.push(createDialogueError(
+                    result.error.code,
+                    result.error.message,
+                    { entity_id: effect.entity_id, item_id: effect.item_id },
+                ));
+            }
+            return;
+        }
+
         case 'unlock_objective':
             pushResult(unlockObjective(state, effect.objective_id, source), outcome);
             return;
@@ -227,6 +278,64 @@ function applyEffect(effect: DialogueEffect, context: EffectContext, outcome: Ef
             }));
             return;
     }
+}
+
+// ---------------------------------------------------------------------------
+// Entity inventory helpers
+// ---------------------------------------------------------------------------
+
+/**
+ * Gets or creates an entity's inventory from the world state.
+ *
+ * Entity inventories are stored in a separate map within the world state,
+ * keyed by entity id. This allows dialogues to interact with specific
+ * entities' inventories without affecting the player's inventory.
+ */
+function getEntityInventory(state: WorldState, entityId: string): Record<string, number> {
+    if (!state.entityInventories) {
+        state.entityInventories = {};
+    }
+    if (!state.entityInventories[entityId]) {
+        state.entityInventories[entityId] = {};
+    }
+    return state.entityInventories[entityId];
+}
+
+/** Adds an item to an entity's inventory. */
+function addItemToEntityInventory(
+    inventory: Record<string, number>,
+    itemId: string,
+    quantity: number,
+): { ok: true; data: { previous: number; next: number } } | { ok: false; error: { code: DialogueErrorCode; message: string } } {
+    const previous = inventory[itemId] ?? 0;
+    const next = previous + quantity;
+    inventory[itemId] = next;
+    return { ok: true, data: { previous, next } };
+}
+
+/** Removes an item from an entity's inventory. */
+function removeItemFromEntityInventory(
+    inventory: Record<string, number>,
+    itemId: string,
+    quantity: number,
+): { ok: true; data: { previous: number; next: number } } | { ok: false; error: { code: DialogueErrorCode; message: string } } {
+    const previous = inventory[itemId] ?? 0;
+    if (previous < quantity) {
+        return {
+            ok: false,
+            error: {
+                code: 'insufficient_item',
+                message: `Cannot remove ${quantity} of "${itemId}": only ${previous} available.`,
+            },
+        };
+    }
+    const next = previous - quantity;
+    if (next === 0) {
+        delete inventory[itemId];
+    } else {
+        inventory[itemId] = next;
+    }
+    return { ok: true, data: { previous, next } };
 }
 
 /** Records a domain result, ignoring the no-op case. */

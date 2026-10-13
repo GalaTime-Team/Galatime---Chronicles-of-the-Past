@@ -3,10 +3,10 @@ import {
     getElementsData,
 } from "../services/elementService";
 import {
-    consolidateScores,
-    scoresToMultipliers,
-    mapElementWeaknessesToScores,
-    mapElementDamageToScores,
+    combineDefenseScores,
+    elementDefenseScore,
+    scoreToMultiplier,
+    scoreToType,
 } from "../utils/elementUtils";
 
 
@@ -45,44 +45,39 @@ export async function getElementsWeaknesses(
         };
     }
 
-    // Get data for all elements
+    // Get data for all defender elements
     const elementsData = await getElementsData(elementIds);
 
-    // Extract weaknesses of each valid element
-    const allWeaknesses: Record<string, { type: string; score: number }>[] = [];
     const validElements: string[] = [];
+    const defenderElements: any[] = [];
 
-    for (let i = 0; i < elementsData.length; i++) {
-        const element = elementsData[i];
+    for (const element of elementsData) {
         if (element !== null) {
             validElements.push(element.id);
-            // Map all relationships in a single pass
-            const weaknesses = mapElementWeaknessesToScores(element as any);
-            allWeaknesses.push(weaknesses);
+            defenderElements.push(element);
         }
     }
 
-    // Consolidate weaknesses
-    let consolidated = consolidateScores(allWeaknesses);
-
-    // The tooltip lists every common element, exactly like the attack tooltip does, so the
-    // elements that no relationship mentions are completed here as neutral (score 0 -> x1).
-    // Corrupted elements are left out, matching the filter the attack tooltip applies.
+    // The tooltip lists every natural element, exactly like the attack tooltip does, so the
+    // elements that no relationship mentions come out neutral (score 0 -> x1). Each entry is
+    // the SUM of the defender's elements' scores (unmentioned = 0), the single efficacy rule
+    // shared with the combat damage path. Corrupted elements are left out of the LIST,
+    // matching the attack tooltip's filter, but are still summed when they defend.
     const allElements = await getAllElementsDataService();
-    const completeScores: Record<string, { type: string; score: number }> = {};
+    const consolidated: Record<string, { type: string; score: number }> = {};
+    const multipliers: Record<string, { type: string; score: number }> = {};
     for (const element of allElements) {
-        if (element.type !== "common") continue;
-        completeScores[element.id] = consolidated[element.id] ?? { type: "none", score: 0 };
+        if (element.type !== "natural") continue;
+        const score = combineDefenseScores(defenderElements, element.id);
+        consolidated[element.id] = { type: scoreToType(score), score };
+        multipliers[element.id] = { type: scoreToType(score), score: scoreToMultiplier(score) };
     }
 
-    // Convert to damage multipliers
-    const multipliers = scoresToMultipliers(completeScores);
-
     // Sort by elementId (alphabetically)
-    const sortedMultipliers: Record<string, { type: string; score: number }> = Object.keys(completeScores)
+    const sortedMultipliers: Record<string, { type: string; score: number }> = Object.keys(multipliers)
         .sort((a, b) => a.localeCompare(b))
         .reduce((acc, elementId) => {
-            acc[elementId] = multipliers[elementId] ?? { type: "none", score: 1 };
+            acc[elementId] = multipliers[elementId];
             return acc;
         }, {} as Record<string, { type: string; score: number }>);
 
@@ -133,25 +128,22 @@ export async function getElementsDamage(
     // Get data for all possible target elements
     const allTargetElements = await getAllElementsDataService();
 
-    const allOffensiveScores: Record<string, { type: string; score: number }>[] = [];
-
-    // For each target element, determine its defensive score against the input offensive elements
+    // For each target element, SUM its defensive score against each of the input
+    // offensive elements (an element that does not mention the offence contributes 0).
+    const consolidated: Record<string, { type: string; score: number }> = {};
     for (const targetElement of allTargetElements) {
         let combinedScoreForTarget = 0;
-        let targettype = targetElement.type;
         for (const offensiveElementId of elementIds) {
-            // Map the target element's defensive relationships to an offensive score for the input element
-            const scores = mapElementDamageToScores(targetElement, offensiveElementId);
-            combinedScoreForTarget += scores[targetElement.id]?.score || 0;
+            combinedScoreForTarget += elementDefenseScore(targetElement, offensiveElementId);
         }
-        allOffensiveScores.push({ [targetElement.id]: { type: targettype, score: combinedScoreForTarget } });
+        consolidated[targetElement.id] = { type: targetElement.type, score: combinedScoreForTarget };
     }
 
-    // Consolidate scores (this will effectively just take the combined score for each target)
-    let consolidated = consolidateScores(allOffensiveScores);
-
     // Convert to damage multipliers
-    const multipliers = scoresToMultipliers(consolidated);
+    const multipliers: Record<string, { type: string; score: number }> = {};
+    for (const [elementId, entry] of Object.entries(consolidated)) {
+        multipliers[elementId] = { type: entry.type, score: scoreToMultiplier(entry.score) };
+    }
 
     // Sort by elementId (alphabetically)
     const sortedMultipliers: Record<string, { type: string; score: number }> = Object.keys(consolidated)

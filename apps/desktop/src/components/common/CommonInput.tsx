@@ -1,9 +1,21 @@
 import React, { useId, useMemo } from 'react';
 import CommonTooltip from './CommonTooltip';
 
+/** Visual arrangement of the input relative to its title. */
+export type CommonInputVariant =
+    /** Title centered above the input (default). */
+    | 'title-top'
+    /** Title to the left of the input. */
+    | 'title-left'
+    /** No visible title — only the input field. */
+    | 'bare';
+
 interface CommonInputProps {
-    /** Title displayed above the input */
-    title: string;
+    /**
+     * Title displayed with the input: above it for `title-top`, to its left for `title-left`.
+     * For `bare` it is not rendered — it only becomes the input's accessible label.
+     */
+    title?: string;
     /** Optional description */
     description?: string;
     /** Current value */
@@ -18,8 +30,8 @@ interface CommonInputProps {
     disabled?: boolean;
     /** Input type */
     type?: React.HTMLInputTypeAttribute;
-    /** Orientation */
-    orientation?: 'horizontal' | 'vertical';
+    /** Layout of the input. Defaults to `'title-top'`. */
+    variant?: CommonInputVariant;
     /** Show description */
     showDescription?: boolean;
     /** Show character counter */
@@ -58,7 +70,7 @@ const CommonInput: React.FC<CommonInputProps> = ({
     maxCharacters = 100,
     disabled = false,
     type = 'text',
-    orientation = 'horizontal',
+    variant = 'title-top',
     showDescription = false,
     showCounter = false,
     containerClassName = '',
@@ -67,11 +79,22 @@ const CommonInput: React.FC<CommonInputProps> = ({
     descriptionClassName = '',
     counterClassName = '',
 }) => {
-    const isHorizontal = orientation === 'horizontal';
+    const isTitleLeft = variant === 'title-left';
+    const isBare = variant === 'bare';
+    const showTitle = !isBare && Boolean(title);
+    const showInlineDescription = !isTitleLeft && showDescription && Boolean(description);
     const descriptionId = useId();
 
     const characters = useMemo(() => splitGraphemes(value), [value]);
     const characterCount = characters.length;
+
+    // Titled variants keep the compact content-driven width; `bare` fills its container.
+    const widthClassName = isBare ? 'w-full' : 'w-auto min-w-7.5';
+    // Allow callers to override alignment via inputClassName (e.g. `text-right`).
+    const hasCustomAlign = /\btext-(left|center|right|justify|start|end)\b/.test(inputClassName);
+    const alignClassName = hasCustomAlign ? '' : isTitleLeft || isBare ? 'text-left' : 'text-center';
+    const stretchClassName = isBare ? 'w-full' : '';
+    const hasCustomItems = /\bitems-(start|end|center|baseline|stretch)\b/.test(containerClassName);
 
     const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         const nextCharacters = splitGraphemes(e.target.value);
@@ -85,32 +108,34 @@ const CommonInput: React.FC<CommonInputProps> = ({
 
     return (
         <div
-            className={`${isHorizontal
+            className={`${isTitleLeft
                 ? 'flex flex-row items-start justify-between w-full gap-4'
-                : 'flex flex-col items-center w-full'
+                : `flex flex-col w-full ${hasCustomItems ? '' : 'items-center'}`
                 } ${containerClassName}`}
         >
-            <div className={isHorizontal ? 'flex-1' : 'w-full'}>
-                <h2
-                    className={`${isHorizontal
-                        ? 'text-lg text-white'
-                        : 'text-white/70 text-2xl text-center'
-                        } ${titleClassName}`}
-                >
-                    {title}
-                </h2>
-            </div>
+            {showTitle && (
+                <div className={isTitleLeft ? 'flex-1' : 'w-full'}>
+                    <h2
+                        className={`${isTitleLeft
+                            ? 'text-lg text-white'
+                            : 'text-white/70 text-2xl text-center'
+                            } ${titleClassName}`}
+                    >
+                        {title}
+                    </h2>
+                </div>
+            )}
 
             <div
-                className={`relative flex flex-col items-center justify-center ${isHorizontal ? '' : 'mt-1'}`}
+                className={`relative flex flex-col items-center justify-center ${showTitle && !isTitleLeft ? 'mt-1' : ''} ${stretchClassName}`}
             >
                 {/* Description floats above the layout so it is never clipped by the tab panel */}
                 <CommonTooltip
                     content={description}
-                    disabled={!isHorizontal || !showDescription}
+                    disabled={!isTitleLeft || !showDescription}
                     textClassName={descriptionClassName}
                 >
-                    <div className="flex flex-col items-center justify-center">
+                    <div className={`flex flex-col items-center justify-center ${stretchClassName}`}>
                         <input
                             type={type}
                             value={value}
@@ -118,8 +143,8 @@ const CommonInput: React.FC<CommonInputProps> = ({
                             disabled={disabled}
                             placeholder={placeholder}
                             aria-label={title}
-                            aria-describedby={description ? descriptionId : undefined}
-                            className={`bg-transparent border-0 border-b text-lg border-galatime-primary/40 text-white placeholder:text-galatime-primary/40 focus:outline-none focus:ring-0 px-0 w-auto min-w-7.5 leading-2.5 transition ${isHorizontal ? 'text-left' : 'text-center'} ${inputClassName}`}
+                            aria-describedby={showInlineDescription ? descriptionId : undefined}
+                            className={`bg-transparent border-0 border-b text-lg border-galatime-primary/40 text-white placeholder:text-galatime-primary/40 focus:outline-none focus:ring-0 px-0 leading-2.5 transition ${widthClassName} ${alignClassName} ${inputClassName}`}
                         />
 
                         {showCounter && (
@@ -133,8 +158,8 @@ const CommonInput: React.FC<CommonInputProps> = ({
                     </div>
                 </CommonTooltip>
 
-                {/* Description Section — vertical layouts keep the text inline */}
-                {!isHorizontal && showDescription && description && (
+                {/* Description Section — `title-top` and `bare` layouts keep the text inline */}
+                {showInlineDescription && (
                     <div id={descriptionId} className={`mt-1 text-galatime-accent text-xs text-center max-w-xs ${descriptionClassName}`}>
                         {description}
                     </div>

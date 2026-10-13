@@ -1,0 +1,1047 @@
+# Diálogo: test_5
+# Gerado pelo Dialogue Forger. Comentários do ficheiro original não são preservados.
+
+dialogue_id: test_5
+start_node: entra
+nodes:
+  entra:
+    type: character_enter
+    character_id: raphael
+    position: center_left
+    emotion: unsure
+    next: entra_2
+    effects_after:
+      - type: add_relationship
+        character_id: raphael
+        relationship_kind: friendship
+        value: 1
+
+  entra_2:
+    type: character_enter
+    character_id: neven
+    position: center_right
+    emotion: neutral
+    next: fala
+
+  fala:
+    type: line
+    speaker_id: raphael
+    emotion: thinking
+    text:
+      - type: text
+        value: Ok, so if I move my queen over here...
+    next: fala_2
+
+  fala_2:
+    type: line
+    speaker_id: arthur
+    emotion: neutral
+    text:
+      - type: text
+        value: HELLO!? IS ANYONE HOME!?
+    next: fala_3
+
+  fala_3:
+    type: line
+    speaker_id: raphael
+    emotion: neutral
+    text:
+      - type: text
+        value: COME ON IN, BOY! IN THE LIVING ROOM!!
+    next: entra_3
+
+  entra_3:
+    type: character_enter
+    character_id: arthur
+    position: right
+    emotion: neutral
+    next: fala_4
+
+  fala_4:
+    type: line
+    speaker_id: arthur
+    emotion: stressed
+    auto_advance: true
+    text:
+      - type: text
+        value: IT'S AN EMERGENCY!! PA-
+    next: fala_5
+
+  fala_5:
+    type: line
+    speaker_id: arthur
+    emotion: unsure
+    text:
+      - type: text
+        value: What are you two doing?
+    next: fala_6
+
+  fala_6:
+    type: line
+    speaker_id: raphael
+    emotion: neutral
+    text:
+      - type: text
+        value: Just playing a friendly match of chess.
+    next: fala_7
+
+  fala_7:
+    type: line
+    speaker_id: neven
+    emotion: neutral
+    text:
+      - type: text
+        value: ...
+    next: fala_8
+
+  fala_8:
+    type: line
+    speaker_id: raphael
+    emotion: neutral
+    text:
+      - type: text
+        value: Yeah. What's the matter?
+    next: fala_9
+
+  fala_9:
+    type: line
+    speaker_id: arthur
+    emotion: unsure
+    text:
+      - type: text
+        value: R-Right. It doesn't matter.
+    next: fala_10
+
+  fala_10:
+    type: line
+    speaker_id: arthur
+    emotion: stressed
+    text:
+      - type: text
+        value: It's Pacci! A bunch of guys came to fight him and he told me to run! You gotta help him!
+    next: fala_11
+
+  fala_11:
+    type: line
+    speaker_id: neven
+    emotion: suspicious
+    text:
+      - type: text
+        value: ...
+    next: fala_12
+
+  fala_12:
+    type: line
+    speaker_id: raphael
+    emotion: neutral
+    text:
+      - type: text
+        value: "I wouldn't worry to much about it. He's not only a respected guard in the city, but I also trained that boy myself. I'm sure he can handle "
+      - type: interactive_text
+        interaction_id: id
+        value: whoever wants a piece of him
+        optional: true
+        on_click:
+          next: fala_19
+      - type: text
+        value: .
+    next: fala_13
+
+  fala_13:
+    type: line
+    speaker_id: neven
+    emotion: neutral
+    text:
+      - type: text
+        value: ...
+    next: fala_14
+
+  fala_14:
+    type: line
+    speaker_id: raphael
+    emotion: neutral
+    text:
+      - type: text
+        value: "Of course, Neven. We can go look for him "
+      - type: styled_text
+        value: after
+        style:
+          bold: true
+      - type: text
+        value: " we finish this game."
+    next: fala_15
+
+  fala_15:
+    type: line
+    speaker_id: arthur
+    emotion: suspicious
+    text:
+      - type: text
+        value: (He didn't even say anything.)
+    next: fala_16
+
+  fala_16:
+    type: line
+    speaker_id: raphael
+    emotion: happy
+    text:
+      - type: text
+        value: "Arthur, please, sit with us. You're about to watch me finally "
+      - type: styled_text
+        value: play
+        style:
+          bold: true
+      - type: text
+        value: " Neven here."
+    next: fala_17
+
+  fala_17:
+    type: line
+    speaker_id: neven
+    emotion: neutral
+    text:
+      - type: text
+        value: ...
+    next: fala_18
+
+  fala_18:
+    type: line
+    speaker_id: arthur
+    emotion: unsure
+    text:
+      - type: text
+        value: ...
+    next: fim
+
+  fim:
+    type: end
+    result: bad
+
+  fala_19:
+    type: line
+    speaker_id: arthur
+    emotion: stressed
+    text:
+      - type: text
+        value: I don't know. That mummy and nun looked like they knew what they were doing.
+    next: fala_20
+
+  fala_20:
+    type: line
+    speaker_id: neven
+    emotion: surprised
+    text:
+      - type: text
+        value: "!"
+    next: fala_21
+
+  fala_21:
+    type: line
+    speaker_id: raphael
+    emotion: neutral
+    text:
+      - type: text
+        value: ...
+    next: fala_22
+
+  fala_22:
+    type: line
+    speaker_id: raphael
+    emotion: annoyed
+    text:
+      - type: styled_text
+        value: What?
+        style:
+          bold: true
+      - type: text
+        value: " "
+    next: fala_23
+
+  fala_23:
+    type: line
+    speaker_id: arthur
+    emotion: neutral
+    text:
+      - type: text
+        value: Hm?
+    next: fala_24
+
+  fala_25:
+    type: line
+    speaker_id: neven
+    emotion: surprised
+    text:
+      - type: text
+        value: "*Gets up*"
+    next: sai
+
+  fala_24:
+    type: line
+    speaker_id: raphael
+    emotion: frustrated
+    text:
+      - type: text
+        value: "Neven, go and help your brother, "
+      - type: styled_text
+        value: NOW
+        style:
+          bold: true
+      - type: text
+        value: .
+    next: fala_25
+
+  sai:
+    type: character_exit
+    character_id: neven
+    next: fala_26
+
+  fala_26:
+    type: line
+    speaker_id: raphael
+    emotion: angry
+    text:
+      - type: text
+        value: "Arthur, tell me "
+      - type: styled_text
+        value: everything
+        style:
+          bold: true
+          wave: normal
+          wave_speed: 0.8
+      - type: text
+        value: " that happened."
+    next: fala_27
+
+  fala_27:
+    type: line
+    speaker_id: arthur
+    emotion: stressed
+    text:
+      - type: text
+        value: O-ok.
+    next: fala_28
+
+  fala_28:
+    type: line
+    speaker_id: arthur
+    emotion: stressed
+    text:
+      - type: text
+        value: So I was returning with Pacci from grocery shopping. We were talking about Nevens birthday. And then suddenly, this mummy and this nun appeared in front of us.
+    next: fala_29
+
+  fala_29:
+    type: line
+    speaker_id: raphael
+    emotion: annoyed
+    text:
+      - type: text
+        value: Right. And?
+    next: fala_30
+
+  fala_30:
+    type: line
+    speaker_id: arthur
+    emotion: thinking
+    text:
+      - type: text
+        value: Well... The nun started to say something about "needing Pacci" and for me to "go and tell Neven that Alice wants to see him". I looked at Pacci and he looked confused.
+    next: fala_31
+
+  fala_31:
+    type: line
+    speaker_id: raphael
+    emotion: annoyed
+    text:
+      - type: text
+        value: ... Go on.
+    next: fala_32
+
+  fala_32:
+    type: line
+    speaker_id: arthur
+    emotion: stressed
+    text:
+      - type: text
+        value: He stood like that for a while, gave me these bags, and told me to call you. That's when the mummy started to attack me. Thankfully, Pacci blocked it, but he's probably still fighting those two.
+    next: ramificacao
+
+  ramificacao:
+    type: conditional
+    branches:
+      - branch_id: ramo
+        if:
+          all:
+            - condition: equals
+              left: relationship.raphael.friendship
+              right: 0
+        next: escolha
+      - branch_id: ramo_2
+        if:
+          all:
+            - condition: greater_than
+              left: relationship.raphael.friendship
+              right: 0
+        next: fala_44
+      - branch_id: caso_padrão
+        next: error
+
+  escolha:
+    type: choice
+    prompt:
+      speaker_id: raphael
+      emotion: angry
+      text:
+        - type: text
+          value: "Arthur, "
+        - type: styled_text
+          value: stay here
+          style:
+            bold: true
+        - type: text
+          value: . I'm going to help those two.
+    choices:
+      - choice_id: opcao
+        text: Comply
+        next: fala_33
+      - choice_id: opcao_2
+        text: Protest
+        next: fala_35
+
+  fala_33:
+    type: line
+    speaker_id: arthur
+    emotion: afraid
+    text:
+      - type: styled_text
+        value: O-ok, I will. Be careful.
+        style:
+          shake: light
+      - type: text
+        value: " "
+    next: fala_34
+
+  fala_34:
+    type: line
+    speaker_id: raphael
+    emotion: angry
+    text:
+      - type: text
+        value: Thanks...
+    next: fim_2
+
+  fala_35:
+    type: line
+    speaker_id: arthur
+    emotion: stressed
+    text:
+      - type: text
+        value: I-I'm going with you.
+    next: fala_36
+
+  fala_36:
+    type: line
+    speaker_id: raphael
+    emotion: frustrated
+    text:
+      - type: text
+        value: I appreciate the sentiment, but I can't let you get into harms way.
+    next: fala_37
+    effects_after:
+      - type: add_relationship
+        character_id: raphael
+        relationship_kind: friendship
+        value: 1
+
+  fala_37:
+    type: line
+    speaker_id: arthur
+    emotion: annoyed
+    auto_advance: true
+    text:
+      - type: text
+        value: But-
+    next: fala_38
+
+  fala_38:
+    type: line
+    speaker_id: raphael
+    emotion: angry
+    text:
+      - type: styled_text
+        value: I am not asking.
+        style:
+          bold: true
+          speed_multiplier: 0.8
+    next: fala_39
+
+  fala_39:
+    type: line
+    speaker_id: arthur
+    emotion: surprised
+    text:
+      - type: text
+        value: "!"
+    next: fala_40
+
+  fala_40:
+    type: line
+    speaker_id: raphael
+    emotion: angry
+    text:
+      - type: text
+        value: ...
+    next: fala_41
+
+  fala_41:
+    type: line
+    speaker_id: raphael
+    emotion: frustrated
+    text:
+      - type: text
+        value: "I... I'm sorry Arthur. But this is bigger that you. "
+    next: fala_42
+
+  fala_42:
+    type: line
+    speaker_id: raphael
+    emotion: neutral
+    text:
+      - type: text
+        value: Please, just stay here. I won't be gone for long.
+    next: fala_43
+
+  fala_43:
+    type: line
+    speaker_id: arthur
+    emotion: unsure
+    text:
+      - type: text
+        value: ... Ok...
+    next: fim_2
+
+  fim_2:
+    type: end
+    result: neutral
+
+  fala_44:
+    type: line
+    speaker_id: raphael
+    emotion: angry
+    text:
+      - type: text
+        value: Arthur, leave the bags here and come with me.
+    next: fala_45
+
+  fala_45:
+    type: line
+    speaker_id: arthur
+    emotion: afraid
+    text:
+      - type: styled_text
+        value: R-right.
+        style:
+          wave: normal
+          wave_speed: 0.8
+    next: fala_46
+    effects_after:
+      - type: remove_item
+        item_id: Groceries
+        quantity: 1
+
+  fala_46:
+    type: line
+    speaker_id: raphael
+    emotion: angry
+    text:
+      - type: styled_text
+        value: ...
+        style:
+          speed_multiplier: 0.5
+    next: escolha_2
+
+  escolha_2:
+    type: choice
+    prompt:
+      speaker_id: arthur
+      emotion: unsure
+      text:
+        - type: text
+          value: (I've never seen him like this. Should I ask him about it?)
+    choices:
+      - choice_id: opcao
+        text: Question situation
+        visible_if:
+          all:
+            - condition: not_equals
+              left: dialogues.seen
+              right: fala_47
+        enabled_if:
+          all:
+            - condition: not_equals
+              left: dialogues.seen
+              right: fala_47
+        next: fala_47
+      - choice_id: opcao_2
+        text: Ask about Zachary
+        visible_if:
+          all:
+            - condition: equals
+              left: dialogues.seen
+              right: fala_47
+            - condition: not_equals
+              left: dialogues.seen
+              right: fala_51
+        enabled_if:
+          all:
+            - condition: equals
+              left: dialogues.seen
+              right: fala_47
+            - condition: not_equals
+              left: dialogues.seen
+              right: fala_51
+        next: fala_51
+      - choice_id: opcao_3
+        text: Ask about Dhalia
+        visible_if:
+          all:
+            - condition: equals
+              left: dialogues.seen
+              right: fala_47
+            - condition: not_equals
+              left: dialogues.seen
+              right: fala_57
+        enabled_if:
+          all:
+            - condition: equals
+              left: dialogues.seen
+              right: fala_47
+            - condition: not_equals
+              left: dialogues.seen
+              right: fala_57
+        next: fala_57
+      - choice_id: opcao_4
+        text: Ask about the brothers
+        visible_if:
+          all:
+            - condition: not_equals
+              left: dialogues.seen
+              right: fala_66
+        enabled_if:
+          all:
+            - condition: not_equals
+              left: dialogues.seen
+              right: fala_66
+        next: fala_66
+      - choice_id: opcao_5
+        text: Don't question the situation
+        next: fala_78
+
+  fala_47:
+    type: line
+    speaker_id: arthur
+    emotion: neutral
+    text:
+      - type: text
+        value: So, what exactly is going on? I've never seen you like this.
+    next: fala_48
+
+  fala_48:
+    type: line
+    speaker_id: raphael
+    emotion: frustrated
+    text:
+      - type: text
+        value: "Zachary and Dhalia... They're the people behind the whole "
+      - type: interactive_text
+        interaction_id: id
+        value: "\"melted humans\""
+        optional: false
+        on_click:
+          next: fala_49
+      - type: text
+        value: " thing."
+    next: fala_49
+
+  fala_49:
+    type: line
+    speaker_id: arthur
+    emotion: suspicious
+    text:
+      - type: text
+        value: What? I thought that that was Kelly and that Ttelion girl.
+    next: fala_50
+
+  fala_50:
+    type: line
+    speaker_id: raphael
+    emotion: frustrated
+    text:
+      - type: text
+        value: I'm afraid that it's not only them. Those two were also making amalgams. Though why are they doing it separately from Kelly, we don't know it yet.
+    next: ramificacao_2
+
+  fala_51:
+    type: line
+    speaker_id: arthur
+    emotion: suspicious
+    text:
+      - type: text
+        value: So who's this Zachary guy? And why is he dressed like a mummy?
+    next: fala_52
+
+  fala_52:
+    type: line
+    speaker_id: raphael
+    emotion: annoyed
+    text:
+      - type: text
+        value: He's one the greatest alchemists of the nation. His work is as great as those of the alchemists of SISO, if not more.
+    next: fala_53
+
+  fala_53:
+    type: line
+    speaker_id: raphael
+    emotion: frustrated
+    text:
+      - type: text
+        value: He was also... my old teacher.
+    next: fala_54
+
+  fala_54:
+    type: line
+    speaker_id: arthur
+    emotion: surprised
+    text:
+      - type: text
+        value: He was your teacher!?
+    next: fala_55
+
+  fala_55:
+    type: line
+    speaker_id: raphael
+    emotion: frustrated
+    text:
+      - type: text
+        value: Yes. But that's all in the past.
+    next: fala_56
+
+  fala_56:
+    type: line
+    speaker_id: arthur
+    emotion: unsure
+    text:
+      - type: text
+        value: ...
+    next: ramificacao_2
+
+  fala_57:
+    type: line
+    speaker_id: arthur
+    emotion: suspicious
+    text:
+      - type: text
+        value: So, who's Dhalia? I never took you as a religious person.
+    next: fala_58
+
+  fala_58:
+    type: line
+    speaker_id: raphael
+    emotion: neutral
+    text:
+      - type: text
+        value: Oh no no no. I'm not the religious type.
+    next: fala_59
+
+  fala_59:
+    type: line
+    speaker_id: raphael
+    emotion: unsure
+    text:
+      - type: text
+        value: Dhalia is... An interesting woman. I've never met ever myself.
+    next: fala_60
+
+  fala_60:
+    type: line
+    speaker_id: arthur
+    emotion: thinking
+    text:
+      - type: text
+        value: Really? Then how do you know her?
+    next: fala_61
+
+  fala_61:
+    type: line
+    speaker_id: raphael
+    emotion: neutral
+    text:
+      - type: text
+        value: "When I was learning about alchemy many years ago, my teacher used to mention her name during our ingredient gathering trips. I remember him always saying:"
+    next: fala_62
+
+  fala_62:
+    type: line
+    speaker_id: raphael
+    emotion: thinking
+    text:
+      - type: styled_text
+        value: Raphael, if you ever want to be a great alchemist, get someone who can always get you more ingredients.
+        style:
+          italic: true
+    next: fala_63
+
+  fala_63:
+    type: line
+    speaker_id: raphael
+    emotion: neutral
+    text:
+      - type: text
+        value: At the time, I thought it was just a simple advice. But now...
+    next: fala_64
+
+  fala_64:
+    type: line
+    speaker_id: raphael
+    emotion: angry
+    text:
+      - type: text
+        value: "I fear that they see the brothers as their new "
+      - type: styled_text
+        value: "\"ingredients\"."
+        style:
+          bold: true
+          italic: true
+          speed_multiplier: 0.8
+    next: fala_65
+
+  fala_65:
+    type: line
+    speaker_id: arthur
+    emotion: afraid
+    text:
+      - type: text
+        value: "*gulp*"
+    next: ramificacao_2
+
+  fala_66:
+    type: line
+    speaker_id: arthur
+    emotion: neutral
+    text:
+      - type: text
+        value: Say Raphael, how did you met Neven and Pacci?
+    next: fala_67
+
+  fala_67:
+    type: line
+    speaker_id: raphael
+    emotion: neutral
+    text:
+      - type: text
+        value: ... Years ago, when I moved to Celordion, I used to be a merchant instead of an alchemist.
+    next: fala_68
+
+  fala_68:
+    type: line
+    speaker_id: arthur
+    emotion: surprised
+    text:
+      - type: text
+        value: Wow, really!?
+    next: fala_69
+
+  fala_69:
+    type: line
+    speaker_id: raphael
+    emotion: neutral
+    text:
+      - type: text
+        value: Yes. Although, I was a terrible merchant. So bad in fact, I could barely pay the bills.
+    next: fala_70
+
+  fala_70:
+    type: line
+    speaker_id: arthur
+    emotion: neutral
+    text:
+      - type: text
+        value: (Yeah. That sounds about right.)
+    next: fala_71
+
+  fala_71:
+    type: line
+    speaker_id: raphael
+    emotion: neutral
+    text:
+      - type: text
+        value: Whoever, during one of many slow days that plagued my business, two young boys entered into my store wearing dirty rags and with a rare ingredient. The oldest was around 14 years old, while the youngest was around 11.
+    next: fala_72
+
+  fala_72:
+    type: line
+    speaker_id: arthur
+    emotion: unsure
+    text:
+      - type: text
+        value: Were those... Pacci and Neven?
+    next: fala_73
+
+  fala_73:
+    type: line
+    speaker_id: raphael
+    emotion: neutral
+    text:
+      - type: text
+        value: Yes. When they came into my store, those two were orphans who've been surviving in the forest for years. So, feeling pity for them, I gave them a home and a job in my store. Ever since that day, we've been together ever since.
+    next: fala_74
+
+  fala_74:
+    type: line
+    speaker_id: arthur
+    emotion: happy
+    text:
+      - type: text
+        value: Aw. That's such a nice story. You're basically their father now.
+    next: fala_75
+
+  fala_75:
+    type: line
+    speaker_id: raphael
+    emotion: happy
+    text:
+      - type: text
+        value: "Ohoh, I would go as far as calling me "
+      - type: styled_text
+        value: their father.
+        style:
+          italic: true
+      - type: text
+        value: " But they are like family to me."
+    next: fala_76
+
+  fala_76:
+    type: line
+    speaker_id: raphael
+    emotion: angry
+    text:
+      - type: text
+        value: "Which is why I'm going to make sure that messing with them will be the last mistake "
+      - type: styled_text
+        value: those idiots ever make!
+        style:
+          bold: true
+    next: fala_77
+
+  fala_77:
+    type: line
+    speaker_id: arthur
+    emotion: afraid
+    text:
+      - type: text
+        value: ...
+    next: ramificacao_2
+
+  fala_78:
+    type: line
+    speaker_id: arthur
+    emotion: surprised
+    text:
+      - type: text
+        value: (He looks like he's going to blow up. I should just leave him be.)
+    next: fala_79
+    effects_after:
+      - type: add_relationship
+        character_id: raphael
+        relationship_kind: friendship
+        value: -1
+
+  ramificacao_2:
+    type: conditional
+    branches:
+      - branch_id: ramo
+        if:
+          any:
+            - all:
+                - condition: not_equals
+                  left: dialogues.seen
+                  right: fala_47
+                - condition: not_equals
+                  left: dialogues.seen
+                  right: fala_51
+                - condition: not_equals
+                  left: dialogues.seen
+                  right: fala_57
+                - condition: not_equals
+                  left: dialogues.seen
+                  right: fala_66
+            - all:
+                - condition: not_equals
+                  left: dialogues.seen
+                  right: fala_78
+        next: escolha_2
+      - branch_id: ramo_2
+        if:
+          all:
+            - condition: equals
+              left: dialogues.seen
+              right: fala_47
+            - condition: equals
+              left: dialogues.seen
+              right: fala_51
+            - condition: equals
+              left: dialogues.seen
+              right: fala_57
+            - condition: equals
+              left: dialogues.seen
+              right: fala_66
+        next: fala_79
+      - branch_id: caso_padrão
+        next: error
+
+  fala_79:
+    type: line
+    speaker_id: raphael
+    emotion: frustrated
+    text:
+      - type: text
+        value: ...
+    next: fala_80
+
+  fala_80:
+    type: line
+    speaker_id: arthur
+    emotion: surprised
+    text:
+      - type: text
+        value: There they are! And they're still fighting!
+    next: fala_81
+
+  fala_81:
+    type: line
+    speaker_id: raphael
+    emotion: frustrated
+    text:
+      - type: text
+        value: Not for long!
+    next: fala_82
+
+  fala_82:
+    type: line
+    speaker_id: raphael
+    emotion: angry
+    text:
+      - type: styled_text
+        value: HEY A"#$%=&S!! IT'S TIME FOR ROUND 2!!
+        style:
+          bold: true
+          speed_multiplier: 1.2
+    next: fim_3
+
+  fim_3:
+    type: end
+    result: good
+
+  error:
+    type: end
+    result: error

@@ -75,11 +75,22 @@ export default function CommonImage({
       return undefined;
     }
 
+    /**
+     * Measures the box the sprite fills.
+     *
+     * `offsetWidth`/`offsetHeight` are layout metrics, so they ignore a transform on an
+     * ancestor - `getBoundingClientRect()` does not. That distinction matters: a unit that
+     * mounts while an animation is scaling it (a summons popping onto the field) would
+     * otherwise be rasterised at the scaled-down size and then stretched over its whole box,
+     * i.e. permanently soft, because nothing re-measures it once the animation ends.
+     * `canvas.width` is an integer anyway, so the sub-pixel precision of a rect buys nothing.
+     */
     const measure = () => {
-      const rect = wrapper.getBoundingClientRect();
+      const width = wrapper.offsetWidth;
+      const height = wrapper.offsetHeight;
       // A single known axis is enough: the other one comes from the source aspect ratio once the
       // image has loaded, and this effect runs again on the resize that follows.
-      if (rect.width === 0 && rect.height === 0) {
+      if (width === 0 && height === 0) {
         return;
       }
 
@@ -87,8 +98,8 @@ export default function CommonImage({
         const next: RenderState = {
           mode: getImageRenderingMode(),
           interfaceZoom: getInterfaceZoom(),
-          width: rect.width,
-          height: rect.height,
+          width,
+          height,
         };
         return previous.mode === next.mode
           && previous.interfaceZoom === next.interfaceZoom

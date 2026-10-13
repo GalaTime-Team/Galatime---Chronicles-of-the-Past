@@ -5,7 +5,7 @@ import type {
     ConditionNode,
 } from '../../types/DialogueType';
 import type { FlagValue, WorldState } from '../../types/WorldStateType';
-import { toFiniteNumber } from '../../utils/dialogueUtils';
+import { toFiniteNumber, toStateBoolean } from '../../utils/dialogueUtils';
 import type { StatePathValue } from '../state/worldStateService';
 import { readStatePath } from '../state/worldStateService';
 
@@ -82,17 +82,24 @@ export function evaluateLeaf(leaf: ConditionLeaf, state: WorldState): boolean {
 /**
  * Compares a state value against a literal.
  *
- * Scalar comparison is strict, so a number never equals its string form and
- * authored values must be quoted consistently. A list is compared by
- * membership (`equals: some_dialogue_id` reads as "has already seen it"),
- * while numeric operators compare the list length.
+ * A boolean literal is a yes/no question about the entry rather than a value to
+ * match, so it is answered by `toStateBoolean`. That is what lets a branch ask
+ * the two questions it always ends up asking — "which option did the player
+ * pick?" about a flag, and "is the player carrying this?" about an inventory
+ * count — without the writer having to guess whether the entry is currently `1`,
+ * `0` or not there yet.
+ *
+ * Every other comparison stays strict, so a number never equals its quoted
+ * string form and authored text values must be quoted consistently. A list is
+ * compared by membership (`equals: some_dialogue_id` reads as "has already seen
+ * it"), while numeric operators compare the list length.
  */
 export function compareValues(
     operator: ComparisonOperator,
     left: StatePathValue,
     right: FlagValue | null,
 ): boolean {
-    if (Array.isArray(left)) {
+    if (Array.isArray(left) && !isBooleanQuestion(left, right)) {
         switch (operator) {
             case 'equals':
                 return right !== null && left.includes(String(right));
@@ -105,6 +112,22 @@ export function compareValues(
                     : compareNumbers(operator, left.length, expectedLength);
             }
         }
+    }
+
+    if (isBooleanQuestion(left, right)) {
+        const leftAnswer = toStateBoolean(left);
+        const rightAnswer = toStateBoolean(right);
+
+        if (operator === 'equals') {
+            return leftAnswer === rightAnswer;
+        }
+
+        if (operator === 'not_equals') {
+            return leftAnswer !== rightAnswer;
+        }
+
+        // An ordering has no meaning for a yes/no answer, so it falls through to
+        // the numeric path below, where a non-numeric side fails the comparison.
     }
 
     if (operator === 'equals') {
@@ -123,6 +146,29 @@ export function compareValues(
     }
 
     return compareNumbers(operator, numericLeft, numericRight);
+}
+
+/**
+ * Whether a comparison against this pair should be read as a yes/no question.
+ *
+ * Only a boolean against something that has no words in it qualifies. Text is
+ * left out on purpose: `flags.mood = true` must not quietly match
+ * `flags.mood = "brave"`, because a named flag is a choice of words and the
+ * writer spelled one out. An absent entry does qualify, so `= false` covers
+ * "never set".
+ */
+function isBooleanQuestion(left: StatePathValue, right: FlagValue | null): boolean {
+    if (typeof left !== 'boolean' && typeof right !== 'boolean') {
+        return false;
+    }
+
+    return isAnswerable(left) && isAnswerable(right);
+}
+
+/** Whether a value can be answered yes or no, i.e. it is not free text. */
+function isAnswerable(value: StatePathValue | FlagValue | null): boolean {
+    return typeof value === 'boolean' || typeof value === 'number' || Array.isArray(value)
+        || value === null;
 }
 
 /** Numeric comparison. Ordering operators on non-numbers never reach here. */

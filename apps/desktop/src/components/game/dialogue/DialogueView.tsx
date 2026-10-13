@@ -10,7 +10,7 @@ import {
 } from '../../../hooks/useDialogueSession';
 import { useElementWidth } from '../../../hooks/useElementWidth';
 import { resolveVisibleCharacterCap } from '../../../services/dialogueCastService';
-import { DIALOGUE_AUTO_CLOSE_HOLD_MS, DIALOGUE_DEFAULT_TEXT_SPEED } from '../../../constants/DialogueConstants';
+import { DIALOGUE_AUTO_CLOSE_HOLD_MS } from '../../../constants/DialogueConstants';
 import GameDialogue, { type GameDialogueHandle } from './GameDialogue';
 import { DialogueChoiceList } from './DialogueChoiceList';
 import { DialogueCastStage } from './DialogueCastStage';
@@ -67,7 +67,7 @@ export function DialogueView({
     dialogueId,
     worldState,
     sessionKey,
-    textSpeed = DIALOGUE_DEFAULT_TEXT_SPEED,
+    textSpeed,
     reduceMotion = false,
     onSessionChange,
     onFinished,
@@ -76,7 +76,15 @@ export function DialogueView({
     className = '',
     stageClassName = '',
 }: DialogueViewProps) {
-    const { registerModalLayer } = useGame();
+    const { registerModalLayer, gameState } = useGame();
+
+    /**
+     * What the line types at when the caller pinned no speed of its own: the
+     * player's setting, so Settings → Game sets the tempo of every conversation.
+     * `GameDialogue` still falls back to the default when neither is there.
+     */
+    const baseTextSpeed = textSpeed ?? gameState.settings.dialogueTextSpeed;
+
     const session = useDialogueSession();
     const dialogueRef = useRef<GameDialogueHandle>(null);
     const [selectedIndex, setSelectedIndex] = useState(0);
@@ -335,7 +343,7 @@ export function DialogueView({
                         ref={dialogueRef}
                         speakerName={speakerName}
                         segments={segments}
-                        textSpeed={textSpeed}
+                        textSpeed={baseTextSpeed}
                         // A choice node is answered by the list, not by the box.
                         showIndicator={node?.next_action === 'continue'}
                         // The line drives itself when the author said so; a choice

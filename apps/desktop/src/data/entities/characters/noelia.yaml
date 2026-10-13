@@ -8,9 +8,8 @@ weight: "45 kg"
 birthday: "Jul 10"
 origin: Atlaria
 description: >
-  An innocent-looking little girl, with a very explosive personality.
-  She was a member of the Imperial Guards to bring the country down, 
-  could she be behind all of this?
+  Noelia has long, dark brown hair parted down the middle, and she wears gold earrings. She wears a scarf and a silver necklace layered over a white turtleneck shirt. She wears a grey knit jacket with short sleeves over the shirt. She is wearing a simple black skirt, cinched with a grey belt featuring a gold buckle. This is paired with tights and black knee-high boots. A large gold ring sits on her left index finger.
+
 
 elements:
   - corrupted_day
@@ -33,21 +32,3 @@ skills:
 
 
 weapon:
-  id: cast_rapier
-  name: Cast Rapier
-  element: inanus
-  damage_type: physical
-  target: individual
-  hits: 1
-  accuracy: 0.95
-  power: 85
-  stamina_cost: 2
-  damage_variance: [0.4, 1.1]
-
-loot:
-  - item: imperial_guard_crest
-    chance: 1.0
-  - item: crude_blade
-    chance: 0.4
-  - item: potion_small
-    chance: 0.6

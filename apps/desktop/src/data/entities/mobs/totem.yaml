@@ -26,14 +26,6 @@ skills:
   - light_heal
 
 weapon:
-  id: radiant_core
-  name: Radiant Core
-  element: lux
-  damage_type: magical
-  target: individual
-  power: 12
-  stamina_cost: 1
-  damage_variance: [0.9, 1.1]
 
 loot:
   - item_id: gold_coin
@@ -46,27 +38,6 @@ loot:
     quantity: 1
     chance: 0.2
 
-abilities:
-  - ability_name: Sanctified Glow
-    condition:
-      type: on_turn
-      interval: 3
-    action:
-      type: heal
-      percent: 0.08
-    keep_triggered_after_once: true
-    activation_message: "The Totem glows softly and repairs its cracks."
-
-  - ability_name: Gleaming Ward
-    condition:
-      type: on_hit
-      damage_type: magical
-    action:
-      type: buff_self
-      buff:
-        magical_defense: 8
-        physical_defense: 4
-      duration: 2
-    keep_triggered_after_once: true
-    activation_message: "A bright ward forms around the Totem."
+ai:
+  style: support
 

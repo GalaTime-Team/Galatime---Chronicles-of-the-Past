@@ -38,9 +38,13 @@
         // the kind are both required — and a half-written path in the menu is
         // worse than none at all.
         relationshipKinds: Forger.model.RELATIONSHIP_KINDS.slice(),
+        // The two words that answer "does the player have this?" — offered so a
+        // boolean is a pick from a list rather than four remembered keystrokes.
+        literals: ['true', 'false'],
         paths: [
             'flags.', 'inventory.', 'stats.', 'objectives.',
-            'time.hour', 'dialogues.seen', 'paths.unlocked',
+            'time.hour', 'time.day', 'dialogues.seen', 'dialogues.unlocked',
+            'paths.unlocked',
         ],
     };
 
@@ -103,14 +107,22 @@
     /**
      * A labelled control.
      *
+     * `hint` may be a string or an already-built node, so a hint that has to
+     * follow the control it describes can be updated in place instead of being
+     * rebuilt around it.
+     *
      * `options.required` marks it with the same `*` the identity panel shows on
      * "ID do diálogo", via `markRequired` so both paths look identical.
      */
     function field(label, control, hint, options) {
+        var hintNode = !hint
+            ? null
+            : (hint instanceof window.Node ? hint : el('span', { class: 'field-hint', text: hint }));
+
         var node = el('label', { class: 'field' }, [
             el('span', { class: 'field-label', text: label }),
             control,
-            hint ? el('span', { class: 'field-hint', text: hint }) : null,
+            hintNode,
         ]);
 
         return options && options.required ? markRequired(node) : node;
@@ -211,28 +223,18 @@
     }
 
     /**
-     * A dropdown.
+     * Fills a dropdown, keeping a value it does not offer as a marked entry.
      *
-     * When the current value is not among the options it is added as a marked
-     * entry, so the control shows what the file actually says instead of
-     * silently jumping to the first option.
+     * So the control shows what the file actually says instead of silently
+     * jumping to the first option. Shared with the callers that repopulate a
+     * dropdown in place, so that rule is spelled the same way everywhere.
      */
-    function select(options) {
-        var choices = options.options || [];
-        var values = choices.map(function (choice) {
+    function fillSelect(node, options, current) {
+        var values = options.map(function (choice) {
             return typeof choice === 'string' ? choice : choice.value;
         });
 
-        var node = el('select', {
-            class: 'input',
-            on: {
-                change: function (event) {
-                    options.onChange(event.target.value);
-                },
-            },
-        });
-
-        var current = options.value == null ? '' : options.value;
+        node.textContent = '';
 
         if (current && values.indexOf(current) === -1) {
             node.appendChild(el('option', {
@@ -241,16 +243,38 @@
             }));
         }
 
-        choices.forEach(function (choice) {
+        options.forEach(function (choice) {
             node.appendChild(el('option', {
                 value: typeof choice === 'string' ? choice : choice.value,
                 text: typeof choice === 'string' ? choice : choice.label,
             }));
         });
 
-        node.value = current;
+        node.value = current || '';
 
         return node;
+    }
+
+    /**
+     * A dropdown.
+     *
+     * When the current value is not among the options it is added as a marked
+     * entry, so the control shows what the file actually says instead of
+     * silently jumping to the first option.
+     */
+    function select(options) {
+        return fillSelect(
+            el('select', {
+                class: 'input',
+                on: {
+                    change: function (event) {
+                        options.onChange(event.target.value);
+                    },
+                },
+            }),
+            options.options || [],
+            options.value == null ? '' : options.value,
+        );
     }
 
     /** A button. */
@@ -382,6 +406,7 @@
         textarea: textarea,
         checkbox: checkbox,
         select: select,
+        fillSelect: fillSelect,
         button: button,
         row: row,
         block: block,

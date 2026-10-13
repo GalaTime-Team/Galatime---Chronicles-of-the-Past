@@ -16,6 +16,7 @@ import {
     toSkillTreeReference,
     toPublicAttack,
 } from './contentGraphService';
+import { applySkillLevel, parseSkillLevelId } from './combat/skillLevels';
 
 const SKILLS_GLOB_PREFIX = '../data/combat/skills/';
 
@@ -119,6 +120,41 @@ export async function getAttack(attackId: string): Promise<PublicAttack | null> 
     const { catalog } = await loadContent();
     const skill = catalog.skills.find((entry) => entry.id === attackId);
     return skill ? toPublicAttack(skill) : null;
+}
+
+/** A skill id resolved to its definition, including its upgrade tier. */
+export interface ResolvedAttack {
+    /** The definition to use: the base skill, rebalanced when `level > 1`. */
+    attack: PublicAttack;
+    /** 1 for an authored id, 2–5 for `[id]_II` … `[id]_V`. */
+    level: number;
+    /** The catalogue id the tier derives from (`freeze_ii` → `freeze`). */
+    baseId: string;
+}
+
+/**
+ * Resolves a skill id the way gameplay reads it, upgrade tiers included.
+ *
+ * The catalogue only authors base skills, so `[id]_II` … `[id]_V` are not in
+ * `skills.yaml` — they resolve to the base skill with {@link applySkillLevel}
+ * applied (`freeze_ii` → `Freeze II`, level 2, +15% power, +5% cost).
+ *
+ * An exact catalogue hit always wins (an authored id is never reinterpreted),
+ * and an unknown id returns `null` — matching `getAttack`.
+ */
+export async function resolveAttack(attackId: string): Promise<ResolvedAttack | null> {
+    const { catalog } = await loadContent();
+
+    const authored = catalog.skills.find((entry) => entry.id === attackId);
+    if (authored) return { attack: toPublicAttack(authored), level: 1, baseId: authored.id };
+
+    const { baseId, level } = parseSkillLevelId(attackId);
+    if (level <= 1) return null;
+
+    const base = catalog.skills.find((entry) => entry.id === baseId);
+    if (!base) return null;
+
+    return { attack: applySkillLevel(toPublicAttack(base), level), level, baseId };
 }
 
 export async function getAttackRequirementsData(attackId: string, includeDependencies = false) {

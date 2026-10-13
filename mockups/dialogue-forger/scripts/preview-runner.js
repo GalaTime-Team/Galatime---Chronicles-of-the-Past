@@ -34,7 +34,7 @@
 
         return {
             flags: Object.assign({}, source.flags),
-            inventory: Object.assign({}, source.inventory),
+            inventory: normalizeInventory(source.inventory),
             relationship: copyRelationships(source.relationship),
             objectives: normalizeObjectives(source.objectives),
             stats: Object.assign({}, source.stats),
@@ -45,6 +45,28 @@
             },
             paths: { unlocked: ((source.paths || {}).unlocked || []).slice() },
         };
+    }
+
+    /**
+     * O inventário é sempre uma contagem.
+     *
+     * O YAML do painel de pré-visualização não é verificado, por isso um `true`
+     * escrito à mão chega aqui como valor. O motor converte-o para `1` ou `0` e
+     * este caminho faz o mesmo, para a pré-visualização não aceitar um estado
+     * que o jogo jamais produziria.
+     */
+    function normalizeInventory(input) {
+        var output = {};
+
+        Object.keys(input || {}).forEach(function (itemId) {
+            var value = input[itemId];
+
+            output[itemId] = typeof value === 'boolean'
+                ? (value ? 1 : 0)
+                : (typeof value === 'number' && isFinite(value) ? value : 0);
+        });
+
+        return output;
     }
 
     /**
@@ -225,6 +247,8 @@
                 session.node = null;
                 return;
             }
+
+            markNodeSeen(session, currentId);
 
             switch (node.type) {
                 case 'line':
@@ -435,8 +459,30 @@
         return passes;
     }
 
-    /** Compares a state value against a literal, matching the engine's rules. */
+    /**
+     * Compara um valor de estado com um literal, pelas mesmas regras do motor.
+     *
+     * Um literal booleano é uma pergunta de sim ou não sobre a entrada, não um
+     * valor a igualar: `inventory.caixa = true` tem de valer para uma contagem de
+     * `1`, e `= false` tem de cobrir `0`, um item já gasto e um item que nunca
+     * existiu. Texto fica de fora de propósito — `flags.mood = true` não pode dar
+     * jeito a `flags.mood = "brave"`, porque uma bandeira com nome é uma escolha
+     * de palavras.
+     */
     function compareValues(operator, left, right) {
+        if (isBooleanQuestion(left, right)) {
+            if (operator === 'equals') {
+                return toStateBoolean(left) === toStateBoolean(right);
+            }
+
+            if (operator === 'not_equals') {
+                return toStateBoolean(left) !== toStateBoolean(right);
+            }
+
+            // Uma ordenação não tem significado para uma resposta de sim ou não,
+            // por isso cai no caminho numérico e falha num dos lados.
+        }
+
         if (Array.isArray(left)) {
             if (operator === 'equals') {
                 return right !== null && left.indexOf(String(right)) !== -1;
@@ -458,6 +504,38 @@
         }
 
         return COMPARISONS[operator](left, right);
+    }
+
+    /** Se a comparação deve ser lida como pergunta de sim ou não. */
+    function isBooleanQuestion(left, right) {
+        if (typeof left !== 'boolean' && typeof right !== 'boolean') {
+            return false;
+        }
+
+        return isAnswerable(left) && isAnswerable(right);
+    }
+
+    /** Se um valor admite resposta de sim ou não, ou seja, se não é texto livre. */
+    function isAnswerable(value) {
+        return typeof value === 'boolean' || typeof value === 'number' || Array.isArray(value)
+            || value === null;
+    }
+
+    /** Lê uma entrada de estado como resposta de sim ou não. Espelha `toStateBoolean`. */
+    function toStateBoolean(value) {
+        if (value === null || value === undefined) {
+            return false;
+        }
+
+        if (Array.isArray(value)) {
+            return value.length > 0;
+        }
+
+        if (typeof value === 'string') {
+            return value !== '';
+        }
+
+        return Boolean(value);
     }
 
     /** Reads a dotted state path, or null when it is absent. */
@@ -504,6 +582,16 @@
         return affinities && relationshipKind in affinities ? affinities[relationshipKind] : null;
     }
 
+    /** Marks a node as seen so conditions on `dialogues.seen` can check it. */
+    function markNodeSeen(session, nodeId) {
+        if (!nodeId || session.state.dialogues.seen.indexOf(nodeId) !== -1) {
+            return;
+        }
+
+        session.state.dialogues.seen.push(nodeId);
+        session.log.push('nó visto: ' + nodeId);
+    }
+
     /** Applies a list of effects, reporting anything that fails. */
     function applyEffects(session, effects, source) {
         (effects || []).forEach(function (effect) {
@@ -534,10 +622,11 @@
                 var previous = typeof affinities[kind] === 'number' ? affinities[kind] : 0;
                 var next = Math.min(Math.max(previous + delta, -100), 100);
 
-                if (next !== previous) {
+                if (!(effect.character_id in state.relationship)) {
                     state.relationship[effect.character_id] = affinities;
-                    affinities[kind] = next;
                 }
+
+                affinities[kind] = next;
 
                 session.log.push('relação ' + effect.character_id + ' · ' + kind + ': ' + previous + ' → ' + next);
                 break;

@@ -27,6 +27,28 @@
     var AUTOSAVE_DELAY_MS = 600;
 
     /**
+     * File System Access options.
+     *
+     * `id` is what makes the browser remember the last folder used by these
+     * pickers, so export reopens where the last import happened even after a
+     * reload. `startIn` (see `saveViaPicker`) covers the current visit with the
+     * handle of the file that was actually imported.
+     */
+    var PICKER_ID = 'galatime-dialogue-forger';
+    var YAML_PICKER_TYPES = [
+        { description: 'YAML', accept: { 'application/yaml': ['.yaml', '.yml'] } },
+    ];
+
+    /**
+     * Set when the pickers prove unusable in this context.
+     *
+     * `file://` pages are the known case (and `canUseFilePickers` refuses them
+     * up front); anything else that answers with a permission or security
+     * refusal flips this and the classic input/download take over for good.
+     */
+    var pickersDisabled = false;
+
+    /**
      * How long the preview holds a self-advancing line before moving on.
      *
      * Longer than the game's own hold on purpose: in the preview the writer is
@@ -72,6 +94,8 @@
         lastRecorded: null,
         parseErrors: {},
         fileName: null,
+        /** File handle of the imported YAML, so export can open beside it. */
+        fileHandle: null,
         report: { errors: [], warnings: [] },
         session: null,
         previewState: null,
@@ -207,7 +231,12 @@
         });
 
         document.getElementById('btn-import').addEventListener('click', function () {
-            document.getElementById('file-input').click();
+            if (canUseFilePickers()) {
+                importViaPicker();
+                return;
+            }
+
+            openImportInput();
         });
 
         document.getElementById('file-input').addEventListener('change', function (event) {
@@ -1530,6 +1559,9 @@
         state.selectedNodeId = Object.keys(model.nodes)[0] || null;
         state.parseErrors = {};
         state.session = null;
+        // An import sets it again right after; New and a failed parse leave it
+        // cleared, so export cannot point at a file the editor no longer mirrors.
+        state.fileHandle = null;
 
         resetHistory();
         autosave();
@@ -1539,8 +1571,67 @@
 
     /* ------------------------------------------------------ import / export */
 
+    /**
+     * True when the File System Access API can be trusted on this page.
+     *
+     * The pickers are not usable from `file://` (the dialog opens, then reading
+     * the chosen handle is refused), and that is a supported way to open this
+     * mockup — so the classic input and download stay as the fallback.
+     */
+    function canUseFilePickers() {
+        return !pickersDisabled
+            && window.location.protocol !== 'file:'
+            && typeof window.showOpenFilePicker === 'function'
+            && typeof window.showSaveFilePicker === 'function';
+    }
+
+    /** Remembers a refusal, so the fallbacks are used for the rest of the visit. */
+    function notePickerFailure(error) {
+        if (error && (error.name === 'NotAllowedError' || error.name === 'SecurityError')) {
+            pickersDisabled = true;
+        }
+    }
+
+    /** Opens the classic file input. */
+    function openImportInput() {
+        document.getElementById('file-input').click();
+    }
+
+    /**
+     * Imports through the picker, keeping the file's handle.
+     *
+     * The handle is the whole point: it is what lets the save dialog open in
+     * the folder the dialogue was imported from.
+     */
+    function importViaPicker() {
+        window.showOpenFilePicker({
+            id: PICKER_ID,
+            multiple: false,
+            types: YAML_PICKER_TYPES,
+        }).then(function (handles) {
+            var handle = handles && handles[0];
+
+            if (!handle) {
+                return;
+            }
+
+            return handle.getFile().then(function (file) {
+                return file.text().then(function (text) {
+                    importText(text, file.name.replace(/\.(ya?ml)$/i, ''), handle);
+                });
+            });
+        }).catch(function (error) {
+            if (error && error.name === 'AbortError') {
+                return;
+            }
+
+            notePickerFailure(error);
+            openImportInput();
+        });
+    }
+
     /** Parses YAML text into the editor. */
-    function importText(text, fileName) {
+    function importText(text, fileName, fileHandle) {
         var parsed = Forger.yaml.parse(text);
 
         if (!parsed.ok) {
@@ -1558,6 +1649,10 @@
             fileName || null,
             'Diálogo importado' + (fileName ? ' de "' + fileName + '"' : '') + '.',
         );
+
+        // After `replaceDocument`, which clears it: only an import that landed
+        // gets to remember where it came from.
+        state.fileHandle = fileHandle || null;
     }
 
     /** Copies the generated YAML to the clipboard, with a visible fallback. */
@@ -1579,9 +1674,66 @@
         flash('A área de transferência não está disponível; o YAML está em baixo para copiar à mão.', true);
     }
 
-    /** Downloads the generated YAML as a `.yaml` file. */
+    /** Saves the generated YAML, through the picker when it is available. */
     function downloadYaml() {
         var name = (state.model.dialogue_id || 'dialogo') + '.yaml';
+
+        if (!canUseFilePickers()) {
+            downloadViaLink(name);
+            return;
+        }
+
+        saveViaPicker(name);
+    }
+
+    /**
+     * Saves through the picker, opening on the imported file's folder.
+     *
+     * `startIn` takes the imported file's handle, so the dialog opens beside it
+     * and offers its name back; the picker `id` makes the browser remember that
+     * folder for the next visit, when there is no handle in memory any more.
+     */
+    function saveViaPicker(name) {
+        var options = {
+            id: PICKER_ID,
+            suggestedName: name,
+            types: YAML_PICKER_TYPES,
+        };
+
+        if (state.fileHandle) {
+            options.startIn = state.fileHandle;
+        }
+
+        window.showSaveFilePicker(options).then(function (handle) {
+            return writeHandle(handle, currentYaml()).then(function () {
+                state.fileHandle = handle;
+                flash('Guardado em "' + handle.name + '".');
+            }, function (error) {
+                flash('Não consegui guardar o ficheiro: '
+                    + (error && error.message ? error.message : error), true);
+            });
+        }, function (error) {
+            if (error && error.name === 'AbortError') {
+                return;
+            }
+
+            // The picker itself was refused: fall back to the download for good.
+            notePickerFailure(error);
+            downloadViaLink(name);
+        });
+    }
+
+    /** Writes text into a handle, closing the stream when it is done. */
+    function writeHandle(handle, text) {
+        return handle.createWritable().then(function (writable) {
+            return writable.write(text).then(function () {
+                return writable.close();
+            });
+        });
+    }
+
+    /** Downloads the generated YAML as a `.yaml` file, without the pickers. */
+    function downloadViaLink(name) {
         var blob = new Blob([currentYaml()], { type: 'application/yaml;charset=utf-8' });
         var url = URL.createObjectURL(blob);
         var link = document.createElement('a');
@@ -1718,6 +1870,19 @@
         var preview = state.previewState || {};
         var paths = [];
 
+        // Known ids come first, because a path the writer can pick is worth more
+        // than a bare root that only tells them the spelling: `inventory.caixa`
+        // is a condition someone can write, `inventory.` is not. The preview
+        // state is still the richer source, since it also carries flags and stats
+        // the game may not have declared anywhere else.
+        Forger.catalogue.items().forEach(function (itemId) {
+            paths.push('inventory.' + itemId);
+        });
+
+        Object.keys(preview.objectives || {}).forEach(function (key) {
+            paths.push('objectives.' + key);
+        });
+
         ['flags', 'inventory', 'stats'].forEach(function (root) {
             Object.keys(preview[root] || {}).forEach(function (key) {
                 paths.push(root + '.' + key);
@@ -1734,13 +1899,11 @@
             });
         });
 
-        Object.keys(preview.objectives || {}).forEach(function (key) {
-            paths.push('objectives.' + key);
+        // The fixed roots and engine-owned lists come from the shared suggestion
+        // list, so they are not repeated here.
+        return paths.filter(function (path, index) {
+            return paths.indexOf(path) === index;
         });
-
-        paths.push('dialogues.seen', 'paths.unlocked');
-
-        return paths;
     }
 
     /** The one-line validation summary. */

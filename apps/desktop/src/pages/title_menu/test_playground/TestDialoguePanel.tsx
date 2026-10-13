@@ -1,4 +1,4 @@
-import { useRef, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { playSfx } from '../../../controllers/audioController';
 import { fetchDialogue } from '../../../controllers/dialogueController';
@@ -12,6 +12,7 @@ import {
     DIALOGUE_SPRITE_MIN_HEIGHT_PX,
 } from '../../../constants/DialogueConstants';
 import type { DialogueSessionSnapshot } from '../../../hooks/useDialogueSession';
+import type { StateChange, WorldStateInput } from '../../../types/WorldStateType';
 import {
     OBJECTIVE_STATUSES,
     buildWorldStateInput,
@@ -20,6 +21,7 @@ import {
     type DialogueStateRequirement,
     type RequirementValues,
 } from '../../../services/dialogueRequirementService';
+import { relationshipStatePath } from '../../../services/state/worldStateService';
 
 /**
  * Plays a dialogue for real, against the dialogue backend.
@@ -28,8 +30,9 @@ import {
  * play it against and there is no way to guess one.
  *
  * 1. **Load** an id. The dialogue file is read and the values it gates on are
- *    worked out from its conditions — nothing else is offered, because nothing
- *    else would do anything.
+ *    worked out from its conditions — plus the items its effects move, because a
+ *    dialogue that takes an item the player does not own cannot be played at all.
+ *    Nothing else is offered, because nothing else would do anything.
  * 2. **Set those values**, then start. The defaults open every branch, so the
  *    interesting thing to do here is lower one and watch an option disappear.
  *
@@ -119,7 +122,6 @@ function RequirementEditor({
             value={value}
             onChange={onChange}
             type={requirement.kind === 'number' ? 'number' : 'text'}
-            orientation="vertical"
             containerClassName={frame}
         />
     );
@@ -133,6 +135,71 @@ function DebugRow({ label, value }: { label: string; value: string }) {
             <dd className="min-w-0 wrap-break-word text-white/70">{value}</dd>
         </div>
     );
+}
+
+/** Where one affinity started a run, and where it stands now. */
+interface RelationshipReading {
+    /** Value the session was started with. */
+    from: number;
+    /** Value the conversation has left it at. */
+    to: number;
+}
+
+/**
+ * The relationships a run starts with, keyed by their dotted state path.
+ *
+ * Seeded from the state the panel is about to hand the engine, so an affinity
+ * the dialogue gates on but never writes still reads as a value rather than
+ * being absent from the readout.
+ */
+function seedRelationships(
+    worldState: WorldStateInput | undefined,
+): Record<string, RelationshipReading> {
+    const readings: Record<string, RelationshipReading> = {};
+
+    for (const [characterId, kinds] of Object.entries(worldState?.relationship ?? {})) {
+        for (const [kind, value] of Object.entries(kinds)) {
+            const path = relationshipStatePath(characterId, kind);
+            readings[path] = { from: value, to: value };
+        }
+    }
+
+    return readings;
+}
+
+/**
+ * Folds one step's relationship changes into the running readings.
+ *
+ * `next` is the value after the change, not the delta, so reporting the same
+ * step twice is a no-op instead of a double count — which is why the readings
+ * are accumulated rather than summed from the deltas.
+ *
+ * A path nothing seeded is one the dialogue only *writes*: its change carries
+ * the value it had before, and that is where the reading starts.
+ */
+function applyRelationshipChanges(
+    readings: Record<string, RelationshipReading>,
+    changes: StateChange[],
+): Record<string, RelationshipReading> {
+    let updated = readings;
+
+    for (const change of changes) {
+        if (change.kind !== 'relationship_changed') {
+            continue;
+        }
+
+        const to = Number(change.next);
+
+        if (!Number.isFinite(to) || updated[change.target]?.to === to) {
+            continue;
+        }
+
+        const from = updated[change.target]?.from ?? Number(change.previous ?? 0);
+
+        updated = { ...updated, [change.target]: { from, to } };
+    }
+
+    return updated;
 }
 
 export function TestDialoguePanel() {
@@ -160,8 +227,33 @@ export function TestDialoguePanel() {
     const [running, setRunning] = useState<{ id: string; key: number } | null>(null);
     const [snapshot, setSnapshot] = useState<DialogueSessionSnapshot | null>(null);
 
+    /**
+     * Every affinity the conversation has touched, keyed by dotted path.
+     *
+     * A response only carries the changes *this step* applied, so the readout
+     * accumulates them here. That is also what keeps the final values on screen
+     * once the session is over, when the response — and its `state_changes` —
+     * are gone.
+     */
+    const [relationships, setRelationships] = useState<Record<string, RelationshipReading>>({});
+
     const response = snapshot?.response ?? null;
     const node = response?.current_node ?? null;
+
+    // Rebuilt on every keystroke; `DialogueView` only reads it when a conversation
+    // starts, so editing a value mid-conversation changes nothing until Start.
+    const worldState = loaded ? buildWorldStateInput(loaded.requirements, values) : undefined;
+
+    // Fold each step's changes in as they arrive. A status change re-renders the
+    // same response, and re-applying an absolute value changes nothing, so the
+    // repeat is harmless rather than something to guard against.
+    useEffect(() => {
+        const changes = snapshot?.response?.state_changes;
+
+        if (changes && changes.length > 0) {
+            setRelationships((previous) => applyRelationshipChanges(previous, changes));
+        }
+    }, [snapshot]);
 
     const handleLoad = async () => {
         const id = dialogueId.trim();
@@ -191,6 +283,7 @@ export function TestDialoguePanel() {
         setError(null);
         setRunning(null);
         setSnapshot(null);
+        setRelationships({});
     };
 
     // The `Change dialogue` and `Start` buttons play their own click; nothing here
@@ -200,6 +293,7 @@ export function TestDialoguePanel() {
         setRunning(null);
         setSnapshot(null);
         setError(null);
+        setRelationships({});
     };
 
     const handleStart = () => {
@@ -207,6 +301,10 @@ export function TestDialoguePanel() {
             return;
         }
 
+        // The readings start where the engine starts: the values this run is
+        // about to be given, so an affinity left alone reads as itself rather
+        // than as something the conversation never touched.
+        setRelationships(seedRelationships(worldState));
         setSnapshot(null);
         setRunning((previous) => ({ id: loaded.id, key: (previous?.key ?? 0) + 1 }));
     };
@@ -219,10 +317,6 @@ export function TestDialoguePanel() {
             void handleLoad();
         }
     };
-
-    // Rebuilt on every keystroke; `DialogueView` only reads it when a conversation
-    // starts, so editing a value mid-conversation changes nothing until Start.
-    const worldState = loaded ? buildWorldStateInput(loaded.requirements, values) : undefined;
 
     //region — Session readout
     const speakerDescription = node?.speaker_id
@@ -249,6 +343,18 @@ export function TestDialoguePanel() {
             .map((change) => `${change.target} ${change.delta !== undefined ? `${change.delta > 0 ? '+' : ''}${change.delta}` : String(change.next)}`)
             .join(', ') || t('dialogue.debug.none')
         : t('dialogue.debug.none');
+
+    // Where every affinity stands, as the conversation has left it. One that
+    // never moved reads as its value alone; one that did reads as it was, then
+    // as it is.
+    const relationshipDescription = Object.entries(relationships)
+        .sort(([left], [right]) => left.localeCompare(right))
+        .map(([path, reading]) => (
+            reading.from === reading.to
+                ? `${path}: ${reading.to}`
+                : `${path}: ${reading.from} → ${reading.to}`
+        ))
+        .join(', ') || t('dialogue.debug.none');
 
     const warningDescription = response
         ? response.warnings
@@ -277,7 +383,6 @@ export function TestDialoguePanel() {
                             placeholder={t('playground.dialogue.placeholder')}
                             maxCharacters={50}
                             showCounter
-                            orientation="vertical"
                         />
                     </div>
 
@@ -330,11 +435,11 @@ export function TestDialoguePanel() {
                       `DialogueView`.
                     */}
                     <div className={`flex min-h-[16rem] flex-1 gap-4 ${isStacked ? 'flex-col' : 'flex-row'}`}>
-                        {/* Only the values the dialogue reads — nothing else would do
-                            anything, so nothing else is offered. Stacked, the column is
-                            capped and scrolls on its own: left to size itself it would
-                            take the stage's height with it and there would be nothing
-                            left to look at. */}
+                        {/* Only the values the dialogue reads or moves — nothing else
+                            would do anything, so nothing else is offered. Stacked, the
+                            column is capped and scrolls on its own: left to size itself it
+                            would take the stage's height with it and there would be
+                            nothing left to look at. */}
                         <section
                             className={`min-h-0 overflow-y-auto pr-1 ${isStacked
                                 ? 'max-h-[35%] w-full'
@@ -417,6 +522,7 @@ export function TestDialoguePanel() {
                             <DebugRow label={t('dialogue.debug.cast')} value={castDescription} />
                             <DebugRow label={t('dialogue.debug.choices')} value={choiceDescription} />
                             <DebugRow label={t('dialogue.debug.changes')} value={changeDescription} />
+                            <DebugRow label={t('dialogue.debug.relationships')} value={relationshipDescription} />
                             <DebugRow label={t('dialogue.debug.warnings')} value={warningDescription} />
                             {snapshot?.error && (
                                 <DebugRow label="error" value={`${snapshot.error.code}: ${snapshot.error.message}`} />

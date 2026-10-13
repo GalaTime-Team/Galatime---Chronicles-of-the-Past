@@ -28,43 +28,11 @@ skills:
   - roll
 
 weapon:
-  id: icy_horns
-  name: Icy Horns
-  element: inanus
-  damage_type: physical
-  target: individual
-  power: 20
-  stamina_cost: 4
-  damage_variance: [0.9, 1.2]
 
 loot:
   - item_id: gold_coin
     quantity: 1
     chance: 0.4
 
-abilities:
-  - ability_name: Powder Snow
-    condition:
-      type: on_hit
-      damage_type: physical
-    action:
-      type: buff_self
-      buff:
-        physical_defense: 8
-        speed: 6
-      duration: 2
-    keep_triggered_after_once: true
-    activation_message: "Snow bursts from the Snowver's coat as it braces itself."
-
-  - ability_name: Winter Instinct
-    condition:
-      type: on_low_resource
-      resource: hp
-      threshold: 0.35
-    action:
-      type: enrage
-      multiplier: 1.25
-      duration: 3
-    keep_triggered_after_once: false
-    activation_message: "The Snowver roars and charges with renewed ferocity!"
-
+ai:
+  style: brute

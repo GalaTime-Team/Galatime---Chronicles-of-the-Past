@@ -5,9 +5,11 @@ import type { StateWriteResult } from './worldStateService';
 /**
  * Item ownership.
  *
- * Counted items are numbers; key items are booleans, because "owns the ancient
- * key" is a fact rather than a quantity. Both shapes are supported so a
- * dialogue can test either with a plain comparison.
+ * An entry is always a count: one herb is `1`, two are `2`, none is absent or
+ * `0`. "Owns the ancient key" is still a question about a quantity, so the
+ * inventory never has to hold a boolean — which is also why `add_item` and
+ * `remove_item` can always add and subtract. A dialogue asks about it in
+ * whichever way reads best, `inventory.ancient_key >= 1` or `= true`.
  */
 
 /** Quantity assumed when an effect omits one. */
@@ -39,36 +41,16 @@ function insufficientItemError(itemId: string, requested: number, owned: number)
     );
 }
 
-/**
- * Whether the player owns at least `quantity` of an item.
- *
- * Boolean entries are key items: they are either owned or not, so the
- * quantity is ignored.
- */
+/** Whether the player owns at least `quantity` of an item. */
 export function hasItem(
     state: WorldState,
     itemId: string,
     quantity: number = DEFAULT_ITEM_QUANTITY,
 ): boolean {
-    const entry = readEntry(state, itemId);
-
-    if (typeof entry === 'boolean') {
-        return entry;
-    }
-
-    if (typeof entry === 'number') {
-        return entry >= quantity;
-    }
-
-    return false;
+    return (readEntry(state, itemId) ?? 0) >= quantity;
 }
 
-/**
- * Gives the player an item.
- *
- * A boolean entry means the item is a key item, so owning it is a state and
- * the quantity is ignored.
- */
+/** Gives the player an item. */
 export function addItem(
     state: WorldState,
     itemId: string,
@@ -80,27 +62,8 @@ export function addItem(
     }
 
     const previous = readEntry(state, itemId);
-
-    if (typeof previous === 'boolean') {
-        if (previous) {
-            return { change: null, error: null };
-        }
-
-        state.inventory[itemId] = true;
-
-        return {
-            change: {
-                kind: 'item_added',
-                target: `inventory.${itemId}`,
-                previous,
-                next: true,
-                source,
-            },
-            error: null,
-        };
-    }
-
     const next = (previous ?? 0) + quantity;
+
     state.inventory[itemId] = next;
 
     return {
@@ -133,26 +96,6 @@ export function removeItem(
     }
 
     const previous = readEntry(state, itemId);
-
-    if (typeof previous === 'boolean') {
-        if (!previous) {
-            return { change: null, error: insufficientItemError(itemId, quantity, 0) };
-        }
-
-        state.inventory[itemId] = false;
-
-        return {
-            change: {
-                kind: 'item_removed',
-                target: `inventory.${itemId}`,
-                previous,
-                next: false,
-                source,
-            },
-            error: null,
-        };
-    }
-
     const owned = previous ?? 0;
 
     if (owned < quantity) {

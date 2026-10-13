@@ -8,3 +8,5 @@ apps/desktop/src-tauri/gen/
 apps/desktop/src-tauri/Cargo.lock
 .env
 .env.*
+__tests__/
+docs/

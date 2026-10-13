@@ -1,0 +1,280 @@
+# ═══════════════════════════════════════════════════════════════════
+#  ITEMS  –  the single catalogue for the whole game
+# ═══════════════════════════════════════════════════════════════════
+#
+#  One entry per item. Fields:
+#    id                    stable id used by dialogues, loot, rewards and saves
+#    name / description    display strings
+#    category              consumable | throwable | buff | debuff | key_item
+#    target                self | one_ally | one_enemy | all_allies |
+#                          all_enemies | both_teams | dead_ally
+#    effects               typed list (see below); empty for a key item
+#    usable_in_combat      may the item be used during a fight
+#    usable_outside_combat may the item be used outside a fight
+#    consumed_on_use       is one unit spent when the item is used
+#    max_stack             carry limit; null means unlimited
+#
+#  Effect types:
+#    restore          resource (hp|mana|stamina) + amount (add amount_max for a range)
+#    restore_percent  resource + amount_percent
+#    damage           amount (+ element to scale the hit by the element matrix)
+#    status           status_effect + effect_id + turns (+ damage for a per-turn DoT,
+#                     buff/debuff stat deltas, element)
+#    revive           amount_percent of the target's maximum HP
+#    cleanse          removes every live status from the target
+#    drain            amount + drain_percent healed back to the user
+#    mystery          turns (random outcome)
+#
+#  An effect may override the item's `target` with its own `target`.
+#
+#  ── INDEX ──
+#  potions     hp_potion hp_potion_plus mega_hp_potion team_hp_potion
+#              mn_potion mn_potion_plus mega_mn_potion team_mn_potion
+#              sn_potion sn_potion_plus mega_sn_potion
+#              elixir mega_elixir team_elixir
+#  throwables  fire_bomb ice_bomb wind_bomb earth_bomb
+#              fire_bomb_plus ice_bomb_plus wind_bomb_plus
+#              scatter_bomb fire_rain blizzard_flask thunder_jar
+#              poison_vial acid_flask burning_oil
+#  specials    phoenix_feather phoenix_plume miracle_feather
+#              antidote team_antidote
+#              life_dew moon_dew soul_siphon life_steal_orb
+#              galatime_shard mirror_shard berserker_draught shadow_cloak
+#              lucky_coin mystery_potion
+#  buffs       power_tonic arcane_tonic iron_tonic ward_tonic speed_tonic
+#              power_tonic_plus arcane_tonic_plus iron_tonic_plus
+#              war_elixir fortress_elixir hero_elixir war_drum barrier_scroll
+#  debuffs     weakness_powder mind_fog_dust rust_powder dispel_dust slow_trap
+#              weakness_powder_plus rust_powder_plus
+#              hex_bag curse_scroll smoke_bomb terror_mask mana_drain_dust
+#  key items   pacci_keepsake
+
+version: 1
+
+items:
+  # ── POTIONS ───────────────────────────────────────────────────────
+  - id: hp_potion
+    name: HP Potion
+    description: Restores 30 HP to one ally.
+    category: consumable
+    target: one_ally
+    effects:
+      - type: restore
+        resource: hp
+        amount: 30
+    usable_in_combat: true
+    usable_outside_combat: true
+    consumed_on_use: true
+    max_stack: 99
+
+  - id: hp_potion_plus
+    name: HP Potion+
+    description: Restores 75 HP to one ally.
+    category: consumable
+    target: one_ally
+    effects:
+      - type: restore
+        resource: hp
+        amount: 75
+    usable_in_combat: true
+    usable_outside_combat: true
+    consumed_on_use: true
+    max_stack: 99
+
+  - id: mega_hp_potion
+    name: Mega HP Potion
+    description: Restores 200 HP to one ally.
+    category: consumable
+    target: one_ally
+    effects:
+      - type: restore
+        resource: hp
+        amount: 200
+    usable_in_combat: true
+    usable_outside_combat: true
+    consumed_on_use: true
+    max_stack: 99
+
+  - id: team_hp_potion
+    name: Team HP Potion
+    description: Restores 40 HP to all allies.
+    category: consumable
+    target: all_allies
+    effects:
+      - type: restore
+        resource: hp
+        amount: 40
+    usable_in_combat: true
+    usable_outside_combat: true
+    consumed_on_use: true
+    max_stack: 99
+
+  - id: mn_potion
+    name: MN Potion
+    description: Restores 20 Mana to one ally.
+    category: consumable
+    target: one_ally
+    effects:
+      - type: restore
+        resource: mana
+        amount: 20
+    usable_in_combat: true
+    usable_outside_combat: true
+    consumed_on_use: true
+    max_stack: 99
+
+  - id: mn_potion_plus
+    name: MN Potion+
+    description: Restores 50 Mana to one ally.
+    category: consumable
+    target: one_ally
+    effects:
+      - type: restore
+        resource: mana
+        amount: 50
+    usable_in_combat: true
+    usable_outside_combat: true
+    consumed_on_use: true
+    max_stack: 99
+
+  - id: mega_mn_potion
+    name: Mega MN Potion
+    description: Restores 120 Mana to one ally.
+    category: consumable
+    target: one_ally
+    effects:
+      - type: restore
+        resource: mana
+        amount: 120
+    usable_in_combat: true
+    usable_outside_combat: true
+    consumed_on_use: true
+    max_stack: 99
+
+  - id: team_mn_potion
+    name: Team MN Potion
+    description: Restores 25 Mana to all allies.
+    category: consumable
+    target: all_allies
+    effects:
+      - type: restore
+        resource: mana
+        amount: 25
+    usable_in_combat: true
+    usable_outside_combat: true
+    consumed_on_use: true
+    max_stack: 99
+
+  - id: sn_potion
+    name: SN Potion
+    description: Restores 20 Stamina to one ally.
+    category: consumable
+    target: one_ally
+    effects:
+      - type: restore
+        resource: stamina
+        amount: 20
+    usable_in_combat: true
+    usable_outside_combat: true
+    consumed_on_use: true
+    max_stack: 99
+
+  - id: sn_potion_plus
+    name: SN Potion+
+    description: Restores 50 Stamina to one ally.
+    category: consumable
+    target: one_ally
+    effects:
+      - type: restore
+        resource: stamina
+        amount: 50
+    usable_in_combat: true
+    usable_outside_combat: true
+    consumed_on_use: true
+    max_stack: 99
+
+  - id: mega_sn_potion
+    name: Mega SN Potion
+    description: Restores 120 Stamina to one ally.
+    category: consumable
+    target: one_ally
+    effects:
+      - type: restore
+        resource: stamina
+        amount: 120
+    usable_in_combat: true
+    usable_outside_combat: true
+    consumed_on_use: true
+    max_stack: 99
+
+  - id: elixir
+    name: Elixir
+    description: Restores 50 HP, 30 Mana, and 30 Stamina to one ally.
+    category: consumable
+    target: one_ally
+    effects:
+      - type: restore
+        resource: hp
+        amount: 50
+      - type: restore
+        resource: mana
+        amount: 30
+      - type: restore
+        resource: stamina
+        amount: 30
+    usable_in_combat: true
+    usable_outside_combat: true
+    consumed_on_use: true
+    max_stack: 99
+
+  - id: mega_elixir
+    name: Mega Elixir
+    description: Fully restores HP, Mana, and Stamina of one ally.
+    category: consumable
+    target: one_ally
+    effects:
+      - type: restore
+        resource: hp
+        amount: 9999
+      - type: restore
+        resource: mana
+        amount: 9999
+      - type: restore
+        resource: stamina
+        amount: 9999
+    usable_in_combat: true
+    usable_outside_combat: true
+    consumed_on_use: true
+    max_stack: 99
+
+  - id: team_elixir
+    name: Team Elixir
+    description: Restores 30 HP, 15 Mana, and 15 Stamina to all allies.
+    category: consumable
+    target: all_allies
+    effects:
+      - type: restore
+        resource: hp
+        amount: 30
+      - type: restore
+        resource: mana
+        amount: 15
+      - type: restore
+        resource: stamina
+        amount: 15
+    usable_in_combat: true
+    usable_outside_combat: true
+    consumed_on_use: true
+    max_stack: 99
+
+  - id: arrow
+    name: Arrow
+    description: A plain wooden arrow
+    category: consumable
+    target: self
+    item_type: arrow
+    effects: []
+    usable_in_combat: false
+    usable_outside_combat: false
+    consumed_on_use: false
+    max_stack: 99

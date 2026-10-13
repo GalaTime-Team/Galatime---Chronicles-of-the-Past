@@ -4,7 +4,7 @@ import { createPortal } from 'react-dom';
 import type { AbilityEntry, BaseStats, CharacterData, LootEntry, MobData } from '../../../../types/EntityDataType';
 import type { EntityImage } from '../../../../types/EntityImageType';
 import type { PublicAttack } from '../../../../types/AttackDataType';
-import { fetchAttacks } from '../../../../controllers/attackController';
+import { fetchResolvedAttack } from '../../../../controllers/attackController';
 import { ChevronLeft, ChevronRight, ElementIcon, UnknownIcon } from '../../../../assets/GalatimeIcon';
 import CommonHoverElement from '../../../../components/common/CommonHoverElement';
 import CommonImage from '../../../../components/common/CommonImage';
@@ -69,7 +69,10 @@ function EntityDetail({ item }: { item: EntityItem }) {
     const loot: LootEntry[] = Array.isArray(data.loot) ? data.loot : [];
 
     const weapon = data.weapon ?? null;
-    const weaponLabel = toText(weapon?.name ?? weapon?.id, 'None');
+    const weaponLabel = toText(
+        typeof weapon === 'string' ? weapon : weapon?.name ?? weapon?.id,
+        'None',
+    );
 
     // Sprites are discovered from the files on disk, not declared in the YAML.
     const images = getEntityImages(item);
@@ -88,15 +91,23 @@ function EntityDetail({ item }: { item: EntityItem }) {
     });
 
     // Resolve skill ids against the shared attack catalogue (skills.yaml).
+    // Upgrade tiers (`freeze_ii`) resolve through the same call, so a variant
+    // id shows the base skill with its level applied instead of "not in catalogue".
     const [attacksById, setAttacksById] = useState<Map<string, PublicAttack>>(new Map());
     const skillsKey = skills.join(',');
     useEffect(() => {
         if (skillsKey === '') return;
         let cancelled = false;
-        fetchAttacks()
-            .then((attacks) => {
+        Promise.all(skills.map(async (id) => {
+            const resolved = await fetchResolvedAttack(id);
+            return [id, resolved?.attack ?? null] as const;
+        }))
+            .then((entries) => {
                 if (cancelled) return;
-                setAttacksById(new Map(attacks.map((attack) => [attack.id, attack])));
+                const found = entries.filter(
+                    (entry): entry is readonly [string, PublicAttack] => entry[1] !== null
+                );
+                setAttacksById(new Map(found));
             })
             .catch((error) => console.error('Failed to resolve entity skills:', error));
         return () => {
@@ -198,7 +209,7 @@ function EntityDetail({ item }: { item: EntityItem }) {
                     <div className="flex flex-col gap-1">
                         {abilities.map((ability, i) => (
                             <div key={i} className="flex justify-between text-sm">
-                                <span className="text-white">{toText(ability?.ability_name, 'Unnamed')}</span>
+                                <span className="text-white">{toText(ability?.name, 'Unnamed')}</span>
                             </div>
                         ))}
                     </div>

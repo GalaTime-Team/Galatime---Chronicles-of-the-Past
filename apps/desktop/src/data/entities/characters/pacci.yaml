@@ -31,12 +31,4 @@ skills:
   - electric_ball
   - lunar_guard
 
-weapon:
-  id: iron_sword
-  name: Iron Sword
-  element: inanus
-  damage_type: physical
-  target: individual
-  power: 40
-  stamina_cost: 2
-  damage_variance: [0.7, 1.0]
+weapon: military_sword

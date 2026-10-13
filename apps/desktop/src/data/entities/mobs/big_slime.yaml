@@ -1,0 +1,86 @@
+﻿id: big_slime
+name: Big Slime
+rarity: uncommon
+height: "120 cm"
+weight: "80 kg"
+description: >
+  A large gelatinous creature that can be found in various environments.
+  Despite their simple appearance, big slimes are surprisingly resilient.
+
+elements:
+  - aqua
+
+base_stats:
+  hp: 445
+  mana: 25
+  stamina: 31
+  physical_attack: 25
+  magical_attack: 28
+  physical_defense: 18
+  magical_defense: 41
+  speed: 20
+
+skills:
+  - headbutt
+  - splash
+
+weapon: 
+
+loot:
+  - item_id: gold_coin
+    quantity: 1
+    chance: 0.4
+  - item_id: slime_goo
+    quantity: 1
+    chance: 0.8
+
+abilities:
+  - id: gelatinous_body
+    name: Gelatinous Body
+    description: Physical attacks lose 90% of their power against it.
+    tags: [defense, physical]
+    trigger:
+      event: before_damage
+    condition:
+      all:
+        - damage:
+            type: physical
+            operator: eq
+    action:
+      type: modify_damage
+      target: self
+      parameters:
+        multiplier: 0.1
+    display:
+      visible: true
+      priority: 80
+
+  - id: slime_split
+    name: Slime Split
+    description: When it dies, it bursts into 2 Slimes.
+    tags: [death, summon]
+    trigger:
+      event: on_death
+    action:
+      type: summon
+      target: self
+      parameters:
+        entity_id: slime
+        entity_type: mob
+        count: 2
+    display:
+      visible: true
+      priority: 70
+
+ai:
+  style: brute
+  weights:
+    kill_secure: 2.5
+    survival: 0.1
+  thresholds:
+    wounded: 0.2
+  targeting:
+    prefer: [weakest]
+  pace: 1200
+
+

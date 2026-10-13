@@ -27,9 +27,10 @@
  * `wave=light wave_speed=2` is therefore a small, quick ripple.
  *
  * The three movements are **layered**, not exclusive: a segment may ask for
- * `shake=normal jitter=light` and both run at once, because the shake moves the
- * whole segment while the jitter trembles in place inside it. Each keeps its own
- * speed, so a segment can drift slowly while it trembles quickly.
+ * `shake=normal jitter=light` and both run at once, because every character
+ * carries both — the shake rattles it while the jitter trembles inside that.
+ * Each keeps its own speed, so a segment can drift slowly while it trembles
+ * quickly.
  *
  * A literal `{` is written `\{`. Unknown braces are left alone, so ordinary
  * prose containing braces is never mangled.

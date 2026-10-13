@@ -1,6 +1,6 @@
 - id: galatime_theme
   name: Galatime Chronicles of the Past
-  src: ../assets/music/Galatime - Chronicles of the Past.ogg
+  src: ../assets/music/Galatime Chronicles of the Past.ogg
   loop: true
 
 - id: cellordion_forest
@@ -13,12 +13,42 @@
   src: ../assets/music/Hivv Village.ogg
   loop: true
 
+- id: deeper_meaning
+  name: Deeper Meaning
+  src: ../assets/music/Deeper Meaning.ogg
+  loop: true
+
 - id: dream_world
   name: Dream World
   src: ../assets/music/Dream World.ogg
   loop: true
 
-- id: deeper_meaning
-  name: Deeper Meaning
-  src: ../assets/music/Deeper Meaning.ogg
+- id: paccis_house
+  name: Paccis House
+  src: ../assets/music/Paccis House.ogg
+  loop: true
+
+- id: paccis_house_music_box
+  name: Paccis House Music Box
+  src: ../assets/music/Paccis House Music Box.ogg
+  loop: true
+
+- id: chemical_house
+  name: Chemical House
+  src: ../assets/music/Chemical House.ogg
+  loop: true
+
+- id: laboratory_fight
+  name: Laboratory Fight
+  src: ../assets/music/Laboratory, Fight.ogg
+  loop: true
+
+- id: unknown_laboratory
+  name: Unknown Laboratory
+  src: ../assets/music/Unknown Laboratory.ogg
+  loop: true
+
+- id: suggengear
+  name: Suggengear (Unused)
+  src: ../assets/music/Suggengear (Adnan Theme).ogg
   loop: true

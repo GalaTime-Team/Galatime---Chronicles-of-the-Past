@@ -17,29 +17,18 @@ elements:
   - spatium
 
 base_stats:
-  hp: 480
+  hp: 250
   mana: 122
   stamina: 35
   physical_attack: 25
-  magical_attack: 97
-  physical_defense: 74
+  magical_attack: 59
+  physical_defense: 20
   magical_defense: 31
   speed: 150
 
 skills:
-  - shadow_sneak
-  - reaper
-  - dark_blades
-  - time_warp
+  - slowness
+  - hasten_IV
+  - night
 
 weapon:
-  id: droment_dagger
-  name: Dorment Dagger
-  element: umbra
-  damage_type: physical
-  target: individual
-  hits: 6
-  hit_chance: 0.8
-  power: 30
-  stamina_cost: 2
-  damage_variance: [0.8, 1.1]

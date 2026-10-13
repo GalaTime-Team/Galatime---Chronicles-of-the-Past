@@ -1,3 +1,8 @@
+import type { AbilityDefinition } from './AbilityType';
+import type { AiProfileDefinition } from './AiType';
+import type { EntityInventoryState } from './InventoryType';
+import type { WeaponDefinition, WeaponReference } from './WeaponType';
+
 export interface BaseStats {
     hp: number;
     mana: number;
@@ -17,14 +22,12 @@ export interface LootEntry {
     chance: number;
 }
 
-/** A passive/triggered mob ability (not a skill: it has a condition and an action). */
-export interface AbilityEntry {
-    ability_name: string;
-    condition?: Record<string, unknown>;
-    action?: Record<string, unknown>;
-    keep_triggered_after_once?: boolean;
-    activation_message?: string;
-}
+/**
+ * A passive/triggered mob ability (not a skill: it has a trigger, a condition
+ * and an action). Authored inline in the entity YAML; the shape lives in
+ * `types/AbilityType.ts` so the combat engine can normalise it once.
+ */
+export type AbilityEntry = AbilityDefinition;
 
 /** Fields shared by characters and mobs (both are "entities"). */
 export interface EntitiesData {
@@ -39,24 +42,33 @@ export interface EntitiesData {
     skills: string[];
     /** Not every entity defines loot. */
     loot?: LootEntry[];
-    /** Both characters and mobs can carry a weapon; some declare none. */
-    weapon?: WeaponEntry | null;
-    /** Only mobs declare triggered abilities. */
-    abilities?: AbilityEntry[];
+    /**
+     * Both characters and mobs can carry a weapon; some declare none.
+     *
+     * A string is a catalogue id (`weapon: rusty_sword`); an object is an inline
+     * definition (natural mob attacks and legacy blocks).
+     */
+    weapon?: WeaponReference | null;
+    /** Only mobs declare triggered abilities; authored inline. */
+    abilities?: AbilityDefinition[];
+    /**
+     * The unit's combat personality, authored inline like `abilities:`.
+     *
+     * Optional and read tolerantly: an absent or malformed block degrades to the
+     * default (balanced) profile. See `docs/ai/PLANO_DESENVOLVIMENTO_IA_COMBATE.md`.
+     */
+    ai?: AiProfileDefinition;
+    /** Items this entity carries. Key is item id, value is quantity. */
+    inventory?: EntityInventoryState;
 }
 
-export interface WeaponEntry {
-    id: string;
-    name: string;
-    element?: string;
-    damage_type?: string;
-    target?: string;
-    power?: number;
-    stamina_cost?: number;
-    hits?: number;
-    accuracy?: number;
-    damage_variance?: number[];
-}
+/**
+ * An inline weapon definition.
+ *
+ * Kept as the name the rest of the codebase already imports; the authoritative
+ * shape is {@link WeaponDefinition} in `types/WeaponType.ts`.
+ */
+export type WeaponEntry = WeaponDefinition;
 
 export interface CharacterData extends EntitiesData {
     name: string;

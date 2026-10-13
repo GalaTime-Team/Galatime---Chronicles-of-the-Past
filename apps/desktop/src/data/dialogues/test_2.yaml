@@ -1,0 +1,206 @@
+# Diálogo: test_2
+# Gerado pelo Dialogue Forger. Comentários do ficheiro original não são preservados.
+
+dialogue_id: test_2
+start_node: entra
+nodes:
+  entra:
+    type: character_enter
+    character_id: arthur
+    position: center
+    emotion: neutral
+    next: entra_2
+
+  entra_2:
+    type: character_enter
+    character_id: pacci
+    position: center
+    emotion: neutral
+    next: fala
+
+  fala:
+    type: line
+    speaker_id: arthur
+    emotion: neutral
+    text:
+      - type: text
+        value: So... What kind of person is Raphael?
+    next: fala_2
+
+  fala_2:
+    type: line
+    speaker_id: pacci
+    emotion: thinking
+    text:
+      - type: text
+        value: Raphael? He's...
+    next: fala_3
+
+  fala_3:
+    type: line
+    speaker_id: pacci
+    emotion: neutral
+    text:
+      - type: text
+        value: "He's a "
+      - type: interactive_text
+        interaction_id: id
+        value: weird guy
+        optional: true
+        on_click:
+          next: clicavel
+      - type: text
+        value: ", but a good person."
+    next: escolha
+
+  escolha:
+    type: choice
+    prompt:
+      speaker_id: pacci
+      emotion: happy
+      text:
+        - type: text
+          value: He raised me and my brother when we where just kids trying to survive on the woods. Gave us a home, taught us how to fight. He's kinda like family to us.
+    choices:
+      - choice_id: opcao
+        text: Concur with him
+        next: fala_4
+      - choice_id: opcao_2
+        text: Question their past
+        next: fala_6
+
+  fala_4:
+    type: line
+    speaker_id: arthur
+    emotion: happy
+    text:
+      - type: text
+        value: He sounds like a great guy.
+    next: fala_5
+
+  fala_5:
+    type: line
+    speaker_id: pacci
+    emotion: happy
+    text:
+      - type: text
+        value: He is. I don't know what would be of us if it wasn't for him.
+    next: fim
+    effects_after:
+      - type: add_relationship
+        character_id: pacci
+        relationship_kind: friendship
+        value: 1
+
+  fala_6:
+    type: line
+    speaker_id: arthur
+    emotion: neutral
+    text:
+      - type: text
+        value: "Wait. "
+      - type: styled_text
+        value: "\"In the woods\""
+        style:
+          italic: true
+      - type: text
+        value: "? What do you mean by that?"
+    next: fala_7
+
+  fala_7:
+    type: line
+    speaker_id: pacci
+    emotion: neutral
+    text:
+      - type: text
+        value: Neven and I are orphans. Our parents... They died when we were kids.
+    next: fala_8
+
+  fala_8:
+    type: line
+    speaker_id: arthur
+    emotion: surprised
+    text:
+      - type: text
+        value: Oh. Oh god. I'm so sorry.
+    next: fala_9
+
+  fala_9:
+    type: line
+    speaker_id: pacci
+    emotion: neutral
+    text:
+      - type: text
+        value: It's alright.
+    next: fala_10
+
+  fala_10:
+    type: line
+    speaker_id: pacci
+    emotion: happy
+    text:
+      - type: text
+        value: In the end, everything turned out fine.
+    next: fim
+
+  clicavel:
+    type: line
+    speaker_id: arthur
+    emotion: suspicious
+    text:
+      - type: text
+        value: How weird are we talking about?
+    next: clicavel_1
+
+  clicavel_1:
+    type: line
+    speaker_id: pacci
+    emotion: unsure
+    text:
+      - type: text
+        value: He's... kinda odd. He often talks like someone is watching. And has bad taste in jokes.
+    next: clicavel_2
+
+  clicavel_2:
+    type: line
+    speaker_id: arthur
+    emotion: unsure
+    text:
+      - type: text
+        value: I don't think I want to meet him anymore. He sounds crazy
+    next: clicavel_3
+
+  clicavel_3:
+    type: line
+    speaker_id: pacci
+    emotion: unsure
+    text:
+      - type: text
+        value: That's a bit harsh. Although he is a bit of an odd ball
+    next: clicavel_4
+    effects_after:
+      - type: add_relationship
+        character_id: pacci
+        relationship_kind: friendship
+        value: -1
+
+  clicavel_4:
+    type: line
+    speaker_id: pacci
+    emotion: happy
+    text:
+      - type: text
+        value: But trust me. He's a good person. You can rely on him.
+    next: clicavel_5
+
+  clicavel_5:
+    type: line
+    speaker_id: arthur
+    emotion: unsure
+    text:
+      - type: text
+        value: Hm.
+    next: fim
+
+  fim:
+    type: end

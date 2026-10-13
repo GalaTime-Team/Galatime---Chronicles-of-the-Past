@@ -1,7 +1,7 @@
 import type { DialogueError } from '../../types/DialogueType';
 import type {
     FlagValue,
-    InventoryEntry,
+    InventoryState,
     ObjectiveState,
     ObjectiveStateInput,
     StateChange,
@@ -79,8 +79,13 @@ export function isRelationshipPathMissingKind(path: string): boolean {
     return segments.length === 2 && segments[0] === 'relationship' && segments[1] !== '';
 }
 
-/** Everything `readStatePath` can return. Lists are returned as copies. */
-export type StatePathValue = FlagValue | InventoryEntry | string[] | null;
+/**
+ * Everything `readStatePath` can return. Lists are returned as copies.
+ *
+ * Every scalar slice collapses into `FlagValue` — `inventory` included, because
+ * an entry is a count — so the union only has to add the engine-managed lists.
+ */
+export type StatePathValue = FlagValue | string[] | null;
 
 /** Outcome of a state mutation: the recorded change, or why it did not happen. */
 export interface StateWriteResult {
@@ -127,11 +132,17 @@ export function isStatePathRoot(value: string): value is StatePathRoot {
  * Missing slices default to empty so a caller can pass only the state a given
  * dialogue actually reads, and the engine-managed slices (`dialogues`,
  * `paths`) never need to be supplied at all.
+ *
+ * The inventory is normalised rather than copied: `WorldStateInput` reaches this
+ * function from YAML and from loose test values, which are not type-checked, and
+ * a boolean there would otherwise become an entry the rest of the engine cannot
+ * count. One key is `1` and no key is `0`, which is the shape every comparison
+ * and every effect already assumes.
  */
 export function createWorldState(input: WorldStateInput = {}): WorldState {
     return {
         flags: { ...(input.flags ?? {}) },
-        inventory: { ...(input.inventory ?? {}) },
+        inventory: normalizeInventory(input.inventory),
         relationship: { ...(input.relationship ?? {}) },
         objectives: normalizeObjectives(input.objectives),
         stats: { ...(input.stats ?? {}) },
@@ -143,7 +154,31 @@ export function createWorldState(input: WorldStateInput = {}): WorldState {
             unlocked: [...(input.dialogues?.unlocked ?? [])],
         },
         paths: { unlocked: [...(input.paths?.unlocked ?? [])] },
+        entityInventories: input.entityInventories
+            ? Object.fromEntries(
+                Object.entries(input.entityInventories).map(([k, v]) => [k, { ...v }]),
+            )
+            : {},
     };
+}
+
+/** An inventory entry as a count, whatever shape it arrived in. */
+function toInventoryCount(value: unknown): number {
+    if (typeof value === 'boolean') {
+        return value ? 1 : 0;
+    }
+
+    return toFiniteNumber(value) ?? 0;
+}
+
+function normalizeInventory(input?: Record<string, unknown>): InventoryState {
+    const normalized: InventoryState = {};
+
+    for (const [itemId, value] of Object.entries(input ?? {})) {
+        normalized[itemId] = toInventoryCount(value);
+    }
+
+    return normalized;
 }
 
 /**

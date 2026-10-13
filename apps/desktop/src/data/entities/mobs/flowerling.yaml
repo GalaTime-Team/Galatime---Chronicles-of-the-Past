@@ -26,14 +26,6 @@ skills:
   - vine_whip
 
 weapon:
-  id: thorny_vine
-  name: Thorny Vine
-  element: florere
-  damage_type: physical
-  target: individual
-  power: 20
-  stamina_cost: 2
-  damage_variance: [0.8, 1.2]
 
 loot:
   - item_id: gold_coin
@@ -44,14 +36,26 @@ loot:
     chance: 0.8
 
 abilities:
-  - ability_name: Thorny Retaliation
+  - id: thorned_body
+    name: Thorned Body
+    description: Corporis attacks wound the attacker with part of the damage.
+    tags: [reaction, reflect]
+    trigger:
+      event: after_damage
     condition:
-      type: on_hit
-      element: corporis
+      all:
+        - element:
+            id: corporis
+            operator: eq
     action:
       type: reflect_damage
-      reflect_fraction: 0.1
-    keep_triggered_after_once: true
-    activation_message: "The Flowerling's thorns scratch back!"
+      target: attacker
+      parameters:
+        fraction: 0.3
+        accuracy: 50
+    display:
+      visible: true
+      priority: 50
 
-
+ai:
+  style: brute

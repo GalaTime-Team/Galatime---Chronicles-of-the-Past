@@ -1,0 +1,90 @@
+﻿id: fire_cloak
+name: Fire Cloak
+rarity: rare
+height: "170 cm"
+weight: "25 kg"
+description: >
+  Besides being a living fire, this creature also wears a cloak
+  that doesn't burn.
+
+elements:
+  - ignis
+
+base_stats:
+  hp: 264
+  mana: 47
+  stamina: 8
+  physical_attack: 40
+  magical_attack: 70
+  physical_defense: 29
+  magical_defense: 39
+  speed: 50
+
+skills:
+  - fire_ball
+  - fire_tornado
+  - commet_dash
+
+weapon:
+
+loot:
+  - item_id: gold_coin
+    quantity: 1
+    chance: 0.4
+  - item_id: crimson_coal
+    quantity: 1
+    chance: 0.2
+  - item_id: warm_rag
+    quantity: 1
+    chance: 0.9
+
+abilities:
+  - id: kindled_immunity
+    name: Kindled Immunity
+    description: The first physical hit ignites it, making it immune to physical attacks until it dies.
+    tags: [reaction, immunity]
+    trigger:
+      event: after_damage
+      once: true
+    condition:
+      all:
+        - damage:
+            type: physical
+            operator: eq
+    action:
+      type: set_immunity
+      target: self
+      parameters:
+        damage_type: physical
+    display:
+      visible: true
+      priority: 80
+
+  - id: kindled_haste
+    name: Kindled Haste
+    description: The first physical hit also stokes its flames, raising its speed until it dies.
+    tags: [reaction, buff]
+    trigger:
+      event: after_damage
+      once: true
+    condition:
+      all:
+        - damage:
+            type: physical
+            operator: eq
+    action:
+      type: modify_stat
+      target: self
+      parameters:
+        stat_changes:
+          speed: 20
+    duration:
+      type: until_death
+    display:
+      visible: true
+      priority: 70
+
+ai:
+  style: caster
+  weights:
+    element_edge: 0.8

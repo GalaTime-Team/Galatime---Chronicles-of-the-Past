@@ -22,6 +22,12 @@ import type { FlagValue, StateChange, WorldState } from './WorldStateType';
  * Item presence, relationships, flags, objective state and seen dialogues are
  * all expressed as state paths combined with these operators, so the evaluator
  * needs no per-domain operator of its own.
+ *
+ * `equals` / `not_equals` against `true` or `false` ask whether the entry is
+ * there rather than naming a value: on a flag, that is "which option did the
+ * player pick?"; on an item, whose entry is a count, `= true` means "is the
+ * count above zero" and `= false` covers zero, an item already removed and an
+ * item never given. The ordering operators are numbers only.
  */
 export type ComparisonOperator =
     | 'equals'
@@ -79,14 +85,15 @@ export interface DialogueTextStyle {
      */
     wave?: 'off' | 'light' | 'normal' | 'strong';
     /**
-     * Jitter intensity: a small, fast, irregular tremble of the whole segment,
+     * Jitter intensity: a small, fast, irregular tremble of each character,
      * horizontally and vertically at once. Written for a character on the edge of
      * crying — it reads as barely holding still rather than as being shaken.
      *
      * **Layered, not exclusive.** `shake`, `wave` and `jitter` each move the text
-     * on their own axis, and a segment may ask for all three; the shake moves the
-     * whole segment, the jitter trembles inside that, and the wave runs per
-     * character inside both. `off` defers to the player, exactly like the others.
+     * on their own axis, and a segment may ask for all three; every character
+     * carries all three — the shake rattles it, the jitter trembles inside that
+     * and the wave bobs inside both — each on its own phase, so the movement
+     * travels along the line. `off` defers to the player, exactly like the others.
      */
     jitter?: 'off' | 'light' | 'normal' | 'strong';
     /**
@@ -195,6 +202,22 @@ export interface RemoveItemEffect {
     quantity?: number;
 }
 
+/** Give an item to a specific entity. */
+export interface AddItemToEntityEffect {
+    type: 'add_item_to_entity';
+    entity_id: string;
+    item_id: string;
+    quantity?: number;
+}
+
+/** Take an item from a specific entity. */
+export interface RemoveItemFromEntityEffect {
+    type: 'remove_item_from_entity';
+    entity_id: string;
+    item_id: string;
+    quantity?: number;
+}
+
 /** Make an objective available without activating it. */
 export interface UnlockObjectiveEffect {
     type: 'unlock_objective';
@@ -233,6 +256,8 @@ export type DialogueEffect =
     | AddStateEffect
     | AddItemEffect
     | RemoveItemEffect
+    | AddItemToEntityEffect
+    | RemoveItemFromEntityEffect
     | UnlockObjectiveEffect
     | CompleteObjectiveEffect
     | UnlockDialogueEffect

@@ -12,13 +12,15 @@
  */
 
 /**
- * A single inventory entry.
+ * A single inventory entry: how many of an item the player is carrying.
  *
- * Most items are counted (a number), but key items may be modelled as a
- * boolean "owned / not owned" flag — the dialogue fixture compares
- * `inventory.ancient_key` against `true`, so both shapes must be supported.
+ * Always a count, never a boolean. "Owns the ancient key or not" is a fact about
+ * ownership, but it is still a fact about a quantity — one key is `1` and no key
+ * is `0` — so `add_item` and `remove_item` can always count and a dialogue can
+ * ask `inventory.ancient_key = true`, which reads as "is the count above zero".
+ * Booleans belong to `flags`, where the value is a truth and not an amount.
  */
-export type InventoryEntry = number | boolean;
+export type InventoryEntry = number;
 
 /** Owned items, keyed by item id. */
 export interface InventoryState {
@@ -103,6 +105,8 @@ export interface WorldState {
     paths: {
         unlocked: string[];
     };
+    /** Inventories of individual entities, keyed by entity id. */
+    entityInventories?: Record<string, Record<string, number>>;
 }
 
 /** Objective shorthand: either a bare status or a full state object. */
@@ -129,6 +133,7 @@ export interface WorldStateInput {
     paths?: {
         unlocked?: string[];
     };
+    entityInventories?: Record<string, Record<string, number>>;
 }
 
 /** What kind of mutation a state change represents. */
@@ -158,8 +163,15 @@ export interface StateChange {
      * whose kind is part of its identity (`relationship.pacci.friendship`).
      */
     target: string;
-    previous: FlagValue | InventoryEntry | null;
-    next: FlagValue | InventoryEntry;
+    /**
+     * What the entry held before, or `null` when it did not exist.
+     *
+     * Typed as a free-form scalar rather than per slice: every slice stores one
+     * (`inventory` included, since an entry is a count), and a change can land on
+     * any of them.
+     */
+    previous: FlagValue | null;
+    next: FlagValue;
     /** Set for numeric changes only. */
     delta?: number;
     /** The effect type (or `scene.on_enter`) that produced the change. */

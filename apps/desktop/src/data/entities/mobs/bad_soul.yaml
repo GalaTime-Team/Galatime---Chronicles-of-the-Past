@@ -1,0 +1,58 @@
+﻿id: bad_soul
+name: Bad Soul
+rarity: rare
+height: "128 cm"
+weight: "0 kg"
+description: >
+  A greedy soul that has abandoned all restraint. It tears at life
+  energy with ruthless hunger and grows stronger with every theft.
+
+elements:
+  - umbra
+
+base_stats:
+  hp: 360
+  mana: 60
+  stamina: 24
+  physical_attack: 20
+  magical_attack: 56
+  physical_defense: 35
+  magical_defense: 28
+  speed: 42
+
+skills:
+  - ravenous_drain
+  - avarice_burst
+
+loot:
+  - item_id: gold_coin
+    quantity: 2
+    chance: 0.55
+
+abilities:
+  - id: soul_inversion
+    name: Soul Inversion
+    description: After 4 of its turns, it turns into a Good Soul.
+    tags: [transform, cycle]
+    trigger:
+      event: turn_end
+      once: true
+    condition:
+      all:
+        - turn_count:
+            operator: gte
+            value: 4
+    action:
+      type: transform
+      target: self
+      parameters:
+        entity_id: good_soul
+        entity_type: mob
+    display:
+      visible: true
+      priority: 60
+
+ai:
+  style: caster
+  targeting:
+    prefer: [weakest]

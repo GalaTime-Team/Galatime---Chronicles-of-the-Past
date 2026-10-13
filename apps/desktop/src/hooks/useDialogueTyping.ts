@@ -44,6 +44,22 @@ export function useDialogueTyping(
 
     const [revealedCount, setRevealedCount] = useState(0);
 
+    /**
+     * The schedule the current reveal belongs to.
+     *
+     * A new page has to be reported as typing in the very first commit that
+     * shows it. Waiting for the restart effect below would leave one frame where
+     * the box still counts the previous page's characters, and the view would
+     * read that stale `false` as "the line finished" — which is exactly the
+     * moment the options of a choice node must not appear yet.
+     */
+    const [revealedSchedule, setRevealedSchedule] = useState(schedule);
+
+    if (revealedSchedule !== schedule) {
+        setRevealedSchedule(schedule);
+        setRevealedCount(instant ? schedule.length : 0);
+    }
+
     const timerRef = useRef<number | null>(null);
     /**
      * Invalidates a running chain.

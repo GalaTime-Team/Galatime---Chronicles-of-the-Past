@@ -1,0 +1,921 @@
+# Diálogo: test_4
+# Gerado pelo Dialogue Forger. Comentários do ficheiro original não são preservados.
+
+dialogue_id: test_4
+start_node: entra
+nodes:
+  entra:
+    type: character_enter
+    character_id: barasturon
+    position: center_left
+    emotion: neutral
+    next: entra_2
+    effects_after:
+      - type: add_relationship
+        character_id: barasturon
+        relationship_kind: friendship
+        value: 0
+
+  entra_2:
+    type: character_enter
+    character_id: duha
+    position: center_right
+    emotion: neutral
+    next: entra_3
+    effects_after:
+      - type: add_relationship
+        character_id: duha
+        relationship_kind: friendship
+        value: 0
+
+  entra_3:
+    type: character_enter
+    character_id: nicima
+    position: right
+    emotion: neutral
+    next: fala
+    effects_after:
+      - type: add_relationship
+        character_id: nicima
+        relationship_kind: friendship
+        value: 0
+
+  fala:
+    type: line
+    speaker_id: duha
+    emotion: neutral
+    text:
+      - type: text
+        value: Are you sure that it's a good idea to ask Arthur to join us?
+    next: fala_2
+
+  fala_2:
+    type: line
+    speaker_id: barasturon
+    emotion: neutral
+    text:
+      - type: text
+        value: Why wouldn't it be? He seems like a good guy.
+    next: fala_3
+
+  fala_3:
+    type: line
+    speaker_id: duha
+    emotion: neutral
+    text:
+      - type: text
+        value: Appearances can be deceiving. Besides, have you seen how he fought yesterday? He's more a liability than a fighter.
+    next: fala_4
+
+  fala_4:
+    type: line
+    speaker_id: nicima
+    emotion: neutral
+    text:
+      - type: text
+        value: He l-looked p-pretty nervous...
+    next: fala_5
+
+  fala_5:
+    type: line
+    speaker_id: barasturon
+    emotion: unsure
+    text:
+      - type: text
+        value: Look guys. I know that we just met him yesterday.
+    next: fala_6
+
+  fala_6:
+    type: line
+    speaker_id: nicima
+    emotion: unsure
+    text:
+      - type: text
+        value: (That's true)
+    next: fala_7
+
+  fala_7:
+    type: line
+    speaker_id: barasturon
+    emotion: unsure
+    text:
+      - type: text
+        value: "And that he "
+      - type: styled_text
+        value: may
+        style:
+          bold: true
+      - type: text
+        value: " not be the best fighter."
+    next: fala_8
+
+  fala_8:
+    type: line
+    speaker_id: duha
+    emotion: neutral
+    text:
+      - type: text
+        value: (You can say that again.)
+    next: fala_9
+
+  fala_9:
+    type: line
+    speaker_id: barasturon
+    emotion: neutral
+    text:
+      - type: text
+        value: "But, thanks to him and Alice, we managed to not only make an "
+      - type: styled_text
+        value: actual
+        style:
+          bold: true
+      - type: text
+        value: " discovery, but to destroy that huge golem."
+    next: fala_10
+
+  fala_10:
+    type: line
+    speaker_id: barasturon
+    emotion: happy
+    text:
+      - type: text
+        value: I think we should give him a chance and take him on another adventure.
+    next: fala_11
+
+  fala_11:
+    type: line
+    speaker_id: duha
+    emotion: annoyed
+    text:
+      - type: text
+        value: "This isn't a game, you know. It's a job. We need someone who knows how to "
+      - type: styled_text
+        value: fight
+        style:
+          italic: true
+      - type: text
+        value: ", not someone a dead weight."
+    next: fala_12
+
+  fala_12:
+    type: line
+    speaker_id: nicima
+    emotion: unsure
+    text:
+      - type: text
+        value: It did lo-looked like h-h-he was sur-p-p-prised with everythi-thing.
+    next: fala_13
+
+  fala_13:
+    type: line
+    speaker_id: duha
+    emotion: annoyed
+    auto_advance: true
+    text:
+      - type: text
+        value: "Besides, "
+      - type: styled_text
+        value: "\"another adventure\""
+        style:
+          italic: true
+      - type: text
+        value: "? We've been looking for work for a week before you found that rumor. How do you think it'll take befo-"
+    next: fala_14
+
+  fala_14:
+    type: line
+    speaker_id: arthur
+    emotion: neutral
+    text:
+      - type: text
+        value: HEY GUYS!
+    next: fala_15
+
+  fala_15:
+    type: line
+    speaker_id: barasturon
+    emotion: happy
+    text:
+      - type: text
+        value: ...
+    next: fala_16
+
+  fala_16:
+    type: line
+    speaker_id: duha
+    emotion: annoyed
+    text:
+      - type: text
+        value: We're not done with this conversation.
+    next: entra_4
+
+  entra_4:
+    type: character_enter
+    character_id: arthur
+    position: left
+    emotion: stressed
+    next: fala_17
+    effects_after:
+      - type: add_item
+        item_id: hp_potion
+        quantity: 3
+
+  fala_17:
+    type: line
+    speaker_id: arthur
+    emotion: stressed
+    text:
+      - type: text
+        value: Sorry I'm late.
+    next: fala_18
+
+  fala_18:
+    type: line
+    speaker_id: barasturon
+    emotion: happy
+    text:
+      - type: text
+        value: "Hey, don't sweat it. We weren't waiting for long. "
+      - type: styled_text
+        value: Right, guys?
+        style:
+          italic: true
+    next: fala_19
+
+  fala_19:
+    type: line
+    speaker_id: nicima
+    emotion: unsure
+    text:
+      - type: text
+        value: ...
+    next: escolha
+
+  escolha:
+    type: choice
+    prompt:
+      speaker_id: duha
+      emotion: annoyed
+      text:
+        - type: styled_text
+          value: You look at the group and feel a tension in the air. You start to wonder if you appeared in a bad time.
+          style:
+            italic: true
+            color: "#D88CFF"
+            speed_multiplier: 0.8
+    choices:
+      - choice_id: opcao
+        text: Question them
+        next: fala_20
+      - choice_id: opcao_2
+        text: Don't press it
+        next: fala_24
+
+  fala_20:
+    type: line
+    speaker_id: arthur
+    emotion: unsure
+    text:
+      - type: text
+        value: Is there a problem?
+    next: fala_21
+
+  fala_21:
+    type: line
+    speaker_id: duha
+    emotion: annoyed
+    text:
+      - type: styled_text
+        value: "*glare*"
+        style:
+          bold: true
+          italic: true
+          speed_multiplier: 0.8
+    next: fala_22
+
+  fala_22:
+    type: line
+    speaker_id: nicima
+    emotion: happy
+    text:
+      - type: text
+        value: W-we were j-j-just talk-k-king about wha-what to do next-t.
+    next: fala_23
+
+  fala_23:
+    type: line
+    speaker_id: arthur
+    emotion: suspicious
+    text:
+      - type: text
+        value: (They're definitively hiding something from me. Maybe I should ask Barasturon about it later.)
+    next: fala_24
+    effects_after:
+      - type: add_relationship
+        character_id: duha
+        relationship_kind: friendship
+        value: -1
+      - type: add_relationship
+        character_id: nicima
+        relationship_kind: friendship
+        value: -1
+
+  fala_24:
+    type: line
+    speaker_id: arthur
+    emotion: thinking
+    text:
+      - type: text
+        value: (Maybe I shouldn't press it. It could make things worse.)
+    next: fala_25
+
+  fala_25:
+    type: line
+    speaker_id: arthur
+    emotion: neutral
+    text:
+      - type: text
+        value: So... Do you guys have a another job to do?
+    next: fala_26
+
+  fala_26:
+    type: line
+    speaker_id: barasturon
+    emotion: happy
+    text:
+      - type: text
+        value: ahahaha...
+    next: fala_27
+
+  fala_27:
+    type: line
+    speaker_id: barasturon
+    emotion: neutral
+    text:
+      - type: text
+        value: Well, no.
+    next: fala_28
+
+  fala_28:
+    type: line
+    speaker_id: nicima
+    emotion: stressed
+    text:
+      - type: text
+        value: ...
+    next: fala_29
+
+  fala_29:
+    type: line
+    speaker_id: duha
+    emotion: annoyed
+    text:
+      - type: text
+        value: ...
+    next: fala_30
+
+  fala_30:
+    type: line
+    speaker_id: barasturon
+    emotion: stressed
+    text:
+      - type: text
+        value: But it's fine! We'll get another job soon, I'm certain of it!
+    next: fala_31
+
+  fala_31:
+    type: line
+    speaker_id: arthur
+    emotion: neutral
+    text:
+      - type: text
+        value: Actually. I have job I would like to do with you.
+    next: fala_32
+
+  fala_32:
+    type: line
+    speaker_id: duha
+    emotion: surprised
+    text:
+      - type: text
+        value: You do?
+    next: fala_33
+
+  fala_33:
+    type: line
+    speaker_id: nicima
+    emotion: surprised
+    text:
+      - type: text
+        value: You do?
+    next: fala_34
+
+  fala_34:
+    type: line
+    speaker_id: barasturon
+    emotion: surprised
+    text:
+      - type: text
+        value: You do?
+    next: fala_35
+
+  fala_35:
+    type: line
+    speaker_id: arthur
+    emotion: stressed
+    text:
+      - type: text
+        value: Ye-yeah? A friend of mine wants me to hunt some... things in Kelpton forest. I don't know my way around it so I thought of asking you guys for help.
+    next: fala_36
+
+  fala_36:
+    type: line
+    speaker_id: duha
+    emotion: unsure
+    text:
+      - type: text
+        value: "What kind of "
+      - type: styled_text
+        value: things
+        style:
+          bold: true
+      - type: text
+        value: " are we hunting? "
+    next: fala_37
+
+  fala_37:
+    type: line
+    speaker_id: arthur
+    emotion: thinking
+    text:
+      - type: text
+        value: Actually... I don't know... He said that these things look "melted" and that they were "freaking the villagers out"
+    next: fala_38
+
+  fala_38:
+    type: line
+    speaker_id: nicima
+    emotion: unsure
+    text:
+      - type: text
+        value: Tha-that's not re-reasuring-ing.
+    next: fala_39
+
+  fala_39:
+    type: line
+    speaker_id: duha
+    emotion: unsure
+    text:
+      - type: text
+        value: Yeah. It sounds suspicious.
+    next: fala_40
+
+  fala_40:
+    type: line
+    speaker_id: barasturon
+    emotion: neutral
+    text:
+      - type: text
+        value: I say let's go for it.
+    next: fala_41
+
+  fala_41:
+    type: line
+    speaker_id: barasturon
+    emotion: happy
+    text:
+      - type: text
+        value: "Helping people will help spread our name. And besides, it's not like we have anything else to do, "
+      - type: styled_text
+        value: right
+        style:
+          italic: true
+      - type: text
+        value: "?"
+    next: fala_42
+
+  fala_42:
+    type: line
+    speaker_id: nicima
+    emotion: thinking
+    text:
+      - type: text
+        value: ...
+    next: fala_43
+
+  fala_43:
+    type: line
+    speaker_id: duha
+    emotion: thinking
+    text:
+      - type: text
+        value: "... We are running out of "
+      - type: interactive_text
+        interaction_id: id
+        value: supplies
+        optional: true
+        on_click:
+          next: escolha_2
+      - type: text
+        value: ...
+    next: fala_44
+
+  fala_44:
+    type: line
+    speaker_id: barasturon
+    emotion: happy
+    text:
+      - type: text
+        value: Great! You can count on us, Arthur!
+    next: fala_45
+
+  fala_45:
+    type: line
+    speaker_id: duha
+    emotion: surprised
+    text:
+      - type: text
+        value: Huh!?
+    next: fala_46
+
+  fala_46:
+    type: line
+    speaker_id: arthur
+    emotion: happy
+    text:
+      - type: text
+        value: Really? Thanks!
+    next: fala_47
+
+  fala_47:
+    type: line
+    speaker_id: duha
+    emotion: angry
+    text:
+      - type: styled_text
+        value: Barasturon...
+        style:
+          bold: true
+          wave: normal
+          wave_speed: 0.8
+    next: fala_48
+
+  fala_48:
+    type: line
+    speaker_id: barasturon
+    emotion: happy
+    text:
+      - type: text
+        value: No problem pal! Now let's go!
+    next: fim_bad
+
+  fim_bad:
+    type: end
+    result: bad
+
+  escolha_2:
+    type: choice
+    prompt:
+      speaker_id: arthur
+      emotion: thinking
+      text:
+        - type: styled_text
+          value: You remember the 4 potions that Raphael gave you earlier. You wonder if you should share with them.
+          style:
+            italic: true
+            color: "#D88CFF"
+            speed_multiplier: 0.8
+    choices:
+      - choice_id: opcao
+        text: Don't share
+        next: fala_44
+      - choice_id: opcao_2
+        text: Share
+        next: fala_49
+
+  fala_49:
+    type: line
+    speaker_id: arthur
+    emotion: neutral
+    text:
+      - type: text
+        value: Speaking of supplies, my friend gave me some healing potions. Would you like one?
+    next: fala_50
+
+  fala_50:
+    type: line
+    speaker_id: barasturon
+    emotion: happy
+    text:
+      - type: text
+        value: Free potion? Don't mind if I do!
+    next: fala_51
+    effects_after:
+      - type: add_relationship
+        character_id: barasturon
+        relationship_kind: friendship
+        value: 1
+      - type: remove_item
+        item_id: hp_potion
+        quantity: 1
+
+  fala_51:
+    type: line
+    speaker_id: nicima
+    emotion: happy
+    text:
+      - type: text
+        value: Th-thank you, Arthur.
+    next: fala_52
+    effects_after:
+      - type: add_relationship
+        character_id: nicima
+        relationship_kind: friendship
+        value: 1
+      - type: remove_item
+        item_id: hp_potion
+        quantity: 1
+
+  fala_52:
+    type: line
+    speaker_id: duha
+    emotion: happy
+    text:
+      - type: text
+        value: ... Thanks.
+    next: fala_53
+    effects_after:
+      - type: add_relationship
+        character_id: duha
+        relationship_kind: friendship
+        value: 1
+      - type: remove_item
+        item_id: hp_potion
+        quantity: 1
+
+  fala_53:
+    type: line
+    speaker_id: arthur
+    emotion: neutral
+    text:
+      - type: text
+        value: So... Can you guys help me?
+    next: ramificacao
+
+  ramificacao:
+    type: conditional
+    branches:
+      - branch_id: ramo
+        if:
+          all:
+            - condition: greater_than
+              left: relationship.duha.friendship
+              right: 0
+        next: fala_54
+      - branch_id: ramo_2
+        if:
+          all:
+            - condition: less_than
+              left: relationship.duhan.friendship
+              right: 1
+            - condition: not_equals
+              left: inventory.hp_potion
+              right: 0
+        next: fala_58
+      - branch_id: ramo_3
+        next: fim_bad
+
+  fala_54:
+    type: line
+    speaker_id: duha
+    emotion: neutral
+    text:
+      - type: text
+        value: ... Alright, we'll help you.
+    next: fala_55
+
+  fala_55:
+    type: line
+    speaker_id: nicima
+    emotion: surprised
+    text:
+      - type: text
+        value: D-Duha!?
+    next: fala_56
+
+  fala_56:
+    type: line
+    speaker_id: duha
+    emotion: happy
+    text:
+      - type: text
+        value: But only because we need money for supplies.
+    next: fala_57
+
+  fala_57:
+    type: line
+    speaker_id: barasturon
+    emotion: happy
+    text:
+      - type: text
+        value: Right... For the supplies. (Thanks, Duha.)
+    next: fim_good
+
+  fim_good:
+    type: end
+    result: good
+
+  fala_58:
+    type: line
+    speaker_id: duha
+    emotion: thinking
+    text:
+      - type: text
+        value: ... Fine.
+    next: fala_59
+
+  fala_59:
+    type: line
+    speaker_id: barasturon
+    emotion: happy
+    auto_advance: true
+    text:
+      - type: text
+        value: Duha... Does that-
+    next: fala_60
+
+  fala_60:
+    type: line
+    speaker_id: duha
+    emotion: annoyed
+    text:
+      - type: styled_text
+        value: "No"
+        style:
+          bold: true
+      - type: text
+        value: . He's not officially in the team.
+    next: fala_61
+
+  fala_61:
+    type: line
+    speaker_id: arthur
+    emotion: surprised
+    text:
+      - type: text
+        value: Huh?
+    next: fala_62
+
+  fala_62:
+    type: line
+    speaker_id: duha
+    emotion: neutral
+    text:
+      - type: text
+        value: Look Arthur. I know that Barasturon invited you into our team last time.
+    next: fala_63
+
+  fala_63:
+    type: line
+    speaker_id: duha
+    emotion: unsure
+    text:
+      - type: text
+        value: But I'm gonna be frank here. I don't think that you've got what it takes.
+    next: fala_64
+
+  fala_64:
+    type: line
+    speaker_id: barasturon
+    emotion: annoyed
+    text:
+      - type: styled_text
+        value: DUDE!
+        style:
+          bold: true
+      - type: text
+        value: " What the heck is your problem!?"
+    next: fala_65
+
+  fala_65:
+    type: line
+    speaker_id: nicima
+    emotion: neutral
+    text:
+      - type: text
+        value: I... agree with him.
+    next: fala_66
+
+  fala_66:
+    type: line
+    speaker_id: barasturon
+    emotion: angry
+    text:
+      - type: styled_text
+        value: WHAT THE HECK GUYS!!
+        style:
+          bold: true
+    next: fala_67
+
+  fala_67:
+    type: line
+    speaker_id: duha
+    emotion: annoyed
+    text:
+      - type: text
+        value: Let me finish.
+    next: fala_68
+
+  fala_68:
+    type: line
+    speaker_id: duha
+    emotion: neutral
+    text:
+      - type: text
+        value: However, you're a good guy. So I'm going to teach you how to fight.
+    next: fala_69
+
+  fala_69:
+    type: line
+    speaker_id: arthur
+    emotion: neutral
+    text:
+      - type: text
+        value: Really?
+    next: fala_70
+
+  fala_70:
+    type: line
+    speaker_id: duha
+    emotion: neutral
+    text:
+      - type: text
+        value: Sure. We were all new to adventuring. Still are. But we've learned some things during our time together, that can share with you.
+    next: fala_71
+
+  fala_71:
+    type: line
+    speaker_id: duha
+    emotion: happy
+    text:
+      - type: text
+        value: Isn't that right guys?
+    next: fala_72
+
+  fala_72:
+    type: line
+    speaker_id: barasturon
+    emotion: happy
+    text:
+      - type: text
+        value: Heck yeah!
+    next: fala_73
+
+  fala_73:
+    type: line
+    speaker_id: nicima
+    emotion: happy
+    text:
+      - type: text
+        value: I wou-ould love t-t-to help you.
+    next: fala_74
+
+  fala_74:
+    type: line
+    speaker_id: duha
+    emotion: happy
+    text:
+      - type: text
+        value: So what do you say Arthur? Do you want us to teach you about adventuring?
+    next: fala_75
+
+  fala_75:
+    type: line
+    speaker_id: arthur
+    emotion: happy
+    text:
+      - type: text
+        value: ... Yeah... Yeah, I would love that!
+    next: fala_76
+
+  fala_76:
+    type: line
+    speaker_id: barasturon
+    emotion: happy
+    text:
+      - type: text
+        value: That's the spirit!
+    next: fala_77
+
+  fala_77:
+    type: line
+    speaker_id: duha
+    emotion: happy
+    text:
+      - type: text
+        value: That settles it. Guys, pack your things. We've got a job to do.
+    next: fim_neutral
+
+  fim_neutral:
+    type: end
+    result: neutral

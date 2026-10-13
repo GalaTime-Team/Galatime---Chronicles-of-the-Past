@@ -25,14 +25,6 @@ skills:
   - kick
 
 weapon:
-  id: claws
-  name: Claws
-  element: inanus
-  damage_type: physical
-  target: individual
-  power: 15
-  stamina_cost: 2
-  damage_variance: [0.9, 1.3]
 
 loot:
   - item_id: gold_coin
@@ -44,5 +36,8 @@ loot:
   - item_id: dirty_fur
     quantity: 1
     chance: 0.8
+
+ai:
+  style: brute
 
 

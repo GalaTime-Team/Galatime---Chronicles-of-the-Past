@@ -1,0 +1,78 @@
+﻿id: good_soul
+name: Good Soul
+rarity: rare
+height: "128 cm"
+weight: "0 kg"
+description: >
+  A charitable soul that learned to wield its light with precision.
+  Its glow restores allies while weakening hostile intent.
+
+elements:
+  - lux
+
+base_stats:
+  hp: 340
+  mana: 62
+  stamina: 22
+  physical_attack: 58
+  magical_attack: 16
+  physical_defense: 32
+  magical_defense: 58
+  speed: 34
+
+skills:
+  - radiant_mend_plus
+  - luminous_blessing
+  - gleam_lance
+
+loot:
+  - item_id: gold_coin
+    quantity: 2
+    chance: 0.55
+
+abilities:
+  - id: soul_inversion
+    name: Soul Inversion
+    description: After 4 of its turns, it turns back into a Bad Soul.
+    tags: [transform, cycle]
+    trigger:
+      event: turn_end
+      once: true
+    condition:
+      all:
+        - turn_count:
+            operator: gte
+            value: 4
+    action:
+      type: transform
+      target: self
+      parameters:
+        entity_id: bad_soul
+        entity_type: mob
+    display:
+      visible: true
+      priority: 60
+
+  - id: radiant_reflection
+    name: Radiant Reflection
+    description: Magical attacks are partly thrown back at the attacker.
+    tags: [reaction, reflect]
+    trigger:
+      event: after_damage
+    condition:
+      all:
+        - damage:
+            type: magical
+            operator: eq
+    action:
+      type: reflect_damage
+      target: attacker
+      parameters:
+        fraction: 0.35
+        accuracy: 40
+    display:
+      visible: true
+      priority: 50
+
+ai:
+  style: support

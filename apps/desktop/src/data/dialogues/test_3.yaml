@@ -1,0 +1,696 @@
+# Diálogo: test_3
+# Gerado pelo Dialogue Forger. Comentários do ficheiro original não são preservados.
+
+dialogue_id: test_3
+start_node: entra
+nodes:
+  entra:
+    type: character_enter
+    character_id: noelia
+    position: center_left
+    emotion: neutral
+    next: entra_2
+
+  entra_2:
+    type: character_enter
+    character_id: kelly
+    position: center_right
+    emotion: neutral
+    next: fala
+
+  fala:
+    type: line
+    speaker_id: noelia
+    emotion: annoyed
+    auto_advance: true
+    text:
+      - type: text
+        value: |
+          So I was going to the plaza to gather some info. And then I-
+      - type: pause
+        duration_ms: 2500
+    next: fala_2
+
+  fala_2:
+    type: line
+    speaker_id: kelly
+    emotion: surprised
+    text:
+      - type: text
+        value: Wait. Is that who I think it is?
+    next: fala_3
+
+  fala_3:
+    type: line
+    speaker_id: noelia
+    emotion: surprised
+    text:
+      - type: text
+        value: Hm?
+    next: sai
+
+  sai:
+    type: character_exit
+    character_id: noelia
+    next: entra_3
+
+  entra_3:
+    type: character_enter
+    character_id: noelia
+    position: center
+    emotion: neutral
+    next: entra_4
+
+  entra_4:
+    type: character_enter
+    character_id: raphael
+    position: center_left
+    emotion: neutral
+    next: fala_4
+
+  fala_4:
+    type: line
+    speaker_id: noelia
+    emotion: annoyed
+    text:
+      - type: text
+        value: "Oh... It's "
+      - type: styled_text
+        value: bird brain
+        style:
+          italic: true
+      - type: text
+        value: .
+    next: fala_5
+
+  fala_5:
+    type: line
+    speaker_id: raphael
+    emotion: neutral
+    text:
+      - type: text
+        value: "Hello, "
+      - type: styled_text
+        value: dumb 'n dumber
+        style:
+          italic: true
+      - type: text
+        value: .
+    next: fala_6
+
+  fala_6:
+    type: line
+    speaker_id: kelly
+    emotion: annoyed
+    text:
+      - type: text
+        value: "What the hell do you want, "
+      - type: styled_text
+        value: punk
+        style:
+          bold: true
+      - type: text
+        value: "!? Can't you see we're having a talk here!?"
+    next: fala_7
+
+  fala_7:
+    type: line
+    speaker_id: raphael
+    emotion: neutral
+    text:
+      - type: text
+        value: "Well "
+      - type: styled_text
+        value: excuuuuuuuse me princess
+        style:
+          wave: normal
+          wave_speed: 0.8
+      - type: text
+        value: . Your conversation was dully noted.
+    next: fala_8
+
+  fala_8:
+    type: line
+    speaker_id: raphael
+    emotion: happy
+    text:
+      - type: text
+        value: And ignored.
+    next: fala_9
+
+  fala_9:
+    type: line
+    speaker_id: raphael
+    emotion: neutral
+    text:
+      - type: text
+        value: I came here because Pacci told me to give you something.
+    next: fala_10
+
+  fala_10:
+    type: line
+    speaker_id: noelia
+    emotion: thinking
+    text:
+      - type: text
+        value: Pacci? What did he wanted to give me?
+    next: ramificacao
+
+  ramificacao:
+    type: conditional
+    branches:
+      - branch_id: com_caixa
+        if:
+          all:
+            - condition: equals
+              left: inventory.caixa
+              right: true
+        next: fala_11
+      - branch_id: sem_caixa
+        next: fala_36
+
+  fala_11:
+    type: line
+    speaker_id: raphael
+    emotion: neutral
+    text:
+      - type: text
+        value: I don't know. He put it in a box and I didn't open it. Here you go.
+    next: fala_12
+    effects_after:
+      - type: remove_item
+        item_id: caixa
+        quantity: 1
+
+  fala_12:
+    type: line
+    speaker_id: kelly
+    emotion: thinking
+    text:
+      - type: text
+        value: "A box? You think it's a "
+      - type: interactive_text
+        interaction_id: id
+        value: gift
+        optional: true
+        on_click:
+          next: clicavel
+      - type: text
+        value: "?"
+    next: fala_13
+
+  fala_13:
+    type: line
+    speaker_id: noelia
+    emotion: thinking
+    text:
+      - type: text
+        value: I dunno. It's not like it's my birthday or anything.
+    next: fala_14
+
+  fala_14:
+    type: line
+    speaker_id: noelia
+    emotion: neutral
+    text:
+      - type: styled_text
+        value: Nerd
+        style:
+          italic: true
+      - type: text
+        value: ", did my brother said anything about this?"
+    next: fala_15
+
+  fala_15:
+    type: line
+    speaker_id: raphael
+    emotion: neutral
+    text:
+      - type: text
+        value: "He said nothing "
+      - type: styled_text
+        value: miss microbe
+        style:
+          italic: true
+      - type: text
+        value: . Just asked me to go to town and give you the box.
+    next: fala_16
+
+  fala_16:
+    type: line
+    speaker_id: noelia
+    emotion: neutral
+    text:
+      - type: text
+        value: ...
+    next: fala_17
+
+  fala_17:
+    type: line
+    speaker_id: raphael
+    emotion: neutral
+    text:
+      - type: text
+        value: Well, aren't you going to open it?
+    next: fala_18
+
+  fala_18:
+    type: line
+    speaker_id: noelia
+    emotion: happy
+    text:
+      - type: text
+        value: "Getting curious, "
+      - type: styled_text
+        value: maidenless
+        style:
+          italic: true
+      - type: text
+        value: "? Tough luck! Not opening in front you."
+    next: fala_19
+
+  fala_19:
+    type: line
+    speaker_id: kelly
+    emotion: happy
+    text:
+      - type: text
+        value: "Yeah. You already made the delivery, "
+      - type: styled_text
+        value: delivery boy
+        style:
+          italic: true
+      - type: text
+        value: . Why don't you go back to your house and play doctor?
+    next: fala_20
+
+  fala_20:
+    type: line
+    speaker_id: raphael
+    emotion: annoyed
+    text:
+      - type: text
+        value: Talking like I didn't knocked you out with one punch.
+    next: fala_21
+
+  fala_21:
+    type: line
+    speaker_id: noelia
+    emotion: happy
+    text:
+      - type: text
+        value: "Wait, what? You were knocked out with one "
+      - type: styled_text
+        value: measly
+        style:
+          bold: true
+      - type: text
+        value: " punch?"
+    next: fala_22
+
+  fala_22:
+    type: line
+    speaker_id: kelly
+    emotion: angry
+    text:
+      - type: text
+        value: Shut up!
+    next: fala_23
+
+  fala_23:
+    type: line
+    speaker_id: raphael
+    emotion: happy
+    text:
+      - type: text
+        value: Hehe.
+    next: fala_24
+
+  fala_24:
+    type: line
+    speaker_id: raphael
+    emotion: neutral
+    text:
+      - type: text
+        value: "Well. I'll go tell Pacci that the box was delivered. Bye "
+      - type: styled_text
+        value: Geek girl
+        style:
+          italic: true
+      - type: text
+        value: ". Bye "
+      - type: styled_text
+        value: Daddy issues
+        style:
+          italic: true
+      - type: text
+        value: .
+    next: fala_25
+
+  fala_25:
+    type: line
+    speaker_id: noelia
+    emotion: annoyed
+    text:
+      - type: text
+        value: "Get lost "
+      - type: styled_text
+        value: feather chocker
+        style:
+          italic: true
+      - type: text
+        value: "!"
+    next: fala_26
+
+  fala_26:
+    type: line
+    speaker_id: kelly
+    emotion: angry
+    text:
+      - type: text
+        value: "Yeah! Get F#@!%d, "
+      - type: styled_text
+        value: mega virgin
+        style:
+          bold: true
+          italic: true
+      - type: text
+        value: "!"
+    next: sai_2
+
+  sai_2:
+    type: character_exit
+    character_id: raphael
+    next: sai_3
+
+  sai_3:
+    type: character_exit
+    character_id: noelia
+    next: entra_5
+
+  entra_5:
+    type: character_enter
+    character_id: noelia
+    position: center_left
+    emotion: neutral
+    next: fala_27
+
+  fala_27:
+    type: line
+    speaker_id: kelly
+    emotion: annoyed
+    text:
+      - type: text
+        value: Finally, he's out.
+    next: fala_28
+
+  fala_28:
+    type: line
+    speaker_id: noelia
+    emotion: neutral
+    text:
+      - type: text
+        value: Yeah. Now let's see what my brother gave me.
+    next: fala_29
+
+  fala_29:
+    type: line
+    speaker_id: noelia
+    emotion: surprised
+    text:
+      - type: styled_text
+        value: Oh...
+        style:
+          shake: light
+          shake_speed: 1.2
+    next: fala_30
+
+  fala_30:
+    type: line
+    speaker_id: kelly
+    emotion: neutral
+    text:
+      - type: text
+        value: Is that a... locket? Looks like there's a note too.
+    next: fala_31
+
+  fala_31:
+    type: line
+    speaker_id: noelia
+    emotion: neutral
+    text:
+      - type: styled_text
+        value: |-
+          Dear Noelia,
+          Today was the day the two of us lost you years ago. And today is the day were you came back. For years, me and Neven have been wondering where you were. What had happened to you. But now that you're back, we don't have to worry anymore. When we ran away from home, I managed to grab this. I want you to have it.
+          Your brother always, Pacci.
+        style:
+          italic: true
+          color: "#D88CFF"
+          speed_multiplier: 0.8
+    next: fala_32
+
+  fala_32:
+    type: line
+    speaker_id: noelia
+    emotion: surprised
+    text:
+      - type: text
+        value: It's... It's a locket with a photo of all 5 of us.
+    next: fala_33
+
+  fala_33:
+    type: line
+    speaker_id: kelly
+    emotion: surprised
+    text:
+      - type: text
+        value: Oh damn.
+    next: fala_34
+
+  fala_34:
+    type: line
+    speaker_id: noelia
+    emotion: happy
+    text:
+      - type: text
+        value: ...
+    next: fala_35
+
+  fala_35:
+    type: line
+    speaker_id: kelly
+    emotion: surprised
+    text:
+      - type: text
+        value: Are you... crying?
+    next: fim_good
+
+  fala_36:
+    type: line
+    speaker_id: raphael
+    emotion: neutral
+    text:
+      - type: text
+        value: I dunno. Let's find out, shall we?
+    next: fala_37
+
+  fala_37:
+    type: line
+    speaker_id: raphael
+    emotion: stressed
+    text:
+      - type: text
+        value: ... Where is the box?
+    next: fala_38
+
+  fala_38:
+    type: line
+    speaker_id: noelia
+    emotion: surprised
+    text:
+      - type: text
+        value: Huh!?
+    next: fala_39
+
+  fala_39:
+    type: line
+    speaker_id: raphael
+    emotion: stressed
+    text:
+      - type: styled_text
+        value: Why is there a hole in my bag!?
+        style:
+          jitter: normal
+    next: fala_40
+
+  fala_40:
+    type: line
+    speaker_id: kelly
+    emotion: happy
+    text:
+      - type: text
+        value: Ain't no f#$%@?g way!
+    next: fala_41
+
+  fala_41:
+    type: line
+    speaker_id: noelia
+    emotion: neutral
+    text:
+      - type: text
+        value: "Oh my "
+      - type: styled_text
+        value: gods
+        style:
+          bold: true
+      - type: text
+        value: ", Raphael. "
+      - type: styled_text
+        value: YOU ABSOLUTE IDIOT!!
+        style:
+          bold: true
+          shake: light
+          shake_speed: 1.2
+    next: fala_42
+
+  fala_42:
+    type: line
+    speaker_id: raphael
+    emotion: stressed
+    text:
+      - type: text
+        value: Oh no... I'll be right back.
+    next: sai_4
+
+  sai_4:
+    type: character_exit
+    character_id: raphael
+    next: sai_5
+
+  sai_5:
+    type: character_exit
+    character_id: noelia
+    next: entra_6
+
+  entra_6:
+    type: character_enter
+    character_id: noelia
+    position: center_left
+    emotion: neutral
+    next: fala_43
+
+  fala_43:
+    type: line
+    speaker_id: kelly
+    emotion: happy
+    text:
+      - type: styled_text
+        value: AHAHAHAHAH! OH MY F#$%@?G GOD! *cough cough*
+        style:
+          shake: light
+    next: fala_44
+
+  fala_44:
+    type: line
+    speaker_id: noelia
+    emotion: frustrated
+    text:
+      - type: text
+        value: "My gods, that "
+      - type: styled_text
+        value: moronic idiot.
+        style:
+          bold: true
+    next: fala_45
+
+  fala_45:
+    type: line
+    speaker_id: kelly
+    emotion: happy
+    auto_advance: true
+    text:
+      - type: styled_text
+        value: I-I think I'm gonna pass out.
+        style:
+          jitter: normal
+    next: fala_46
+
+  fala_46:
+    type: line
+    speaker_id: noelia
+    emotion: angry
+    text:
+      - type: styled_text
+        value: SHUT UP!!
+        style:
+          bold: true
+    next: fim_bad
+
+  clicavel:
+    type: line
+    speaker_id: raphael
+    emotion: surprised
+    text:
+      - type: text
+        value: Oh yeah. Before he asked to give this to you, he was saying something about today being an important day and finally being able to see you.
+    next: clicavel_1
+
+  clicavel_1:
+    type: line
+    speaker_id: noelia
+    emotion: thinking
+    text:
+      - type: text
+        value: Being able to see me again?
+    next: clicavel_2
+
+  clicavel_2:
+    type: line
+    speaker_id: kelly
+    emotion: thinking
+    text:
+      - type: text
+        value: What could he mean by that?
+    next: clicavel_3
+
+  clicavel_3:
+    type: line
+    speaker_id: raphael
+    emotion: thinking
+    text:
+      - type: text
+        value: "I have a feeling of what it might be. But I'm not gonna spoil the "
+      - type: styled_text
+        value: surpriiiiiise
+        style:
+          wave: normal
+      - type: text
+        value: .
+    next: clicavel_4
+
+  clicavel_4:
+    type: line
+    speaker_id: kelly
+    emotion: annoyed
+    text:
+      - type: text
+        value: Tsk. Lame.
+    next: fala_16
+
+  fim_good:
+    type: end
+    result: good
+
+  fim_bad:
+    type: end
+    result: bad
+
+  erro:
+    type: line
+    speaker_id: raphael
+    emotion: annoyed
+    text:
+      - type: text
+        value: There's an error in here. Might want to program your game better.
+    next: fim_bad

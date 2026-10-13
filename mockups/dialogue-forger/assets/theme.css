@@ -89,3 +89,36 @@ p {
     color: #eaf2ff;
     background: #325c94;
 }
+
+/* ------------------------------------------------------------ scrollbars */
+
+/* Standard properties cover Firefox and Chromium 121+; the -webkit rules
+   cover older Chromium. Both are stated with the same colours, so whichever
+   engine wins, the bar reads as part of the page instead of the OS theme. */
+* {
+    scrollbar-width: thin;
+    scrollbar-color: #46515d #171e24;
+}
+
+::-webkit-scrollbar {
+    width: 11px;
+    height: 11px;
+}
+
+::-webkit-scrollbar-track {
+    background: #171e24;
+}
+
+::-webkit-scrollbar-thumb {
+    border: 2px solid #171e24;
+    border-radius: 6px;
+    background: #46515d;
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background: #566371;
+}
+
+::-webkit-scrollbar-corner {
+    background: #171e24;
+}

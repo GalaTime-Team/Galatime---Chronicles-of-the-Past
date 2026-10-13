@@ -47,7 +47,7 @@ export interface DialogueAnimationDefinition {
 /**
  * Every animation a dialogue may name, grouped by the moment it belongs to.
  *
- * The ids already used by `test-1.yaml` (`step_in`, `enter_surprised`,
+ * The ids already used by `test_1.yaml` (`step_in`, `enter_surprised`,
  * `idle_nervous`, `leave_running`) are all present, so the fixture and the menu
  * agree.
  */

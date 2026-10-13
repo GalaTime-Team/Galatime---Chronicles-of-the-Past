@@ -1,6 +1,156 @@
 @import "tailwindcss";
 @config "../../tailwind.config.js";
 
+@theme {
+  /* Preview bands on the combat bars: the mana/stamina a hovered or pending
+     action is about to spend. Blinks harder than Tailwind's `animate-pulse`
+     (which only dips to 50% opacity over 2s) so the doomed slice of the bar is
+     unmistakable for as long as the action is hovered or waiting for its target. */
+  --animate-stat-preview: stat-preview 1s ease-in-out infinite;
+
+  @keyframes stat-preview {
+    0%, 100% {
+      opacity: 1;
+    }
+    50% {
+      opacity: 0.2;
+    }
+  }
+}
+
+/* Combat arena choreography.
+   Defined at the top level (not in `@theme`) on purpose: these are driven from inline
+   `style.animation` in the arena, so Tailwind must not tree-shake them away. `--arena-dir`
+   is set per unit (1 for allies facing right, -1 for adversaries facing left) so one
+   keyframe serves both sides. */
+
+/* The actor steps toward its target and back. */
+@keyframes combat-lunge {
+  0% {
+    translate: 0 0;
+  }
+  45% {
+    translate: calc(var(--arena-dir, 1) * 0.85rem) -0.15rem;
+  }
+  100% {
+    translate: 0 0;
+  }
+}
+
+/* The struck unit is knocked away from the blow and rattles back to rest. */
+@keyframes combat-hit {
+  0% {
+    translate: 0 0;
+  }
+  16% {
+    translate: calc(var(--arena-dir, 1) * 0.3rem) 0;
+  }
+  36% {
+    translate: calc(var(--arena-dir, 1) * -0.22rem) 0;
+  }
+  56% {
+    translate: calc(var(--arena-dir, 1) * 0.14rem) 0;
+  }
+  76% {
+    translate: calc(var(--arena-dir, 1) * -0.08rem) 0;
+  }
+  100% {
+    translate: 0 0;
+  }
+}
+
+/* The element-tinted flash laid over the struck unit. */
+@keyframes combat-flash {
+  0% {
+    opacity: 0;
+  }
+  14% {
+    opacity: 0.9;
+  }
+  100% {
+    opacity: 0;
+  }
+}
+
+/* A floating damage/heal number, rising and fading. */
+@keyframes combat-rise {
+  0% {
+    opacity: 0;
+    translate: 0 0.2rem;
+    scale: 0.8;
+  }
+  16% {
+    opacity: 1;
+    translate: 0 -0.25rem;
+    scale: 1.15;
+  }
+  60% {
+    opacity: 1;
+    translate: 0 -1.3rem;
+    scale: 1;
+  }
+  100% {
+    opacity: 0;
+    translate: 0 -2.1rem;
+    scale: 1;
+  }
+}
+
+/* A unit brought onto the field (summoned or transformed) pops into place. */
+@keyframes combat-pop {
+  0% {
+    opacity: 0;
+    scale: 0.4;
+  }
+  55% {
+    opacity: 1;
+    scale: 1.15;
+  }
+  100% {
+    opacity: 1;
+    scale: 1;
+  }
+}
+
+/* A shield ring pinging outward on a unit that threw damage back. */
+@keyframes combat-shield {
+  0% {
+    opacity: 0;
+    scale: 0.6;
+  }
+  25% {
+    opacity: 0.9;
+    scale: 1.05;
+  }
+  100% {
+    opacity: 0;
+    scale: 1.4;
+  }
+}
+
+/* The whole board jolts on an enormous or fatal blow. */
+@keyframes combat-board-shake {
+  0%,
+  100% {
+    translate: 0 0;
+  }
+  14% {
+    translate: 0.22rem 0;
+  }
+  30% {
+    translate: -0.18rem 0;
+  }
+  46% {
+    translate: 0.12rem 0;
+  }
+  62% {
+    translate: -0.07rem 0;
+  }
+  80% {
+    translate: 0.04rem 0;
+  }
+}
+
 @font-face {
   font-family: 'm5x7';
   src: url('/fonts/m5x7.ttf') format('truetype');

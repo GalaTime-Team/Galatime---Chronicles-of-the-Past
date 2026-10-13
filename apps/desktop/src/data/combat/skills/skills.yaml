@@ -1,21 +1,4 @@
 # Índice de skills (elemento → IDs):
-# Bases por elemento (a árvore deriva-se dos pré-requisitos; personalidade onde há mais de uma):
-# · aqua: water = pressão/sustentação | ice = controlo/resistência (debuff Slowed em quase todas)
-# · corporis: kick = pernas | punch = punhos | bulck = condicionamento | headbutt = cabeça
-# · lux: day (Day) = sustentação — cura, wards e buffs de equipa, pouco dano |
-#        light (Light) = ofensiva — dano e debuffs ao inimigo, quase sem cura
-# · caeli: o elemento mais FRACO em potência e o mais BARATO em aprender — o vento e o ar
-#        não fazem estrago. 3 raízes: puff (Ar) | breeze (Vento) | thermal (Corrente)
-# · chaos: corruption = raiz; a eletricidade (electric_* e thunder*) vive aqui, encaixada
-#        na família da vibração (low_vibration → electric_shock → …)
-# · florere: sprout = vida e crescimento | briar = a planta que se defende | spore = o wild
-# · lapis: stone = pedra bruta | earth = o terreno vivo | crystal = pedra refinada
-# · spatium: o elemento MAIS PODEROSO do jogo — custos e XP muito acima da média
-#        3 raízes: blink (Espaço) | hasten (Tempo) | event_horizon (Gravidade)
-# · umbra: night = ocultação, controlo e suporte | dark = fome e poder bruto
-#        darkness é um ward mais profundo, já dentro de Night (não é uma raiz)
-# · vis: mana05 é a raiz comum a todas as árvores; vetus: raízes puras (sem pré-requisitos)
-# Regra: dentro de um elemento o XP sobe sempre ao longo das arestas (pré-requisitos cross-tree podem descer).
 # aqua
 #   crashing_wave
 #   downpour
@@ -93,27 +76,6 @@
 #   wind
 #   wind_shield
 #   wind_steal
-# caeli: o elemento MAIS FRACO em potência e o MAIS BARATO em aprender — é de se esperar
-#   que o vento e o ar não façam estrago. Personalidade: não bate forte, mas chega sempre,
-#   empurra, cega, atrasa e sustenta. Os custos de aprendizagem são os mais baixos do
-#   jogo (raízes a 50 XP, capstones a 1600-1800) e o dano nunca passa de 60.
-#   3 raízes, todas de mana20:
-#   puff (Ar)        = o ar como substância — comprimir, rarear, sugar, tirar o ar
-#   gust (Vento)     = o ar em movimento — deslocar, empurrar, tempestades
-#   thermal (Corrente) = ar quente — sustentação, mobilidade e suporte da equipa
-# caeli ramificação:
-#   Ar:        puff → breath, compressed_air_ball → dense_air → decompression
-#              → vacuum → pressure_burst → airlock → last_breath;
-#              puff → gas → toxic → tornado
-#   Vento:     breeze (raiz, 4 de dano, custo zero) → wind (× fog, icy_wind,
-#              thunder_tornado, gas_minion) → wind_steal, gust (rajada forte e súbita)
-#              → squall → whirlwind, hurricane, fire_tornado (× fire_ball) → fire_wind
-#              → smoke, sand_wind (× rock_shield) → sand_tornado;
-#              squall → downburst → storm_front → gale_force
-#   Corrente:  thermal → oxygen, updraft (× night: ghost_dash), wind_shield
-#              → fly → soar → sky_lift → tailwind → trade_winds
-# caeli encontros: hurricane (tornado + whirlwind), eye_of_the_storm (trade_winds +
-#           downburst), ghost_dash (updraft + night), e os híbridos com ignis/lapis
 # chaos
 #   adjust
 #   antimatter
@@ -140,14 +102,13 @@
 #   thunder_tornado
 #   thunder_wheel
 #   thundershock
+#   tnt
 # corporis
 #   bulck
 #   chop
 #   drain_kick
 #   drain_punch
 #   endurance
-#   fire_kick
-#   fire_punch
 #   flying_kick
 #   focus
 #   frenzy
@@ -216,21 +177,24 @@
 #   blue_fire_wheel
 #   commet_dash
 #   eruption
+#   fire
 #   fire_absorption
 #   fire_ball
 #   fire_bullet
 #   fire_restore
-#   fire_shield
 #   fire_spin
-#   fire_vines
 #   fire_wave
 #   fire_wheel
 #   flamethrower
+#   heat_wave
+#   inferno
+#   lava
 #   lava_gun
 #   lava_jet
+#   overheat
+#   scorch
 #   spark
 #   star
-#   tnt
 # lapis
 #   avalanche
 #   bastion
@@ -406,6 +370,7 @@
 # vis
 #   barrier
 #   magic_suck
+#   mana_bullet
 #   mana05
 #   mana10
 #   mana20
@@ -413,7 +378,6 @@
 #   mana40
 #   mana50
 #   mana60
-#   mana_bullet
 #   small_barrier
 skills:
   - id: crashing_wave
@@ -3063,6 +3027,26 @@ skills:
         apply_to: target
         turns: 1
         effect_hit_chance: 0.8
+  - id: tnt
+    name: TNT
+    description: Add a description.
+    element_id: chaos
+    learning_cost:
+      experience_points: 1
+    learning_requirements:
+      required_attack_ids:
+        - eruption
+    targeting: self
+    costs:
+      mana: 0
+      stamina: 0
+      cooldown: 0
+    effects:
+      - effect_id: tnt_effect_1
+        status_effect: TNT
+        apply_to: self
+        turns: 99
+        can_stack: true
   - id: bulck
     name: Bulck
     description: Add a description.
@@ -3198,72 +3182,6 @@ skills:
         turns: 3
         buff:
           physical_defense: 12
-  - id: fire_kick
-    name: Fire Kick
-    description: Add a description.
-    element_id: corporis
-    learning_cost:
-      experience_points: 1
-    learning_requirements:
-      required_attack_ids:
-        - kick
-        - fire_ball
-    targeting: enemy_one
-    damage:
-      kind: physical
-      damage_type: physical
-      power:
-        kind: fixed
-        value: 60
-    accuracy: 100
-    hit_count: 1
-    costs:
-      mana: 30
-      stamina: 30
-      cooldown: 0
-    effects:
-      - effect_id: fire_kick_effect_1
-        element_id: ignis
-        status_effect: Burning
-        apply_to: target
-        turns: 3
-        damage: 5
-        damage_variance:
-          - 0.8
-          - 1.2
-  - id: fire_punch
-    name: Fire Punch
-    description: Add a description.
-    element_id: corporis
-    learning_cost:
-      experience_points: 1
-    learning_requirements:
-      required_attack_ids:
-        - punch
-        - fire_ball
-    targeting: enemy_one
-    damage:
-      kind: physical
-      damage_type: physical
-      power:
-        kind: fixed
-        value: 55
-    accuracy: 100
-    hit_count: 1
-    costs:
-      mana: 30
-      stamina: 25
-      cooldown: 0
-    effects:
-      - effect_id: fire_punch_effect_1
-        element_id: ignis
-        status_effect: Burning
-        apply_to: target
-        turns: 3
-        damage: 5
-        damage_variance:
-          - 0.8
-          - 1.2
   - id: flying_kick
     name: Flying Kick
     description: Add a description.
@@ -4795,7 +4713,7 @@ skills:
       experience_points: 1
     learning_requirements:
       required_attack_ids:
-        - fire_shield
+        - blue_fire
     targeting: self
     costs:
       mana: 0
@@ -4909,6 +4827,37 @@ skills:
         damage_variance:
           - 0.5
           - 1.2
+  - id: fire
+    name: Fire
+    description: Ignite a single enemy with a burst of flame.
+    element_id: ignis
+    learning_cost:
+      experience_points: 1
+    learning_requirements:
+      required_attack_ids:
+        - spark
+    targeting: enemy_one
+    damage:
+      kind: magical
+      damage_type: magical
+      power:
+        kind: fixed
+        value: 10
+    accuracy: 100
+    hit_count: 1
+    costs:
+      mana: 10
+      stamina: 0
+      cooldown: 0
+    effects:
+      - effect_id: fire_effect_1
+        status_effect: Burning
+        apply_to: target
+        turns: 2
+        damage: 3
+        damage_variance:
+          - 0.8
+          - 1.2
   - id: fire_absorption
     name: Fire Absorption
     description: Add a description.
@@ -4936,7 +4885,7 @@ skills:
       experience_points: 1
     learning_requirements:
       required_attack_ids:
-        - mana20
+        - fire
     targeting: enemy_one
     damage:
       kind: magical
@@ -4993,27 +4942,6 @@ skills:
         turns: 3
         resource_regen:
           hp: 8
-  - id: fire_shield
-    name: Fire Shield
-    description: Add a description.
-    element_id: ignis
-    learning_cost:
-      experience_points: 1
-    learning_requirements:
-      required_attack_ids:
-        - blue_fire_ball
-    targeting: self
-    costs:
-      mana: 0
-      stamina: 0
-      cooldown: 0
-    effects:
-      - effect_id: fire_shield_effect_1
-        status_effect: Power Up
-        apply_to: self
-        turns: 3
-        buff:
-          physical_attack: 15
   - id: fire_spin
     name: Fire Spin
     description: Add a description.
@@ -5036,46 +4964,6 @@ skills:
       mana: 45
       stamina: 5
       cooldown: 0
-  - id: fire_vines
-    name: Fire Vines
-    description: Add a description.
-    element_id: ignis
-    learning_cost:
-      experience_points: 1
-    learning_requirements:
-      required_attack_ids:
-        - fire_shield
-        - leaf_blade
-    targeting: enemy_one
-    damage:
-      kind: magical
-      damage_type: magical
-      power:
-        kind: fixed
-        value: 30
-    accuracy: 100
-    hit_count: 1
-    costs:
-      mana: 30
-      stamina: 0
-      cooldown: 0
-    effects:
-      - effect_id: fire_vines_effect_1
-        status_effect: Vine
-        apply_to: target
-        turns: 1
-        apply_chance: 0.8
-        lower_accuracy: 0.25
-        debuff:
-          speed: 10
-      - effect_id: fire_vines_effect_2
-        status_effect: Burning
-        apply_to: target
-        turns: 3
-        damage: 5
-        damage_variance:
-          - 0.8
-          - 1.2
   - id: fire_wave
     name: Fire Wave
     description: Add a description.
@@ -5084,7 +4972,7 @@ skills:
       experience_points: 1
     learning_requirements:
       required_attack_ids:
-        - fire_vines
+        - flamethrower
     targeting: enemies_all
     damage:
       kind: magical
@@ -5142,6 +5030,101 @@ skills:
       mana: 30
       stamina: 0
       cooldown: 0
+  - id: heat_wave
+    name: Heat Wave
+    description: Wash the enemy line in searing air that sets everyone alight.
+    element_id: ignis
+    learning_cost:
+      experience_points: 1
+    learning_requirements:
+      required_attack_ids:
+        - fire_wave
+    targeting: enemies_all
+    damage:
+      kind: magical
+      damage_type: magical
+      power:
+        kind: fixed
+        value: 40
+    accuracy: 100
+    hit_count: 1
+    costs:
+      mana: 45
+      stamina: 0
+      cooldown: 0
+    effects:
+      - effect_id: heat_wave_effect_1
+        status_effect: Burning
+        apply_to: enemies_all
+        turns: 3
+        damage: 4
+        damage_variance:
+          - 0.8
+          - 1.2
+  - id: inferno
+    name: Inferno
+    description: Engulf every enemy in an all-consuming firestorm.
+    element_id: ignis
+    learning_cost:
+      experience_points: 1
+    learning_requirements:
+      required_attack_ids:
+        - fire_spin
+        - heat_wave
+    targeting: enemies_all
+    damage:
+      kind: magical
+      damage_type: magical
+      power:
+        kind: fixed
+        value: 100
+    accuracy: 100
+    hit_count: 1
+    costs:
+      mana: 110
+      stamina: 20
+      cooldown: 0
+    effects:
+      - effect_id: inferno_effect_1
+        status_effect: Burning
+        apply_to: enemies_all
+        turns: 3
+        damage: 6
+        damage_variance:
+          - 0.8
+          - 1.2
+  - id: lava
+    name: Lava
+    description: Hurl molten rock that leaves burning lava pooled beneath the target.
+    element_id: ignis
+    learning_cost:
+      experience_points: 1
+    learning_requirements:
+      required_attack_ids:
+        - fire
+        - stone
+    targeting: enemy_one
+    damage:
+      kind: magical
+      damage_type: magical
+      power:
+        kind: fixed
+        value: 35
+    accuracy: 100
+    hit_count: 1
+    costs:
+      mana: 30
+      stamina: 5
+      cooldown: 0
+    effects:
+      - effect_id: lava_effect_1
+        status_effect: Lava Puddle
+        apply_to: target
+        turns: 4
+        damage: 5
+        damage_variance:
+          - 0.5
+          - 1.2
   - id: lava_gun
     name: Lava Gun
     description: Add a description.
@@ -5150,7 +5133,7 @@ skills:
       experience_points: 1
     learning_requirements:
       required_attack_ids:
-        - spark
+        - lava
     targeting: enemy_one
     damage:
       kind: magical
@@ -5195,6 +5178,60 @@ skills:
       mana: 100
       stamina: 20
       cooldown: 0
+  - id: overheat
+    name: Overheat
+    description: Push past your own limits, trading defense for raw destructive power.
+    element_id: ignis
+    learning_cost:
+      experience_points: 1
+    learning_requirements:
+      required_attack_ids:
+        - heat_wave
+    targeting: self
+    costs:
+      mana: 40
+      stamina: 10
+      cooldown: 0
+    effects:
+      - effect_id: overheat_effect_1
+        status_effect: Power Up
+        apply_to: self
+        turns: 3
+        buff:
+          magical_attack: 18
+        debuff:
+          physical_defense: 10
+  - id: scorch
+    name: Scorch
+    description: Sear a single enemy with intense heat, leaving them burning.
+    element_id: ignis
+    learning_cost:
+      experience_points: 1
+    learning_requirements:
+      required_attack_ids:
+        - fire
+    targeting: enemy_one
+    damage:
+      kind: magical
+      damage_type: magical
+      power:
+        kind: fixed
+        value: 18
+    accuracy: 100
+    hit_count: 1
+    costs:
+      mana: 15
+      stamina: 0
+      cooldown: 0
+    effects:
+      - effect_id: scorch_effect_1
+        status_effect: Burning
+        apply_to: target
+        turns: 3
+        damage: 5
+        damage_variance:
+          - 0.8
+          - 1.2
   - id: spark
     name: Spark
     description: Add a description.
@@ -5202,9 +5239,7 @@ skills:
     learning_cost:
       experience_points: 1
     learning_requirements:
-      required_attack_ids:
-        - star
-        - rock_shield
+      required_attack_ids: []
     targeting: enemy_one
     damage:
       kind: magical
@@ -5226,8 +5261,8 @@ skills:
       experience_points: 1
     learning_requirements:
       required_attack_ids:
-        - tnt
-        - speedflow
+        - gravity_well
+        - inferno
     targeting: enemy_one
     damage:
       kind: magical
@@ -5241,26 +5276,6 @@ skills:
       mana: 100
       stamina: 15
       cooldown: 0
-  - id: tnt
-    name: TNT
-    description: Add a description.
-    element_id: ignis
-    learning_cost:
-      experience_points: 1
-    learning_requirements:
-      required_attack_ids:
-        - eruption
-    targeting: self
-    costs:
-      mana: 0
-      stamina: 0
-      cooldown: 0
-    effects:
-      - effect_id: tnt_effect_1
-        status_effect: TNT
-        apply_to: self
-        turns: 99
-        can_stack: true
   - id: avalanche
     name: Avalanche
     description: Add a description.
@@ -9491,6 +9506,28 @@ skills:
         turns: 2
         resource_drain:
           mana: 15
+  - id: mana_bullet
+    name: Mana Bullet
+    description: Add a description.
+    element_id: vis
+    learning_cost:
+      experience_points: 1
+    learning_requirements:
+      required_attack_ids:
+        - mana30
+    targeting: enemy_one
+    damage:
+      kind: magical
+      damage_type: magical
+      power:
+        kind: fixed
+        value: 20
+    accuracy: 100
+    hit_count: 1
+    costs:
+      mana: 10
+      stamina: 0
+      cooldown: 0
   - id: mana05
     name: Mana05
     description: Add a description.
@@ -9642,28 +9679,6 @@ skills:
     hit_count: 1
     costs:
       mana: 60
-      stamina: 0
-      cooldown: 0
-  - id: mana_bullet
-    name: Mana Bullet
-    description: Add a description.
-    element_id: vis
-    learning_cost:
-      experience_points: 1
-    learning_requirements:
-      required_attack_ids:
-        - mana30
-    targeting: enemy_one
-    damage:
-      kind: magical
-      damage_type: magical
-      power:
-        kind: fixed
-        value: 20
-    accuracy: 100
-    hit_count: 1
-    costs:
-      mana: 10
       stamina: 0
       cooldown: 0
   - id: small_barrier

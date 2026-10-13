@@ -8,7 +8,7 @@ weight: "73 kg"
 birthday: "Oct 2"
 origin: ???
 description: >
-  Ever so boring me.
+  Arthur has dark brown hair which covers his right eye. He wears a white T-shirt under a long green sweatshirt with light green trim and gold detailing on the cuffs. There are golden buttons on his shoulders and he is wearing dark jeans with a chain on the left-hand side.
 
 elements:
   - chaos
@@ -25,13 +25,6 @@ base_stats:
   speed: 60
 
 skills:
+  - fire_ball
 
-weapon:
-  id: rusty_sword
-  name: Rusty Sword
-  element: inanus
-  damage_type: physical
-  target: individual
-  power: 40
-  stamina_cost: 3
-  damage_variance: [0.8, 1.2]
+weapon: rusty_sword

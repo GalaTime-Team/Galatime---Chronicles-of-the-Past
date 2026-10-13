@@ -104,6 +104,8 @@ export function advanceToNode(context: NodeContext, startNodeId: string): Advanc
             );
         }
 
+        markNodeSeen(context.state, nodeId);
+
         switch (node.type) {
             case 'line':
                 // A line's emotion is the face the speaker keeps, not a costume
@@ -438,6 +440,22 @@ function pickBranch(node: ConditionalNode, state: WorldState): ConditionalBranch
     }
 
     return null;
+}
+
+/**
+ * Records a visit so conditions on `dialogues.seen` can check it.
+ *
+ * Every node the walk crosses is marked, exactly like the forger's preview
+ * runner marks the nodes it walks. Without this a choice gated on
+ * `dialogues.seen` — "hide this option once `fala_47` has been shown" — could
+ * never change during a conversation, because the list would only ever hold
+ * dialogue ids recorded at completion. Quiet on purpose: a visit is not an
+ * authored effect, so it produces no state change for the presentation to show.
+ */
+function markNodeSeen(state: WorldState, nodeId: string): void {
+    if (!state.dialogues.seen.includes(nodeId)) {
+        state.dialogues.seen.push(nodeId);
+    }
 }
 
 /** Interactive segments of a line, keyed by interaction id. */

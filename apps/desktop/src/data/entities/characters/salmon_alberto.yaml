@@ -1,0 +1,29 @@
+id: salmon_alberto
+name: Salmon Alberto
+surname: God of Time
+gender: ???
+age: 32
+height: "188 cm"
+weight: "88 kg"
+birthday: "December 3"
+origin: ???
+description: >
+  Add description here.
+
+elements:
+  - corrupted_forest
+
+base_stats:
+  hp: 3050
+  mana: 200
+  stamina: 15
+  physical_attack: 15
+  magical_attack: 132
+  physical_defense: 15  
+  magical_defense: 26
+  speed: 104
+
+skills:
+  - focus
+
+weapon:

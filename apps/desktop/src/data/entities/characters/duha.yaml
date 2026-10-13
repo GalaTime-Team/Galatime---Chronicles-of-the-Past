@@ -30,12 +30,3 @@ skills:
   - tailwind
 
 weapon:
-  id: windblade
-  name: Windblade
-  element: caeli
-  damage_type: physical
-  target: enemy_one
-  hits: 1
-  accuracy: 0.9
-  power: 30
-  stamina_cost: 2

@@ -11,6 +11,7 @@ import {
     getAttackList,
     getLearningTree,
     getLearningTrees,
+    resolveAttack,
 } from '../services/attackContentService';
 import type {
     AttackEffect,
@@ -18,6 +19,7 @@ import type {
     PublicAttack,
     PublicSkillTree,
 } from '../types/AttackDataType';
+import type { ResolvedAttack } from '../services/attackContentService';
 
 /** Read-only gameplay content controller. A missing id maps to `null` (HTTP 404 at an API adapter). */
 export function fetchAttacks(filters: AttackFilters = {}): Promise<PublicAttack[]> {
@@ -26,6 +28,14 @@ export function fetchAttacks(filters: AttackFilters = {}): Promise<PublicAttack[
 
 export function fetchAttack(attackId: string): Promise<PublicAttack | null> {
     return getAttack(attackId);
+}
+
+/**
+ * Resolves a skill id including upgrade tiers: `freeze_ii` returns `Freeze II`
+ * (level 2) with its stats rebalanced, while `freeze` returns level 1.
+ */
+export function fetchResolvedAttack(attackId: string): Promise<ResolvedAttack | null> {
+    return resolveAttack(attackId);
 }
 
 export function fetchAttackRequirements(attackId: string, includeDependencies = false) {

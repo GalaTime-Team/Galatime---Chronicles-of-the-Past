@@ -1,0 +1,78 @@
+﻿id: pure_soul
+name: Pure Soul
+rarity: epic
+height: "140 cm"
+weight: "0 kg"
+description: >
+  A soul refined into radiant serenity. Its light shields companions,
+  restores vitality, and overwhelms darkness.
+
+elements:
+  - lux
+
+base_stats:
+  hp: 470
+  mana: 90
+  stamina: 30
+  physical_attack: 68
+  magical_attack: 25
+  physical_defense: 40
+  magical_defense: 72
+  speed: 39
+
+skills:
+  - radiant_restoration
+  - sanctified_aegis
+  - dawnflare
+
+loot:
+  - item_id: gold_coin
+    quantity: 3
+    chance: 0.65
+
+abilities:
+  - id: soul_inversion
+    name: Soul Inversion
+    description: After 4 of its turns, it turns back into a Corrupted Soul.
+    tags: [transform, cycle]
+    trigger:
+      event: turn_end
+      once: true
+    condition:
+      all:
+        - turn_count:
+            operator: gte
+            value: 4
+    action:
+      type: transform
+      target: self
+      parameters:
+        entity_id: corrupted_soul
+        entity_type: mob
+    display:
+      visible: true
+      priority: 60
+
+  - id: radiant_reflection
+    name: Radiant Reflection
+    description: Magical attacks are partly thrown back at the attacker.
+    tags: [reaction, reflect]
+    trigger:
+      event: after_damage
+    condition:
+      all:
+        - damage:
+            type: magical
+            operator: eq
+    action:
+      type: reflect_damage
+      target: attacker
+      parameters:
+        fraction: 0.35
+        accuracy: 40
+    display:
+      visible: true
+      priority: 50
+
+ai:
+  style: support

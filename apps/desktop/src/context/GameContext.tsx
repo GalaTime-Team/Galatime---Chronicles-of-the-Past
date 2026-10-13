@@ -15,6 +15,11 @@ import {
   type GamepadFamily,
   type GamepadVibrationEffect,
 } from '../constants/GamepadConstants';
+import {
+  DIALOGUE_DEFAULT_TEXT_SPEED,
+  DIALOGUE_TEXT_SPEED_MAX,
+  DIALOGUE_TEXT_SPEED_MIN,
+} from '../constants/DialogueConstants';
 import type { Difficulty } from '../constants/DifficultyConstants';
 import {
   findControlsForEvent,
@@ -48,8 +53,15 @@ export interface GameSettings {
   actionsTooltipVisible: boolean;
   /** Highlights the phrases inside a dialogue that the player can click. */
   dialogueTooltipVisible: boolean;
+  /** Milliseconds per character of the base line, before a segment's own multiplier. */
+  dialogueTextSpeed: number;
   /** Shows a card naming the track every time a music track starts playing. */
   showNowPlayingMusic: boolean;
+  /**
+   * Plays the arena's choreography during combat: the lunge, the hit reaction, the
+   * floating numbers, the particles. Off, every turn resolves the instant it is taken.
+   */
+  combatAnimations: boolean;
   audio: {
     master: number;
     music: number;
@@ -106,6 +118,19 @@ function normalizeDisplay(raw: unknown): Partial<GameSettings['display']> {
   return normalized;
 }
 
+/**
+ * The persisted text speed, kept only when it is a number the slider can draw
+ * and clamped to the setting's own bounds — a hand-edited or stale file must
+ * not be able to type outside what Settings → Game offers.
+ */
+function normalizeTextSpeed(raw: unknown, fallback: number): number {
+  if (typeof raw !== 'number' || !Number.isFinite(raw)) {
+    return fallback;
+  }
+
+  return Math.min(DIALOGUE_TEXT_SPEED_MAX, Math.max(DIALOGUE_TEXT_SPEED_MIN, Math.round(raw)));
+}
+
 export interface GameState {
   settings: GameSettings;
   player?: {
@@ -156,7 +181,9 @@ export const DEFAULT_SETTINGS: GameSettings = {
   fightingTooltipVisible: true,
   actionsTooltipVisible: true,
   dialogueTooltipVisible: true,
+  dialogueTextSpeed: DIALOGUE_DEFAULT_TEXT_SPEED,
   showNowPlayingMusic: false,
+  combatAnimations: true,
   audio: { ...DEFAULT_AUDIO_VOLUMES },
   currentMusicTrackId: DEFAULT_MUSIC_TRACK_ID,
   controls: buildDefaultControlBindings(),
@@ -283,6 +310,7 @@ export function GameProvider({ children }: { children: ReactNode }) {
           settings: {
             ...previous.settings,
             ...saved,
+            dialogueTextSpeed: normalizeTextSpeed(saved.dialogueTextSpeed, previous.settings.dialogueTextSpeed),
             audio: { ...previous.settings.audio, ...saved.audio },
             controls: { ...previous.settings.controls, ...normalizeControlBindings(saved.controls) },
             display: { ...previous.settings.display, ...normalizeDisplay(saved.display) },

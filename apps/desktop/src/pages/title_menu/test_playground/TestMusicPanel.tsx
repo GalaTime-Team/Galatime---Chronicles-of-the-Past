@@ -1,13 +1,15 @@
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { MUSIC_TRACKS } from '../../../constants/AudioConstants';
 import { getCurrentMusicTrackId, playMusic, stopMusic } from '../../../controllers/audioController';
 import { MusicNote } from '../../../assets/GalatimeIcon';
 import CommonButton from '../../../components/common/CommonButton';
+import CommonInput from '../../../components/common/CommonInput';
 
 export function TestMusicPanel() {
     const { t } = useTranslation('playground');
     const [currentTrackId, setCurrentTrackId] = useState<string | null>(getCurrentMusicTrackId());
+    const [query, setQuery] = useState('');
 
     useEffect(() => {
         setCurrentTrackId(getCurrentMusicTrackId());
@@ -22,6 +24,17 @@ export function TestMusicPanel() {
         stopMusic();
         setCurrentTrackId(null);
     }, []);
+
+    const visibleTracks = useMemo(() => {
+        const needle = query.trim().toLowerCase();
+
+        if (!needle) return MUSIC_TRACKS;
+
+        return MUSIC_TRACKS.filter(
+            (track) =>
+                track.title.toLowerCase().includes(needle) || track.id.toLowerCase().includes(needle),
+        );
+    }, [query]);
 
     return (
         <div className="space-y-2">
@@ -48,8 +61,21 @@ export function TestMusicPanel() {
             </div>
 
             {/* Track List */}
+            <div className="ml-auto w-full max-w-sm">
+                <CommonInput
+                    variant="bare"
+                    title={t('playground.music.searchTitle')}
+                    value={query}
+                    onChange={setQuery}
+                    placeholder={t('playground.music.searchPlaceholder')}
+                    maxCharacters={40}
+                    containerClassName="items-end"
+                    inputClassName="text-left"
+                />
+            </div>
+
             <div className="space-y-1">
-                {MUSIC_TRACKS.map((track) => {
+                {visibleTracks.map((track) => {
                     const isPlaying = currentTrackId === track.id;
 
                     return (
@@ -71,6 +97,10 @@ export function TestMusicPanel() {
                         </div>
                     );
                 })}
+
+                {visibleTracks.length === 0 && (
+                    <p className="px-2 py-3 text-sm text-white/45">{t('playground.music.noResults')}</p>
+                )}
             </div>
         </div>
     );

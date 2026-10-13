@@ -1,0 +1,218 @@
+elements:
+
+  # ------------------------------------------------------------
+  #region NATURAL
+  # ------------------------------------------------------------
+
+  aqua:
+    name: Aqua
+    description: "The element of water and ice."
+    type: natural
+    relations:
+      immune:       [corporis]
+      super_strong: []
+      strong:       [ignis, lux]
+      weak:         [chaos, florere]
+      super_weak:   []
+
+  caeli:
+    name: Caeli
+    description: "The element of wind, sky, and storms."
+    type: natural
+    relations:
+      immune:       [corporis, lux, umbra]
+      super_strong: []
+      strong:       [aqua, florere, spatium]
+      weak:         [ignis, lapis]
+      super_weak:   []
+
+  chaos:
+    name: Chaos
+    description: "The element of disorder and electricity."
+    type: natural
+    relations:
+      immune:       [corporis]
+      super_strong: []
+      strong:       [caeli, lapis]
+      weak:         [lux, spatium]
+      super_weak:   []
+
+  corporis:
+    name: Corporis
+    description: "The element of force and physicality."
+    type: natural
+    relations:
+      immune:       []
+      super_strong: []
+      strong:       [aqua, caeli, vetus]
+      weak:         [lux, spatium, vis]
+      super_weak:   []
+
+  florere:
+    name: Florere
+    description: "The element of flora and plant life."
+    type: natural
+    relations:
+      immune:       []
+      super_strong: []
+      strong:       [aqua, corporis, lux]
+      weak:         [ignis, spatium]
+      super_weak:   []
+
+  ignis:
+    name: Ignis
+    description: "The element of fire and heat."
+    type: natural
+    relations:
+      immune:       []
+      super_strong: []
+      strong:       [florere, umbra]
+      weak:         [aqua, caeli]
+      super_weak:   []
+
+  inanus:
+    name: Inanus
+    description: "What even is this...?"
+    type: natural
+    relations:
+      immune:       []
+      super_strong: []
+      strong:       []
+      weak:         []
+      super_weak:   []
+
+  lapis:
+    name: Lapis
+    description: "The element of earth and stone."
+    type: natural
+    relations:
+      immune:       [vetus, vis]
+      super_strong: []
+      strong:       [caeli, ignis, lux, umbra]
+      weak:         [aqua, chaos, florere]
+      super_weak:   []
+
+  lux:
+    name: Lux
+    description: "The element of day and light."
+    type: natural
+    relations:
+      immune:       [caeli, lux]
+      super_strong: []
+      strong:       [chaos, ignis]
+      weak:         [aqua, florere, umbra]
+      super_weak:   []
+
+  spatium:
+    name: Spatium
+    description: "The element of time and space."
+    type: natural
+    relations:
+      immune:       [corporis, vetus]
+      super_strong: []
+      strong:       [florere, lux]
+      weak:         [spatium, umbra]
+      super_weak:   []
+
+  umbra:
+    name: Umbra
+    description: "The element of night and darkness."
+    type: natural
+    relations:
+      immune:       [caeli, lapis, umbra]
+      super_strong: []
+      strong:       [aqua, spatium, vetus]
+      weak:         [corporis, ignis, lux]
+      super_weak:   []
+
+  vetus:
+    name: Vetus
+    description: "The element of the ancient power."
+    type: natural
+    relations:
+      immune:       []
+      super_strong: []
+      strong:       [spatium, vis]
+      weak:         [caeli]
+      super_weak:   []
+
+  vis:
+    name: Vis
+    description: "The element of mana."
+    type: natural
+    relations:
+      immune:       []
+      super_strong: []
+      strong:       [chaos, corporis]
+      weak:         [lapis, vetus]
+      super_weak:   []
+
+  # ------------------------------------------------------------
+  #region CORRUPTED
+  # ------------------------------------------------------------
+
+  corrupted_blaze:
+    name: Corrupted Blaze
+    description: "???"
+    type: corrupted
+    relations:
+      immune:       [ignis]
+      super_strong: [florere, spatium, umbra]
+      strong:       [corporis, lux]
+      weak:         [chaos]
+      super_weak:   [aqua, caeli]
+
+  corrupted_day:
+    name: Corrupted Day
+    description: "???"
+    type: corrupted
+    relations:
+      immune:       [caeli, lux]
+      super_strong: [chaos, corporis, ignis, lapis]
+      strong:       [spatium]
+      weak:         []
+      super_weak:   [aqua, florere, umbra]
+
+  corrupted_forest:
+    name: Corrupted Forest
+    description: "???"
+    type: corrupted
+    relations:
+      immune:       [florere, umbra]
+      super_strong: [chaos, lapis]
+      strong:       [corporis, spatium]
+      weak:         [aqua, caeli]
+      super_weak:   [ignis]
+
+  corrupted_ice:
+    name: Corrupted Ice
+    description: "???"
+    type: corrupted
+    relations:
+      immune:       [aqua, corporis]
+      super_strong: [ignis, lux, umbra]
+      strong:       [lapis]
+      weak:         [caeli]
+      super_weak:   [chaos, florere]
+
+  corrupted_night:
+    name: Corrupted Night
+    description: "???"
+    type: corrupted
+    relations:
+      immune:       [lapis, umbra]
+      super_strong: [aqua, caeli, florere, spatium]
+      strong:       [chaos]
+      weak:         []
+      super_weak:   [corporis, ignis, lux]
+
+  corrupted_void:
+    name: Corrupted Void
+    description: "???"
+    type: corrupted
+    relations:
+      immune:       [corporis, ignis]
+      super_strong: [florere, lapis, lux]
+      strong:       []
+      weak:         [chaos]
+      super_weak:   [spatium, umbra]

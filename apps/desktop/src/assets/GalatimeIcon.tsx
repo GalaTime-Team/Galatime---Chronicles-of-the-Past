@@ -52,13 +52,21 @@ interface ArrowIconProps {
   className?: string;
 }
 
-export const ArrowRight: React.FC<ArrowIconProps> = ({ className = '' }) => (
+/**
+ * One arrow from `public/images/ui/arrow/`, applied as a CSS mask and filled with
+ * `currentColor` so it follows the tone of whatever renders it.
+ *
+ * It is sized in `em`, so the font-size of the surrounding text decides how big it is — pass a
+ * `text-*` class to the wrapper rather than a `h-*`/`w-*` one (an arbitrary `[0.8em]` height
+ * beats a plain Tailwind size, the same trap `MiscIcon` documents).
+ */
+const ArrowGlyph: React.FC<ArrowIconProps & { file: string }> = ({ file, className = '' }) => (
   <span
     aria-hidden="true"
     className={`block h-[0.8em] w-[0.8em] bg-current ${className}`}
     style={{
-      maskImage: 'url(/images/ui/arrow/arrow_right.svg)',
-      WebkitMaskImage: 'url(/images/ui/arrow/arrow_right.svg)',
+      maskImage: `url(/images/ui/arrow/${file}.svg)`,
+      WebkitMaskImage: `url(/images/ui/arrow/${file}.svg)`,
       maskRepeat: 'no-repeat',
       WebkitMaskRepeat: 'no-repeat',
       maskPosition: 'center',
@@ -67,6 +75,20 @@ export const ArrowRight: React.FC<ArrowIconProps> = ({ className = '' }) => (
       WebkitMaskSize: 'contain',
     }}
   />
+);
+
+export const ArrowRight: React.FC<ArrowIconProps> = ({ className = '' }) => (
+  <ArrowGlyph file="arrow_right" className={className} />
+);
+
+/** Used to mark a statistic a status effect has raised. */
+export const ArrowUp: React.FC<ArrowIconProps> = ({ className = '' }) => (
+  <ArrowGlyph file="arrow_up" className={className} />
+);
+
+/** Used to mark a statistic a status effect has lowered. */
+export const ArrowDown: React.FC<ArrowIconProps> = ({ className = '' }) => (
+  <ArrowGlyph file="arrow_down" className={className} />
 );
 
 // --- Switch Icon ---
@@ -216,11 +238,13 @@ const MiscIcon: React.FC<MiscIconProps & { file: string }> = ({ file, className 
 );
 
 export const AddIcon: React.FC<MiscIconProps> = ({ className = '' }) => <MiscIcon file="add" className={className} />;
+export const ControlIcon: React.FC<MiscIconProps> = ({ className = '' }) => <MiscIcon file="control" className={className} />;
 export const EditIcon: React.FC<MiscIconProps> = ({ className = '' }) => <MiscIcon file="edit" className={className} />;
 export const RemoveIcon: React.FC<MiscIconProps> = ({ className = '' }) => <MiscIcon file="remove" className={className} />;
 export const TrashIcon: React.FC<MiscIconProps> = ({ className = '' }) => <MiscIcon file="trash" className={className} />;
 export const CloseIcon: React.FC<MiscIconProps> = ({ className = '' }) => <MiscIcon file="close" className={className} />;
 export const FitIcon: React.FC<MiscIconProps> = ({ className = '' }) => <MiscIcon file="fit" className={className} />;
+export const SelectorIcon: React.FC<MiscIconProps> = ({ className = '' }) => <MiscIcon file="selector" className={className} />;
 
 // --- Element Icon ---
 interface ElementIconProps {
@@ -236,6 +260,34 @@ export const ElementIcon: React.FC<ElementIconProps> = ({ id, className = '' }) 
     className={`object-contain ${className}`}
   />
 );
+
+// --- Combat Extra Movement Icons ---
+interface CombatIconProps {
+  className?: string;
+}
+
+const CombatIcon: React.FC<CombatIconProps & { file: string }> = ({ file, className = '' }) => (
+  <span
+    aria-hidden="true"
+    className={`block h-[1em] w-[1em] bg-current ${className}`}
+    style={{
+      maskImage: `url(/images/elements/extra/${file}.svg)`,
+      WebkitMaskImage: `url(/images/elements/extra/${file}.svg)`,
+      maskRepeat: 'no-repeat',
+      WebkitMaskRepeat: 'no-repeat',
+      maskPosition: 'center',
+      WebkitMaskPosition: 'center',
+      maskSize: 'contain',
+      WebkitMaskSize: 'contain',
+    }}
+  />
+);
+
+export const DefendIcon: React.FC<CombatIconProps> = ({ className = '' }) => <CombatIcon file="defend" className={className} />;
+export const RestIcon: React.FC<CombatIconProps> = ({ className = '' }) => <CombatIcon file="rest" className={className} />;
+export const WeaponIcon: React.FC<CombatIconProps> = ({ className = '' }) => <CombatIcon file="weapon" className={className} />;
+export const InventoryIcon: React.FC<CombatIconProps> = ({ className = '' }) => <CombatIcon file="inventory" className={className} />;
+export const ChangeIcon: React.FC<CombatIconProps> = ({ className = '' }) => <CombatIcon file="change" className={className} />;
 
 // --- Loading Component ---
 interface LoadingProps {

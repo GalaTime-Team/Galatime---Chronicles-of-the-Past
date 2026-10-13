@@ -35,6 +35,16 @@ export const DIALOGUE_CHOICE_FOCUS_DURATION = 0.15;
 export const DIALOGUE_SHAKE_DURATION = 0.32;
 
 /**
+ * Delay between two neighbouring characters' shakes, in seconds.
+ *
+ * A tenth of the shake loop, so the six phases span half of it: the rattle
+ * travels along the line the way the wave's ripple does, instead of every
+ * letter snapping in step — which reads as the whole phrase being shoved
+ * rather than shaken.
+ */
+export const DIALOGUE_SHAKE_PHASE_STEP = 0.032;
+
+/**
  * Travel distance of the strongest shake, as a fraction of the line's own size.
  *
  * An `em` rather than a pixel count because the spoken line scales with the
@@ -42,11 +52,13 @@ export const DIALOGUE_SHAKE_DURATION = 0.32;
  * 2px at the base line size.
  *
  * Kept small because the shake is a *relative offset* — `left` on a
- * `position: relative` span — and not a transform. Inline text cannot be
- * transformed (a CSS transform is ignored on a non-replaced inline box), and
- * making the segment an `inline-block` to allow one would change where the line
- * breaks, which is what the hidden measuring mirror measures. A relative offset
- * moves the line without touching layout, so the two stay in agreement.
+ * `position: relative` span around each character — and not a transform. The
+ * characters stay plain inline text (only a wave wraps them in blocks), and
+ * inline text cannot be transformed (a CSS transform is ignored on a
+ * non-replaced inline box); making each character an `inline-block` to allow
+ * one would change where the line breaks, which is what the hidden measuring
+ * mirror measures. A relative offset moves the line without touching layout,
+ * so the two stay in agreement.
  */
 export const DIALOGUE_SHAKE_AMPLITUDE_EM = 0.09;
 
@@ -137,7 +149,7 @@ export const DIALOGUE_CHOICE_ITEM_VARIANTS: Variants = {
     },
 };
 
-/** Shake loop applied to a styled segment asking for one. */
+/** Shake loop applied to each character of a styled segment asking for one. */
 export const DIALOGUE_SHAKE_TRANSITION: Transition = {
     duration: DIALOGUE_SHAKE_DURATION,
     repeat: Infinity,
@@ -194,13 +206,15 @@ export const DIALOGUE_WAVE_AMPLITUDE_PX = 3;
 export const DIALOGUE_WAVE_PHASE_STEP = 0.09;
 
 /**
- * How many distinct phases the wave uses before it repeats.
+ * How many distinct phases a movement style uses before it repeats.
  *
  * The offset is taken modulo this, so a long line never drifts into a delay so
  * large that the last characters look frozen. Six is enough for the eye to read
- * a travelling ripple and few enough that the repeat is not visible.
+ * a travelling ripple and few enough that the repeat is not visible. Shared by
+ * the wave, the jitter and the shake: they differ in tempo, not in how finely
+ * the line is phased.
  */
-export const DIALOGUE_WAVE_PHASE_STEPS = 6;
+export const DIALOGUE_MOTION_PHASE_STEPS = 6;
 
 /** Wave loop applied to each character of a segment asking for one. */
 export const DIALOGUE_WAVE_TRANSITION: Transition = {
@@ -233,6 +247,14 @@ export const DIALOGUE_WAVE_INTENSITY: Record<string, number> = {
 export const DIALOGUE_JITTER_DURATION = 0.16;
 
 /**
+ * Delay between two neighbouring characters' jitters, in seconds.
+ *
+ * A tenth of the jitter loop, for the same reason as the shake's: the tremble
+ * walks the line instead of the whole phrase hiccuping at once.
+ */
+export const DIALOGUE_JITTER_PHASE_STEP = 0.016;
+
+/**
  * Travel distance of the strongest jitter, as a fraction of the line's own size.
  *
  * An `em` rather than a pixel count, for the same reason as the shake: the spoken
@@ -248,8 +270,8 @@ export const DIALOGUE_JITTER_AMPLITUDE_EM = 0.045;
  * A fixed, deliberately uneven sequence rather than a sine wave: a smooth
  * oscillation reads as a wave, and the whole point of a jitter is that no two
  * beats are the same size. The two axes use **different** sequences on purpose —
- * if they matched, the segment would slide along a straight diagonal instead of
- * trembling.
+ * if they matched, each character would slide along a straight diagonal instead
+ * of trembling.
  */
 const JITTER_HORIZONTAL_STEPS = [0, -0.85, 0.35, -0.5, 0.7, -0.3, 0.55, -0.6, 0.15, -0.2, 0];
 const JITTER_VERTICAL_STEPS = [0, 0.4, -0.9, 0.25, -0.45, 0.65, -0.2, 0.5, -0.55, 0.2, 0];
@@ -262,7 +284,7 @@ const JITTER_VERTICAL_STEPS = [0, 0.4, -0.9, 0.25, -0.45, 0.65, -0.2, 0.5, -0.55
  */
 const JITTER_TIMES = [0, 0.06, 0.13, 0.22, 0.31, 0.4, 0.5, 0.62, 0.71, 0.85, 1];
 
-/** Jitter loop applied to a styled segment asking for one. */
+/** Jitter loop applied to each character of a styled segment asking for one. */
 export const DIALOGUE_JITTER_TRANSITION: Transition = {
     duration: DIALOGUE_JITTER_DURATION,
     repeat: Infinity,

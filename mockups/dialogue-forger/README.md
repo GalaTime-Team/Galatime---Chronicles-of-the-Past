@@ -10,6 +10,7 @@ Objetivo: escrever diálogos sem mexer em YAML manualmente e com o mínimo de in
 Abre o `index.html` no navegador. Não precisa de servidor nem de uma cópia da pasta do jogo.
 
 - **YAML:** Importa ficheiros `.yml` / `.yaml` e exporta o diálogo em `.yaml`.
+- **Pasta de importação:** com a página servida por `http://` (por exemplo `npx http-server`), importar e exportar usam o diálogo nativo do browser, e a exportação abre na pasta de onde o último YAML foi importado. Em `file://` o browser bloqueia a API de ficheiros: a exportação volta a ser um download normal, para a pasta de transferências.
 - **Rascunho:** O diálogo e o estado da pré-visualização são guardados neste navegador.
 - **Sem rede:** A página e os campos continuam disponíveis; o YAML requer que `js-yaml` tenha carregado. Para uso totalmente offline, guarda uma cópia local de `js-yaml.min.js` e aponta o `<script>` para essa cópia.
 
@@ -31,6 +32,32 @@ Entrada de personagem, Fala, Escolha, Ramificação, Saída de personagem e Fim.
 
 **Elenco:**
 Os nós `character_enter` / `character_exit` dizem quem está na conversa. O palco mostra até 4 personagens, escurece quem não está a falar, e uma fala com `emotion` sobrepõe-se à emoção com que o personagem entrou. O fundo e a composição da cena não são do diálogo — isso é do sistema de cenas.
+
+**Ramificações (nó `conditional`):**
+Os ramos são avaliados por ordem e o primeiro que passa ganha; um ramo sem condição é o caso padrão.
+
+Uma condição é um caminho de estado, um operador e um literal:
+
+```yaml
+if:
+  all:
+    - condition: equals
+      left: inventory.caixa
+      right: true
+```
+
+- **Caminhos:** `flags.<nome>`, `inventory.<item>`, `stats.<nome>`, `time.hour`, `time.day`, `objectives.<id>` e `relationship.<personagem>.<tipo>` (três segmentos, obrigatórios).
+- **Um booleano é uma pergunta de sim ou não**, não um valor a igualar.
+  - Numa **flag**, o valor é a verdade: `flags.escolheu_o_joelho = true`.
+  - Num **item**, o valor é sempre uma contagem (1 chave, 0 chaves), por isso `inventory.caixa = true` quer dizer «a contagem está acima de zero» e `= false` cobre `0`, um item já gasto e um item que nunca foi dado. Serve `inventory.caixa >= 1` — é a mesma pergunta.
+- `>` `≥` `<` `≤` só fazem sentido com números (itens, afinidades, contadores, stats).
+- Texto é exato: `flags.mood = "brave"` nunca é igual a `flags.mood = true`.
+- Uma lista (`dialogues.seen`, `paths.unlocked`) compara por pertença: `equals: test_3` quer dizer «já viu este diálogo».
+- Grupos: `all` (todas), `any` (alguma) e `not` (negar). Também servem em `visible_if` / `enabled_if` de uma escolha e em `entry_conditions`.
+
+No editor, a lista de operadores encolhe sozinha conforme o valor: `true`, `false` e texto só oferecem `=` e `≠`.
+
+No painel **Estado inicial do jogo**, o inventário é uma contagem: `inventory: { caixa: 1 }`.
 
 **Sintaxe do texto:**
 - `{pause:400}` → pausa de 400 ms.

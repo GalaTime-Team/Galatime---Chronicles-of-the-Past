@@ -48,6 +48,36 @@ export function toFiniteNumber(value: unknown): number | null {
 }
 
 /**
+ * Reads a state entry as a yes/no answer.
+ *
+ * This is what lets a boolean literal ask "is this entry there?" instead of
+ * having to name the value that happens to be stored. It matters most for
+ * inventory, where the entry is always a count: `inventory.caixa = true` has to
+ * mean "the player is holding the box" for a count of `1`, and `= false` has to
+ * cover `0`, an item that was taken away and an item that was never given —
+ * three states that are the same answer to the question but three different
+ * numbers. A flag is a truth already, and passes straight through.
+ *
+ * Absence counts as "no": an entry that does not exist is not something the
+ * player has.
+ */
+export function toStateBoolean(value: unknown): boolean {
+    if (value === null || value === undefined) {
+        return false;
+    }
+
+    if (Array.isArray(value)) {
+        return value.length > 0;
+    }
+
+    if (typeof value === 'string') {
+        return value !== '';
+    }
+
+    return Boolean(value);
+}
+
+/**
  * Accepts both text shapes the format allows and returns segments.
  *
  * A bare string is the shorthand a hand-written file uses for a question; a

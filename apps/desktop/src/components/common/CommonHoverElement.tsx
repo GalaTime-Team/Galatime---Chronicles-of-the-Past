@@ -75,11 +75,11 @@ const CommonHoverElement: React.FC<CommonHoverElementProps> = ({
         if (!data) return [[], []];
         // Attack tooltips are built from the target elements, so `type` holds the
         // element's own type and the filter keeps the corrupted ones out. Defence
-        // tooltips carry the relationship itself (immune_to, strong_vs, weak_to...)
-        // in `type`, but the controller already returns only common elements, so
+        // tooltips carry the relationship itself (immune, strong, weak...)
+        // in `type`, but the controller already returns only natural elements, so
         // every combined entry must be kept.
         const entries = Object.entries(data.multipliers)
-            .filter(([_, multiplier]) => (isAttack ? multiplier.type === 'common' : true));
+            .filter(([_, multiplier]) => (isAttack ? multiplier.type === 'natural' : true));
         const half = Math.ceil(entries.length / 2);
         return [entries.slice(0, half), entries.slice(half)];
     };

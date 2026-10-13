@@ -1,78 +1,94 @@
 import * as yaml from "js-yaml";
 
+/** Relationship keys an element may author, in the order the score matrix reads them. */
+export type ElementRelationKey = "immune" | "super_strong" | "strong" | "weak" | "super_weak";
+
+/** Defensive relationships of one element; each list holds target element ids. */
+export interface ElementRelations {
+    immune?: string[];
+    super_strong?: string[];
+    strong?: string[];
+    weak?: string[];
+    super_weak?: string[];
+}
+
 export interface ElementData {
     id: string;
     name: string;
     description: string;
-    type: "common" | string;
-    immune_to?: string[];
-    super_strong_vs?: string[];
-    strong_vs?: string[];
-    weak_to?: string[];
-    super_weak_to?: string[];
+    type: "natural" | string;
+    relations: ElementRelations;
+}
+
+/** One entry of `elements.yaml` — its `id` is the mapping key, not a field. */
+type ElementEntry = Omit<ElementData, "id">;
+
+/** Shape of the single element catalogue file. */
+interface ElementsFile {
+    elements: Record<string, ElementEntry>;
+}
+
+// Vite's `import.meta.glob` only accepts a literal pattern, so the path is
+// written out here. `?raw` + js-yaml is the pattern the other catalogue loaders
+// use; `eager` + `import: 'default'` keeps the catalogue readable synchronously,
+// like `itemService`.
+const catalogueModules = import.meta.glob(
+    "../data/combat/elements/elements.yaml",
+    { query: '?raw', import: 'default', eager: true },
+) as Record<string, string>;
+
+/** Cache of the parsed catalogue, keyed by element id. */
+const elementCache: Map<string, ElementData> = new Map();
+
+/** Reads the authored `elements:` mapping out of the catalogue file. */
+function readCatalogueEntries(): Record<string, ElementEntry> {
+    const entries: Record<string, ElementEntry> = {};
+
+    for (const [path, source] of Object.entries(catalogueModules)) {
+        try {
+            const parsed = yaml.load(source) as ElementsFile | null;
+            if (parsed?.elements) Object.assign(entries, parsed.elements);
+        } catch (error) {
+            console.error(`Failed to parse element catalogue "${path}":`, error);
+        }
+    }
+
+    return entries;
 }
 
 /**
- * Cache of loaded elements
+ * Loads and caches every element, keyed by id.
+ * @returns Every element, in file order
  */
-const elementCache: Map<string, ElementData> = new Map();
-let elementsGlob: Record<string, () => Promise<{ default: string }>> | null = null;
-
-/**
- * Initializes the elements glob
- */
-async function initializeElementsGlob() {
-    if (elementsGlob === null) {
-        elementsGlob = import.meta.glob(
-            "../data/combat/elements/*.yaml",
-            { query: '?raw' }
-        ) as Record<string, () => Promise<{ default: string }>>;
+function loadElementCatalogue(): ElementData[] {
+    if (elementCache.size > 0) {
+        return [...elementCache.values()];
     }
+
+    for (const [id, entry] of Object.entries(readCatalogueEntries())) {
+        elementCache.set(id, {
+            id,
+            name: entry.name,
+            description: entry.description,
+            type: entry.type,
+            relations: entry.relations ?? {},
+        });
+    }
+
+    return [...elementCache.values()];
 }
 
 /**
  * Fetches element data by ID.
- * @param elementId Element ID (file name without extension)
+ * @param elementId Element ID (the key in `elements.yaml`)
  * @returns Element data or null if not found
  */
 export async function getElementData(elementId: string): Promise<ElementData | null> {
-    try {
-        // Check cache
-        if (elementCache.has(elementId)) {
-            return elementCache.get(elementId) ?? null;
-        }
-
-        // Initialize glob if necessary
-        await initializeElementsGlob();
-
-        if (!elementsGlob) {
-            console.error("Failed to initialize elements glob");
-            return null;
-        }
-
-        // Find the corresponding file
-        const globPath = `../data/combat/elements/${elementId}.yaml`;
-        const loaderFn = elementsGlob[globPath];
-
-        if (!loaderFn) {
-            console.log("loaderFn: ", loaderFn, "globPath: ", globPath, "elementsGlob: ", elementsGlob);
-            console.warn(`Element file not found: ${elementId}`);
-            return null;
-        }
-
-        // Load and parse
-        const module = await loaderFn();
-        const content = module.default as string;
-        const parsed = yaml.load(content) as unknown as ElementData;
-
-        // Cache
-        elementCache.set(elementId, parsed);
-
-        return parsed;
-    } catch (error) {
-        console.error(`Error loading element data for ${elementId}:`, error);
-        return null;
+    if (elementCache.has(elementId)) {
+        return elementCache.get(elementId) ?? null;
     }
+
+    return loadElementCatalogue().find((element) => element.id === elementId) ?? null;
 }
 
 /**
@@ -80,17 +96,5 @@ export async function getElementData(elementId: string): Promise<ElementData | n
  * @returns Array of all element data
  */
 export async function getAllElementsData(): Promise<ElementData[]> {
-    await initializeElementsGlob();
-
-    if (!elementsGlob) {
-        console.error("Failed to initialize elements glob");
-        return [];
-    }
-
-    const allElementIds = Object.keys(elementsGlob).map(path =>
-        path.replace("../data/combat/elements/", "").replace(".yaml", "").replace("?raw", "")
-    );
-
-    const elements = await Promise.all(allElementIds.map(id => getElementData(id)));
-    return elements.filter((e): e is ElementData => e !== null);
+    return loadElementCatalogue();
 }

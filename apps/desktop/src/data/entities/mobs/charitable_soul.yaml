@@ -1,0 +1,76 @@
+﻿id: charitable_soul
+name: Charitable Soul
+rarity: uncommon
+height: "120 cm"
+weight: "0 kg"
+description: >
+  Hollow glowing yellow souls that wander around, healing creatures.
+  I hope these things aren't actual souls...
+
+elements:
+  - lux
+
+base_stats:
+  hp: 250
+  mana: 40
+  stamina: 18
+  physical_attack: 46
+  magical_attack: 7
+  physical_defense: 22
+  magical_defense: 42
+  speed: 30
+
+skills:
+  - radiant_mend
+
+loot:
+  - item_id: gold_coin
+    quantity: 1
+    chance: 0.4
+
+abilities:
+  - id: soul_inversion
+    name: Soul Inversion
+    description: After 4 of its turns, it turns back into a Greedy Soul.
+    tags: [transform, cycle]
+    trigger:
+      event: turn_end
+      once: true
+    condition:
+      all:
+        - turn_count:
+            operator: gte
+            value: 4
+    action:
+      type: transform
+      target: self
+      parameters:
+        entity_id: greedy_soul
+        entity_type: mob
+    display:
+      visible: true
+      priority: 60
+
+  - id: radiant_reflection
+    name: Radiant Reflection
+    description: Magical attacks are partly thrown back at the attacker.
+    tags: [reaction, reflect]
+    trigger:
+      event: after_damage
+    condition:
+      all:
+        - damage:
+            type: magical
+            operator: eq
+    action:
+      type: reflect_damage
+      target: attacker
+      parameters:
+        fraction: 0.35
+        accuracy: 40
+    display:
+      visible: true
+      priority: 50
+
+ai:
+  style: support

@@ -13,6 +13,17 @@
 export const DIALOGUE_DEFAULT_TEXT_SPEED = 30;
 
 /**
+ * Bounds of the player-facing text speed setting, in the same milliseconds per
+ * character as `DIALOGUE_DEFAULT_TEXT_SPEED`.
+ *
+ * `MIN` is the fastest the base line may type and `MAX` the slowest. The slider
+ * in Settings → Game snaps across the range in ten equal steps, and the default
+ * (30) sits exactly on one of them, so restoring defaults draws a whole step.
+ */
+export const DIALOGUE_TEXT_SPEED_MIN = 10;
+export const DIALOGUE_TEXT_SPEED_MAX = 60;
+
+/**
  * Rows of text the box shows before a line is paginated.
  *
  * The height of a row is not a constant here. The spoken line scales with the

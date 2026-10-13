@@ -85,6 +85,11 @@ export function findInteractiveSegments(
  * survives, and a pause belonging to a later page does not fire early. The lower
  * bound is exclusive so a pause sitting exactly on a page boundary belongs to the
  * page it ends, not to both.
+ *
+ * A styled segment cut in two also has its `pause_after_ms` dropped from the piece
+ * that does not end it. The hold closes the segment, so it belongs to whichever
+ * piece carries the segment's last character; leaving it on the earlier pieces
+ * would fire the whole hold once per word.
  */
 export function sliceSegmentsByRange(
     segments: DialogueSegment[],
@@ -116,10 +121,16 @@ export function sliceSegmentsByRange(
             continue;
         }
 
-        sliced.push({
-            ...segment,
-            value: segment.value.slice(overlapStart - segmentStart, overlapEnd - segmentStart),
-        });
+        const value = segment.value.slice(overlapStart - segmentStart, overlapEnd - segmentStart);
+
+        if (segment.type === 'styled_text' && overlapEnd < segmentEnd && segment.style?.pause_after_ms !== undefined) {
+            const { pause_after_ms: _unfinishedHold, ...restStyle } = segment.style;
+
+            sliced.push({ ...segment, value, style: restStyle });
+            continue;
+        }
+
+        sliced.push({ ...segment, value });
     }
 
     return sliced;
@@ -129,9 +140,8 @@ export function sliceSegmentsByRange(
  * One measurable piece of a line.
  *
  * The box paginates by measuring where each token lands, so a page break can
- * fall between two tokens but never inside one. A plain `text` segment therefore
- * contributes one token per word, while a styled or interactive segment is a
- * single token: splitting it would break the styling across two pages.
+ * fall between two tokens but never inside one. A segment is one token per word
+ * unless `isAtomicSegment` says otherwise.
  */
 export interface DialogueToken {
     /** Position in the token list; the renderer mirrors it in `data-dialogue-token`. */
@@ -193,6 +203,36 @@ export function splitSegmentWords(value: string): WordRange[] {
     return ranges;
 }
 
+/**
+ * Whether a page break is allowed to fall inside this segment.
+ *
+ * Three kinds, for three reasons:
+ *
+ * - A `text` segment is plain prose, so it breaks between words freely.
+ * - A `styled_text` segment also breaks between words. Its style is *not* a reason
+ *   to keep it whole: `sliceSegmentsByRange` copies the style onto every piece, so
+ *   two adjacent `styled_text` segments carrying the same style draw identically to
+ *   one. Keeping it whole used to make a long styled passage — a letter, a speech
+ *   — a single page taller than the box, which clipped it to the box's first rows
+ *   and silently lost the rest.
+ * - The exceptions are the styles that are properties of *the element* rather than
+ *   of the characters: a clickable phrase would be cut in half, and the wave's
+ *   ripple takes its phase from a character's place in the whole segment, so
+ *   splitting it would restart the phase at every word and every page boundary.
+ *   `off` counts as absent because the author is deferring to the player.
+ */
+export function isAtomicSegment(segment: DialogueSegment): boolean {
+    if (segment.type === 'interactive_text') {
+        return true;
+    }
+
+    if (segment.type !== 'styled_text') {
+        return false;
+    }
+
+    return segment.style?.wave !== undefined && segment.style.wave !== 'off';
+}
+
 /** Splits a line into the tokens a page break may fall between. */
 export function tokenizeSegments(segments: DialogueSegment[]): DialogueToken[] {
     const tokens: DialogueToken[] = [];
@@ -210,9 +250,7 @@ export function tokenizeSegments(segments: DialogueSegment[]): DialogueToken[] {
             tokens.push({ index: tokens.length, segmentIndex, start: tokenStart, end: tokenEnd, atomic });
         };
 
-        // A styled or interactive segment is one token: splitting it would break
-        // its styling across two pages, or half of a clickable span.
-        if (segment.type !== 'text') {
+        if (isAtomicSegment(segment)) {
             pushToken(start, offset, true);
             return;
         }

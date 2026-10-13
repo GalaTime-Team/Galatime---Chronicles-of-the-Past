@@ -31,24 +31,4 @@ skills:
   - vine
   - nature_absorption
 
-weapon:
-  id: peace_maker
-  name: Peace Maker
-  element: lux
-  damage_type: physical
-  target: individual
-  hits: 1
-  accuracy: 0.80
-  power: 100
-  stamina_cost: 6
-  damage_variance: [0.9, 1.6]
-  effects:
-    - effect_id: stun
-      status_effect: Stun
-      apply_to: enemy_one
-      turns: 4
-      lower_accuracy: 0.25
-      effect_hit_chance: 0.4
-      debuff:
-        physical_attack: 15
-        magical_attack: 15
+weapon: peace_maker

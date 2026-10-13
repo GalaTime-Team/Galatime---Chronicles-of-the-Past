@@ -24,19 +24,7 @@ skills:
   - headbutt
   - splash
 
-weapon: null
-
-abilities:
-  - ability_name: Split
-    condition:
-      type: on_death
-    action:
-      type: spawn
-      enemies:
-        - small_slime
-        - small_slime
-    keep_triggered_after_once: false
-    activation_message: "The Slime splits into two smaller slimes!"
+weapon: 
 
 loot:
   - item_id: gold_coin
@@ -45,5 +33,26 @@ loot:
   - item_id: slime_goo
     quantity: 1
     chance: 0.8
+
+abilities:
+  - id: slime_split_small
+    name: Slime Split
+    description: When it dies, it bursts into 2 Small Slimes.
+    tags: [death, summon]
+    trigger:
+      event: on_death
+    action:
+      type: summon
+      target: self
+      parameters:
+        entity_id: small_slime
+        entity_type: mob
+        count: 2
+    display:
+      visible: true
+      priority: 70
+
+ai:
+  style: brute
 
 

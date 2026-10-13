@@ -7,8 +7,10 @@ import { TestPlaygroundSidebar } from './test_playground/TestPlaygroundSidebar';
 import type { PlaygroundTab } from './test_playground/types';
 import { TestMusicPanel } from './test_playground/TestMusicPanel';
 import { TestDialoguePanel } from './test_playground/TestDialoguePanel';
-import { TestCombatPanel, TestObjectivesPanel, TestMovementPanel } from './test_playground/TestPlaceholderPanels';
+import { TestObjectivesPanel, TestMovementPanel } from './test_playground/TestPlaceholderPanels';
+import { TestCombatPanel } from './test_playground/TestCombatPanel';
 import { TestEntitiesPanel } from './test_playground/TestEntitiesPanel';
+import { TestItemsPanel } from './test_playground/TestItemsPanel';
 import { TestSkillTreePanel } from './test_playground/TestSkillTreePanel';
 
 interface TestPlaygroundScreenProps {
@@ -28,6 +30,7 @@ export function TestPlaygroundScreen({ onBack }: TestPlaygroundScreenProps) {
         movement: t('playground.tabs.movement'),
         entities: t('playground.tabs.entities'),
         skills: t('playground.tabs.skills'),
+        items: t('playground.tabs.items'),
     };
 
     const panels: Record<PlaygroundTab, React.ReactNode> = {
@@ -40,6 +43,7 @@ export function TestPlaygroundScreen({ onBack }: TestPlaygroundScreenProps) {
         movement: <TestMovementPanel />,
         entities: <TestEntitiesPanel />,
         skills: <TestSkillTreePanel />,
+        items: <TestItemsPanel />,
     };
 
     const panel = panels[activeTab];

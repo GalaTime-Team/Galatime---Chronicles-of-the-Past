@@ -1,6 +1,6 @@
 import type { CharacterData, MobData } from '../../../types/EntityDataType';
 
-export type PlaygroundTab = 'music' | 'entities' | 'dialogue' | 'combat' | 'objectives' | 'movement' | 'skills';
+export type PlaygroundTab = 'music' | 'entities' | 'dialogue' | 'combat' | 'objectives' | 'movement' | 'skills' | 'items';
 
 /** A selectable entity shown in the playground's entity sidebar/tab. */
 export type EntityItem = {

@@ -675,6 +675,22 @@ function describeConditionPathProblem(left: unknown): { code: string; message: s
     };
 }
 
+/**
+ * Roots whose entries are always numbers.
+ *
+ * A boolean literal against one of these can never be satisfied, and it fails
+ * silently rather than loudly, so it is worth naming in the report.
+ */
+function isAlwaysNumericPath(left: unknown): boolean {
+    if (typeof left !== 'string') {
+        return false;
+    }
+
+    const parts = parseStatePath(left);
+
+    return !!parts && (parts.root === 'relationship' || parts.root === 'stats' || parts.root === 'time');
+}
+
 /** Checks a condition tree's operators, state paths and literals. */
 function validateConditionNode(
     node: ConditionNode | undefined,
@@ -707,6 +723,16 @@ function validateConditionNode(
                 'invalid_condition_value',
                 'Condition "right" must be a boolean, string, number or null.',
                 `${path}.right`,
+            );
+        }
+
+        if (typeof node.right === 'boolean' && isAlwaysNumericPath(node.left)) {
+            addWarning(
+                collector,
+                'boolean_on_numeric_path',
+                `Condition path "${node.left}" only ever holds a number, so comparing it to `
+                    + `${node.right ? 'true' : 'false'} is never satisfied. Compare against a number instead.`,
+                path,
             );
         }
 

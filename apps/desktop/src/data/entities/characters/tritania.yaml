@@ -1,0 +1,30 @@
+id: tritania
+name: Tritania
+surname: God of Umbra
+gender: Female
+age: ???
+height: "155 cm"
+weight: "51 kg"
+birthday: "December 5"
+origin: ???
+description: >
+  Tritania has voluminous silver hair with crimson undertones and three pom-poms: two at the front and one at the back. She wears a gold tiara, bracelet, armlet and belt, and has crimson tattoos visible on her arms, legs and belly. She wears a scarf draped across her chest and two long scarves tied around her waist: one white with a crimson rim and the other crimson and gold, which drapes down to cover most of her right leg.
+
+elements:
+  - umbra
+  - inanus
+
+base_stats:
+  hp: 2210
+  mana: 132
+  stamina: 48
+  physical_attack: 11
+  magical_attack: 63
+  physical_defense: 55  
+  magical_defense: 101
+  speed: 41
+
+skills:
+  - focus
+
+weapon:

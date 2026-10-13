@@ -1,0 +1,954 @@
+weapon_types:
+  sword:
+    range: short
+    accuracy: 100
+    hits: 1
+    power: 40
+    damage_type: physical
+  dagger:
+    range: short
+    accuracy: 100
+    hits: 3
+    power: 18
+    damage_type: physical
+  lance:
+    range: long
+    accuracy: 100
+    hits: 1
+    power: 40
+    damage_type: physical
+    exponential:
+      per_hit: 0.1
+      cap: 0.5
+    stats:
+      speed: -10
+  mace:
+    range: short
+    accuracy: 90
+    hits: 1
+    cooldown: 1
+    power: 60
+    damage_type: physical
+  longsword:
+    range: medium
+    accuracy: 85
+    hits: 1
+    power: 52
+    damage_type: physical
+  greatsword:
+    range: medium
+    accuracy: 85
+    hits: 1
+    power: 52
+    damage_type: physical
+  staff:
+    range: medium
+    accuracy: 100
+    hits: 1
+    damage_type: magical
+    accuracy_by_range:
+      front: 70
+      rear: 100
+  bow:
+    range: long
+    accuracy: 100
+    hits: 1
+    power: 30
+    damage_type: physical
+    accuracy_by_range:
+      front: 80
+      rear: 100
+    ammo:
+      item_type: arrow
+
+weapons:
+  - id: rusty_sword
+    name: Rusty Sword
+    type: sword
+    element: inanus
+    damage_type: physical
+    target: individual
+    power: 40
+    stamina_cost: 3
+    damage_variance: [0.8, 1.2]
+    durability: { max: 120, wear: 1 }
+    display:
+      summary: "Add a description."
+
+  - id: rusty_dagger
+    name: Rusty Dagger
+    type: dagger
+    element: inanus
+    damage_type: physical
+    target: individual
+    power: 16
+    stamina_cost: 1
+    damage_variance: [0.6, 1.4]
+    durability: { max: 70, wear: 1 }
+    flags: [fragile]
+    display:
+      summary: "Add a description."
+
+  - id: rusty_lance
+    name: Rusty Lance
+    type: lance
+    element: inanus
+    damage_type: physical
+    target: individual
+    power: 36
+    stamina_cost: 3
+    damage_variance: [0.6, 1.3]
+    durability: { max: 90, wear: 1 }
+    display:
+      summary: "Add a description."
+
+  - id: rusty_mace
+    name: Rusty Mace
+    type: mace
+    element: inanus
+    damage_type: physical
+    target: individual
+    power: 52
+    accuracy: 80
+    stamina_cost: 4
+    damage_variance: [0.7, 1.3]
+    durability: { max: 90, wear: 1 }
+    display:
+      summary: "Add a description."
+
+  - id: rusty_bow
+    name: Rusty Bow
+    type: bow
+    element: inanus
+    damage_type: physical
+    target: individual
+    power: 24
+    stamina_cost: 2
+    accuracy_by_range:
+      front: 70
+      rear: 90
+    durability: { max: 80, wear: 1 }
+    display:
+      summary: "Add a description."
+
+  - id: military_sword
+    name: Iron Sword
+    type: sword
+    element: inanus
+    damage_type: physical
+    target: individual
+    power: 40
+    stamina_cost: 2
+    damage_variance: [0.7, 1.0]
+    durability: { max: 180, wear: 1 }
+
+  - id: military_dagger
+    name: Military Dagger
+    type: dagger
+    element: inanus
+    damage_type: physical
+    target: individual
+    power: 20
+    stamina_cost: 1
+    damage_variance: [0.85, 1.15]
+    durability: { max: 150, wear: 1 }
+    display:
+      summary: "Add a description."
+
+  - id: military_lance
+    name: Military Lance
+    type: lance
+    element: inanus
+    damage_type: physical
+    target: individual
+    power: 42
+    stamina_cost: 3
+    damage_variance: [0.85, 1.15]
+    durability: { max: 200, wear: 1 }
+    display:
+      summary: "Add a description."
+
+  - id: military_mace
+    name: Military Mace
+    type: mace
+    element: inanus
+    damage_type: physical
+    target: individual
+    power: 62
+    stamina_cost: 4
+    durability: { max: 230, wear: 1 }
+    display:
+      summary: "Add a description."
+
+  - id: military_greatsword
+    name: Military Greatsword
+    type: greatsword
+    element: inanus
+    damage_type: physical
+    target: individual
+    power: 56
+    stamina_cost: 4
+    damage_variance: [0.85, 1.15]
+    durability: { max: 230, wear: 1 }
+    display:
+      summary: "Add a description."
+
+  - id: military_bow
+    name: Military Bow
+    type: bow
+    element: inanus
+    damage_type: physical
+    target: individual
+    power: 30
+    stamina_cost: 2
+    accuracy_by_range:
+      front: 85
+      rear: 100
+    durability: { max: 170, wear: 1 }
+    display:
+      summary: "Add a description."
+
+  - id: iron_sword
+    name: Iron Sword
+    type: sword
+    element: inanus
+    damage_type: physical
+    target: individual
+    power: 40
+    stamina_cost: 2
+    damage_variance: [0.7, 1.0]
+    durability: { max: 180, wear: 1 }
+
+  - id: iron_dagger
+    name: Iron Dagger
+    type: dagger
+    element: inanus
+    damage_type: physical
+    target: individual
+    power: 18
+    stamina_cost: 1
+    damage_variance: [0.8, 1.2]
+    durability: { max: 130, wear: 1 }
+    display:
+      summary: "Add a description."
+
+  - id: iron_mace
+    name: Iron Mace
+    type: mace
+    element: inanus
+    damage_type: physical
+    target: individual
+    power: 56
+    stamina_cost: 4
+    durability: { max: 200, wear: 1 }
+    display:
+      summary: "Add a description."
+
+  - id: iron_greatsword
+    name: Iron Greatsword
+    type: greatsword
+    element: inanus
+    damage_type: physical
+    target: individual
+    power: 52
+    stamina_cost: 4
+    damage_variance: [0.8, 1.2]
+    durability: { max: 200, wear: 1 }
+    display:
+      summary: "Add a description."
+
+  - id: iron_bow
+    name: Iron Bow
+    type: bow
+    element: inanus
+    damage_type: physical
+    target: individual
+    power: 28
+    stamina_cost: 2
+    durability: { max: 150, wear: 1 }
+    display:
+      summary: "Add a description."
+
+  - id: imperial_blade
+    name: Imperial Blade
+    type: sword
+    element: inanus
+    damage_type: physical
+    target: individual
+    power: 50
+    stamina_cost: 2
+    damage_variance: [0.8, 1.2]
+    durability: { max: 220, wear: 1 }
+
+  - id: windblade
+    name: Windblade
+    type: sword
+    element: caeli
+    damage_type: physical
+    target: enemy_one
+    hits: 1
+    accuracy: 0.9
+    power: 30
+    stamina_cost: 2
+    durability: { max: 160, wear: 1 }
+
+  - id: cast_rapier
+    name: Cast Rapier
+    type: sword
+    element: inanus
+    damage_type: physical
+    target: individual
+    hits: 1
+    accuracy: 0.95
+    power: 85
+    stamina_cost: 2
+    damage_variance: [0.4, 1.1]
+    durability: { max: 150, wear: 1 }
+
+  - id: droment_dagger
+    name: Dorment Dagger
+    type: dagger
+    element: umbra
+    damage_type: physical
+    target: individual
+    hits: 6
+    accuracy: 80
+    power: 30
+    stamina_cost: 2
+    damage_variance: [0.8, 1.1]
+    durability: { max: 110, wear: 1 }
+
+  - id: peace_maker
+    name: Peace Maker
+    type: mace
+    element: lux
+    damage_type: physical
+    target: individual
+    hits: 1
+    accuracy: 0.80
+    power: 100
+    stamina_cost: 6
+    damage_variance: [0.9, 1.6]
+    durability: { max: 200, wear: 1 }
+    effects:
+      - effect_id: peace_maker_stun
+        status_effect: Stun
+        apply_to: enemy_one
+        turns: 4
+        effect_hit_chance: 0.4
+        prevent_actions: [attack]
+        debuff:
+          physical_attack: 15
+          magical_attack: 15
+
+  - id: golden_scepter
+    name: Golden Scepter
+    type: staff
+    element: lux
+    damage_type: magical
+    target: self
+    hits: 1
+    accuracy: 0.75
+    power: 0
+    stamina_cost: 2
+    durability: { max: 140, wear: 1 }
+    effects:
+      - effect_id: heal_hp
+        status_effect: Soothing Light
+        apply_to: ally_one
+        resource_regen:
+          hp: 10
+        regen_variance: [0.5, 1.1]
+        apply_chance: 0.2
+      - effect_id: heal_mana
+        status_effect: Soothing Mind
+        apply_to: ally_one
+        resource_regen:
+          mana: 6
+        regen_variance: [0.5, 1.1]
+        apply_chance: 0.2
+
+  - id: fragarach
+    name: Fragarach
+    type: sword
+    element: caeli
+    damage_type: physical
+    target: individual
+    power: 50
+    stamina_cost: 3
+    durability: { max: 240, wear: 1 }
+    flags: [legendary]
+    display:
+      summary: "Add a description."
+    abilities:
+      - id: fragarach_dispel_guard
+        name: Answerer
+        trigger: { event: before_attack, scope: self }
+        action:
+          type: dispel
+          target: defender
+        display:
+          visible: true
+          summary: "Add a description."
+      - id: fragarach_caeli_edge
+        name: Wind Edge
+        trigger: { event: before_attack, scope: self }
+        condition:
+          element:
+            id: caeli
+        action:
+          type: modify_damage
+          target: self
+          parameters: { multiplier: 1.35 }
+        display:
+          visible: true
+          summary: "Add a description."
+
+  - id: staff_of_god
+    name: Staff of God
+    type: staff
+    element: aqua
+    damage_type: magical
+    target: individual
+    power: 30
+    stamina_cost: 2
+    durability: { max: 200, wear: 1 }
+    cost_modifiers:
+      mana:
+        multiplier: 0.75
+        elements: [aqua, lapis]
+    flags: [legendary]
+    display:
+      summary: "Add a description."
+
+  - id: ruyi_jingu_bang
+    name: Ruyi Jingu Bang
+    type: staff
+    element: lapis
+    damage_type: physical
+    target: individual
+    power: 45
+    stamina_cost: 3
+    durability: { max: 300, wear: 1 }
+    flags: [legendary]
+    display:
+      summary: "Add a description."
+    abilities:
+      - id: ruyi_amplify_best
+        name: Ruyi Empower
+        trigger: { event: battle_start, scope: self }
+        action:
+          type: modify_stat
+          target: self
+          duration: { type: permanent }
+          parameters:
+            amplify_best:
+              count: 3
+              multiplier: 1.15
+        display:
+          visible: true
+          summary: "Add a description."
+
+  - id: asclepius_wand
+    name: Asclepius Wand
+    type: staff
+    element: lux
+    damage_type: magical
+    target: individual
+    power: 20
+    stamina_cost: 2
+    durability: { max: 180, wear: 1 }
+    effect_power: 2.0
+    flags: [legendary]
+    display:
+      summary: "Add a description."
+
+  - id: caduceus_wand
+    name: Caduceus Wand
+    type: staff
+    element: caeli
+    damage_type: magical
+    target: individual
+    power: 25
+    stamina_cost: 2
+    durability: { max: 180, wear: 1 }
+    stats:
+      speed: 15
+    flags: [legendary]
+    display:
+      summary: "Add a description."
+    tags: [commerce]
+
+  - id: durandal
+    name: Durandal
+    type: sword
+    element: inanus
+    damage_type: physical
+    target: individual
+    power: 60
+    stamina_cost: 3
+    durability: { max: 200, wear: 0, indestructible: true }
+    flags: [legendary]
+    display:
+      summary: "Add a description."
+
+  - id: gungnir
+    name: Gungnir
+    type: lance
+    element: inanus
+    damage_type: physical
+    target: individual
+    power: 50
+    stamina_cost: 3
+    durability: { max: 230, wear: 1 }
+    exponential: { per_hit: 0.15, cap: 1.0 }
+    throw:
+      power: 65
+      accuracy: 100
+      range: long
+      returns: true
+    flags: [legendary]
+    display:
+      summary: "Add a description."
+
+  - id: fairy_bow
+    name: Fairy Bow
+    type: bow
+    element: florere
+    damage_type: physical
+    target: individual
+    power: 32
+    stamina_cost: 2
+    durability: { max: 150, wear: 1 }
+    ammo:
+      item_type: arrow
+      consume_chance: 0.6
+    flags: [legendary]
+    display:
+      summary: "Add a description."
+
+  - id: princes_sword
+    name: Prince's Sword
+    type: sword
+    element: inanus
+    damage_type: physical
+    target: individual
+    power: 45
+    stamina_cost: 3
+    durability: { max: 220, wear: 1 }
+    damage_modifiers:
+      atk_def_ratio: true
+    flags: [royal]
+    display:
+      summary: "Add a description."
+
+  - id: royal_gladius
+    name: Royal Gladius
+    type: sword
+    element: inanus
+    damage_type: physical
+    target: individual
+    power: 42
+    stamina_cost: 2
+    damage_variance: [0.8, 1.1]
+    durability: { max: 190, wear: 1 }
+    tags: [royal]
+    display:
+      summary: "Add a description."
+
+  - id: seven_branched_sword
+    name: Seven-Branched Sword
+    type: sword
+    element: inanus
+    damage_type: physical
+    target: individual
+    power: 38
+    stamina_cost: 3
+    damage_variance: [0.6, 1.3]
+    durability: { max: 150, wear: 1 }
+    flags: [randomize_power]
+    tags: [bazar]
+    display:
+      summary: "Add a description."
+
+  - id: strange_broken_sword
+    name: Strange Broken Sword
+    type: dagger
+    element: lux
+    damage_type: physical
+    target: individual
+    power: 20
+    accuracy: 70
+    stamina_cost: 1
+    damage_variance: [0.5, 1.5]
+    durability: { max: 102, wear: 1 }
+    flags: [fragile, legendary]
+    display:
+      summary: "Add a description."
+
+  - id: kings_longsword
+    name: King's Longsword
+    type: longsword
+    element: lux
+    damage_type: physical
+    target: individual
+    power: 55
+    stamina_cost: 3
+    durability: { max: 250, wear: 1 }
+    loot:
+      chance_multiplier: 1.5
+    tags: [royal]
+    display:
+      summary: "Add a description."
+
+  - id: steel_greatsword
+    name: Steel Greatsword
+    type: greatsword
+    element: inanus
+    damage_type: physical
+    target: individual
+    power: 60
+    stamina_cost: 4
+    damage_variance: [0.85, 1.15]
+    durability: { max: 200, wear: 1 }
+    display:
+      summary: "Add a description."
+
+  - id: rusty_greatsword
+    name: Rusty Greatsword
+    type: greatsword
+    element: inanus
+    damage_type: physical
+    target: individual
+    power: 48
+    stamina_cost: 4
+    damage_variance: [0.7, 1.1]
+    durability: { max: 110, wear: 1 }
+    display:
+      summary: "Add a description."
+
+  - id: royal_greatsword
+    name: Royal Greatsword
+    type: greatsword
+    element: lux
+    damage_type: physical
+    target: individual
+    power: 58
+    stamina_cost: 4
+    damage_variance: [0.85, 1.15]
+    durability: { max: 230, wear: 1 }
+    tags: [royal]
+    display:
+      summary: "Add a description."
+
+  - id: sandai_kitetsu_greatsword
+    name: Sandai Kitetsu
+    type: greatsword
+    element: umbra
+    damage_type: physical
+    target: individual
+    power: 58
+    stamina_cost: 4
+    damage_variance: [0.6, 1.4]
+    durability: { max: 120, wear: 1 }
+    flags: [randomize_power, cursed]
+    tags: [bazar]
+    display:
+      summary: "Add a description."
+
+  - id: steel_dagger
+    name: Steel Dagger
+    type: dagger
+    element: inanus
+    damage_type: physical
+    target: individual
+    power: 20
+    stamina_cost: 1
+    damage_variance: [0.8, 1.2]
+    durability: { max: 130, wear: 1 }
+    display:
+      summary: "Add a description."
+
+  - id: iron_lance
+    name: Iron Lance
+    type: lance
+    element: inanus
+    damage_type: physical
+    target: individual
+    power: 40
+    stamina_cost: 3
+    damage_variance: [0.8, 1.2]
+    durability: { max: 180, wear: 1 }
+    display:
+      summary: "Add a description."
+
+  - id: day_staff
+    name: Day Staff
+    type: staff
+    element: lux
+    damage_type: magical
+    target: individual
+    power: 30
+    stamina_cost: 2
+    durability: { max: 150, wear: 1 }
+    display:
+      summary: "Add a description."
+
+  - id: night_staff
+    name: Night Staff
+    type: staff
+    element: umbra
+    damage_type: magical
+    target: individual
+    power: 34
+    stamina_cost: 2
+    durability: { max: 150, wear: 1 }
+    display:
+      summary: "Add a description."
+
+  - id: forged_steel_hammer
+    name: Forged Steel Hammer
+    type: mace
+    element: inanus
+    damage_type: physical
+    target: individual
+    power: 62
+    stamina_cost: 4
+    durability: { max: 220, wear: 1 }
+    display:
+      summary: "Add a description."
+    effects:
+      - effect_id: hammer_stun
+        status_effect: Stun
+        apply_to: enemy_one
+        turns: 1
+        effect_hit_chance: 0.25
+        prevent_actions: [attack]
+
+  - id: hunting_bow
+    name: Hunting Bow
+    type: bow
+    element: inanus
+    damage_type: physical
+    target: individual
+    power: 30
+    stamina_cost: 2
+    durability: { max: 140, wear: 1 }
+    display:
+      summary: "Add a description."
+
+  - id: hunting_knife
+    name: Hunting Knife
+    type: dagger
+    element: inanus
+    damage_type: physical
+    target: individual
+    power: 22
+    accuracy: 95
+    stamina_cost: 1
+    damage_variance: [0.8, 1.2]
+    durability: { max: 110, wear: 1 }
+    display:
+      summary: "Add a description."
+
+  - id: hunting_spear
+    name: Hunting Spear
+    type: lance
+    element: inanus
+    damage_type: physical
+    target: individual
+    power: 44
+    accuracy: 95
+    stamina_cost: 3
+    damage_variance: [0.8, 1.2]
+    durability: { max: 160, wear: 1 }
+    display:
+      summary: "Add a description."
+
+  - id: lightwood_bow
+    name: Lightwood Bow
+    type: bow
+    element: florere
+    damage_type: physical
+    target: individual
+    power: 26
+    stamina_cost: 1
+    durability: { max: 120, wear: 1 }
+    display:
+      summary: "Add a description."
+
+  - id: sunlit_bow
+    name: Sunlit Bow
+    type: bow
+    element: lux
+    damage_type: physical
+    target: individual
+    power: 32
+    stamina_cost: 2
+    accuracy_by_range:
+      front: 90
+      rear: 100
+    durability: { max: 150, wear: 1 }
+    display:
+      summary: "Add a description."
+
+  - id: umbra_bow
+    name: Umbra Bow
+    type: bow
+    element: umbra
+    damage_type: physical
+    target: individual
+    power: 32
+    stamina_cost: 2
+    durability: { max: 140, wear: 1 }
+    display:
+      summary: "Add a description."
+    effects:
+      - effect_id: umbra_blind
+        status_effect: Blinded
+        apply_to: enemy_one
+        turns: 2
+        effect_hit_chance: 0.3
+        debuff:
+          physical_attack: 6
+          magical_attack: 6
+
+  - id: heracles_broken_bow
+    name: Heracles' Broken Bow
+    type: bow
+    element: inanus
+    damage_type: physical
+    target: individual
+    power: 30
+    stamina_cost: 2
+    accuracy_by_range:
+      front: 65
+      rear: 80
+    durability: { max: 40, wear: 2 }
+    flags: [fragile]
+    display:
+      summary: "Add a description."
+
+  - id: gram_sword
+    name: Gram
+    type: sword
+    element: inanus
+    damage_type: physical
+    target: individual
+    power: 52
+    stamina_cost: 3
+    damage_variance: [0.8, 1.2]
+    durability: { max: 260, wear: 1 }
+    exponential: { per_hit: 0.12, cap: 0.6 }
+    flags: [legendary]
+    display:
+      summary: "Add a description."
+
+  - id: chaoseater_greatsword
+    name: Chaoseater
+    type: greatsword
+    element: chaos
+    damage_type: physical
+    target: individual
+    power: 70
+    stamina_cost: 5
+    damage_variance: [0.9, 1.3]
+    durability: { max: 280, wear: 1 }
+    flags: [legendary]
+    display:
+      summary: "Add a description."
+    effects:
+      - effect_id: chaoseater_drain
+        status_effect: "War's Thirst"
+        apply_to: enemy_one
+        turns: 1
+        resource_drain:
+          hp: 8
+      - effect_id: chaoseater_feast
+        status_effect: "War's Feast"
+        apply_to: self
+        turns: 1
+        resource_regen:
+          hp: 8
+
+  - id: jormungandr_greatsword
+    name: Jormungandr Greatsword
+    type: greatsword
+    element: aqua
+    damage_type: physical
+    target: individual
+    power: 62
+    stamina_cost: 4
+    damage_variance: [0.85, 1.15]
+    durability: { max: 260, wear: 1 }
+    flags: [legendary]
+    display:
+      summary: "Add a description."
+    effects:
+      - effect_id: jormungandr_venom
+        status_effect: Venom
+        apply_to: enemy_one
+        turns: 3
+        effect_hit_chance: 0.7
+        damage_per_turn: 7
+
+  - id: fariduns_mace
+    name: Faridun's Mace
+    type: mace
+    element: ignis
+    damage_type: physical
+    target: individual
+    power: 72
+    stamina_cost: 5
+    damage_variance: [0.9, 1.2]
+    durability: { max: 260, wear: 1 }
+    flags: [legendary]
+    display:
+      summary: "Add a description."
+    effects:
+      - effect_id: faridun_stun
+        status_effect: Stun
+        apply_to: enemy_one
+        turns: 2
+        effect_hit_chance: 0.5
+        prevent_actions: [attack]
+
+  - id: rostam_dagger
+    name: Rostam's Dagger
+    type: dagger
+    element: caeli
+    damage_type: physical
+    target: individual
+    power: 24
+    hits: 4
+    accuracy: 95
+    stamina_cost: 2
+    damage_variance: [0.85, 1.15]
+    durability: { max: 170, wear: 1 }
+    flags: [legendary]
+    display:
+      summary: "Add a description."
+    effects:
+      - effect_id: rostam_guard_break
+        status_effect: Guard Break
+        apply_to: enemy_one
+        turns: 3
+        effect_hit_chance: 0.5
+        debuff:
+          physical_defense: 6
+
+  - id: tyrfing_dagger
+    name: Tyrfing
+    type: dagger
+    element: umbra
+    damage_type: physical
+    target: individual
+    power: 40
+    hits: 2
+    accuracy: 85
+    stamina_cost: 3
+    damage_variance: [0.8, 1.4]
+    durability: { max: 90, wear: 1 }
+    flags: [legendary, cursed]
+    display:
+      summary: "Add a description."

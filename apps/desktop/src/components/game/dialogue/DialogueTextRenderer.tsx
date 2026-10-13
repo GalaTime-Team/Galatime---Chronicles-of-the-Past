@@ -5,18 +5,20 @@ import { useTranslation } from 'react-i18next';
 import type { DialogueSegment, DialogueTextStyle } from '../../../types/DialogueType';
 import { playSfx } from '../../../controllers/audioController';
 import { useGame } from '../../../context/GameContext';
-import { splitSegmentWords } from '../../../services/dialogueTextService';
+import { isAtomicSegment, splitSegmentWords } from '../../../services/dialogueTextService';
 import {
     DIALOGUE_JITTER_DURATION,
     DIALOGUE_JITTER_INTENSITY,
+    DIALOGUE_JITTER_PHASE_STEP,
     DIALOGUE_JITTER_TRANSITION,
+    DIALOGUE_MOTION_PHASE_STEPS,
     DIALOGUE_SHAKE_DURATION,
     DIALOGUE_SHAKE_INTENSITY,
+    DIALOGUE_SHAKE_PHASE_STEP,
     DIALOGUE_SHAKE_TRANSITION,
     DIALOGUE_WAVE_DURATION,
     DIALOGUE_WAVE_INTENSITY,
     DIALOGUE_WAVE_PHASE_STEP,
-    DIALOGUE_WAVE_PHASE_STEPS,
     DIALOGUE_WAVE_TRANSITION,
     buildJitterKeyframes,
     buildShakeKeyframes,
@@ -110,71 +112,160 @@ function resolveMotionIntensity(
 }
 
 /**
- * One character per element, each bobbing up and down on its own phase.
+ * One character per element, each movement on its own phase.
  *
- * The phase comes from the character's place in the segment, so neighbours are
- * never in step and the line reads as a ripple instead of as the whole word
- * jumping. Characters are keyed by that same index, and the value is only ever
- * truncated from the end while a page types, so a character never changes phase
- * part-way through a line.
+ * The three movement styles are layered **per character** instead of per
+ * segment: the wave bobs, the jitter trembles inside that, and the shake rattles
+ * the two of them together — each on its own element, so a segment may ask for
+ * all three and the offsets add up rather than overwrite. Every character runs
+ * the same loops offset by its place in the segment, so a line ripples and
+ * shivers *along* instead of the whole phrase snapping in step.
  *
- * **Words stay atomic.** Each word is one `inline-block`, so the browser can only
- * break the line between words; a break inside a word would be a visible defect
- * and would also make the hidden measuring mirror disagree with the visible text.
+ * The phase comes from the character's index in the segment, and the value is
+ * only ever truncated from the end while a page types, so a character never
+ * changes phase part-way through a line. Characters are keyed by that same
+ * index.
  *
- * Nothing here carries `data-dialogue-token`: a styled segment is one token to
- * the paginator, and handing it more elements than it counted makes it give up
- * and put the whole line on a single page.
+ * **A space is counted for the phase but never wrapped in an element.** An
+ * inline box trims the whitespace at its own edges, so a space inside a
+ * `motion.span` collapses to nothing — which used to swallow the gap in
+ * "desculpa princesa" while the line rendered. Spaces stay plain text between
+ * the characters; they still advance the phase, so the letters after one keep
+ * their place in the segment.
+ *
+ * **Words stay atomic when the wave asks for it.** Each word is one
+ * `inline-block`, so the browser can only break the line between words; a break
+ * inside a word would be a visible defect and would also make the hidden
+ * measuring mirror disagree with the visible text. Without a wave the characters
+ * are plain inline spans — where the line always broke anyway — because the
+ * jitter and the shake move each one with a *relative* offset: a CSS transform
+ * is ignored on a non-replaced inline box, and turning every character into an
+ * `inline-block` to allow one would change where the line breaks. A relative
+ * offset moves a character without touching layout, so the mirror still
+ * describes what the box draws.
+ *
+ * Nothing here carries `data-dialogue-token`, and a waved segment is a single
+ * token to the paginator (`isAtomicSegment`): the phase comes from a character's
+ * place in the whole segment, so the segment cannot be split across pages without
+ * restarting the ripple at every boundary.
  *
  * The tempo is handed in rather than read from the style: `duration` and
- * `phaseStep` scale together, so a slow wave still ripples across the line at the
- * same rate relative to its own bob.
+ * `phaseStep` scale together, so a slow movement still spreads along the line at
+ * the same rate relative to its own loop.
  */
-function WaveText({
+function MotionText({
     value,
-    intensity,
-    duration,
-    phaseStep,
+    wave,
+    jitter,
+    shake,
+    waveDuration,
+    jitterDuration,
+    shakeDuration,
+    wavePhaseStep,
+    jitterPhaseStep,
+    shakePhaseStep,
 }: {
     value: string;
-    intensity: number;
-    duration: number;
-    phaseStep: number;
+    wave: number;
+    jitter: number;
+    shake: number;
+    waveDuration: number;
+    jitterDuration: number;
+    shakeDuration: number;
+    wavePhaseStep: number;
+    jitterPhaseStep: number;
+    shakePhaseStep: number;
 }) {
-    const keyframes = buildWaveKeyframes(intensity);
+    const waveKeyframes = wave > 0 ? buildWaveKeyframes(wave) : undefined;
+    const jitterKeyframes = jitter > 0 ? buildJitterKeyframes(jitter) : undefined;
+    const shakeKeyframes = shake > 0 ? buildShakeKeyframes(shake) : undefined;
 
-    // Split on the whitespace runs rather than on the words, so the spacing is
-    // preserved exactly and the runs become the only places a line may break.
-    const runs = value.split(/(\s+)/);
+    // Split on the whitespace runs only for a wave: the split is what makes each
+    // word a block the browser cannot break. Without one the characters are
+    // plain inline spans and the line breaks exactly where the mirror measures.
+    const runs = waveKeyframes ? value.split(/(\s+)/) : [value];
 
     // Mutated during render on purpose, like `tokenIndex` below: it is a local of
     // this render, so the phase always walks the segment in the same order.
     let characterIndex = -1;
 
+    const drawCharacter = (character: string): ReactNode => {
+        characterIndex += 1;
+
+        // A space is phase, not motion: see the note above.
+        if (/\s/.test(character)) {
+            return character;
+        }
+
+        const phase = (step: number) => (characterIndex % DIALOGUE_MOTION_PHASE_STEPS) * step;
+
+        // Innermost first: the wave bobs the glyph, the jitter trembles it
+        // inside that, the shake rattles the two of them together — each layer
+        // its own element, so the offsets add up instead of overwriting.
+        let node: ReactNode = character;
+
+        if (waveKeyframes) {
+            node = (
+                <motion.span
+                    className="inline-block"
+                    animate={{ y: waveKeyframes }}
+                    transition={{ ...DIALOGUE_WAVE_TRANSITION, duration: waveDuration, delay: phase(wavePhaseStep) }}
+                >
+                    {node}
+                </motion.span>
+            );
+        }
+
+        if (jitterKeyframes) {
+            node = (
+                <motion.span
+                    style={{ position: 'relative', left: 0, top: 0 }}
+                    animate={{ left: jitterKeyframes.left, top: jitterKeyframes.top }}
+                    transition={{ ...DIALOGUE_JITTER_TRANSITION, duration: jitterDuration, delay: phase(jitterPhaseStep) }}
+                >
+                    {node}
+                </motion.span>
+            );
+        }
+
+        if (shakeKeyframes) {
+            node = (
+                <motion.span
+                    style={{ position: 'relative', left: 0 }}
+                    animate={{ left: shakeKeyframes }}
+                    transition={{ ...DIALOGUE_SHAKE_TRANSITION, duration: shakeDuration, delay: phase(shakePhaseStep) }}
+                >
+                    {node}
+                </motion.span>
+            );
+        }
+
+        return <Fragment key={characterIndex}>{node}</Fragment>;
+    };
+
     return (
         <>
-            {runs.map((run, runIndex) => (
-                <span key={runIndex} className="inline-block whitespace-nowrap">
-                    {[...run].map((character) => {
-                        characterIndex += 1;
+            {runs.map((run, runIndex) => {
+                if (run.length === 0) {
+                    return null;
+                }
 
-                        return (
-                            <motion.span
-                                key={characterIndex}
-                                className="inline-block"
-                                animate={{ y: keyframes }}
-                                transition={{
-                                    ...DIALOGUE_WAVE_TRANSITION,
-                                    duration,
-                                    delay: (characterIndex % DIALOGUE_WAVE_PHASE_STEPS) * phaseStep,
-                                }}
-                            >
-                                {character}
-                            </motion.span>
-                        );
-                    })}
-                </span>
-            ))}
+                const characters = [...run].map(drawCharacter);
+                const isWhitespaceRun = /^\s+$/.test(run);
+
+                // A whitespace run is plain text: a block around it would trim
+                // the space away. Everything else a wave wraps in its word
+                // block; without one the characters need no wrapper at all.
+                if (isWhitespaceRun || !waveKeyframes) {
+                    return <Fragment key={runIndex}>{characters}</Fragment>;
+                }
+
+                return (
+                    <span key={runIndex} className="inline-block whitespace-nowrap">
+                        {characters}
+                    </span>
+                );
+            })}
         </>
     );
 }
@@ -259,8 +350,28 @@ export function DialogueTextRenderer({
                     );
                 }
 
-                const token = measureTokens ? nextToken() : -1;
                 const css = toCss(segment.style);
+
+                /*
+                  The mirror has to hand the paginator exactly the tokens
+                  `tokenizeSegments` counted, so the same `isAtomicSegment` decides
+                  here. A styled segment that is allowed to break is drawn one
+                  element per word, each carrying the same style — which is what it
+                  looks like as one segment, so the ruler still describes the box.
+                */
+                if (measureTokens && !isAtomicSegment(segment)) {
+                    return (
+                        <Fragment key={index}>
+                            {splitSegmentWords(segment.value).map((range) => (
+                                <span key={range.start} data-dialogue-token={nextToken()} style={css}>
+                                    {segment.value.slice(range.start, range.end)}
+                                </span>
+                            ))}
+                        </Fragment>
+                    );
+                }
+
+                const token = measureTokens ? nextToken() : -1;
                 const style = segment.style;
                 const shake = resolveMotionIntensity(style?.shake, DIALOGUE_SHAKE_INTENSITY, reduceMotion);
                 const wave = resolveMotionIntensity(style?.wave, DIALOGUE_WAVE_INTENSITY, reduceMotion);
@@ -274,66 +385,33 @@ export function DialogueTextRenderer({
                 const waveDuration = scaleMotionDuration(DIALOGUE_WAVE_DURATION, style?.wave_speed);
                 // The phase offset is a *fraction* of the loop, so it slows down with
                 // it. Leaving it alone would make a slowed wave ripple along the line
-                // faster than each letter bobs, which reads as a glitch.
+                // faster than each letter bobs, which reads as a glitch — the same
+                // would go for a jitter or a shake spreading at a different rate than
+                // it moves, so each takes its own step scaled with its own tempo.
                 const wavePhaseStep = scaleMotionDuration(DIALOGUE_WAVE_PHASE_STEP, style?.wave_speed);
+                const jitterPhaseStep = scaleMotionDuration(DIALOGUE_JITTER_PHASE_STEP, style?.jitter_speed);
+                const shakePhaseStep = scaleMotionDuration(DIALOGUE_SHAKE_PHASE_STEP, style?.shake_speed);
 
-                // Each movement style owns its own layer, so a segment may ask for
-                // all three at once instead of one winning: the wave runs per
-                // character, the jitter trembles inside that, and the shake throws
-                // the whole segment around the two of them. The offsets are on
-                // separate elements, so they add up rather than overwrite.
-                let content: ReactNode = wave > 0
+                // Every movement runs per character, so they share one component:
+                // the wave bobs, the jitter trembles inside that, and the shake
+                // rattles the two of them together — each on its own element and
+                // its own phase. See `MotionText` for why a space is not one of them.
+                const content: ReactNode = wave > 0 || jitter > 0 || shake > 0
                     ? (
-                        <WaveText
+                        <MotionText
                             value={segment.value}
-                            intensity={wave}
-                            duration={waveDuration}
-                            phaseStep={wavePhaseStep}
+                            wave={wave}
+                            jitter={jitter}
+                            shake={shake}
+                            waveDuration={waveDuration}
+                            jitterDuration={jitterDuration}
+                            shakeDuration={shakeDuration}
+                            wavePhaseStep={wavePhaseStep}
+                            jitterPhaseStep={jitterPhaseStep}
+                            shakePhaseStep={shakePhaseStep}
                         />
                     )
                     : segment.value;
-
-                // The jitter animates `left` and `top` on a relatively positioned
-                // span, for the same reason the shake animates `left`: a CSS
-                // transform does nothing on a non-replaced inline box, and an
-                // `inline-block` — the other way to make one apply — would change
-                // where the line breaks, so the mirror that measures the line would
-                // no longer describe what the box draws.
-                if (jitter > 0) {
-                    const keyframes = buildJitterKeyframes(jitter);
-
-                    content = (
-                        <motion.span
-                            style={{ position: 'relative', left: 0, top: 0 }}
-                            animate={{ left: keyframes.left, top: keyframes.top }}
-                            transition={{ ...DIALOGUE_JITTER_TRANSITION, duration: jitterDuration }}
-                        >
-                            {content}
-                        </motion.span>
-                    );
-                }
-
-                if (shake > 0) {
-                    return (
-                        <motion.span
-                            key={index}
-                            data-dialogue-token={token >= 0 ? token : undefined}
-                            // The shake animates `left` on a relatively positioned span, not
-                            // `x`. A CSS transform does nothing on a non-replaced inline box,
-                            // which is what the segment is; and an `inline-block` — the other
-                            // way to make a transform apply — would change where the line
-                            // breaks, so the mirror that measures the line would no longer
-                            // describe what the box draws. A relative offset moves the segment
-                            // without touching layout, and the whole segment moves as one
-                            // because it stays a single element.
-                            style={{ ...css, position: 'relative', left: 0 }}
-                            animate={{ left: buildShakeKeyframes(shake) }}
-                            transition={{ ...DIALOGUE_SHAKE_TRANSITION, duration: shakeDuration }}
-                        >
-                            {content}
-                        </motion.span>
-                    );
-                }
 
                 return (
                     <span

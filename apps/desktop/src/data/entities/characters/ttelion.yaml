@@ -30,12 +30,3 @@ skills:
   - earthen_roar
 
 weapon:
-  id: punch
-  name: Fist Punch
-  element: lapis
-  damage_type: physical
-  target: enemy_one
-  hits: 2
-  accuracy: 0.95
-  power: 40
-  stamina_cost: 2

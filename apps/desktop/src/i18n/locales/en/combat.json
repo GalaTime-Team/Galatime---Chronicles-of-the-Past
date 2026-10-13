@@ -1,0 +1,27 @@
+{
+	"combat": {
+		"loading": "Preparing the battle…",
+		"startFailed": "The battle could not be started.",
+		"turn": "{{unit}}'s turn",
+		"waitingFor": "{{unit}} is acting…",
+		"pickTarget": "Choose a target for {{action}}",
+		"acting": "{{actor}} uses {{action}}",
+		"miss": "MISS",
+		"stalled": "This unit has nothing it can do.",
+		"inventoryTitle": "Use an item",
+		"inventoryEmpty": "This unit carries no usable items.",
+		"inventoryCancel": "Cancel",
+		"inventoryTabItems": "Items",
+		"inventoryTabWeapons": "Weapons",
+		"weaponsEmpty": "This unit carries no weapons.",
+		"weaponAboutToBreak": "About to break",
+		"weaponBroken": "Broken",
+		"cancelSelection": "Deselect",
+		"escKey": "ESC",
+		"outcome": {
+			"victory": "Victory",
+			"defeat": "Defeat",
+			"fled": "Escaped"
+		}
+	}
+}

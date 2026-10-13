@@ -106,10 +106,13 @@ export const GameDialogue = forwardRef<GameDialogueHandle, GameDialogueProps>(fu
     });
 
     // The view needs this to decide what the advance key means right now: finish
-    // the page, turn it, or confirm a choice.
+    // the page, turn it, or confirm a choice. `segments` is in the deps because a
+    // new line must always re-report, even when the value itself did not change:
+    // a line with no text, or a choice node right after another, would otherwise
+    // leave the surface holding the previous node's state.
     useEffect(() => {
         onTypingChange?.(isTyping);
-    }, [isTyping, onTypingChange]);
+    }, [isTyping, segments, onTypingChange]);
 
     const revealed = sliceSegmentsByRange(currentPage, 0, revealedCount);
     const isLastPage = currentPageIndex >= pages.length - 1;

@@ -23,14 +23,8 @@ export async function getElementsData(
 export function getElementWeaknesses(element: ElementData): Record<string, { type: string; score: number }> {
     const weaknesses: Record<string, { type: string; score: number }> = {};
 
-    // If weak_to is not defined and type is "common", there are no specific weaknesses
-    if (!element.weak_to || element.weak_to.length === 0) {
-        return weaknesses;
-    }
-
-    // Each weakness has a score of 1 (weak_to)
-    for (const weakElement of element.weak_to) {
-        weaknesses[weakElement].score = 1;
+    for (const weakElement of element.relations?.weak ?? []) {
+        weaknesses[weakElement] = { type: "weak", score: 1 };
     }
 
     return weaknesses;
@@ -44,14 +38,8 @@ export function getElementWeaknesses(element: ElementData): Record<string, { typ
 export function getElementStrengths(element: ElementData): Record<string, { type: string; score: number }> {
     const strengths: Record<string, { type: string; score: number }> = {};
 
-    // If strong_vs is not defined, there are no specific strengths
-    if (!element.strong_vs || element.strong_vs.length === 0) {
-        return strengths;
-    }
-
-    // Each element that is strong against has a score of -1 (strong_vs)
-    for (const strongElement of element.strong_vs) {
-        strengths[strongElement].score = -1;
+    for (const strongElement of element.relations?.strong ?? []) {
+        strengths[strongElement] = { type: "strong", score: -1 };
     }
 
     return strengths;

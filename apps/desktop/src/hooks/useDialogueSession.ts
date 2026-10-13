@@ -45,7 +45,7 @@ export type DialogueStatus =
     | 'typing'
     /** The page is complete and the player can advance. */
     | 'waiting_for_input'
-    /** The node is a choice and the player is picking an option. */
+    /** The node is a choice, its line has finished appearing and the player is picking an option. */
     | 'showing_choices'
     /** A step is in flight; input is ignored. */
     | 'processing_action'
@@ -135,9 +135,10 @@ export function useDialogueSession(): DialogueSessionState {
     /**
      * Moves to the state a freshly received response implies.
      *
-     * A choice node is the only node that waits for something other than the
-     * advance control, so everything else starts by typing — including a line with
-     * no text, which the box reports as finished immediately.
+     * Every node starts by typing, a choice included: the options are the answer
+     * to a question the box is still asking, so they wait for the last character.
+     * A line with no text is reported as finished immediately, which is how an
+     * empty node reaches its resting state in the same breath.
      */
     const applyResponse = useCallback((next: DialogueResponse) => {
         setResponse(next);
@@ -148,7 +149,7 @@ export function useDialogueSession(): DialogueSessionState {
             return;
         }
 
-        setStatus(next.current_node?.next_action === 'choose' ? 'showing_choices' : 'typing');
+        setStatus('typing');
     }, []);
 
     const start = useCallback(async (dialogueId: string, worldState: WorldStateInput = {}) => {
@@ -227,17 +228,35 @@ export function useDialogueSession(): DialogueSessionState {
         applyResponse(outcome.data);
     }, [sessionId, applyResponse]);
 
+    /**
+     * What the current node waits for once its line rests.
+     *
+     * Read when a page reports that it finished, so the surface knows whether
+     * the rest means "advance the line" or "pick an option".
+     */
+    const nextAction = response?.current_node?.next_action ?? null;
+
     const reportTyping = useCallback((isTyping: boolean) => {
         // Guarded so a late report from a page that is being replaced cannot pull
-        // the surface back out of `processing_action` or a choice.
+        // the surface back out of `processing_action` or the ending.
         setStatus((previous) => {
-            if (previous !== 'typing' && previous !== 'waiting_for_input') {
+            if (
+                previous !== 'typing'
+                && previous !== 'waiting_for_input'
+                && previous !== 'showing_choices'
+            ) {
                 return previous;
             }
 
-            return isTyping ? 'typing' : 'waiting_for_input';
+            // A page that starts appearing again — a turned page, a re-measured
+            // box — hides the options once more: they belong to a line at rest.
+            if (isTyping) {
+                return 'typing';
+            }
+
+            return nextAction === 'choose' ? 'showing_choices' : 'waiting_for_input';
         });
-    }, []);
+    }, [nextAction]);
 
     const finish = useCallback((): DialogueEndResult | null => {
         if (!sessionId) {

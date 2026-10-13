@@ -463,6 +463,22 @@
         });
     }
 
+    /**
+     * Raízes cujas entradas são sempre números.
+     *
+     * Um literal booleano contra uma delas nunca passa, e falha em silêncio em
+     * vez de dar erro, por isso vale a pena apontá-lo no relatório.
+     */
+    function isAlwaysNumericPath(left) {
+        var parts = typeof left === 'string' ? parseStatePath(left) : null;
+
+        if (!parts) {
+            return false;
+        }
+
+        return parts.root === 'relationship' || parts.root === 'stats' || parts.root === 'time';
+    }
+
     /** Checks a condition tree's operators, paths and literals. */
     function validateCondition(node, path, error, warn) {
         if (!node) {
@@ -482,6 +498,15 @@
 
             if (!isComparableLiteral(node.right)) {
                 error('invalid_condition_value', 'O "right" tem de ser booleano, texto, número ou nulo.', path + '.right');
+            }
+
+            if (typeof node.right === 'boolean' && isAlwaysNumericPath(node.left)) {
+                warn(
+                    'boolean_on_numeric_path',
+                    '"' + node.left + '" só guarda números, por isso comparar com '
+                        + (node.right ? '"true"' : '"false"') + ' nunca passa. Compara com um número.',
+                    path,
+                );
             }
 
             return;

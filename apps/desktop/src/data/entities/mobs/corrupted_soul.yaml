@@ -1,0 +1,59 @@
+﻿id: corrupted_soul
+name: Corrupted Soul
+rarity: epic
+height: "140 cm"
+weight: "0 kg"
+description: >
+  A soul consumed by endless avarice. Its touch withers resolve, and
+  its hunger feeds on any fading spark nearby.
+
+elements:
+  - umbra
+
+base_stats:
+  hp: 500
+  mana: 85
+  stamina: 30
+  physical_attack: 28
+  magical_attack: 72
+  physical_defense: 46
+  magical_defense: 38
+  speed: 47
+
+skills:
+  - abyssal_drain
+  - corruptive_wail
+  - desolate_claw
+
+loot:
+  - item_id: gold_coin
+    quantity: 3
+    chance: 0.65
+
+abilities:
+  - id: soul_inversion
+    name: Soul Inversion
+    description: After 4 of its turns, it turns into a Pure Soul.
+    tags: [transform, cycle]
+    trigger:
+      event: turn_end
+      once: true
+    condition:
+      all:
+        - turn_count:
+            operator: gte
+            value: 4
+    action:
+      type: transform
+      target: self
+      parameters:
+        entity_id: pure_soul
+        entity_type: mob
+    display:
+      visible: true
+      priority: 60
+
+ai:
+  style: caster
+  targeting:
+    prefer: [weakest]

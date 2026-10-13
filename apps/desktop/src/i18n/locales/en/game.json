@@ -71,6 +71,13 @@
 			"dialogueTips": {
 				"title": "Dialogue Tool tip",
 				"description": "Highlight the phrases in a dialogue that you can interact."
+			},
+			"combatAnimations": {
+				"title": "Combat Animations",
+				"description": "Play the attacks, hits and other reactions on the battlefield."
+			},
+			"textSpeed": {
+				"title": "Text Speed"
 			}
 		}
 	}
