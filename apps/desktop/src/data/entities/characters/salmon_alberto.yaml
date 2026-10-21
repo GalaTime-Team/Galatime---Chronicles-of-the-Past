@@ -8,10 +8,11 @@ weight: "88 kg"
 birthday: "December 3"
 origin: ???
 description: >
-  Add description here.
+  Wha- a fish!?
 
 elements:
-  - corrupted_forest
+  - spatium
+  - inanus
 
 base_stats:
   hp: 3050

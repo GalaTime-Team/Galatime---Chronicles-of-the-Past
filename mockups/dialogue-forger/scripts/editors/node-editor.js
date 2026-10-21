@@ -9,22 +9,40 @@
  * (validation and the node list), never a re-render of this panel. Re-rendering
  * while typing would destroy the focused input, which is the single easiest way
  * to make an editor unusable.
+ *
+ * The fields are grouped by the **role** they play in the node — who is in it,
+ * where they stand, what is said, how they move and where it goes next — because
+ * a flat list of inputs says nothing about how the node works. Every section is
+ * visible; the ones a writer opens rarely are collapsible.
  */
 (function (Forger) {
     'use strict';
 
     var ui = Forger.ui;
 
-    /** The syntax the text textareas understand, shown next to them. */
-    var TEXT_LEGEND = [
-        '{pause:400} — pausa de 400 ms',
-        '{click id|texto|no_destino} — texto clicável (opcional)',
-        '{click! id|texto|no_destino} — texto clicável (obrigatório)',
-        '{style bold italic color=#D88CFF speed=0.8|texto} — texto com estilo; speed ajusta a velocidade da escrita.',
-        '{style wave=normal wave_speed=0.8|texto} — ondulação lenta; níveis off / light / normal / strong, com wave_speed próprio.',
-        '{style shake=light shake_speed=1.2|texto} — vibração leve e rápida.',
-        '{style jitter=normal jitter_speed=0.8|texto} — tremor normal, mais lento.',
-        '\\{ — chaveta literal',
+    /**
+     * The markup the text areas understand, in one table.
+     *
+     * The inserter's dropdown and the tooltip that explains it both read from
+     * here, so the two can never disagree about what the syntax offers — a
+     * directive missing from the dropdown is a directive nobody finds. Each
+     * entry is the text that goes into the box and the name it goes by.
+     */
+    var MARKUP = [
+        { value: '{input.nome}', label: 'Variável do jogador' },
+        { value: '{pause:400}', label: 'Pausa' },
+        { value: '{thought|texto}', label: 'Pensamento' },
+        { value: '{whisper|texto}', label: 'Sussurro' },
+        { value: '{shout|texto}', label: 'Berro' },
+        { value: '{style bold color=#D88CFF speed=0.8|texto}', label: 'Estilo' },
+        { value: '{style wave=normal wave_speed=0.8|texto}', label: 'Ondulação' },
+        { value: '{style shake=light shake_speed=1.2|texto}', label: 'Vibração' },
+        { value: '{style jitter=normal jitter_speed=0.8|texto}', label: 'Tremor' },
+        { value: '{click id|texto|destino}', label: 'Clicável' },
+        { value: '{click! id|texto|destino}', label: 'Clicável obrigatório' },
+        { value: '{name}', label: 'Nome do protagonista' },
+        { value: '{elements}', label: 'Elementos do protagonista' },
+        { value: '\\{', label: 'Chaveta literal' },
     ];
 
     /** Renders the body of the editor. */
@@ -34,8 +52,12 @@
                 return renderLine(options);
             case 'choice':
                 return renderChoice(options);
+            case 'player_input':
+                return renderPlayerInput(options);
             case 'character_enter':
                 return renderCharacterEnter(options);
+            case 'character_action':
+                return renderCharacterAction(options);
             case 'character_exit':
                 return renderCharacterExit(options);
             case 'conditional':
@@ -126,9 +148,7 @@
      * The opt-in that lets a line drive itself.
      *
      * Off unless the author says otherwise: a line waits for the player, one page
-     * at a time, and only `auto_advance` removes that wait. The checkbox is shown
-     * rather than hidden in a collapsed block, because "this line moves on by
-     * itself" is exactly the sort of thing that should be visible at a glance.
+     * at a time, and only `auto_advance` removes that wait.
      */
     function autoAdvanceField(options) {
         var node = options.node;
@@ -139,10 +159,68 @@
             onChange: function (checked) {
                 options.patch({ auto_advance: checked });
             },
-        }));
+        }), 'A fala passa sozinha, sem esperar pelo jogador.');
     }
 
-    /** A spoken line: speaker, delivery, text, destination, effects. */
+    /**
+     * The markup inserter that sits under the text area.
+     *
+     * One picker, one button, one line: the picker says what goes in and the
+     * button puts it at the cursor, so nobody has to type the braces by hand.
+     * They are held together as one bar rather than as a field beside a loose
+     * button, because the label explains the pair and not the picker alone.
+     *
+     * The syntax itself lives in the bar's own "i": what can be written in the
+     * box is the picker's business, not the text field's.
+     */
+    function markupInserter(area) {
+        var tooltipId = 'forger-markup-syntax';
+        var tips = MARKUP.map(function (entry) {
+            return ui.el('div', { class: 'syntax-tip-row' }, [
+                ui.el('code', { text: entry.value }),
+                ui.el('span', { text: entry.label }),
+            ]);
+        });
+
+        var picker = ui.select({
+            value: '{thought|texto}',
+            options: MARKUP,
+            onChange: function () {},
+        });
+
+        return ui.el('div', { class: 'markup-toolbar' }, [
+            ui.el('span', { class: 'markup-toolbar-label', text: 'Marcação' }),
+            picker,
+            ui.el('span', { class: 'syntax-help' }, [
+                ui.el('button', {
+                    type: 'button',
+                    class: 'info-button',
+                    'aria-label': 'Ajuda para a marcação do texto',
+                    'aria-describedby': tooltipId,
+                    title: 'Ver a marcação suportada',
+                    text: 'i',
+                }),
+                ui.el('div', { id: tooltipId, class: 'syntax-popover', role: 'tooltip' }, [
+                    ui.el('h4', { text: 'Marcação suportada' }),
+                    ui.el('div', { class: 'syntax-tip-list' }, tips),
+                    ui.el('p', {
+                        class: 'syntax-popover-note',
+                        text: 'A marcação escolhida entra na posição do cursor, dentro da caixa de texto.',
+                    }),
+                ]),
+            ]),
+            ui.button({
+                label: 'Inserir',
+                tiny: true,
+                title: 'Inserir a marcação escolhida na posição do cursor',
+                onClick: function () {
+                    insertMarkupAtCursor(area, picker.value);
+                },
+            }),
+        ]);
+    }
+
+    /** A spoken line: who says it, what they say, how they move, where it goes. */
     function renderLine(options) {
         var node = options.node;
         var lists = options.lists;
@@ -154,9 +232,17 @@
                 options.patch({ text: segments });
             },
         );
+        var movement = animationField({
+            phase: 'idle',
+            node: node,
+            value: node.animation_id,
+            onChange: function (value) {
+                options.patch({ animation_id: value });
+            },
+        });
 
         return ui.el('div', { class: 'node-body' }, [
-            ui.el('div', { class: 'node-core' }, [
+            ui.section('Quem', [
                 ui.inline([
                     characterField('Falante', node.speaker_id, function (value) {
                         options.patch({ speaker_id: value });
@@ -164,24 +250,31 @@
                     emotionField('Emoção', node.emotion, lists, function (value) {
                         options.patch({ emotion: value });
                     }),
-                ]),
+                ], 'pair'),
+            ]),
+            ui.section('Conversa', [
                 textField('Texto da fala', text.area),
+                markupInserter(text.area),
                 text.errorBox,
-            ]),
-            advancedSection('Animação, avanço e efeitos', [
                 ui.inline([
-                    ui.field('Animação tsp', ui.listInput('animations', {
-                        value: node.animation_id,
-                        extra: lists.animations,
-                        onInput: function (value) {
-                            options.patch({ animation_id: value });
-                        },
-                    })),
+                    deliveryField('Como é dito', node.delivery, function (value) {
+                        options.patch({ delivery: value });
+                    }),
                     autoAdvanceField(options),
-                ]),
-                effectsAfterBlock(options, 'Efeitos depois desta fala'),
-                text.previewBlock,
+                ], 'pair'),
             ]),
+            ui.section('Como se move', [
+                movement.el,
+            ]),
+            ui.section('Percurso', [
+                destinationField(options),
+            ]),
+            ui.section('Efeitos', [
+                effectsAfterBlock(options, 'Efeitos depois desta fala'),
+            ], { collapsible: true, open: (node.effects_after || []).length > 0 }),
+            ui.section('Marcação', [
+                text.previewBlock,
+            ], { collapsible: true }),
         ]);
     }
 
@@ -221,7 +314,7 @@
         );
 
         return ui.el('div', { class: 'node-body' }, [
-            ui.el('div', { class: 'node-core' }, [
+            ui.section('Quem', [
                 ui.inline([
                     characterField('Falante da pergunta', prompt.speaker_id, function (value) {
                         prompt.speaker_id = value;
@@ -231,8 +324,11 @@
                         prompt.emotion = value;
                         publish();
                     }),
-                ]),
-                textField('Pergunta', text.area, 'Obrigatória.'),
+                ], 'pair'),
+            ]),
+            ui.section('Conversa', [
+                textField('Pergunta', text.area),
+                markupInserter(text.area),
                 text.errorBox,
                 ui.block('Opções de resposta', [
                     Forger.choiceEditor.render(node, function (next) {
@@ -242,57 +338,286 @@
                         suggestedPaths: options.suggestedPaths,
                         settings: Forger.effectEditor.settings(options.lists),
                     }),
-                ]),
-            ]),
-            advancedSection('Formato da pergunta', [
+                ], { open: true }),
                 text.previewBlock,
             ]),
         ]);
     }
 
     /**
+     * A "call to action": the dialogue stops and asks the player for a value.
+     *
+     * One variable is filled and spoken back later as {input.<variavel>}. The
+     * answer is either free text or a pick from a short list; the writer names
+     * the variable once and everything else follows from the type. In the forger
+     * the value only lives during the test - the engine is expected to keep it
+     * in the real save.
+     */
+    function renderPlayerInput(options) {
+        // The face that depends on the type - a placeholder for text, the list
+        // for a choice - repaints when the type changes, so switching never
+        // leaves the old control sitting behind the new one.
+        var typeFace = ui.el('div', {});
+
+        function paintTypeFace() {
+            while (typeFace.firstChild) {
+                typeFace.removeChild(typeFace.firstChild);
+            }
+
+            if (options.node.input_type === 'choice') {
+                ui.append(typeFace, optionsListEditor(options));
+            } else {
+                ui.append(typeFace, ui.field('Dica do campo', ui.text({
+                    value: options.node.placeholder,
+                    placeholder: 'ex.: o teu nome',
+                    onInput: function (value) {
+                        options.patch({ placeholder: value });
+                    },
+                }), 'O que a caixa mostra antes de o jogador escrever.'));
+            }
+        }
+
+        var typeSelect = ui.select({
+            value: options.node.input_type,
+            options: Forger.lists.INPUT_TYPES,
+            onChange: function (value) {
+                options.patch({ input_type: value });
+                paintTypeFace();
+            },
+        });
+
+        paintTypeFace();
+
+        return ui.el('div', { class: 'node-body' }, [
+            ui.section('Pergunta', [
+                ui.field('Pergunta ao jogador', ui.textarea({
+                    value: options.node.question,
+                    rows: 2,
+                    placeholder: 'ex.: Como te chamas?',
+                    onInput: function (value) {
+                        options.patch({ question: value });
+                    },
+                }), 'O texto mostrado ao jogador antes de ele responder.', { required: true }),
+            ]),
+            ui.section('Variável', [
+                ui.inline([
+                    ui.field('Nome da variável', ui.listInput('inputVariables', {
+                        value: options.node.variable,
+                        placeholder: 'ex.: name',
+                        extra: options.lists.inputVariables || [],
+                        onInput: function (value) {
+                            var trimmed = String(value).trim();
+                            options.patch({ variable: trimmed ? Forger.model.slug(trimmed) : '' });
+                        },
+                    }), 'Fica guardada em input.<nome> e lê-se no texto com {input.<nome>}.', { required: true }),
+                    ui.field('Tipo de resposta', typeSelect, 'Texto livre deixa o jogador escrever; escolha oferece uma lista.'),
+                ], 'pair'),
+                typeFace,
+                ui.el('div', { class: 'inline-help' }, [
+                    ui.info({
+                        label: 'Onde o valor fica',
+                        title: 'Onde o valor fica',
+                        body: 'No forger o valor só existe durante o teste. No jogo fica '
+                            + 'guardado em input.<nome>, persiste entre diálogos, e lê-se '
+                            + 'em qualquer texto com {input.<nome>}.',
+                    }),
+                ]),
+            ]),
+            ui.section('Percurso', [
+                destinationField(options),
+            ]),
+            ui.section('Efeitos', [
+                effectsAfterBlock(options, 'Efeitos depois da resposta'),
+            ], { collapsible: true, open: (options.node.effects_after || []).length > 0 }),
+        ]);
+    }
+
+    /** The option list of a "choice"-type call to action: rows that add and remove. */
+    function optionsListEditor(options) {
+        var container = ui.el('div', { class: 'stack' });
+        var list = (options.node.options || []).slice();
+
+        function rebuild() {
+            while (container.firstChild) {
+                container.removeChild(container.firstChild);
+            }
+
+            if (list.length === 0) {
+                ui.append(container, ui.hint('Sem opções. Acrescenta pelo menos uma.'));
+            }
+
+            list.forEach(function (option, index) {
+                ui.append(container, ui.row([
+                    ui.field('Opção ' + (index + 1), ui.text({
+                        value: option,
+                        placeholder: 'ex.: Fogo',
+                        onInput: function (value) {
+                            list[index] = value;
+                            options.patch({ options: list.slice() });
+                        },
+                    })),
+                ], function () {
+                    list.splice(index, 1);
+                    options.patch({ options: list.slice() });
+                    rebuild();
+                }));
+            });
+
+            ui.append(container, ui.el('div', { class: 'repeater-actions' }, [
+                ui.button({
+                    label: '+ Opção',
+                    tiny: true,
+                    onClick: function () {
+                        list.push('');
+                        options.patch({ options: list.slice() });
+                        rebuild();
+                    },
+                }),
+            ]));
+        }
+
+        rebuild();
+
+        return container;
+    }
+
+    /**
      * A character walking on screen.
      *
      * The dialogue stages itself: these nodes are how it says who is in the
-     * conversation. `position` is an ordering hint rather than a coordinate — the
-     * stage lays itself out from how many characters are on it — and `emotion` is
-     * the sprite they arrive with, which a line's own `emotion` may override.
+     * conversation, where they stand and how they arrive. `position` is an
+     * ordering hint rather than a coordinate, `pose` is what the body does in
+     * that slot — sitting tracks the "the character can enter sitting" case —
+     * and `emotion` is the sprite they arrive with, which a line's own
+     * `emotion` may override.
      */
     function renderCharacterEnter(options) {
         var node = options.node;
         var lists = options.lists;
-        var entryFields = ui.inline([
-            characterField('Personagem', node.character_id, function (value) {
-                options.patch({ character_id: value });
-            }),
-            emotionField('Emoção', node.emotion, lists, function (value) {
-                options.patch({ emotion: value });
-            }),
-        ]);
+        var movement = animationField({
+            phase: 'enter',
+            node: node,
+            value: node.animation_id,
+            direction: 'De que lado vem',
+            directionHint: 'De que lado do palco o personagem aparece.',
+            onChange: function (value) {
+                options.patch({ animation_id: value });
+            },
+        });
 
         return ui.el('div', { class: 'node-body' }, [
-            ui.el('div', { class: 'node-core' }, [
-                entryFields,
-            ]),
-            advancedSection('Animação, avanço e efeitos', [
+            ui.section('Quem', [
                 ui.inline([
-                    ui.field('Animação tsp', ui.listInput('animations', {
-                        value: node.animation_id,
-                        extra: lists.animations,
-                        onInput: function (value) {
-                            options.patch({ animation_id: value });
-                        },
-                    })),
-                    ui.field('Posição', ui.listInput('positions', {
-                        value: node.position || 'center',
-                        extra: lists.positions,
-                        onInput: function (value) {
-                            options.patch({ position: value });
-                        },
-                    })),
-                ]),
-                effectsAfterBlock(options, 'Efeitos depois da entrada'),
+                    characterField('Personagem', node.character_id, function (value) {
+                        options.patch({ character_id: value });
+                    }),
+                    emotionField('Emoção', node.emotion, lists, function (value) {
+                        options.patch({ emotion: value });
+                    }),
+                ], 'pair'),
             ]),
+            ui.section('Cena', [
+                ui.inline([
+                    positionField('Posição', node.position || 'center', lists, function (value) {
+                        options.patch({ position: value });
+                    }),
+                    poseField('Pose', node.pose || 'stand', function (value) {
+                        options.patch({ pose: value });
+                    }),
+                    depthField('Profundidade', node.depth || 'front', function (value) {
+                        options.patch({ depth: value });
+                    }),
+                ], 'entry-fields'),
+                ui.inline([
+                    depthOfField('Em relação a', node.depth_of, lists, function (value) {
+                        options.patch({ depth_of: value });
+                    }),
+                ]),
+            ]),
+            ui.section('Como se move', [
+                movement.el,
+            ]),
+            ui.section('Percurso', [
+                destinationField(options),
+            ]),
+            ui.section('Efeitos', [
+                effectsAfterBlock(options, 'Efeitos depois da entrada'),
+            ], { collapsible: true, open: (node.effects_after || []).length > 0 }),
+        ]);
+    }
+
+    /**
+     * Someone already on stage doing something.
+     *
+     * Standing up, sitting down, stepping to another slot or moving behind
+     * another character all end here. Nothing about the entrance belongs to it:
+     * the character never left, so the node only states what changed.
+     */
+    function renderCharacterAction(options) {
+        var node = options.node;
+        var lists = options.lists;
+        var movement = animationField({
+            phase: 'action',
+            node: node,
+            value: node.animation_id,
+            defaultKind: Forger.model.actionForPose(node.pose),
+            direction: 'Para que lado',
+            directionHint: 'Para que lado do palco a ação se faz.',
+            onChange: function (value) {
+                options.patch({ animation_id: value });
+            },
+        });
+
+        return ui.el('div', { class: 'node-body' }, [
+            ui.section('Quem', [
+                ui.inline([
+                    characterField('Personagem', node.character_id, function (value) {
+                        options.patch({ character_id: value });
+                    }),
+                    emotionField('Nova emoção', node.emotion, lists, function (value) {
+                        options.patch({ emotion: value });
+                    }),
+                ], 'pair'),
+            ]),
+            ui.section('Cena', [
+                ui.inline([
+                    positionField('Nova posição', node.position, lists, function (value) {
+                        options.patch({ position: value });
+                    }),
+                    poseField('Nova pose', node.pose, function (value) {
+                        options.patch({ pose: value });
+
+                        // A pose implies its own movement, so the pose carries
+                        // the motion with it — until the writer picks a
+                        // different one, which the check below leaves alone.
+                        var implied = Forger.model.actionForPose(value);
+                        var current = node.animation_id || '';
+
+                        if (implied && (!current || isImplicitActionAnimation(current))) {
+                            options.patch({ animation_id: implied });
+                            movement.show(implied);
+                        }
+                    }),
+                    depthField('Profundidade', node.depth || 'front', function (value) {
+                        options.patch({ depth: value });
+                    }),
+                ], 'entry-fields'),
+                ui.inline([
+                    depthOfField('Em relação a', node.depth_of, lists, function (value) {
+                        options.patch({ depth_of: value });
+                    }),
+                ]),
+                stagingHelp('O que este nó deixar em branco fica como estava.'),
+            ]),
+            ui.section('Como se move', [
+                movement.el,
+            ]),
+            ui.section('Percurso', [
+                destinationField(options),
+            ]),
+            ui.section('Efeitos', [
+                effectsAfterBlock(options, 'Efeitos depois da ação'),
+            ], { collapsible: true, open: (node.effects_after || []).length > 0 }),
         ]);
     }
 
@@ -300,38 +625,40 @@
     function renderCharacterExit(options) {
         var node = options.node;
         var lists = options.lists;
+        var movement = animationField({
+            phase: 'exit',
+            node: node,
+            value: node.animation_id,
+            direction: 'Para que lado',
+            directionHint: 'Para onde vira ao sair — a cena lê esta direção.',
+            onChange: function (value) {
+                options.patch({ animation_id: value });
+            },
+            onDirection: function (value) {
+                options.patch({ direction: value });
+            },
+        });
 
         return ui.el('div', { class: 'node-body' }, [
-            ui.el('div', { class: 'node-core' }, [
+            ui.section('Quem', [
                 characterField('Personagem', node.character_id, function (value) {
                     options.patch({ character_id: value });
                 }),
             ]),
-            advancedSection('Animação, direção e efeitos', [
-                ui.inline([
-                    ui.field('Animação tsp', ui.listInput('animations', {
-                        value: node.animation_id,
-                        extra: lists.animations,
-                        onInput: function (value) {
-                            options.patch({ animation_id: value });
-                        },
-                    })),
-                    ui.field('Direção', ui.listInput('directions', {
-                        value: node.direction,
-                        extra: lists.directions,
-                        onInput: function (value) {
-                            options.patch({ direction: value });
-                        },
-                    })),
-                ]),
-                effectsAfterBlock(options, 'Efeitos depois da saída'),
+            ui.section('Como se move', [
+                movement.el,
             ]),
+            ui.section('Percurso', [
+                destinationField(options),
+            ]),
+            ui.section('Efeitos', [
+                effectsAfterBlock(options, 'Efeitos depois da saída'),
+            ], { collapsible: true, open: (node.effects_after || []).length > 0 }),
         ]);
     }
 
     /** An automatic branch, resolved without player input. */
     function renderConditional(options) {
-        var node = options.node;
         var container = ui.el('div', {});
 
         function rebuild(branches) {
@@ -342,87 +669,122 @@
             ui.append(container, buildBranches(branches, rebuild, options));
         }
 
-        rebuild(node.branches || []);
+        rebuild(options.node.branches || []);
 
         return ui.el('div', { class: 'node-body' }, [
-            ui.el('div', { class: 'node-core' }, [
-                ui.hint('Os ramos são avaliados por ordem. O primeiro que passar ganha; um ramo sem condição é o caso padrão.'),
+            ui.section('Ramos', [
+                ui.el('div', { class: 'inline-help' }, [
+                    ui.info({
+                        label: 'Como os ramos são avaliados',
+                        title: 'Como os ramos são avaliados',
+                        body: 'Os ramos são avaliados por ordem e o primeiro que passar ganha. '
+                            + 'O último é sempre o caso padrão: recebe o que nenhum dos outros recebeu.',
+                    }),
+                ]),
                 container,
             ]),
         ]);
     }
 
-    /** The branches of a conditional node. */
+    /**
+     * The branches of a conditional node, as sentences.
+     *
+     * A branch reads "Vai para X se Y": the destination sits in the lead line and
+     * its condition underneath, inside one card. The list always ends in the
+     * default — a branch with no condition, which catches whatever the others
+     * did not — so it is never missing and never deletable.
+     */
     function buildBranches(branches, rebuild, options) {
+        var slots = branchSlots(branches);
         var nodes = [];
 
-        if (branches.length === 0) {
-            nodes.push(ui.hint('Sem ramos.'));
+        /** Writes a new branch list, keeping the default last. */
+        function publish(conditionals, fallback) {
+            options.patch({ branches: conditionals.concat([fallback]) });
         }
 
-        branches.forEach(function (branch, index) {
-            var current = {
-                branch_id: branch.branch_id || '',
-                if: branch.if || null,
-                next: branch.next || '',
-            };
+        slots.conditionals.forEach(function (branch, position) {
+            nodes.push(ui.el('div', { class: 'branch-card' }, [
+                ui.el('div', { class: 'branch-question' }, [
+                    ui.el('label', { class: 'branch-destination' }, [
+                        ui.el('span', { class: 'branch-lead', text: 'Vai para' }),
+                        ui.listInput('nodes', {
+                            value: branch.next,
+                            placeholder: 'id_do_no',
+                            extra: options.lists.nodes,
+                            onInput: function (value) {
+                                var copy = slots.conditionals.slice();
+                                copy[position] = Object.assign({}, branch, { next: value });
+                                publish(copy, slots.fallback);
+                            },
+                        }),
+                    ]),
+                    ui.el('span', { class: 'branch-lead', text: 'se' }),
+                    ui.button({
+                        label: '×',
+                        title: 'Remover ramo',
+                        variant: 'danger',
+                        tiny: true,
+                        onClick: function () {
+                            var copy = slots.conditionals.slice();
+                            copy.splice(position, 1);
 
-            function publish() {
-                var copy = branches.slice();
-                copy[index] = current;
-
-                options.patch({ branches: copy });
-            }
-
-            nodes.push(ui.row([
-                ui.inline([
-                    ui.field('ID do ramo', ui.text({
-                        value: current.branch_id,
-                        placeholder: 'caso_padrao',
-                        onInput: function (value) {
-                            current.branch_id = value;
-                            publish();
+                            publish(copy, slots.fallback);
+                            rebuild(copy.concat([slots.fallback]));
                         },
-                    }), undefined, { required: true }),
-                    ui.field('Destino', ui.listInput('nodes', {
-                        value: current.next,
+                    }),
+                ]),
+                ui.el('div', { class: 'branch-condition' }, [
+                    Forger.conditionEditor.render(branch.if, function (next) {
+                        var copy = slots.conditionals.slice();
+                        copy[position] = Object.assign({}, branch, { if: next });
+                        publish(copy, slots.fallback);
+                    }, options.suggestedPaths),
+                ]),
+            ]));
+        });
+
+        nodes.push(ui.el('div', { class: 'branch-card is-default' }, [
+            ui.el('div', { class: 'branch-question' }, [
+                ui.el('label', { class: 'branch-destination' }, [
+                    ui.el('span', { class: 'branch-lead', text: 'Caso padrão · vai para' }),
+                    ui.listInput('nodes', {
+                        value: slots.fallback.next,
+                        placeholder: 'id_do_no',
                         extra: options.lists.nodes,
                         onInput: function (value) {
-                            current.next = value;
-                            publish();
+                            publish(slots.conditionals, Object.assign({}, slots.fallback, { next: value }));
                         },
-                    }), undefined, { required: true }),
+                    }),
                 ]),
-                ui.block('Condição (vazio = caso padrão)', [
-                    Forger.conditionEditor.render(current.if, function (next) {
-                        current.if = next;
-                        publish();
-                    }, options.suggestedPaths),
-                ], { collapsible: true }),
-            ], function () {
-                var copy = branches.slice();
-                copy.splice(index, 1);
-
-                options.patch({ branches: copy });
-                rebuild(copy);
-            }));
-        });
+            ]),
+            ui.el('p', {
+                class: 'branch-note',
+                text: 'Se nenhuma das condições acima corresponder, a conversa segue por aqui.',
+            }),
+        ]));
 
         nodes.push(ui.el('div', { class: 'repeater-actions' }, [
             ui.button({
                 label: '+ Ramo',
                 tiny: true,
                 onClick: function () {
-                    var copy = branches.concat([{
-                        branch_id: Forger.model.uniqueId(branches.map(function (branch) {
-                            return branch.branch_id;
-                        }), 'ramo'),
+                    var taken = slots.conditionals.map(function (branch) {
+                        return branch.branch_id;
+                    });
+                    var added = {
+                        branch_id: Forger.model.uniqueId(taken, 'ramo'),
                         if: null,
                         next: '',
-                    }]);
+                    };
 
-                    options.patch({ branches: copy });
-                    rebuild(copy);
+                    // Inserted above the default, which is what keeps the default
+                    // last and therefore the one that catches the rest.
+                    var copy = slots.conditionals.concat([added]);
+                    var published = copy.concat(Object.assign({}, slots.fallback));
+
+                    options.patch({ branches: published });
+                    rebuild(published);
                 },
             }),
         ]));
@@ -430,12 +792,40 @@
         return nodes;
     }
 
+    /**
+     * Splits a branch list into the conditional branches and the default.
+     *
+     * The default is the first branch with no condition. Any further branch
+     * without one stays in the conditional list, where it can be given a
+     * condition — the engine would never reach it where it stands, and hiding
+     * it would hide a real problem in the file.
+     */
+    function branchSlots(branches) {
+        var conditionals = [];
+        var fallback = null;
+
+        (branches || []).forEach(function (branch) {
+            if (!branch.if && !fallback) {
+                fallback = branch;
+                return;
+            }
+
+            conditionals.push(branch);
+        });
+
+        if (!fallback) {
+            fallback = { branch_id: '', if: null, next: '' };
+        }
+
+        return { conditionals: conditionals, fallback: fallback };
+    }
+
     /** A terminal node. */
     function renderEnd(options) {
         var node = options.node;
 
         return ui.el('div', { class: 'node-body' }, [
-            ui.el('div', { class: 'node-core' }, [
+            ui.section('Resultado', [
                 ui.field('Resultado', ui.listInput('results', {
                     value: node.result,
                     extra: options.lists.results,
@@ -444,11 +834,11 @@
                     },
                 }), 'etiqueta livre, ex.: good / neutral / bad'),
             ]),
-            advancedSection('Efeitos ao terminar', [
+            ui.section('Efeitos ao terminar', [
                 Forger.effectEditor.render(node.effects || [], function (next) {
                     options.patch({ effects: next });
                 }, Forger.effectEditor.settings(options.lists)),
-            ]),
+            ], { collapsible: true, open: (node.effects || []).length > 0 }),
         ]);
     }
 
@@ -466,6 +856,276 @@
             value: value,
             onChange: onChange,
         }), undefined, { required: true });
+    }
+
+    /**
+     * Where on the stage the character stands.
+     *
+     * Still a free-text field: the engine reads a position it does not know by
+     * the words in it, and a closed menu would refuse a name a stage could
+     * place anyway.
+     */
+    function positionField(label, value, lists, onChange) {
+        return ui.field(label, ui.select({
+            value: value || 'center',
+            options: lists.positions.map(function (position) {
+                return { value: position, label: Forger.model.vocabularyLabel('position', position) };
+            }),
+            onChange: onChange,
+        }), 'A ordem no palco, da esquerda para a direita. As distâncias são do palco, que se organiza pelos personagens que estão em cena.');
+    }
+
+    /**
+     * What the character's body is doing in their slot.
+     *
+     * A closed menu: the stage draws one body per entry, so an invented pose
+     * would only ever fall back to the standing one.
+     */
+    function poseField(label, value, onChange) {
+        return ui.field(label, ui.select({
+            value: value || '',
+            options: [{ value: '', label: '—' }].concat(Forger.lists.POSES.map(function (pose) {
+                return { value: pose, label: Forger.model.vocabularyLabel('pose', pose) };
+            })),
+            onChange: onChange,
+        }), 'Um personagem pode entrar no diálogo sentado, e levantar-se a meio dele.');
+    }
+
+    /**
+     * Which side of the cast the character is drawn on.
+     *
+     * Paired with the character it names, when it names one: relative depth is
+     * what "atrás de outro personagem" means.
+     */
+    function depthField(label, value, onChange) {
+        return ui.field(label, ui.select({
+            value: value || '',
+            options: [{ value: '', label: '—' }].concat(Forger.lists.DEPTHS.map(function (depth) {
+                return { value: depth, label: Forger.model.vocabularyLabel('depth', depth) };
+            })),
+            onChange: onChange,
+        }), 'Quem é desenhado à frente de quem. Indica junto de quem em «Em relação a»; sozinho, vale para todo o elenco.');
+    }
+
+    /** The character a depth is measured against. */
+    function depthOfField(label, value, lists, onChange) {
+        return ui.field(label, ui.characterSelect({
+            value: value,
+            placeholder: 'personagem',
+            onChange: onChange,
+        }), 'Só usado em conjunto com a profundidade.');
+    }
+
+    /**
+     * Whether the line is spoken out loud or only thought.
+     *
+     * A whole line is one or the other, and the empty value is the common case:
+     * the box reads «Fala» and nothing is written to the file. A single thought
+     * inside a spoken line is a segment instead — `{thought|texto}` — so a
+     * character can say one thing and think the next.
+     */
+    function deliveryField(label, value, onChange) {
+        return ui.field(label, ui.select({
+            value: value || '',
+            options: Forger.lists.DELIVERIES,
+            onChange: onChange,
+        }), 'Um personagem pode falar ou pensar. «Pensamento» apresenta a linha como pensamento; uma parte só usa {thought|texto}.');
+    }
+
+    /**
+     * How the character moves, as three choices.
+     *
+     * Instead of a table of animation names, the writer picks what the body
+     * does, from or to which side, and at what tempo; the editor composes those
+     * into the single `animation_id` the file carries. An id that came from a
+     * file is read back into the same three choices.
+     *
+     * Returns the control and a `show(id)` the callers use when something else
+     * wrote the animation — a pose carrying its own movement — so the controls
+     * and the file say the same thing.
+     */
+    function animationField(config) {
+        var phase = config.phase;
+        var defaults = Forger.lists.ANIMATION_DEFAULTS[phase];
+
+        // An action's pose carries its own movement, so a node that already
+        // states one starts from it rather than from the plain default.
+        if (config.defaultKind) {
+            defaults = Object.assign({}, defaults, { kind: config.defaultKind });
+        }
+
+        var parts = Forger.model.parseAnimation(config.value);
+
+        // "Nenhum" a writer chose earlier is remembered on the node out-of-band
+        // (it is never serialised): an empty animation_id alone cannot tell a
+        // deliberate "no movement" from a node nobody has opened yet, and the
+        // difference is whether the phase default gets seeded further down.
+        var explicitNone = config.node && config.node.__animationNone === true && !config.value;
+
+        var state = {
+            kind: explicitNone ? 'none' : (parts.kind || defaults.kind),
+            // An id never writes «centro», so a parsed centre is the phase's own
+            // default speaking — and an exit's default side is not the centre.
+            direction: parts.direction === 'center' ? defaults.direction : parts.direction,
+            speed: parts.speed === 'normal' ? defaults.speed : parts.speed,
+        };
+
+        var kindSelect = ui.select({
+            value: state.kind,
+            options: Forger.lists.ANIMATION_KINDS[phase].map(function (kind) {
+                return { value: kind.value, label: kind.label };
+            }),
+            onChange: function (value) {
+                state.kind = value;
+
+                // Remembered so a node re-opened later still reads "Nenhum"
+                // instead of being re-seeded with the phase default. Any other
+                // choice clears it: the node moves again.
+                if (config.node) {
+                    if (value === 'none') {
+                        config.node.__animationNone = true;
+                    } else {
+                        delete config.node.__animationNone;
+                    }
+                }
+
+                publish();
+            },
+        });
+
+        var directionSelect = ui.select({
+            value: state.direction,
+            options: Forger.lists.ANIMATION_DIRECTIONS.map(function (direction) {
+                return { value: direction.value, label: direction.label };
+            }),
+            onChange: function (value) {
+                state.direction = value;
+                publish();
+            },
+        });
+
+        var speedSelect = ui.select({
+            value: state.speed,
+            options: Forger.lists.ANIMATION_SPEEDS.map(function (speed) {
+                return { value: speed.value, label: speed.label };
+            }),
+            onChange: function (value) {
+                state.speed = value;
+                publish();
+            },
+        });
+
+        function publish() {
+            config.onChange(Forger.model.composeAnimation(phase, state));
+
+            // An exit's side is a field of its own, so the same choice feeds
+            // both: the movement reads it and the engine field keeps it.
+            if (config.onDirection) {
+                config.onDirection(state.direction === 'center' ? '' : state.direction);
+            }
+
+            syncDisabled();
+        }
+
+        /** Shows an animation written from somewhere else, without publishing. */
+        function show(id) {
+            var read = Forger.model.parseAnimation(id);
+
+            state.kind = read.kind || defaults.kind;
+            state.direction = read.direction === 'center' ? defaults.direction : read.direction;
+            state.speed = read.speed === 'normal' ? defaults.speed : read.speed;
+
+            // A motion arriving from elsewhere — a pose carrying its own — is a
+            // real movement, so the node is no longer "does not move".
+            if (config.node) {
+                delete config.node.__animationNone;
+            }
+
+            kindSelect.value = state.kind;
+            directionSelect.value = state.direction;
+            speedSelect.value = state.speed;
+            syncDisabled();
+        }
+
+        // "Nenhum" has no side and no tempo, so its two companions go quiet: a
+        // control that cannot change anything is worse than one plainly off.
+        function syncDisabled() {
+            speedSelect.disabled = state.kind === 'none';
+            directionSelect.disabled = state.kind === 'none';
+        }
+
+        var controls = [ui.field('Movimento', kindSelect)];
+
+        if (config.direction) {
+            controls.push(ui.field(config.direction, directionSelect, config.directionHint));
+        }
+
+        controls.push(ui.field('Velocidade', speedSelect,
+            'A velocidade escreve-se no id: «slow» e «fast» mudam o tempo, «normal» não escreve nada.'));
+
+        syncDisabled();
+
+        // A node with no animation yet gets its phase's own: an empty control
+        // would read as "nothing happens", which is never what a node means.
+        // A writer who chose "Nenhum" is the one exception — that empty is on
+        // purpose, and seeding a default here would undo their choice the
+        // moment they came back to the node.
+        if (!config.value && !explicitNone) {
+            publish();
+        }
+
+        return {
+            el: ui.el('div', { class: 'animation-field' }, [ui.inline(controls)]),
+            show: show,
+        };
+    }
+
+    /**
+     * Whether an animation id is one a pose would have picked on its own.
+     *
+     * The pose carries its movement with it, so a motion that is still the pose's
+     * own gives way when the pose changes; one the writer chose does not.
+     */
+    function isImplicitActionAnimation(id) {
+        var kind = Forger.model.parseAnimation(id).kind;
+
+        return Forger.lists.ANIMATION_KINDS.action.some(function (entry) {
+            return entry.value === kind;
+        });
+    }
+
+    /** Where a node hands the conversation over to. */
+    function destinationField(options) {
+        return ui.field('Próximo nó', ui.listInput('nodes', {
+            value: options.node.next,
+            placeholder: 'id_do_no',
+            extra: options.lists.nodes,
+            onInput: function (value) {
+                options.patch({ next: value });
+            },
+        }), 'O passo mostrado a seguir. Liga-se sozinho ao nó anterior quando este ainda não tem destino.');
+    }
+
+    /**
+     * The "i" of a staging editor.
+     *
+     * The staging fields are the ones an author meets for the first time here,
+     * so their explanation stays one hover away instead of printed between the
+     * fields and the rest of the node.
+     */
+    function stagingHelp(extra) {
+        return ui.el('div', { class: 'inline-help' }, [
+            ui.info({
+                label: 'Como o palco lê a cena',
+                title: 'Como o palco lê a cena',
+                body: [
+                    'Posição — a ordem da esquerda para a direita: esquerda, centro-esquerda, centro, centro-direita, direita.',
+                    'Pose — o que o corpo faz nesse lugar: de pé ou sentado.',
+                    'Profundidade — quem é desenhado à frente de quem, em relação a um personagem ou a todo o elenco.',
+                    extra || '',
+                ],
+            }),
+        ]);
     }
 
     /**
@@ -490,39 +1150,25 @@
         return field;
     }
 
-    /** Text input with accessible, always-discoverable syntax help. */
+    /**
+     * The text box of a line or of a choice's question.
+     *
+     * The markup the box understands is not explained here: it has an inserter
+     * of its own right below, whose "i" carries the whole syntax. A tooltip on
+     * the box would only repeat what the writer is about to read anyway.
+     */
     function textField(label, area, hint) {
-        var tooltipId = 'forger-text-syntax-tooltip';
         var hintId = 'forger-node-text-hint';
-        var tips = TEXT_LEGEND.map(function (line) {
-            var separator = line.indexOf(' — ');
-
-            return ui.el('div', { class: 'syntax-tip-row' }, [
-                ui.el('code', { text: separator === -1 ? line : line.slice(0, separator) }),
-                ui.el('span', { text: separator === -1 ? '' : line.slice(separator + 3) }),
-            ]);
-        });
 
         area.id = 'forger-node-text';
-        area.setAttribute('aria-describedby', tooltipId + (hint ? ' ' + hintId : ''));
+
+        if (hint) {
+            area.setAttribute('aria-describedby', hintId);
+        }
 
         var node = ui.el('div', { class: 'field text-field' }, [
             ui.el('div', { class: 'field-label-row' }, [
                 ui.el('label', { class: 'field-label', for: area.id, text: label }),
-                ui.el('div', { class: 'syntax-help' }, [
-                    ui.el('button', {
-                        type: 'button',
-                        class: 'info-button',
-                        'aria-label': 'Ajuda para a sintaxe do texto',
-                        'aria-describedby': tooltipId,
-                        title: 'Ver exemplos de formatação',
-                        text: 'i',
-                    }),
-                    ui.el('div', { id: tooltipId, class: 'syntax-popover', role: 'tooltip' }, [
-                        ui.el('h4', { text: 'Marcação suportada' }),
-                        ui.el('div', { class: 'syntax-tip-list' }, tips),
-                    ]),
-                ]),
             ]),
             area,
             hint ? ui.el('span', { id: hintId, class: 'field-hint', text: hint }) : null,
@@ -532,24 +1178,11 @@
         return ui.markRequired(node);
     }
 
-    /** A labelled disclosure for optional node configuration. */
-    function advancedSection(title, children) {
-        return ui.el('details', { class: 'node-advanced' }, [
-            ui.el('summary', {}, [
-                ui.el('span', { text: title }),
-                ui.el('span', { class: 'summary-note', text: 'Opcional' }),
-            ]),
-            ui.el('div', { class: 'node-advanced-content' }, children),
-        ]);
-    }
-
     /** The "effects after this node" block, shared by the auto nodes. */
     function effectsAfterBlock(options, title) {
-        return ui.block(title, [
-            Forger.effectEditor.render(options.node.effects_after || [], function (next) {
-                options.patch({ effects_after: next });
-            }, Forger.effectEditor.settings(options.lists)),
-        ], { collapsible: true });
+        return Forger.effectEditor.render(options.node.effects_after || [], function (next) {
+            options.patch({ effects_after: next });
+        }, Forger.effectEditor.settings(options.lists));
     }
 
     /** One line describing a generated segment, for the live preview. */
@@ -557,6 +1190,18 @@
         switch (segment.type) {
             case 'text':
                 return 'texto · ' + segment.value;
+
+            case 'variable':
+                return 'variável · ' + segment.value;
+
+            case 'thought':
+                return 'pensamento · ' + segment.value;
+            case 'whisper':
+                return 'sussurro · ' + segment.value;
+            case 'shout':
+                return 'berro · ' + segment.value;
+            case 'variable':
+                return 'variável · ' + segment.value;
 
             case 'pause':
                 return 'pausa · ' + segment.duration_ms + ' ms';
@@ -609,8 +1254,17 @@
         return multiplier == null ? '' : ' (ritmo ' + multiplier + ')';
     }
 
+    function insertMarkupAtCursor(area, token) {
+        var start = area.selectionStart || 0;
+        var end = area.selectionEnd || 0;
+        var value = area.value || '';
+        area.value = value.slice(0, start) + token + value.slice(end);
+        area.selectionStart = area.selectionEnd = start + token.length;
+        area.focus();
+        area.dispatchEvent(new Event('input', { bubbles: true }));
+    }
+
     Forger.nodeEditor = {
-        TEXT_LEGEND: TEXT_LEGEND,
         render: render,
     };
 })(window.DialogueForger);

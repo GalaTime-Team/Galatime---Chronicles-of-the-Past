@@ -11,10 +11,12 @@
     <link rel="stylesheet" href="assets/forger.css">
 
     <script src="https://cdn.jsdelivr.net/npm/js-yaml@4.1.0/dist/js-yaml.min.js" defer></script>
+    <script src="scripts/lists.js" defer></script>
     <script src="scripts/yaml-parser.js" defer></script>
     <script src="scripts/segments.js" defer></script>
     <script src="scripts/local-draft-storage.js" defer></script>
     <script src="scripts/dialogue-model.js" defer></script>
+    <script src="scripts/preview-state.js" defer></script>
     <script src="scripts/yaml-serializer.js" defer></script>
     <script src="scripts/catalogue.js" defer></script>
     <script src="scripts/ui-common.js" defer></script>
@@ -75,20 +77,40 @@
                     <section class="identity-sidebar" aria-labelledby="identity-title">
                         <div class="section-heading sidebar-section-heading">
                             <div>
-                                <h2 id="identity-title">Identidade do diálogo</h2>
-                                <p>Nome e ponto de partida.</p>
+                                <h2 id="identity-title">Início do diálogo</h2>
                             </div>
+                            <span class="info-help">
+                                <button type="button" class="info-button" aria-label="Sobre o início do diálogo"
+                                    aria-describedby="info-start" title="Sobre o início do diálogo">i</button>
+                                <div id="info-start" class="info-popover" role="tooltip">
+                                    <h4>Sobre o início do diálogo</h4>
+                                    <div class="info-body">
+                                        <p>O nome do ficheiro é a identidade do diálogo: é por ele que os outros
+                                            diálogos o referenciam, por isso já não há um id próprio.</p>
+                                        <p>O nó inicial é o primeiro passo mostrado ao jogador — e é o primeiro nó
+                                            da lista abaixo. Para mudar o início, arrasta outro nó para o topo.</p>
+                                    </div>
+                                </div>
+                            </span>
                         </div>
-                        <label class="field" for="dialogue-id">
-                            <span class="field-label">ID do diálogo <b aria-hidden="true">*</b></span>
-                            <input id="dialogue-id" class="input" type="text" placeholder="dialogue_id"
-                                autocomplete="off" aria-describedby="dialogue-id-hint">
-                            <span id="dialogue-id-hint" class="field-hint">Obrigatório · usa minúsculas e underscores.</span>
-                        </label>
                         <label class="field" for="start-node">
-                            <span class="field-label">Nó inicial <b aria-hidden="true">*</b></span>
-                            <select id="start-node" class="input" aria-describedby="start-node-hint"></select>
-                            <span id="start-node-hint" class="field-hint">O primeiro passo mostrado ao jogador.</span>
+                            <div class="field-label-row">
+                                <span class="field-label">Nó inicial</span>
+                                <span class="info-help">
+                                    <button type="button" class="info-button" aria-label="Sobre o nó inicial"
+                                        aria-describedby="info-start-node" title="Sobre o nó inicial">i</button>
+                                    <div id="info-start-node" class="info-popover" role="tooltip">
+                                        <h4>Sobre o nó inicial</h4>
+                                        <div class="info-body">
+                                            <p>O primeiro passo mostrado ao jogador, e sempre o primeiro nó da lista
+                                                em «Estrutura». Só pode haver um por diálogo.</p>
+                                            <p>Esta lista é informativa: para mudar o início, reordena os nós e
+                                                deixa o que queres no topo.</p>
+                                        </div>
+                                    </div>
+                                </span>
+                            </div>
+                            <select id="start-node" class="input" disabled></select>
                         </label>
                     </section>
 
@@ -97,15 +119,43 @@
                             <div class="section-heading sidebar-section-heading">
                                 <div>
                                     <h2 id="structure-title">Estrutura</h2>
-                                    <p>Adiciona passos e liga as partes da conversa.</p>
                                 </div>
+                                <span class="info-help">
+                                    <button type="button" class="info-button" aria-label="Sobre a estrutura"
+                                        aria-describedby="info-structure" title="Sobre a estrutura">i</button>
+                                    <div id="info-structure" class="info-popover" role="tooltip">
+                                        <h4>Sobre a estrutura</h4>
+                                        <div class="info-body">
+                                            <p>Adiciona passos e liga as partes da conversa. Um nó adicionado é ligado
+                                                ao anterior quando esse nó aceita um único destino e ainda não tem um.</p>
+                                            <p>A ordem da lista é a tua: arrasta um passo, ou usa Ctrl + setas, para a
+                                                reorganizar. As ligações são por id, por isso reordenar não muda nenhum
+                                                destino.</p>
+                                        </div>
+                                    </div>
+                                </span>
                             </div>
                             <span id="node-count" class="count-pill">0 passos</span>
                         </div>
 
                         <div class="node-create">
                             <label class="field" for="node-type">
-                                <span class="field-label">Tipos de nó</span>
+                                <div class="field-label-row">
+                                    <span class="field-label">Tipos de nó</span>
+                                    <span class="info-help">
+                                        <button type="button" class="info-button" aria-label="Sobre os tipos de nó"
+                                            aria-describedby="info-node-types" title="Sobre os tipos de nó">i</button>
+                                        <div id="info-node-types" class="info-popover" role="tooltip">
+                                            <h4>Sobre os tipos de nó</h4>
+                                            <div class="info-body">
+                                                <p>Entrada e saída de personagem dizem quem está na conversa;
+                                                    alterar personagem muda quem já está em cena — posição, pose ou
+                                                    profundidade.</p>
+                                                <p>Fala, escolha e ramificação são a conversa; fim fecha o percurso.</p>
+                                            </div>
+                                        </div>
+                                    </span>
+                                </div>
                                 <select id="node-type" class="input"></select>
                             </label>
                             <button id="btn-add-node" class="btn btn-primary btn-full" type="button">
@@ -115,7 +165,7 @@
 
                         <div class="list-heading">
                             <h3>Nós do diálogo</h3>
-                            <span class="list-hint">Seleciona para editar</span>
+                            <span class="list-hint">Arrasta para reordenar</span>
                         </div>
                         <div id="node-list" class="node-list" aria-live="polite"></div>
                     </section>
@@ -126,8 +176,21 @@
                         <div class="section-heading editor-intro-heading">
                             <div>
                                 <h2 id="content-title">Conteúdo</h2>
-                                <p>Edita o nó selecionado. As opções menos frequentes ficam recolhidas.</p>
                             </div>
+                            <span class="info-help">
+                                <button type="button" class="info-button" aria-label="Sobre o editor"
+                                    aria-describedby="info-editor" title="Sobre o editor">i</button>
+                                <div id="info-editor" class="info-popover" role="tooltip">
+                                    <h4>Sobre o editor</h4>
+                                    <div class="info-body">
+                                        <p>Edita o nó selecionado. As opções menos frequentes ficam recolhidas em
+                                            «Animação, avanço e efeitos» e afins.</p>
+                                        <p>Um nó de entrada ou alteração descreve a cena: posição, pose e profundidade
+                                            — passa o rato pelos «i» de cada campo para saber o que o palco faz com
+                                            eles.</p>
+                                    </div>
+                                </div>
+                            </span>
                             <div id="node-actions" class="node-actions" role="group" aria-label="Ações do nó"></div>
                         </div>
                     </header>
@@ -143,17 +206,6 @@
                             <button id="btn-validate-panel" class="btn btn-small" type="button">Atualizar verificação</button>
                         </div>
                     </details>
-
-                    <details id="export-details" class="utility-card export-card">
-                        <summary class="utility-summary">
-                            <span class="utility-title"><strong>YAML gerado</strong><small>Estrutura atual do diálogo.</small></span>
-                            <span class="summary-chevron" aria-hidden="true">⌄</span>
-                        </summary>
-                        <div class="utility-content">
-                            <textarea id="export-output" class="input code-input" rows="12" spellcheck="false" aria-label="YAML gerado"></textarea>
-                            <button id="btn-copy-export" class="btn btn-small" type="button">Copiar YAML</button>
-                        </div>
-                    </details>
                 </section>
             </section>
 
@@ -161,8 +213,19 @@
                 <header class="test-heading">
                     <div>
                         <span class="eyebrow">ENSAIO</span>
-                        <h2>Testar diálogo</h2>
-                        <p>Segue o percurso e experimenta as escolhas como jogador.</p>
+                        <h2 class="heading-with-info">Testar diálogo
+                            <span class="info-help">
+                                <button type="button" class="info-button" aria-label="Sobre o teste"
+                                    aria-describedby="info-test" title="Sobre o teste">i</button>
+                                <div id="info-test" class="info-popover" role="tooltip">
+                                    <h4>Sobre o teste</h4>
+                                    <div class="info-body">
+                                        <p>Segue o percurso e experimenta as escolhas como jogador. O elenco em cima
+                                            do registo mostra onde cada personagem está na cena.</p>
+                                    </div>
+                                </div>
+                            </span>
+                        </h2>
                     </div>
                     <div class="flow-legend" aria-label="Legenda do mapa">
                         <span><i class="legend-start" aria-hidden="true"></i> Início</span>
@@ -177,7 +240,17 @@
                         <div class="test-panel-heading">
                             <div>
                                 <h3 id="flow-title">Mapa do diálogo</h3>
-                                <p>Os nós acompanham o percurso real, incluindo escolhas e ramificações.</p>
+                                <span class="info-help">
+                                    <button type="button" class="info-button" aria-label="Sobre o mapa"
+                                        aria-describedby="info-map" title="Sobre o mapa">i</button>
+                                    <div id="info-map" class="info-popover" role="tooltip">
+                                        <h4>Sobre o mapa</h4>
+                                        <div class="info-body">
+                                            <p>Os nós acompanham o percurso real, incluindo escolhas e ramificações.
+                                                Passa o rato por uma fala para a leres no mapa.</p>
+                                        </div>
+                                    </div>
+                                </span>
                             </div>
                             <span id="flow-current-label" class="flow-current-label">Sem teste ativo</span>
                         </div>
@@ -188,17 +261,46 @@
                         <div class="test-panel-heading">
                             <div>
                                 <h3 id="runner-title">Teste interativo</h3>
-                                <p>As escolhas e os segmentos clicáveis avançam a conversa.</p>
+                                <span class="info-help">
+                                    <button type="button" class="info-button" aria-label="Sobre o teste interativo"
+                                        aria-describedby="info-runner" title="Sobre o teste interativo">i</button>
+                                    <div id="info-runner" class="info-popover" role="tooltip">
+                                        <h4>Sobre o teste interativo</h4>
+                                        <div class="info-body">
+                                            <p>As escolhas e os segmentos clicáveis avançam a conversa.</p>
+                                        </div>
+                                    </div>
+                                </span>
                             </div>
                         </div>
 
                         <details id="preview-config" class="preview-config">
                             <summary>Estado inicial do jogo</summary>
                             <label class="field" for="preview-state">
-                                <span class="field-label">Estado inicial (YAML)</span>
-                                <textarea id="preview-state" class="input code-input" rows="7" spellcheck="false"></textarea>
+                                <div class="field-label-row">
+                                    <span class="field-label">Estado inicial</span>
+                                    <span class="info-help">
+                                        <button type="button" class="info-button" aria-label="Sobre o estado inicial"
+                                            aria-describedby="info-preview-state" title="Sobre o estado inicial">i</button>
+                                        <div id="info-preview-state" class="info-popover" role="tooltip">
+                                            <h4>Sobre o estado inicial</h4>
+                                            <div class="info-body">
+                                                <p>Uma entrada por linha: o caminho do estado, um ponto, e o valor.
+                                                    <code>relationship.pacci.friendship.5</code> fica
+                                                    <code>relationship: { pacci: { friendship: 5 } }</code>.</p>
+                                                <p>O inventário é uma contagem (<code>inventory.caixa.1</code>); numa
+                                                    relação, diz a personagem e o tipo
+                                                    (<code>relationship.pacci.friendship: 10</code>).</p>
+                                                <p>As condições de entrada e dos ramos são avaliadas contra este
+                                                    estado.</p>
+                                            </div>
+                                        </div>
+                                    </span>
+                                </div>
+                                <textarea id="preview-state" class="input" rows="5" spellcheck="false"
+                                    placeholder="relationship.pacci.friendship.5&#10;inventory.caixa.1&#10;flags.conheceu_pacci.true&#10;dialogues.seen.teste_1"></textarea>
                             </label>
-                            <p class="field-hint">O inventário é uma contagem (<code>caixa: 1</code>); em <code>relationship</code>, indica a personagem e o tipo: <code>pacci: { friendship: 10 }</code>.</p>
+                            <div id="preview-state-readout" class="legend" aria-live="polite"></div>
                         </details>
 
                         <div class="preview-actions">

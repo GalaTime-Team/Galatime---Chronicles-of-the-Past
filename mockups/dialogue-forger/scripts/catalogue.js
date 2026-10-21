@@ -1,48 +1,42 @@
 /**
- * Built-in suggestions for the standalone dialogue editor.
+ * The built-in suggestions, read from the vocabulary file.
  *
- * Character ids are deliberately fixed in this file: they are not loaded from
- * the repository, a folder picker, a network request or browser storage. Old
- * catalogue values saved by earlier versions are ignored.
+ * Character ids, items and dialogues are deliberately fixed in `lists.js`: they
+ * are not loaded from the repository, a folder picker, a network request or
+ * browser storage. This module is only the accessor the rest of the tool talks
+ * to, so adding a value is an edit to `lists.js` and nothing else.
  */
 (function (Forger) {
     'use strict';
 
-    var CHARACTER_IDS = [
-        'alice', 'annah', 'arthur', 'barasturon', 'duha', 'ttelion',
-        'neven', 'noelia', 'pacci', 'raphael', 'nicima', 'kelly',
-    ];
-
-    // These are optional hints only; writers can still enter any item or dialogue id.
-    var ITEM_IDS = ['herb', 'ancient_key', 'hp_potion'];
+    var lists = Forger.lists;
 
     function characters() {
-        return CHARACTER_IDS.slice();
+        return lists.CHARACTER_IDS.slice();
     }
 
     function items() {
-        return ITEM_IDS.slice();
+        return lists.ITEM_IDS.slice();
     }
 
     function dialogues() {
-        return [];
+        return lists.DIALOGUE_IDS.slice();
     }
 
     function hasCharacter(id) {
-        return CHARACTER_IDS.indexOf(id) !== -1;
+        return lists.CHARACTER_IDS.indexOf(id) !== -1;
     }
 
     function hasItem(id) {
-        return ITEM_IDS.indexOf(id) !== -1;
+        return lists.ITEM_IDS.indexOf(id) !== -1;
     }
 
-    // Without an imported dialogue catalogue, a free-form id is intentional.
     function hasDialogue() {
         return true;
     }
 
     Forger.catalogue = {
-        CHARACTER_IDS: CHARACTER_IDS.slice(),
+        CHARACTER_IDS: lists.CHARACTER_IDS.slice(),
         characters: characters,
         items: items,
         dialogues: dialogues,

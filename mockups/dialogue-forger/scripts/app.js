@@ -55,13 +55,6 @@
      * reading a node they may just have written, not playing.
      */
     var PREVIEW_AUTO_ADVANCE_MS = 1000;
-    var DEFAULT_PREVIEW_STATE = [
-        'flags: {}',
-        'inventory: {}',
-        'relationship: {}',
-        'objectives: {}',
-        'stats: {}',
-    ].join('\n');
 
     /** Card box the layout is built around; branching cards grow taller. */
     var FLOW_CARD_WIDTH = 205;
@@ -80,8 +73,10 @@
     var FLOW_LANE_STEP = 25;
     var NODE_ID_BASES = {
         character_enter: 'entra',
+        character_action: 'acao',
         line: 'fala',
         choice: 'escolha',
+        player_input: 'pergunta',
         conditional: 'ramificacao',
         character_exit: 'sai',
         end: 'fim',
@@ -99,6 +94,7 @@
         report: { errors: [], warnings: [] },
         session: null,
         previewState: null,
+        previewStateErrors: [],
     };
 
     var autosaveTimer = null;
@@ -111,6 +107,16 @@
      * twice — once for the click and once for the timeout nobody withdrew.
      */
     var previewTimer = null;
+
+    /**
+     * The node list's drag state.
+     *
+     * One row at a time: `draggedNodeId` is the row being carried, and
+     * `suppressNextClick` swallows the click a drop leaves behind in browsers
+     * that fire one after a drag.
+     */
+    var draggedNodeId = null;
+    var suppressNextClick = false;
 
     /* ------------------------------------------------------------- history */
 
@@ -159,7 +165,7 @@
         setSaveStatus(draft ? 'Rascunho recuperado neste dispositivo' : 'Pronto a guardar neste dispositivo');
 
         var previewText = Forger.draftStorage.loadPreview();
-        document.getElementById('preview-state').value = previewText || DEFAULT_PREVIEW_STATE;
+        document.getElementById('preview-state').value = previewText || '';
         updatePreviewState();
 
         if (!Forger.yaml.available()) {
@@ -190,19 +196,6 @@
             }
 
             recordSnapshot();
-        });
-
-        document.getElementById('dialogue-id').addEventListener('input', function (event) {
-            state.model.dialogue_id = event.target.value;
-            autosave();
-            refresh();
-        });
-
-        document.getElementById('start-node').addEventListener('change', function (event) {
-            recordSnapshot();
-            state.model.start_node = event.target.value;
-            autosave();
-            refresh();
         });
 
         document.getElementById('btn-undo').addEventListener('click', undo);
@@ -257,7 +250,6 @@
         });
 
         document.getElementById('btn-copy').addEventListener('click', copyYaml);
-        document.getElementById('btn-copy-export').addEventListener('click', copyYaml);
         document.getElementById('btn-download').addEventListener('click', downloadYaml);
 
         document.querySelector('.action-menu').addEventListener('click', function (event) {
@@ -276,6 +268,44 @@
         document.getElementById('btn-validate-panel').addEventListener('click', validateFromButton);
 
         document.getElementById('btn-add-node').addEventListener('click', addNode);
+
+        // The gaps between rows accept a drop too, so letting go never misses:
+        // the container only allows the drop and hands the work to the row the
+        // pointer ended over.
+        var nodeList = document.getElementById('node-list');
+
+        nodeList.addEventListener('dragover', function (event) {
+            if (!draggedNodeId || event.target.closest('.node-item')) {
+                return;
+            }
+
+            event.preventDefault();
+            event.dataTransfer.dropEffect = 'move';
+        });
+
+        nodeList.addEventListener('drop', function (event) {
+            if (!draggedNodeId || event.target.closest('.node-item')) {
+                return;
+            }
+
+            event.preventDefault();
+
+            var ids = Object.keys(state.model.nodes);
+            var items = nodeListItems();
+            var lastItem = items[items.length - 1];
+
+            // Dropping below the last row appends; dropping above the first row
+            // leads. Anything between the rows is a drop onto a row instead, and
+            // that row's own handler has already run.
+            var atEnd = !lastItem
+                || event.clientY > lastItem.getBoundingClientRect().top + lastItem.offsetHeight / 2;
+
+            moveNodeInOrder(atEnd ? ids.length - 1 : 0, draggedNodeId);
+            suppressNextClick = true;
+            clearClickSuppression();
+        });
+
+        nodeList.addEventListener('dragend', endDrag);
 
         document.getElementById('preview-state').addEventListener('input', function (event) {
             updatePreviewState();
@@ -321,11 +351,33 @@
 
     /** Rebuilds the whole UI. */
     function render() {
+        // The start node is not a field anybody edits: it is the first node of
+        // the list, so every structural change settles it here, once, before
+        // anything reads it.
+        syncStartNode();
+
         renderHeader();
         renderNodeList();
         renderEditor();
         renderIssues();
         renderPreview();
+    }
+
+    /**
+     * Keeps `start_node` equal to the first node of the list.
+     *
+     * Called from `render`, which every structural change already goes through
+     * (add, remove, rename, reorder, import, undo, redo) — so there is no
+     * mutation that can leave the two out of step. A no-op when they agree,
+     * which is the common case.
+     */
+    function syncStartNode() {
+        var first = Forger.model.startNodeId(state.model);
+
+        if (state.model.start_node !== first) {
+            state.model.start_node = first;
+            autosave();
+        }
     }
 
     /** Rebuilds only the parts that are safe to touch while typing. */
@@ -335,15 +387,14 @@
         renderFlowGraph();
     }
 
-    /** The dialogue id, the start node picker and the undo/redo buttons. */
+    /**
+     * The start node readout and the undo/redo buttons.
+     *
+     * The dropdown is informative on purpose: the start node is the first node
+     * of the list, so there is nothing here to choose — the list below is where
+     * the beginning is decided, by putting a node first.
+     */
     function renderHeader() {
-        var idInput = document.getElementById('dialogue-id');
-
-        // Do not clobber the field the writer is currently in.
-        if (document.activeElement !== idInput) {
-            idInput.value = state.model.dialogue_id;
-        }
-
         var startSelect = document.getElementById('start-node');
         var nodeIds = Object.keys(state.model.nodes);
 
@@ -358,21 +409,24 @@
         });
 
         startSelect.value = state.model.start_node || '';
+        startSelect.disabled = true;
 
         document.getElementById('btn-undo').disabled = !state.history.canUndo();
         document.getElementById('btn-redo').disabled = !state.history.canRedo();
     }
 
-    /** The node list, with a marker for the start node and for broken links. */
+    /**
+     * The node list, in the order the writer left it.
+     *
+     * The order is the author's, not the walk's: the start node is marked with
+     * a ▶ rather than pinned to the top, because pinning it would make
+     * reordering impossible exactly where it matters most. Dragging a row, or
+     * Ctrl+↑/↓ on a focused row, moves the rest of the document's order with
+     * it — links are by id, so reordering never rewrites a `next`.
+     */
     function renderNodeList() {
         var container = document.getElementById('node-list');
         var nodeIds = Object.keys(state.model.nodes);
-
-        if (state.model.start_node && state.model.nodes[state.model.start_node]) {
-            nodeIds = [state.model.start_node].concat(nodeIds.filter(function (nodeId) {
-                return nodeId !== state.model.start_node;
-            }));
-        }
 
         container.textContent = '';
 
@@ -388,19 +442,98 @@
 
         var broken = collectBrokenNodes();
 
-        nodeIds.forEach(function (nodeId) {
+        nodeIds.forEach(function (nodeId, index) {
             var node = state.model.nodes[nodeId];
             var isStart = nodeId === state.model.start_node;
+            var isSelected = nodeId === state.selectedNodeId;
 
             container.appendChild(ui.el('button', {
                 type: 'button',
-                class: 'node-item' + (nodeId === state.selectedNodeId ? ' is-selected' : ''),
+                class: 'node-item' + (isSelected ? ' is-selected' : ''),
+                draggable: 'true',
+                'data-node-id': nodeId,
+                'aria-label': nodeId + ' · ' + (Forger.model.NODE_TYPE_LABELS[node.type] || node.type)
+                    + ' · posição ' + (index + 1) + ' de ' + nodeIds.length
+                    + '. Arrasta, ou usa Ctrl + setas, para reordenar.',
                 on: {
                     click: function () {
+                        // A drop ends with a click in some browsers; that click
+                        // must not also select the row it just left behind.
+                        if (suppressNextClick) {
+                            suppressNextClick = false;
+                            return;
+                        }
+
                         selectNode(nodeId);
+                    },
+                    keydown: function (event) {
+                        if (!event.ctrlKey && !event.metaKey) {
+                            return;
+                        }
+
+                        if (event.key !== 'ArrowUp' && event.key !== 'ArrowDown') {
+                            return;
+                        }
+
+                        event.preventDefault();
+
+                        moveNodeInOrder(index + (event.key === 'ArrowUp' ? -1 : 1), nodeId);
+                    },
+                    dragstart: function (event) {
+                        draggedNodeId = nodeId;
+                        event.dataTransfer.effectAllowed = 'move';
+                        event.dataTransfer.setData('text/plain', nodeId);
+                        event.currentTarget.classList.add('is-dragging');
+                    },
+                    dragover: function (event) {
+                        if (!draggedNodeId || draggedNodeId === nodeId) {
+                            return;
+                        }
+
+                        // Without this the drop is refused and the list never
+                        // reorders at all.
+                        event.preventDefault();
+                        event.dataTransfer.dropEffect = 'move';
+
+                        var after = event.clientY > event.currentTarget.getBoundingClientRect().top
+                            + event.currentTarget.offsetHeight / 2;
+
+                        markDropTarget(event.currentTarget, after);
+                    },
+                    dragleave: function (event) {
+                        event.currentTarget.classList.remove('is-drop-before', 'is-drop-after');
+                    },
+                    drop: function (event) {
+                        if (!draggedNodeId || draggedNodeId === nodeId) {
+                            return;
+                        }
+
+                        event.preventDefault();
+                        event.stopPropagation();
+
+                        var ids = Object.keys(state.model.nodes);
+                        var from = ids.indexOf(draggedNodeId);
+                        var target = ids.indexOf(nodeId);
+
+                        // Where the row ends up, counted after it is taken out:
+                        // above a target that sat below it, the target has
+                        // already moved one row up.
+                        var after = event.clientY > event.currentTarget.getBoundingClientRect().top
+                            + event.currentTarget.offsetHeight / 2;
+                        var finalIndex = from < target
+                            ? (after ? target : target - 1)
+                            : (after ? target + 1 : target);
+
+                        moveNodeInOrder(finalIndex, draggedNodeId);
+                        suppressNextClick = true;
+                        clearClickSuppression();
+                    },
+                    dragend: function () {
+                        endDrag();
                     },
                 },
             }, [
+                ui.el('span', { class: 'node-grip', 'aria-hidden': 'true', text: '⠿' }),
                 ui.el('div', { class: 'node-item-copy' }, [
                     ui.el('div', { class: 'node-id', text: (isStart ? '▶ ' : '') + nodeId }),
                     ui.el('div', { class: 'node-meta' }, [
@@ -414,6 +547,89 @@
                 ]),
             ]));
         });
+    }
+
+    /** The row a dragged node would land on, and on which side of it. */
+    function markDropTarget(item, after) {
+        nodeListItems().forEach(function (candidate) {
+            candidate.classList.remove('is-drop-before', 'is-drop-after');
+        });
+
+        item.classList.add(after ? 'is-drop-after' : 'is-drop-before');
+    }
+
+    /** Every row of the node list. */
+    function nodeListItems() {
+        return Array.prototype.slice.call(document.querySelectorAll('#node-list .node-item'));
+    }
+
+    /** Clears the drag state, whichever way the drag ended. */
+    function endDrag() {
+        draggedNodeId = null;
+
+        nodeListItems().forEach(function (item) {
+            item.classList.remove('is-dragging', 'is-drop-before', 'is-drop-after');
+        });
+    }
+
+    /**
+     * Withdraws the click suppression if the drop left no click behind.
+     *
+     * A drop ends in a click in some browsers and nothing in others; the flag
+     * only has to outlive the click that immediately follows a drop, so it is
+     * cleared on the next task and never waits longer.
+     */
+    function clearClickSuppression() {
+        window.setTimeout(function () {
+            suppressNextClick = false;
+        }, 0);
+    }
+
+    /**
+     * Moves a node to a new place in the document's order.
+     *
+     * `targetIndex` is the place the row should occupy **after** the move, which
+     * is what a keyboard move means and what a drop can be worked out to: a drop
+     * above a row that sat below the dragged one aims one slot higher, because
+     * the dragged row is no longer there to be counted past.
+     *
+     * The nodes map is rebuilt in the new order, which is the only place the
+     * order lives: links are by id, so nothing else in the document follows a
+     * node around.
+     */
+    function moveNodeInOrder(targetIndex, movedId) {
+        var ids = Object.keys(state.model.nodes);
+        var from = ids.indexOf(movedId);
+
+        if (from === -1) {
+            return;
+        }
+
+        ids.splice(from, 1);
+        ids.splice(Math.max(0, Math.min(ids.length, targetIndex)), 0, movedId);
+
+        var rebuilt = {};
+
+        ids.forEach(function (nodeId) {
+            rebuilt[nodeId] = state.model.nodes[nodeId];
+        });
+
+        recordSnapshot();
+        state.model.nodes = rebuilt;
+        state.selectedNodeId = movedId;
+
+        autosave();
+        render();
+
+        // The row lost its place mid-drag: focus it again so the next Ctrl+seta
+        // moves the same row instead of wherever the browser left focus.
+        var movedItem = nodeListItems().filter(function (item) {
+            return item.getAttribute('data-node-id') === movedId;
+        })[0];
+
+        if (movedItem) {
+            movedItem.focus();
+        }
     }
 
     /** The editor for the selected node. */
@@ -452,34 +668,15 @@
             })),
         ];
 
-        if (Forger.model.supportsNext(node.type)) {
-            var nextField = ui.field('Próximo nó', ui.listInput('nodes', {
-                value: node.next,
-                placeholder: 'id_do_no',
-                extra: Object.keys(state.model.nodes),
-                onInput: function (value) {
-                    patchNode({ next: value });
-                },
-            }));
-            nextField.classList.add('node-destination');
-            primaryFields.push(nextField);
-        }
-
         var primaryInfo = ui.el('div', { class: 'node-primary-info' }, primaryFields);
 
         var actions = [];
 
-        actions.push(ui.checkbox({
-            checked: state.model.start_node === nodeId,
-            label: 'Inicial',
-            onChange: function (checked) {
-                if (checked && state.model.start_node !== nodeId) {
-                    setStartNode(nodeId);
-                } else if (!checked) {
-                    render();
-                }
-            },
-        }));
+        // Not a control: where the node sits is what makes it the start, so the
+        // selected node only ever *reports* being first in the list.
+        if (state.model.start_node === nodeId) {
+            actions.push(ui.el('span', { class: 'node-start-indicator', text: '▶ Início' }));
+        }
 
         actions.push(ui.button({
             label: 'Duplicar',
@@ -525,7 +722,6 @@
         var container = document.getElementById('issues');
 
         state.report = Forger.validator.validate(state.model, {
-            fileName: state.fileName,
             parseErrors: state.parseErrors,
         });
 
@@ -569,22 +765,73 @@
 
     /* -------------------------------------------------------------- preview */
 
-    /** Re-reads the preview's initial state from the textarea. */
+    /**
+     * Re-reads the panel's initial state and shows what it understood.
+     *
+     * The panel takes one entry per line (`relationship.pacci.friendship.5`),
+     * so the readout under it is the contract: every line the writer typed is
+     * echoed back as the path and value it will be used as, and a line that
+     * could not be read says why instead of being dropped in silence.
+     */
     function updatePreviewState() {
         var textarea = document.getElementById('preview-state');
-        var parsed = Forger.yaml.parse(textarea.value);
+        var parsed = Forger.previewState.parse(textarea.value);
 
-        state.previewState = parsed.ok && parsed.value && typeof parsed.value === 'object'
-            ? parsed.value
-            : null;
+        state.previewState = parsed.state;
+        state.previewStateErrors = parsed.errors;
+
+        renderStateReadout(parsed);
+    }
+
+    /** The list of what the panel understood, and of what it could not read. */
+    function renderStateReadout(parsed) {
+        var box = document.getElementById('preview-state-readout');
+
+        while (box.firstChild) {
+            box.removeChild(box.firstChild);
+        }
+
+        parsed.errors.forEach(function (problem) {
+            ui.append(box, ui.notice(
+                'error',
+                'Linha ' + problem.line + ': ' + problem.message + ' → ' + problem.raw,
+            ));
+        });
+
+        if (parsed.legacy) {
+            ui.append(box, ui.el('div', {
+                class: 'small muted',
+                text: 'Lido como YAML — uma entrada por linha também serve: ex. flags.conheceu_pacci.true.',
+            }));
+        }
+
+        if (parsed.entries.length === 0 && parsed.errors.length === 0) {
+            ui.append(box, ui.el('div', {
+                class: 'small muted',
+                text: 'Sem estado inicial: o teste começa com tudo a zero.',
+            }));
+            return;
+        }
+
+        parsed.entries.forEach(function (entry) {
+            ui.append(box, ui.el('div', {
+                class: 'small',
+                text: entry.path + ' ' + (entry.list ? 'inclui' : '=') + ' ' + describeStateValue(entry.value),
+            }));
+        });
+    }
+
+    /** A value as the writer will read it back: `vazio` for null, else as typed. */
+    function describeStateValue(value) {
+        return value === null || value === undefined ? 'vazio' : String(value);
     }
 
     /** Starts a preview run from the current document. */
     function startPreview() {
         updatePreviewState();
 
-        if (!state.previewState) {
-            flash('O estado inicial não é YAML válido.', true);
+        if (state.previewStateErrors.length > 0) {
+            flash('O estado inicial tem linhas que não consegui ler — vê o painel acima.', true);
             return;
         }
 
@@ -610,6 +857,7 @@
         continueButton.disabled = !session
             || session.completed
             || !session.node
+            || session.node.type === 'player_input'
             || !Forger.model.supportsNext(session.node.type);
         resetButton.disabled = !session;
         container.textContent = '';
@@ -626,11 +874,15 @@
 
         var speakerId = session.node ? session.node.speaker_id : null;
 
-        // Who the dialogue has in the conversation, and which of them is talking.
+        // Who the dialogue has in the conversation, where each of them stands
+        // and which of them is talking. The staging is read through the same
+        // description the node list uses, so the two never disagree.
         ui.append(container, ui.el('div', { class: 'cast-chips' }, session.cast.map(function (member) {
+            var staging = Forger.model.describeStaging(member);
+
             return ui.el('span', {
                 class: 'chip' + (member.character_id === speakerId ? ' chip-on' : ''),
-                text: member.character_id + ' @ ' + member.position,
+                text: member.character_id + (staging ? ' · ' + staging : ''),
             });
         })));
 
@@ -1029,7 +1281,7 @@
         if (!Array.isArray(segments)) return '';
 
         return segments.filter(function (segment) {
-            return segment && ['text', 'styled_text', 'interactive_text'].includes(segment.type);
+            return segment && ['text', 'thought', 'styled_text', 'interactive_text'].includes(segment.type);
         }).map(function (segment) {
             return segment.value || '';
         }).join('').trim();
@@ -1341,25 +1593,65 @@
         var node = session.node;
         var box = ui.el('div', {});
         var isChoice = node.type === 'choice';
+        var isPrompt = node.type === 'player_input';
         var prompt = isChoice ? (node.prompt || {}) : null;
-        var speaker = isChoice ? (prompt.speaker_id || '(sem falante)') : (node.speaker_id || '(sem falante)');
+        var speaker = isChoice
+            ? (prompt.speaker_id || '(sem falante)')
+            : isPrompt
+                ? 'Pergunta ao jogador'
+                : (node.speaker_id || '(sem falante)');
         var emotion = isChoice ? prompt.emotion : node.emotion;
+        // A whole line may be a thought, and a single segment may be one inside
+        // a spoken line; both read the same way on screen.
+        var thought = !isChoice && !isPrompt && node.delivery === 'thought';
 
         // A question is a line, so it is read from the same place a line's text
         // is. Clickable segments are part of the sentence the player reads, so
-        // they are inlined here as well as being offered as buttons below.
-        var text = (isChoice ? (prompt.text || []) : (node.text || []))
+        // they are inlined here as well as being offered as buttons below. A
+        // call to action carries a plain question, so it reads as one segment.
+        var source = isChoice
+            ? (prompt.text || [])
+            : isPrompt
+                ? [{ type: 'text', value: node.question }]
+                : (node.text || []);
+
+        var text = source
             .filter(function (segment) {
                 return segment.type === 'text'
+                    || segment.type === 'thought'
                     || segment.type === 'styled_text'
-                    || segment.type === 'interactive_text';
+                    || segment.type === 'interactive_text'
+                    || segment.type === 'variable';
             }).map(function (segment) {
-                return segment.value;
-            }).join('');
+                if (segment.type === 'thought' && !thought) {
+                    return ui.el('em', { class: 'thought', text: segment.value });
+                }
 
-        ui.append(box, ui.el('div', { class: 'preview-node' }, [
-            ui.el('div', { class: 'speaker', text: (speaker || '(sem falante)') + (emotion ? ' · ' + emotion : '') }),
-            ui.el('div', { text: text }),
+                // A variable is spoken back with whatever it holds. Before the
+                // player has answered, it reads as the bare reference, marked, so
+                // the gap is obvious rather than a silent hole in the sentence.
+                if (segment.type === 'variable') {
+                    var value = Forger.preview.resolveVariable(segment.value, session.state);
+
+                    return ui.el('span', {
+                        class: 'preview-variable' + (value == null ? ' is-missing' : ''),
+                        text: value == null ? '{' + segment.value + '}' : String(value),
+                        title: value == null
+                            ? 'Sem valor ainda: ' + segment.value
+                            : '{' + segment.value + '}',
+                    });
+                }
+
+                return segment.value;
+            });
+
+        ui.append(box, ui.el('div', { class: 'preview-node' + (thought ? ' is-thought' : '') }, [
+            ui.el('div', {
+                class: 'speaker',
+                text: (speaker || '(sem falante)') + (emotion ? ' · ' + emotion : '')
+                    + (thought ? ' · a pensar' : ''),
+            }),
+            ui.el('div', {}, text),
         ]));
 
         // The line will move on by itself, so say so: a writer watching the panel
@@ -1371,7 +1663,9 @@
             }));
         }
 
-        if (isChoice) {
+        if (session.prompt) {
+            ui.append(box, renderPreviewPrompt(session));
+        } else if (isChoice) {
             ui.append(box, ui.el('div', { class: 'preview-choices' }, session.choices.map(function (choice) {
                 return ui.el('button', {
                     type: 'button',
@@ -1401,6 +1695,57 @@
         }
 
         return box;
+    }
+
+    /**
+     * The prompt at a call-to-action node: a text box or a list, then onward.
+     *
+     * Text is stored exactly as typed; a choice stores the option picked. Either
+     * way the answer lands at `input.<variavel>` and the run continues, so the
+     * writer plays the conversation exactly the way the game would ask.
+     */
+    function renderPreviewPrompt(session) {
+        var prompt = session.prompt;
+
+        function confirm(value) {
+            Forger.preview.submitInput(state.session, value);
+            renderPreview();
+        }
+
+        if (prompt.input_type === 'choice') {
+            return ui.el('div', { class: 'preview-choices' },
+                (prompt.options || []).map(function (option) {
+                    return ui.el('button', {
+                        type: 'button',
+                        class: 'btn preview-choice',
+                        text: option || '(sem texto)',
+                        on: { click: function () { confirm(option); } },
+                    });
+                }));
+        }
+
+        var input = ui.text({
+            value: '',
+            placeholder: prompt.placeholder || 'Escreve aqui.',
+        });
+
+        // Enter answers too: a name prompt answered by clicking a button each
+        // time is one move more than the game needs.
+        input.addEventListener('keydown', function (event) {
+            if (event.key === 'Enter') {
+                event.preventDefault();
+                confirm(input.value);
+            }
+        });
+
+        return ui.el('div', { class: 'preview-prompt-text' }, [
+            input,
+            ui.button({
+                label: 'Confirmar',
+                variant: 'primary',
+                onClick: function () { confirm(input.value); },
+            }),
+        ]);
     }
 
     /* ------------------------------------------------------- document edits */
@@ -1438,10 +1783,6 @@
         // Link the node the writer was on, so building a conversation in order
         // does not require filling in "next" by hand every time.
         linkTo(previousId, newId);
-
-        if (!state.model.start_node) {
-            state.model.start_node = newId;
-        }
 
         state.selectedNodeId = newId;
 
@@ -1490,7 +1831,12 @@
         render();
     }
 
-    /** Renames a node, keeping the map order and fixing the start node. */
+    /**
+     * Renames a node, keeping the map order.
+     *
+     * The start node follows the rename rather than being decided here: the
+     * renamed node was first, so it still is, under its new name.
+     */
     function renameNode(oldId, newId) {
         if (!newId || newId === oldId) {
             return;
@@ -1533,17 +1879,6 @@
 
         autosave();
         render();
-    }
-
-    /** Marks a node as the conversation's entry point. */
-    function setStartNode(nodeId) {
-        recordSnapshot();
-
-        state.model.start_node = nodeId;
-
-        autosave();
-        render();
-        flash('"' + nodeId + '" é agora o nó inicial.');
     }
 
     /** Selects a node and rebuilds the editor. */
@@ -1644,11 +1979,19 @@
             return;
         }
 
-        replaceDocument(
-            Forger.model.normalize(parsed.value),
-            fileName || null,
-            'Diálogo importado' + (fileName ? ' de "' + fileName + '"' : '') + '.',
-        );
+        var model = Forger.model.normalize(parsed.value);
+        var declared = typeof parsed.value.start_node === 'string' ? parsed.value.start_node : '';
+        var message = 'Diálogo importado' + (fileName ? ' de "' + fileName + '"' : '') + '.';
+
+        // The start node is the first step of the list now, so a file that
+        // declared a different one has its beginning moved. Say so: the writer
+        // can see it in the file, and silence would look like the tool agreeing.
+        if (declared && model.start_node && declared !== model.start_node) {
+            message += ' O ficheiro dizia que o início era "' + declared
+                + '"; o início passa a ser o primeiro nó da lista, "' + model.start_node + '".';
+        }
+
+        replaceDocument(model, fileName || null, message);
 
         // After `replaceDocument`, which clears it: only an import that landed
         // gets to remember where it came from.
@@ -1659,24 +2002,24 @@
     function copyYaml() {
         var text = currentYaml();
 
-        showExport(text);
-
         if (navigator.clipboard && navigator.clipboard.writeText) {
             navigator.clipboard.writeText(text).then(function () {
                 flash('YAML copiado para a área de transferência.');
             }, function () {
-                flash('Não consegui usar a área de transferência; o YAML está em baixo para copiar à mão.', true);
+                flash('Não consegui usar a área de transferência; usa «Exportar YAML» para guardar o ficheiro.', true);
             });
 
             return;
         }
 
-        flash('A área de transferência não está disponível; o YAML está em baixo para copiar à mão.', true);
+        flash('A área de transferência não está disponível; usa «Exportar YAML» para guardar o ficheiro.', true);
     }
 
     /** Saves the generated YAML, through the picker when it is available. */
     function downloadYaml() {
-        var name = (state.model.dialogue_id || 'dialogo') + '.yaml';
+        // The file name is the dialogue's identity, so the name it came in as
+        // is the name it goes back out with.
+        var name = (state.fileName || 'dialogo') + '.yaml';
 
         if (!canUseFilePickers()) {
             downloadViaLink(name);
@@ -1752,14 +2095,6 @@
     /** The YAML for the current document. */
     function currentYaml() {
         return Forger.serializer.serialize(state.model);
-    }
-
-    /** Shows the generated YAML in the export box. */
-    function showExport(text) {
-        var box = document.getElementById('export-output');
-
-        box.value = text;
-        document.getElementById('export-details').setAttribute('open', 'open');
     }
 
     /* ------------------------------------------------------------- undo/redo */
@@ -1857,11 +2192,16 @@
             objectives: objectives,
             stats: stats,
             flags: flags,
-            animations: [],
             emotions: [],
-            positions: [],
-            directions: [],
+            // The stage position menu. It read as an empty list, so the "Posição"
+            // field could only ever show the current value marked "desconhecido"
+            // and left the writer with no left/right halves to pick.
+            positions: Forger.lists.POSITIONS.slice(),
+            directions: Forger.lists.ANIMATION_DIRECTIONS.map(function (d) { return d.value; }),
             results: [],
+            // The input variables the call-to-action nodes collect, so the
+            // "Nome da variável" field can suggest what the dialogue already asks.
+            inputVariables: Forger.model.collectInputVariables(state.model),
         };
     }
 
@@ -1897,6 +2237,12 @@
             Object.keys(preview.relationship[characterId] || {}).forEach(function (kind) {
                 paths.push('relationship.' + characterId + '.' + kind);
             });
+        });
+
+        // A player-input variable the dialogue asks for, so a branch or a choice
+        // can reach for it the same way it reaches for an item in the bag.
+        Forger.model.collectInputVariables(state.model).forEach(function (name) {
+            paths.push('input.' + name);
         });
 
         // The fixed roots and engine-owned lists come from the shared suggestion
@@ -1964,7 +2310,6 @@
         currentYaml: currentYaml,
         validate: function () {
             return Forger.validator.validate(state.model, {
-                fileName: state.fileName,
                 parseErrors: state.parseErrors,
             });
         },

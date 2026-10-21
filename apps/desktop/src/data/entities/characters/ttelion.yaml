@@ -11,7 +11,7 @@ description: >
   Add description here.
 
 elements:
-  - corrupted_forest
+  - corrupted_void
 
 base_stats:
   hp: 780

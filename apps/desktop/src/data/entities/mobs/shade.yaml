@@ -1,0 +1,38 @@
+﻿id: snowver
+name: Snowver
+rarity: common
+height: "95 cm"
+weight: "42 kg"
+description: >
+  Due to people constantly hunting them for their meat and fur,
+  Snowvers have gained deep hatred towards humnas. They say,
+  however, that if you gain their trust, they'll guide you around
+  the snowy mountains.
+
+elements:
+  - corporis
+  - aqua
+
+base_stats:
+  hp: 340
+  mana: 6
+  stamina: 88
+  physical_attack: 69
+  magical_attack: 9
+  physical_defense: 58
+  magical_defense: 24
+  speed: 35
+
+skills:
+  - ice_cube
+  - roll
+
+weapon:
+
+loot:
+  - item_id: gold_coin
+    quantity: 1
+    chance: 0.4
+
+ai:
+  style: brute

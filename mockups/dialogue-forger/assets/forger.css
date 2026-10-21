@@ -353,7 +353,39 @@
 .input::placeholder { color: #77838e; }
 .input:hover:not(:focus) { border-color: #566371; }
 .input:focus { border-color: var(--accent); outline: none; box-shadow: 0 0 0 2px rgba(120, 169, 248, .13); }
-select.input { max-width: 100%; padding-right: 28px; cursor: pointer; }
+
+/* One dropdown look for every picker, be it a closed <select> or a text field
+   with a suggestion list. The chevron is drawn here so the two families match
+   exactly — and so a browser that draws no chevron of its own on a datalist
+   still shows one. A datalist field also gets the browser's own picker chevron
+   on hover and focus, so ours steps aside for exactly those moments and there is
+   never a second arrow. */
+select.input,
+input.input[list] {
+    appearance: none;
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    padding-right: 26px;
+    background-image: url("data:image/svg+xml;charset=utf-8,<svg xmlns='http://www.w3.org/2000/svg' width='9' height='6' viewBox='0 0 9 6'><path d='M0 0h9L4.5 6z' fill='%23aab6c1'/></svg>");
+    background-repeat: no-repeat;
+    background-position: right 10px center;
+    background-size: 9px 6px;
+    cursor: pointer;
+}
+
+select.input::-ms-expand { display: none; }
+
+select.input:hover:not(:disabled),
+input.input[list]:hover:not(:disabled) {
+    background-image: url("data:image/svg+xml;charset=utf-8,<svg xmlns='http://www.w3.org/2000/svg' width='9' height='6' viewBox='0 0 9 6'><path d='M0 0h9L4.5 6z' fill='%23c3ccd5'/></svg>");
+}
+
+/* The browser's own picker takes over, so only one chevron shows at a time. */
+input.input[list]:hover,
+input.input[list]:focus { background-image: none; }
+
+select.input:disabled,
+input.input[list]:disabled { background-image: none; cursor: not-allowed; }
 select.input option { color: #e0e5e9; background: #181e25; }
 textarea.input { min-height: 100px; resize: vertical; line-height: 1.65; }
 .input.code-input { font: 11px/1.55 var(--mono); tab-size: 2; }
@@ -386,7 +418,8 @@ textarea.input { min-height: 100px; resize: vertical; line-height: 1.65; }
     color: var(--ink);
     background: transparent;
     text-align: left;
-    transition: border-color .14s ease, background .14s ease;
+    cursor: grab;
+    transition: border-color .14s ease, background .14s ease, box-shadow .14s ease, opacity .14s ease;
 }
 
 .node-item::before {
@@ -408,6 +441,23 @@ textarea.input { min-height: 100px; resize: vertical; line-height: 1.65; }
 .node-item .node-meta { margin-top: 3px; color: var(--muted-soft); font-size: 11px; line-height: 1.45; }
 .node-item .badge { color: var(--warning); font-weight: 650; }
 
+/* The drag affordance, quiet until the row is hovered or focused. */
+.node-grip {
+    flex: 0 0 auto;
+    margin-top: 1px;
+    color: #5d6a77;
+    font-size: 11px;
+    line-height: 1.5;
+    opacity: 0;
+    transition: opacity .14s ease;
+}
+.node-item:hover .node-grip,
+.node-item:focus-visible .node-grip { opacity: 1; }
+.node-item.is-dragging { cursor: grabbing; opacity: .45; }
+/* Where a drop would land: a line on the side the pointer is on. */
+.node-item.is-drop-before { box-shadow: inset 0 2px 0 var(--accent); border-color: rgba(120, 169, 248, .4); }
+.node-item.is-drop-after { box-shadow: inset 0 -2px 0 var(--accent); border-color: rgba(120, 169, 248, .4); }
+
 .list-empty { padding: 12px 10px; border: 1px dashed #3a4651; border-radius: 7px; color: var(--muted); background: #171e25; font-size: 11px; line-height: 1.5; }
 .list-empty p { margin: 0; }
 .library-footer { display: flex; align-items: center; gap: 6px; margin: 11px 0 0; padding-top: 10px; border-top: 1px solid var(--border-soft); color: var(--muted-soft); font-size: 11px; }
@@ -419,7 +469,7 @@ textarea.input { min-height: 100px; resize: vertical; line-height: 1.65; }
 .editor-intro { padding-bottom: 14px; border-bottom: 1px solid var(--border-soft); }
 .editor-intro .section-heading { align-items: center; }
 .editor-intro .editor-intro-heading { justify-content: flex-start; gap: 12px; }
-.editor-intro-heading > div:nth-child(2) { min-width: 0; flex: 1; }
+.editor-intro-heading > div:first-child { min-width: 0; flex: 1; }
 .editor-intro .section-heading h2 { font-size: 15px; }
 .editor-intro .section-heading p { font-size: 11px; }
 #editor { padding-top: 16px; }
@@ -437,7 +487,7 @@ textarea.input { min-height: 100px; resize: vertical; line-height: 1.65; }
     box-shadow: inset 2px 0 var(--accent);
 }
 
-.node-primary-info { display: grid; min-width: 0; flex: 1; grid-template-columns: minmax(0, 1.2fr) minmax(0, .8fr) minmax(0, 1fr); gap: 12px; }
+.node-primary-info { display: grid; min-width: 0; flex: 1; grid-template-columns: minmax(0, 1.4fr) minmax(0, 1fr); gap: 12px; }
 .node-primary-info .field-label { color: #9da8b2; font: 500 11px var(--mono); letter-spacing: .05em; text-transform: uppercase; }
 .node-primary-info .input { min-height: 32px; }
 .node-actions { display: flex; flex: 0 0 auto; flex-wrap: wrap; align-items: center; justify-content: flex-end; gap: 6px; margin-left: auto; }
@@ -454,23 +504,114 @@ textarea.input { min-height: 100px; resize: vertical; line-height: 1.65; }
 .field-primary .input { border-color: #42556b; background: #161f29; }
 .field-primary .input:focus { border-color: var(--accent); }
 
+/* The editor's fields, grouped by the role each one plays in the node: who is
+   in it, where they stand, what is said, how they move and where it goes next.
+   Always visible, so the shape of a node reads at a glance. */
+.node-section { min-width: 0; border: 1px solid var(--border-soft); border-radius: 8px; background: #171e24; }
+.node-section-title { margin: 0; padding: 9px 13px 8px; border-bottom: 1px solid var(--border-soft); color: #8fa0af; font: 650 10px/1.4 var(--sans); letter-spacing: .1em; text-transform: uppercase; }
+.node-section-body { display: grid; gap: 13px; padding: 13px; }
+.node-section-body > .inline { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+.node-section-body > .inline.pair { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+.node-section-body > .block { margin: 0; }
+details.node-section > summary { cursor: pointer; list-style: none; }
+details.node-section > summary::-webkit-details-marker { display: none; }
+details.node-section > summary::after { float: right; color: var(--accent); content: "+"; font-size: 13px; font-weight: 400; }
+details.node-section[open] > summary::after { content: "−"; }
+
 .field-label-row { display: flex; min-width: 0; align-items: flex-start; gap: 8px; }
 .field-label-row > .field-label { margin: 0; }
+.field-label-row .info-help { margin-left: auto; padding-left: 2px; }
 .text-field > textarea { min-height: 138px; padding: 12px 13px; font-size: 12px; line-height: 1.75; }
-.syntax-help { position: relative; z-index: 3; display: inline-flex; flex: 0 0 auto; align-items: center; }
+
+/* The markup inserter reads as one control under the text area: a label, the
+   picker and the button that acts on it, on a single line the width of the box
+   above. The picker grows, the button keeps its size, and on a narrow column
+   the button drops to a line of its own instead of squeezing the picker. */
+.markup-toolbar {
+    display: flex;
+    min-width: 0;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 8px;
+    padding: 7px 9px;
+    border: 1px solid #2e3843;
+    border-radius: 7px;
+    background: #161d24;
+}
+
+.markup-toolbar-label { flex: 0 0 auto; color: #b9c2cb; font-size: 11px; font-weight: 640; }
+.markup-toolbar .input { min-width: 0; min-height: 31px; flex: 1 1 170px; }
+.markup-toolbar .btn { min-height: 31px; flex: 0 0 auto; }
+.syntax-help,
+.info-help { position: relative; z-index: 3; display: inline-flex; flex: 0 0 auto; align-items: center; }
 .info-button { display: grid; width: 14px; height: 14px; place-items: center; padding: 0; border: 1px solid #586778; border-radius: 50%; color: #c2d8f7; background: #273443; font: 600 9px/1 var(--sans); cursor: help; }
 .info-button:hover,
-.syntax-help:focus-within .info-button { border-color: var(--accent); color: #fff; background: #2e4a70; }
-.syntax-popover { position: absolute; z-index: 20; top: calc(100% + 7px); left: 0; display: none; width: min(460px, calc(100vw - 40px)); max-width: calc(100vw - 40px); padding: 13px 14px; border: 1px solid #465361; border-radius: 8px; color: #d9dfe4; background: #202830; box-shadow: 0 8px 20px rgba(0, 0, 0, .26); }
+.syntax-help:focus-within .info-button,
+.info-help:focus-within .info-button { border-color: var(--accent); color: #fff; background: #2e4a70; }
+.syntax-popover,
+.info-popover { position: absolute; z-index: 20; top: calc(100% + 7px); left: 0; display: none; width: min(460px, calc(100vw - 40px)); max-width: calc(100vw - 40px); max-height: calc(100vh - 36px); overflow: auto; padding: 13px 14px; border: 1px solid #465361; border-radius: 8px; color: #d9dfe4; background: #202830; box-shadow: 0 8px 20px rgba(0, 0, 0, .26); scrollbar-color: #46515d #202830; }
+/* Flipped by JS when the default direction would fall off the window. */
+.syntax-popover.is-above,
+.info-popover.is-above { top: auto; bottom: calc(100% + 7px); }
+/* And leftwards when it would fall off the right edge. */
+.syntax-popover.is-right,
+.info-popover.is-right { left: auto; right: 0; }
 .syntax-help:hover .syntax-popover,
-.syntax-help:focus-within .syntax-popover { display: block; }
-.syntax-popover h4 { margin: 0 0 9px; color: #f0f2f3; font-size: 11px; font-weight: 700; }
+.syntax-help:focus-within .syntax-popover,
+.info-help:hover .info-popover,
+.info-help:focus-within .info-popover { display: block; }
+.syntax-popover h4,
+.info-popover h4 { margin: 0 0 9px; color: #f0f2f3; font-size: 11px; font-weight: 700; }
+.info-body { display: grid; gap: 7px; }
+.info-body p { margin: 0; color: #adb8c2; font-size: 11px; line-height: 1.55; }
+.info-body code { color: #b7c9e0; font-size: 11px; overflow-wrap: anywhere; }
 .syntax-tip-list { display: grid; gap: 7px; }
-.syntax-tip-row { display: grid; grid-template-columns: minmax(0, 1fr); align-items: start; gap: 2px; }
+/* One line per directive — code, then its name — so the whole syntax reads as a
+   list instead of a column twice as tall as the list of names. */
+.syntax-tip-row { display: grid; grid-template-columns: auto minmax(0, 1fr); align-items: baseline; gap: 9px; }
 .syntax-tip-row code { overflow-wrap: anywhere; color: #b5d0f5; font-size: 11px; line-height: 1.5; }
 .syntax-tip-row span { color: #adb8c2; font-size: 11px; line-height: 1.5; }
+/* What the picker's button does, said under the list it acts on. */
+.syntax-popover-note { margin: 10px 0 0; color: var(--muted-soft); font-size: 11px; line-height: 1.5; }
+
+/* A right-aligned "i" under a group of fields: the explanation stays with the
+   fields it explains without sitting between them and what follows. */
+.inline-help { display: flex; justify-content: flex-end; margin-top: -4px; }
+.heading-with-info { display: inline-flex; align-items: center; gap: 8px; }
+
+/* The three movement choices, side by side. */
+.animation-field { display: grid; gap: 6px; min-width: 0; }
 
 .node-destination { min-width: 0; }
+
+/* A branch reads as a sentence — "Vai para X se Y" — so the destination sits
+   in the lead line and its condition sits underneath, inside the same card. */
+.branch-card { min-width: 0; border: 1px solid #303943; border-radius: 7px; background: #1b2229; }
+.branch-card.is-default { border-color: #35414d; background: #1a2129; }
+.branch-question { display: flex; min-width: 0; align-items: center; gap: 8px; padding: 9px 11px; }
+.branch-question .branch-destination { min-width: 0; flex: 1; }
+.branch-lead { flex: 0 0 auto; color: #a5b0bb; font-size: 11px; font-weight: 640; }
+.branch-destination { display: flex; min-width: 0; align-items: center; gap: 7px; }
+.branch-destination .input { min-width: 0; }
+.branch-condition { padding: 0 11px 11px 11px; }
+.branch-note { margin: 0; padding: 0 11px 10px; color: var(--muted-soft); font-size: 11px; line-height: 1.5; }
+.branch-card > .row { margin: 0; padding: 0; border-top: 0; }
+
+/* An option of a choice node is its own card: the summary says what it is, the
+   body holds the parts a writer opens only when the option needs them. */
+.choice-card { min-width: 0; border: 1px solid #303943; border-radius: 7px; background: #1b2229; }
+.choice-card > summary { display: flex; min-width: 0; align-items: center; gap: 9px; min-height: 40px; padding: 8px 11px; cursor: pointer; list-style: none; }
+.choice-card > summary::-webkit-details-marker { display: none; }
+.choice-card > summary::before { flex: 0 0 auto; color: var(--accent); content: "+"; font-size: 14px; font-weight: 400; }
+.choice-card[open] > summary::before { content: "−"; }
+.choice-card[open] > summary { border-bottom: 1px solid var(--border-soft); }
+.choice-index { display: grid; width: 19px; height: 19px; flex: 0 0 auto; place-items: center; border: 1px solid #4c5967; border-radius: 6px; color: #d3dbe4; background: #1a2128; font: 600 10px var(--mono); }
+.choice-title { min-width: 0; flex: 1; color: #e2e7eb; font-size: 12px; }
+.choice-title.is-empty { color: var(--muted-soft); font-style: italic; }
+.choice-target { flex: 0 1 auto; overflow: hidden; color: var(--muted-soft); font: 11px var(--mono); text-overflow: ellipsis; white-space: nowrap; }
+.choice-card > summary .btn-danger { flex: 0 0 auto; margin: 0; }
+.choice-card-body { display: grid; gap: 11px; padding: 11px; }
+.choice-card-body > .block { margin: 0; }
 
 .node-advanced { padding: 0 12px; border: 1px solid var(--border-soft); border-radius: 8px; background: #171e24; }
 .node-advanced > summary { display: flex; min-height: 42px; align-items: center; gap: 8px; color: #bdc6ce; cursor: pointer; font-size: 11px; font-weight: 650; list-style: none; }
@@ -482,6 +623,12 @@ textarea.input { min-height: 100px; resize: vertical; line-height: 1.65; }
 
 .inline { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 170px), 1fr)); align-items: start; gap: 11px 12px; min-width: 0; }
 .inline > .field { min-width: 0; }
+.inline-effect { grid-template-columns: repeat(auto-fit, minmax(min(100%, 120px), 1fr)); gap: 10px 10px; }
+/* A "Relação" condition is five fields on purpose — Estado, Personagem, Relação,
+   Condição, Valor — so they sit in five columns and keep to one line even when
+   the panel is narrow. Unlike `.entry-fields` it never folds to fewer columns:
+   the five read as one thought, and breaking them across lines loses that. */
+.inline.inline-5 { grid-template-columns: repeat(5, minmax(0, 1fr)); column-gap: 8px; }
 .inline > .toolbar { display: flex; flex-wrap: wrap; align-items: flex-end; gap: 5px; padding-top: 18px; }
 .checkbox { display: inline-flex; min-height: 35px; align-items: center; gap: 7px; color: var(--muted); font-size: 11px; }
 .checkbox input { width: 14px; height: 14px; margin: 0; accent-color: var(--accent); }
@@ -503,6 +650,12 @@ details.block[open] > summary::before { content: "−"; }
 .row-body { display: flex; min-width: 0; flex: 1; flex-direction: column; gap: 9px; }
 .row > .btn-danger { flex: 0 0 auto; margin-top: 20px; }
 .repeater-actions { margin-top: 9px; }
+
+/* What a condition groups is shown by indentation: a rule one level in belongs
+   to the group above it, and the gutter marks where that group ends. */
+.condition-children { display: grid; gap: 9px; margin: 9px 0 0 8px; padding-left: 13px; border-left: 1px solid #2f3a45; }
+.condition-children > .row { margin-top: 0; padding-top: 0; border-top: 0; }
+.condition-empty { margin: 9px 0 0; }
 .legend { display: grid; gap: 5px; margin-top: 8px; padding: 9px 10px; border: 1px solid #303c47; border-radius: 6px; background: #171e24; }
 .legend code { color: #aac8f2; font-size: 11px; }
 .legend .small { color: var(--muted); font-size: 11px; line-height: 1.5; }
@@ -625,6 +778,7 @@ details.block[open] > summary::before { content: "−"; }
 .flow-node.is-type-choice::before { background: #a98ad4; }
 .flow-node.is-type-conditional::before { background: #d3a063; }
 .flow-node.is-type-character_enter::before { background: #6cab7d; }
+.flow-node.is-type-character_action::before { background: #6fa8b8; }
 .flow-node.is-type-character_exit::before { background: #bd7b7b; }
 .flow-node.is-type-end::before { top: 0; bottom: 0; background: #8794a2; }
 
@@ -692,7 +846,10 @@ details.block[open] > summary::before { content: "−"; }
 .preview-config > summary::before { color: var(--accent); content: "+"; font-size: 14px; }
 .preview-config[open] > summary::before { content: "−"; }
 .preview-config[open] .field { margin: 1px 0 8px; }
-.preview-config textarea.input { min-height: 108px; }
+.preview-config textarea.input { min-height: 96px; }
+/* What the panel understood, one line per entry, under the box it read. */
+.preview-config > .legend { margin: 0 0 9px; }
+.preview-config > .legend .small { overflow-wrap: anywhere; }
 .preview-config > .field-hint { display: block; margin: 0 0 9px; }
 .preview-actions { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 12px; }
 .preview-actions #btn-preview-start { margin-right: auto; }
@@ -705,6 +862,19 @@ details.block[open] > summary::before { content: "−"; }
 .chip-on { border-color: rgba(120, 169, 248, .37); color: #bed5f8; background: rgba(77, 137, 232, .12); }
 .preview-node { overflow-wrap: anywhere; padding: 12px; border: 1px solid #34424f; border-radius: 7px; color: #e3e8ec; background: #1c252d; font-size: 11px; line-height: 1.7; white-space: pre-wrap; }
 .preview-node .speaker { margin-bottom: 5px; color: #a9cbff; font-size: 11px; font-weight: 750; letter-spacing: .07em; text-transform: uppercase; }
+/* A thought is said inwardly, so it reads in a different voice — and a whole
+   line delivered as one drops the name plate's claim that it was spoken. */
+.preview-node .thought,
+.preview-node.is-thought { color: #d3bdf2; font-style: italic; }
+.preview-node.is-thought .speaker { color: #cbb6ef; }
+/* A player value spoken back inside a line reads as the value it holds, tinted
+   so it stands out from prose; before the player answers it reads as the bare
+   reference, muted, so the gap is visible rather than a silent hole. */
+.preview-node .preview-variable { color: #bcd7ff; font-weight: 650; }
+.preview-node .preview-variable.is-missing { color: var(--muted); font-weight: 400; font-style: italic; }
+/* The call-to-action answer: the box and its confirm button, one row. */
+.preview-prompt-text { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 9px; }
+.preview-prompt-text .input { min-width: 0; flex: 1 1 180px; }
 .preview-choices { display: flex; flex-direction: column; gap: 5px; margin-top: 7px; }
 .preview-choice { justify-content: flex-start; text-align: left; }
 .preview-choice:disabled { opacity: .55; }

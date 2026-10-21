@@ -44,8 +44,7 @@
             });
         }
 
-        return '# Diálogo: ' + (model.dialogue_id || '(sem id)') + '\n'
-            + '# Gerado pelo Dialogue Forger. Comentários do ficheiro original não são preservados.\n'
+        return '# Gerado pelo Dialogue Forger. Comentários do ficheiro original não são preservados.\n'
             + '\n'
             + blocks.join('\n') + '\n';
     }
@@ -71,8 +70,9 @@
 
     /** The plain object that gets dumped, with empty fields removed. */
     function toYamlObject(model) {
+        // The file name is the dialogue's identity, so the document starts at
+        // where the conversation starts and carries no id of its own.
         var output = {
-            dialogue_id: model.dialogue_id || '',
             start_node: model.start_node || '',
         };
 
@@ -118,6 +118,10 @@
                 output.speaker_id = node.speaker_id || '';
                 addIf(output, 'emotion', node.emotion);
                 addIf(output, 'animation_id', node.animation_id);
+                // Written only when the line is a thought: a spoken line is the
+                // default and says nothing, so a file that has no thoughts
+                // exports without the field at all.
+                addIf(output, 'delivery', node.delivery);
 
                 // Written only when on, and spelled out rather than left to
                 // `addIf`: that helper is about empty strings and lists, and a
@@ -134,8 +138,24 @@
             case 'character_enter':
                 output.character_id = node.character_id || '';
                 addIf(output, 'position', node.position);
+                addIf(output, 'pose', node.pose);
+                addIf(output, 'depth', node.depth);
+                addIf(output, 'depth_of', node.depth_of);
                 addIf(output, 'animation_id', node.animation_id);
                 addIf(output, 'emotion', node.emotion);
+                addIf(output, 'next', node.next);
+                break;
+
+            case 'character_action':
+                // Everything is optional: the node states what changed, and a
+                // field left out keeps whatever the character already has.
+                output.character_id = node.character_id || '';
+                addIf(output, 'position', node.position);
+                addIf(output, 'pose', node.pose);
+                addIf(output, 'depth', node.depth);
+                addIf(output, 'depth_of', node.depth_of);
+                addIf(output, 'emotion', node.emotion);
+                addIf(output, 'animation_id', node.animation_id);
                 addIf(output, 'next', node.next);
                 break;
 
@@ -152,6 +172,20 @@
                 }
 
                 output.choices = (node.choices || []).map(pruneChoice);
+                break;
+
+            case 'player_input':
+                // The question and the variable it fills are the node's identity,
+                // so they are written even when empty — the validator says so, and
+                // an export that dropped them would hide the problem.
+                output.question = node.question || '';
+                output.variable = node.variable || '';
+                addIf(output, 'input_type', node.input_type);
+                addIf(output, 'placeholder', node.placeholder);
+                if ((node.options || []).length > 0) {
+                    output.options = node.options.slice();
+                }
+                addIf(output, 'next', node.next);
                 break;
 
             case 'conditional':
@@ -261,6 +295,9 @@
                     }
 
                     return styled;
+
+                case 'thought':
+                    return { type: 'thought', value: segment.value || '' };
 
                 default:
                     // Unknown segment kinds are written back untouched so an

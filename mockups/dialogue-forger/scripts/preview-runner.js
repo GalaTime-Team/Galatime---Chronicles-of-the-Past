@@ -44,6 +44,10 @@
                 unlocked: ((source.dialogues || {}).unlocked || []).slice(),
             },
             paths: { unlocked: ((source.paths || {}).unlocked || []).slice() },
+            // What the player typed or picked at a call-to-action node. Local to
+            // the run: the game would carry it in its save, the forger only holds
+            // it long enough to play the conversation back.
+            input: Object.assign({}, source.input),
         };
     }
 
@@ -191,6 +195,44 @@
         return session;
     }
 
+    /**
+     * Stores the player's answer at a call-to-action node and moves on.
+     *
+     * Text is stored exactly as typed; a choice stores the option's own label.
+     * Either way it lands at `input.<variable>`, which is what a later
+     * `{input.<variable>}` speaks back and what a condition compares against.
+     */
+    function submitInput(session, value) {
+        if (session.completed || !session.nodeId) {
+            return session;
+        }
+
+        var node = session.model.nodes[session.nodeId];
+
+        if (!node || node.type !== 'player_input') {
+            return session;
+        }
+
+        if (!node.variable) {
+            session.log.push('A pergunta "' + session.nodeId + '" não diz em que variável guardar.');
+            return session;
+        }
+
+        session.state.input[node.variable] = value;
+        session.log.push(node.variable + ' = ' + JSON.stringify(value));
+
+        applyEffects(session, node.effects_after, 'nodes.' + session.nodeId + '.effects_after');
+
+        if (!node.next) {
+            session.log.push('O nó "' + session.nodeId + '" não tem destino.');
+            return session;
+        }
+
+        walk(session, node.next);
+
+        return session;
+    }
+
     /** Follows a clickable segment. */
     function click(session, interactionId) {
         if (session.completed || !session.nodeId) {
@@ -228,6 +270,7 @@
 
         session.choices = [];
         session.interactions = [];
+        session.prompt = null;
 
         while (currentId) {
             if (steps >= MAX_STEPS) {
@@ -263,6 +306,18 @@
                     session.choices = buildChoices(session, node);
                     return;
 
+                case 'player_input':
+                    session.nodeId = currentId;
+                    session.node = node;
+                    session.prompt = {
+                        variable: node.variable,
+                        input_type: node.input_type,
+                        question: node.question,
+                        placeholder: node.placeholder,
+                        options: (node.options || []).slice(),
+                    };
+                    return;
+
                 case 'end':
                     applyEffects(session, node.effects, 'nodes.' + currentId + '.effects');
                     session.completed = true;
@@ -273,6 +328,12 @@
 
                 case 'character_enter':
                     enterCast(session, node);
+                    applyEffects(session, node.effects_after, 'nodes.' + currentId + '.effects_after');
+                    currentId = node.next;
+                    break;
+
+                case 'character_action':
+                    changeCast(session, node);
                     applyEffects(session, node.effects_after, 'nodes.' + currentId + '.effects_after');
                     currentId = node.next;
                     break;
@@ -326,17 +387,14 @@
      * to state what changed — the same rule the backend's cast service follows.
      */
     function enterCast(session, node) {
-        var existing = null;
-
-        session.cast.forEach(function (member) {
-            if (member.character_id === node.character_id) {
-                existing = member;
-            }
-        });
+        var existing = castMember(session, node.character_id);
 
         var next = {
             character_id: node.character_id,
             position: node.position || (existing && existing.position) || 'center',
+            pose: node.pose || (existing && existing.pose) || '',
+            depth: node.depth || (existing && existing.depth) || '',
+            depth_of: node.depth_of || (existing && existing.depth_of) || '',
             emotion: node.emotion || (existing && existing.emotion) || '',
         };
 
@@ -348,7 +406,45 @@
             session.cast = session.cast.concat([next]);
         }
 
-        session.log.push('Entra: ' + next.character_id + ' @ ' + next.position);
+        session.log.push('Entra: ' + describeCast(next));
+    }
+
+    /**
+     * Moves, poses or re-layers someone already on stage.
+     *
+     * No entrance animation belongs here: the character never left, so only
+     * what the node actually states changes. Someone who is not on stage cannot
+     * be changed — the walk says so and carries on, because what the player
+     * sees next is the destination, not the staging they missed.
+     */
+    function changeCast(session, node) {
+        var existing = castMember(session, node.character_id);
+
+        if (!existing) {
+            session.log.push('Altera: ' + node.character_id + ' (não estava em cena)');
+            return;
+        }
+
+        if (node.position) {
+            existing.position = node.position;
+        }
+
+        if (node.pose) {
+            existing.pose = node.pose;
+        }
+
+        // A new depth redefines the pair: naming one without the other is what
+        // puts a character in front of, or behind, the whole cast at once.
+        if (node.depth) {
+            existing.depth = node.depth;
+            existing.depth_of = node.depth_of || '';
+        }
+
+        if (node.emotion) {
+            existing.emotion = node.emotion;
+        }
+
+        session.log.push('Altera: ' + describeCast(existing));
     }
 
     /** Takes a character out of the preview's cast, saying so if they were not there. */
@@ -362,6 +458,24 @@
         session.log.push(session.cast.length === before
             ? 'Sai: ' + node.character_id + ' (não estava em cena)'
             : 'Sai: ' + node.character_id);
+    }
+
+    /** The cast member with this id, or null when they are not on stage. */
+    function castMember(session, characterId) {
+        for (var i = 0; i < session.cast.length; i += 1) {
+            if (session.cast[i].character_id === characterId) {
+                return session.cast[i];
+            }
+        }
+
+        return null;
+    }
+
+    /** One line for the log, reading the same way the node list does. */
+    function describeCast(member) {
+        var staging = Forger.model.describeStaging(member);
+
+        return member.character_id + (staging ? ' · ' + staging : '');
     }
 
     /** The first branch whose condition passes; a branch without `if` always passes. */
@@ -538,6 +652,31 @@
         return Boolean(value);
     }
 
+    /**
+     * Resolves a variable reference for the preview's line rendering.
+     *
+     * "{input.<nome>}" reads the value a call-to-action node collected; "{name}"
+     * and "{elements}" read the same values they always did, as the input
+     * variables "name" and "elements". Anything else falls back to a normal
+     * state path, so a variable never resolves to something it does not mean.
+     */
+    function resolveVariable(path, state) {
+        var name = String(path || '');
+
+        if (name === 'name') return readInput(state, 'name');
+        if (name === 'elements') return readInput(state, 'elements');
+        if (name.indexOf('input.') === 0) return readInput(state, name.slice(6));
+
+        return readStatePath(state, path);
+    }
+
+    /** One entry of the preview's `input` slice, or null when it is absent. */
+    function readInput(state, key) {
+        return state.input && Object.prototype.hasOwnProperty.call(state.input, key)
+            ? state.input[key]
+            : null;
+    }
+
     /** Reads a dotted state path, or null when it is absent. */
     function readStatePath(state, path) {
         var segments = String(path || '').split('.');
@@ -570,6 +709,8 @@
                 return null;
             case 'paths':
                 return key === 'unlocked' ? state.paths.unlocked.slice() : null;
+            case 'input':
+                return key in state.input ? state.input[key] : null;
             default:
                 return null;
         }
@@ -617,7 +758,8 @@
                     break;
                 }
 
-                var delta = typeof effect.value === 'number' ? effect.value : 0;
+                var amount = typeof effect.value === 'number' ? effect.value : 0;
+                var delta = effect.direction === 'decrease' ? -amount : amount;
                 var affinities = state.relationship[effect.character_id] || {};
                 var previous = typeof affinities[kind] === 'number' ? affinities[kind] : 0;
                 var next = Math.min(Math.max(previous + delta, -100), 100);
@@ -632,19 +774,6 @@
                 break;
             }
 
-            case 'add': {
-                var parts = String(effect.target || '').split('.');
-
-                if (parts.length !== 2 || parts[0] !== 'stats') {
-                    session.log.push('efeito "add" só aceita "stats.<nome>"; ignorado: ' + effect.target);
-                    break;
-                }
-
-                var current = typeof state.stats[parts[1]] === 'number' ? state.stats[parts[1]] : 0;
-                state.stats[parts[1]] = current + effect.value;
-                session.log.push('stat ' + parts[1] + ': ' + current + ' → ' + state.stats[parts[1]]);
-                break;
-            }
 
             case 'add_item':
                 state.inventory[effect.item_id] = (state.inventory[effect.item_id] || 0) + (effect.quantity || 1);
@@ -665,31 +794,7 @@
                 break;
             }
 
-            case 'unlock_objective':
-                if (!state.objectives[effect.objective_id]) {
-                    state.objectives[effect.objective_id] = { status: 'locked' };
-                    session.log.push('objetivo desbloqueado: ' + effect.objective_id);
-                }
-                break;
 
-            case 'complete_objective':
-                state.objectives[effect.objective_id] = { status: 'completed', progress: 1 };
-                session.log.push('objetivo concluído: ' + effect.objective_id);
-                break;
-
-            case 'unlock_dialogue':
-                if (state.dialogues.unlocked.indexOf(effect.dialogue_id) === -1) {
-                    state.dialogues.unlocked.push(effect.dialogue_id);
-                    session.log.push('diálogo desbloqueado: ' + effect.dialogue_id);
-                }
-                break;
-
-            case 'unlock_path':
-                if (state.paths.unlocked.indexOf(effect.path_id) === -1) {
-                    state.paths.unlocked.push(effect.path_id);
-                    session.log.push('caminho desbloqueado: ' + effect.path_id);
-                }
-                break;
 
             case 'play_music':
                 session.log.push('música: ' + effect.music_id);
@@ -706,8 +811,10 @@
         start: start,
         advance: advance,
         choose: choose,
+        submitInput: submitInput,
         click: click,
         evaluateCondition: evaluateCondition,
         readStatePath: readStatePath,
+        resolveVariable: resolveVariable,
     };
 })(window.DialogueForger);

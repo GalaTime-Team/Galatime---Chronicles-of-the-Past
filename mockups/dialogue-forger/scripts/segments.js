@@ -10,6 +10,7 @@
  *   {pause:400}                       a hold, in milliseconds
  *   {click id|label|next_node}        clickable text, optional to click
  *   {click! id|label|next_node}       clickable text, required to click
+ *   {thought|text}                    a thought: said inwardly, not out loud
  *   {style bold color=#D88CFF|text}   styled text
  *   {style wave=normal|text}          text that ripples, letter by letter
  *   {style jitter=normal|text}        text that trembles, as if about to cry
@@ -161,6 +162,47 @@
             };
         }
 
+        if (/^thought\s*(\||$)/.test(body)) {
+            var pipe = body.indexOf('|');
+            var thought = pipe === -1 ? '' : body.slice(pipe + 1);
+
+            if (thought.trim() === '') {
+                return { error: 'O pensamento precisa de texto: "{thought|algo que se pensa}".' };
+            }
+
+            return { segment: { type: 'thought', value: thought } };
+        }
+
+        if (/^whisper\s*(\||$)/.test(body)) {
+            var wPipe = body.indexOf('|');
+            var whisper = wPipe === -1 ? '' : body.slice(wPipe + 1);
+
+            if (whisper.trim() === '') {
+                return { error: 'O sussurro precisa de texto: "{whisper|algo sussurrado}".' };
+            }
+
+            return { segment: { type: 'whisper', value: whisper } };
+        }
+
+        if (/^shout\s*(\||$)/.test(body)) {
+            var sPipe = body.indexOf('|');
+            var shout = sPipe === -1 ? '' : body.slice(sPipe + 1);
+
+            if (shout.trim() === '') {
+                return { error: 'O berro precisa de texto: "{shout|algo gritado}".' };
+            }
+
+            return { segment: { type: 'shout', value: shout } };
+        }
+
+        // A variable reference is spoken back on screen with whatever it holds.
+        // The canonical form is `{input.<nome>}` — a value a call-to-action node
+        // asked the player for — but `{name}` and `{elements}` read the same way,
+        // as the `input.name` / `input.elements` they have always meant.
+        if (body === 'name' || body === 'elements' || /^input\.[A-Za-z0-9_]+$/.test(body)) {
+            return { segment: { type: 'variable', value: body } };
+        }
+
         if (/^style\s/.test(body)) {
             var pipe = body.indexOf('|');
 
@@ -255,6 +297,15 @@
 
             case 'styled_text':
                 return '{style ' + formatStyle(segment.style) + '|' + escapeBraces(segment.value || '') + '}';
+
+            case 'thought':
+                return '{thought|' + escapeBraces(segment.value || '') + '}';
+            case 'whisper':
+                return '{whisper|' + escapeBraces(segment.value || '') + '}';
+            case 'shout':
+                return '{shout|' + escapeBraces(segment.value || '') + '}';
+            case 'variable':
+                return '{' + (segment.value || '') + '}';
 
             default:
                 return '';

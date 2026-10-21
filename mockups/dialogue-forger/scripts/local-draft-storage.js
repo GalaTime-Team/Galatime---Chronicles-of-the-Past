@@ -3,13 +3,16 @@
  *
  * Keeps the work-in-progress in `localStorage` so closing the tab does not lose
  * a conversation. Versioned key: bump the suffix if the model shape ever
- * changes in a way an old draft could not survive.
+ * changes in a way an old draft could not survive. The current suffix is `v2`,
+ * from the version that dropped the document's own `dialogue_id` and added the
+ * staging fields — an old draft's id would have been written back out, which is
+ * exactly what that version stopped doing.
  */
 (function (Forger) {
     'use strict';
 
-    var KEY = 'galatime.forger.draft.v1';
-    var PREVIEW_KEY = 'galatime.forger.preview-state.v1';
+    var KEY = 'galatime.forger.draft.v2';
+    var PREVIEW_KEY = 'galatime.forger.preview-state.v2';
 
     /** Stores the model. Returns false when storage is unavailable or full. */
     function save(model) {

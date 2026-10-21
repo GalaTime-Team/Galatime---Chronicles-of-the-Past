@@ -1,107 +1,287 @@
 /**
  * Condition editor.
  *
- * Conditions are a tree, so the editor is a tree too: a group has a mode
- * (`all` / `any`), an optional negation, and children that are either single
- * comparisons or nested groups. That covers everything the engine can evaluate
- * without exposing the raw structure.
+ * Conditions are split into structured dropdowns so the writer picks each part
+ * instead of typing a raw path. Every leaf is composed of:
  *
- * Every field keeps a mutable working copy and publishes a fresh object on each
- * change. The editor is not re-rendered while the user types — re-rendering
- * would destroy the focused input — so reading from a captured value instead of
- * the working copy would silently undo the previous field's edit. For the same
- * reason the operator dropdown is repopulated in place rather than rebuilt.
+ *   root → key → (subKey for relationship) → operator → value
+ *
+ * For example:
+ *   dialogue.seen = fala_47        → dialogue + seen + = + fala_47
+ *   dialogue.not_seen = fala_47    → dialogue + seen + ≠ + fala_47
+ *   relationship.pacci.friendship > 10
+ *     → relationship + pacci + friendship + > + 10
+ *   inventory.herb has             → inventory + herb + = true
+ *   inventory.herb > 1             → inventory + herb + > + 1
+ *
+ * The available options adapt to what was chosen, keeping the writer inside
+ * valid combinations. An inventory item defaults to a "has" (= true) check
+ * and switches to a count comparison when the operator changes.
  */
 (function (Forger) {
     'use strict';
 
     var ui = Forger.ui;
 
-    var OPERATORS = [
-        { value: 'equals', label: '=' },
-        { value: 'not_equals', label: '≠' },
-        { value: 'greater_than', label: '>' },
-        { value: 'greater_or_equal', label: '≥' },
-        { value: 'less_than', label: '<' },
-        { value: 'less_or_equal', label: '≤' },
-    ];
+    // The operator and root tables are vocabularies, so they live in `lists.js`
+    // with the rest of them; only the rules that read them stay here.
+    var OPERATORS = Forger.lists.CONDITION_OPERATORS;
+    var MODES = Forger.lists.CONDITION_MODES;
+    var ROOTS = Forger.lists.CONDITION_ROOTS;
+    var ROOT_KEYS = Forger.lists.CONDITION_ROOT_KEYS;
+    var DIALOGUE_OPERATORS = Forger.lists.CONDITION_OPERATORS_DIALOGUE;
+    var INVENTORY_HAS_OPERATORS = Forger.lists.CONDITION_OPERATORS_INVENTORY_HAS;
+    var INVENTORY_COUNT_OPERATORS = Forger.lists.CONDITION_OPERATORS_INVENTORY_COUNT;
+    var RELATIONSHIP_OPERATORS = Forger.lists.CONDITION_OPERATORS_RELATIONSHIP;
 
-    var MODES = [
-        { value: 'all', label: 'todas (E)' },
-        { value: 'any', label: 'alguma (OU)' },
-    ];
+    var MODE_GROUPS = { all: 'all', notAll: 'all', any: 'any', notAny: 'any' };
+    var MODE_NEGATED = { notAll: true, notAny: true };
 
-    /** Só estas comparações fazem sentido contra um literal que não é número. */
-    var EQUALITY_ONLY = ['equals', 'not_equals'];
+    var EXAMPLES = 'ex.: dialogue.seen = fala_47 · relationship.pacci.friendship > 10 · inventory.herb = true (tem)';
 
-    /**
-     * Os operadores que dizem algo contra o valor escolhido.
-     *
-     * Um `>` contra `true` é ruído: o motor compara números e um literal
-     * booleano nunca chega a essa comparação. Esconder as opções que não têm
-     * efeito deixa a linha mais curta e o operador legível sem acrescentar
-     * nenhum campo — a lista encolhe sozinha conforme o valor muda.
-     *
-     * Só o que se pode escolher a partir daqui. Um operador que o ficheiro já
-     * traz continua listado, marcado como desconhecido, para a comparação não
-     * desaparecer em silêncio enquanto se escreve o valor.
-     */
-    function operatorsFor(right) {
-        if (typeof right === 'boolean' || typeof right === 'string') {
-            return OPERATORS.filter(function (operator) {
-                return EQUALITY_ONLY.indexOf(operator.value) !== -1;
-            });
-        }
+    var ROOT_ALIASES = {
+        dialogues: 'dialogue',
+    };
 
+    function normalizeRoot(root) {
+        return ROOT_ALIASES[root] || root;
+    }
+
+    function operatorsFor(root) {
+        if (root === 'dialogue') return DIALOGUE_OPERATORS;
+        if (root === 'inventory') return INVENTORY_HAS_OPERATORS.concat(INVENTORY_COUNT_OPERATORS);
+        if (root === 'relationship') return RELATIONSHIP_OPERATORS;
+        if (root === 'skill' || root === 'element' || root === 'elements') return INVENTORY_HAS_OPERATORS;
         return OPERATORS;
     }
 
-    /**
- * As duas formas em que um ramo se escreve.
-     *
-     * Aparece só num grupo ainda vazio. Ter um item e ter uma afinidade são as
-     * únicas coisas que um ramo pergunta normalmente, e a grafia de cada uma é a
-     * parte que dá para errar — mas repetida em cada ramo de cada nó deixa de
-     * ajudar e passa a ser ruído.
-     */
-    var EXAMPLES = 'ex.: inventory.<item> = true (tem) · = false (não tem)'
-        + ' · relationship.<personagem>.<tipo> > 10';
+    function defaultOperatorFor(root) {
+        if (root === 'dialogue') return 'equals';
+        if (root === 'inventory') return 'equals';
+        if (root === 'relationship') return 'greater_than';
+        if (root === 'skill' || root === 'element' || root === 'elements') return 'equals';
+        return 'equals';
+    }
 
-    /** Renders a condition tree. A null value renders an empty group. */
+    function isBooleanContext(root) {
+        return root === 'dialogue' || root === 'flags'
+            || root === 'skill' || root === 'element' || root === 'elements';
+    }
+
+    function buildPath(root, key, subKey) {
+        if (root === 'relationship') return 'relationship.' + key + '.' + subKey;
+        return root + '.' + key;
+    }
+
+    function parsePath(left) {
+        if (!left || typeof left !== 'string') return null;
+        var parts = left.split('.');
+        if (parts.length < 2) return null;
+        var rawRoot = parts[0];
+        var root = normalizeRoot(rawRoot);
+        var key = parts[1];
+        var subKey = parts.length > 2 ? parts[2] : null;
+        return { root: root, key: key, subKey: subKey };
+    }
+
     function render(value, onChange, suggestedPaths) {
         return renderNode(value, onChange, suggestedPaths || [], 0);
     }
 
-    /** Renders whichever kind of node this is. */
     function renderNode(node, onChange, paths, depth) {
         return isLeaf(node)
             ? renderLeaf(node, onChange, paths)
             : renderGroup(node, onChange, paths, depth);
     }
 
-    /** A comparison, as opposed to a group. */
     function isLeaf(node) {
         return !!node && typeof node.condition === 'string';
     }
 
-    /** A single `path op value` comparison. */
+    function readGroup(initial) {
+        var source = initial || {};
+        if (!source) return { mode: 'all', children: [] };
+
+        var negated = !!source.not;
+        var inner = negated ? (source.not || {}) : source;
+
+        if (isLeaf(inner)) {
+            return { mode: negated ? 'notAll' : 'all', children: [inner] };
+        }
+
+        var group = Array.isArray(inner.any) ? 'any' : 'all';
+        var mode = negated ? (group === 'any' ? 'notAny' : 'notAll') : group;
+
+        return {
+            mode: mode,
+            children: (Array.isArray(inner[group]) ? inner[group] : []).slice(),
+        };
+    }
+
     function renderLeaf(initial, onChange, paths) {
+        var parsed = parsePath(initial.left);
+        var root = parsed ? parsed.root : 'inventory';
+        var key = parsed ? parsed.key : '';
+        var subKey = parsed ? parsed.subKey : '';
+        var right = initial.right !== undefined ? initial.right : true;
+
         var current = {
-            condition: initial.condition,
+            condition: initial.condition || defaultOperatorFor(root),
             left: initial.left || '',
-            right: initial.right,
+            right: right,
         };
 
-        var operatorSelect = ui.select({
-            value: current.condition,
-            options: operatorsFor(current.right),
-            onChange: function (value) {
-                current.condition = value;
-                publish();
-            },
-        });
+        var container = ui.el('div', { class: 'condition-leaf' });
 
-        var hint = ui.el('span', { class: 'field-hint', text: literalHint(current.right) });
+        // A key picked from a closed menu (a character, or the dialogue's
+        // "Visto") changes the shape of what follows it, so it resets the
+        // operator and rebuilds the leaf.
+        function pickKey(value) {
+            key = value;
+            if (root === 'relationship') {
+                subKey = Forger.model.DEFAULT_RELATIONSHIP_KIND;
+            }
+            current.condition = defaultOperatorFor(root);
+            current.left = buildPath(root, key, subKey);
+            rebuild();
+            publish();
+        }
+
+        // A key typed into a free text box (an item, a flag) must not rebuild:
+        // the box keeps the focus, and rebuilding after every keystroke would
+        // make typing unusable. The operator already picked is left alone.
+        function typeKey(value) {
+            key = value;
+            current.left = buildPath(root, key, subKey);
+            publish();
+        }
+
+        // The key control follows the root: a character or a fixed entry is a
+        // closed menu; anything else is a name the writer types - an item being
+        // the one free-form key with a vocabulary of ids to suggest.
+        function keyControl() {
+            if (root === 'relationship') {
+                return ui.select({
+                    value: key,
+                    options: Forger.catalogue.characters().map(function (c) {
+                        return { value: c, label: c };
+                    }),
+                    onChange: pickKey,
+                });
+            }
+
+            var predefined = ROOT_KEYS[root];
+            if (predefined) {
+                return ui.select({ value: key, options: predefined, onChange: pickKey });
+            }
+
+            if (root === 'inventory') {
+                return ui.listInput('items', {
+                    value: key,
+                    placeholder: 'ex.: item_id',
+                    extra: Forger.catalogue.items(),
+                    onInput: typeKey,
+                });
+            }
+
+            return ui.text({ value: key, placeholder: 'ex.: nome', onInput: typeKey });
+        }
+
+        function keyLabel(theRoot) {
+            if (theRoot === 'relationship') return 'Personagem';
+            if (theRoot === 'inventory') return 'Item';
+            if (theRoot === 'input') return 'Variável';
+            return 'Tipo';
+        }
+
+        // A relationship reads as five fields on one line and keeps them there.
+        function inlineClass(theRoot) {
+            return theRoot === 'relationship' ? 'inline-5' : undefined;
+        }
+
+        // The amount a comparison is measured against. Whether the player has
+        // an item already answers a yes/no check on the item, so only a count
+        // comparison needs a box to type into.
+        function valueField(theRoot) {
+            var isInventory = theRoot === 'inventory';
+
+            return ui.field(isInventory ? 'Quantidade' : 'Valor', ui.text({
+                value: Forger.model.formatLiteral(current.right),
+                placeholder: isBooleanContext(theRoot) ? 'true' : '1',
+                onInput: function (raw) {
+                    current.right = Forger.model.parseLiteral(raw);
+                    publish();
+                },
+            }), literalHint(theRoot));
+        }
+
+        function rebuild() {
+            while (container.firstChild) {
+                container.removeChild(container.firstChild);
+            }
+
+            var rootSelect = ui.select({
+                value: root,
+                options: ROOTS,
+                onChange: function (value) {
+                    root = value;
+                    key = '';
+                    subKey = '';
+                    current.condition = defaultOperatorFor(root);
+                    current.left = '';
+                    current.right = true;
+                    rebuild();
+                    publish();
+                },
+            });
+
+            var fields = [
+                ui.field('Estado', rootSelect),
+                ui.field(keyLabel(root), keyControl()),
+            ];
+
+            if (root === 'relationship') {
+                fields.push(ui.field('Relação', ui.select({
+                    value: subKey,
+                    options: Forger.lists.RELATIONSHIP_KINDS.map(function (k) { return { value: k, label: k }; }),
+                    onChange: function (value) {
+                        subKey = value;
+                        current.left = buildPath(root, key, subKey);
+                        publish();
+                    },
+                })));
+            }
+
+            if (root !== 'dialogue') {
+                fields.push(ui.field('Condição', ui.select({
+                    value: current.condition,
+                    options: operatorsFor(root),
+                    onChange: function (value) {
+                        current.condition = value;
+                        if (root === 'inventory') {
+                            if (value === 'equals') current.right = true;
+                            else if (value === 'not_equals') current.right = false;
+                            else if (typeof current.right !== 'number') current.right = 1;
+                            // Rebuild so a count shows its quantity box and the
+                            // "tem"/"nao tem" cases drop the box they never used.
+                            rebuild();
+                        }
+                        publish();
+                    },
+                })));
+            } else {
+                current.condition = 'equals';
+            }
+
+            // An item's yes/no checks ("tem", "nao tem") are answered by the
+            // item itself, so they carry no quantity box; a count comparison does.
+            if (!(root === 'inventory'
+                && (current.condition === 'equals' || current.condition === 'not_equals'))) {
+                fields.push(valueField(root));
+            }
+
+            ui.append(container, ui.inline(fields, inlineClass(root)));
+        }
 
         function publish() {
             onChange({
@@ -111,74 +291,23 @@
             });
         }
 
-        return ui.inline([
-            ui.field('Caminho', ui.listInput('paths', {
-                value: current.left,
-                placeholder: 'inventory.caixa',
-                extra: paths,
-                onInput: function (value) {
-                    current.left = value;
-                    publish();
-                },
-            }), 'ex.: flags.escolheu_a_mão · relationship.pacci.friendship', { required: true }),
-            ui.field('Operador', operatorSelect),
-            // One text field for every literal type: a number, a word and `true`
-            // all have to be writable here, so the control stays and the
-            // suggestions do the work instead. `true`/`false` are offered because
-            // they are the two words that answer "does the player have this?".
-            ui.field('Valor', ui.listInput('literals', {
-                value: Forger.model.formatLiteral(current.right),
-                placeholder: 'true',
-                onInput: function (value) {
-                    current.right = Forger.model.parseLiteral(value);
-
-                    // The offered operators and the hint follow the literal's
-                    // shape. Repopulated in place rather than by re-rendering the
-                    // row, because the writer's cursor is in this field and
-                    // replacing it would throw them out of what they were typing.
-                    //
-                    // The operator already in the file is never overwritten: if it
-                    // is not one of the meaningful ones it stays listed as
-                    // unknown, and the validator says why it cannot pass. Quietly
-                    // rewriting a comparison the writer did choose would hide a
-                    // mistake instead of surfacing it.
-                    ui.fillSelect(operatorSelect, operatorsFor(current.right), current.condition);
-                    hint.textContent = literalHint(current.right);
-
-                    publish();
-                },
-            }), hint),
-        ]);
-    }
-
-    /** Says what the current literal can be, in place of a type error later. */
-    function literalHint(right) {
-        if (typeof right === 'boolean') {
-            return 'sim = tem · não = não tem';
+        function literalHint(root) {
+            if (root === 'dialogue') return 'ex.: fala_47';
+            if (root === 'inventory') return 'quantidade (ex.: 3)';
+            if (root === 'input') return 'o valor guardado (ex.: Fogo, 3, true)';
+            if (root === 'skill' || root === 'element' || root === 'elements')
+                return 'true = tem · false = não tem';
+            if (root === 'relationship') return 'número (ex.: 10)';
+            return 'true / false / número';
         }
 
-        if (typeof right === 'string') {
-            return 'texto exato';
-        }
+        rebuild();
 
-        return typeof right === 'number' ? 'número' : 'vazio = ausente';
+        return container;
     }
 
-    /**
-     * A group of conditions, possibly negated.
-     *
-     * The group owns a container it can repaint. Adding or removing a child
-     * changes how many rows exist, and publishing alone left the old rows on
-     * screen while the model had already moved on — the writer had to reload
-     * the page to see the condition go. Structural changes therefore repaint
-     * this group from the tree it just published; typing does not repaint,
-     * because replacing the input under the cursor would steal the focus.
-     */
     function renderGroup(initial, onChange, paths, depth) {
         var container = ui.el('div', {});
-
-        // What this group currently holds. Repainting reads from here, so every
-        // publish keeps it in step with what the caller stored.
         var latest = initial || null;
 
         function publish(built) {
@@ -190,33 +319,26 @@
             while (container.firstChild) {
                 container.removeChild(container.firstChild);
             }
-
             ui.append(container, paintGroup(latest, publish, paths, depth, rebuild));
         }
 
         rebuild();
-
         return container;
     }
 
-    /** The group's controls, children and adders. Painted by `renderGroup`. */
     function paintGroup(initial, onChange, paths, depth, rebuild) {
         var source = initial || {};
-        var negate = !!source.not;
-        var inner = negate ? (source.not || {}) : source;
-        var mode = Array.isArray(inner.any) ? 'any' : 'all';
+        var read = readGroup(source);
 
         var current = {
-            negate: negate,
-            mode: mode,
-            children: (Array.isArray(inner[mode]) ? inner[mode] : []).slice(),
+            mode: read.mode,
+            children: read.children,
         };
 
         function publish() {
-            var built = {};
-            built[current.mode] = current.children;
-
-            onChange(current.negate ? { not: built } : built);
+            var group = {};
+            group[MODE_GROUPS[current.mode]] = current.children;
+            onChange(MODE_NEGATED[current.mode] ? { not: group } : group);
         }
 
         function replaceChild(index, next) {
@@ -225,9 +347,6 @@
             publish();
         }
 
-        // A removal or an addition changes the number of rows, so the group is
-        // repainted after the publish: the fresh rows come from the tree the
-        // caller now holds, empty-state hint included when the last one goes.
         function removeChild(index) {
             current.children = current.children.slice();
             current.children.splice(index, 1);
@@ -253,37 +372,20 @@
         });
 
         if (rows.length === 0) {
-            // Doubles as the empty-state note: a group with nothing in it always
-            // passes, and this is where somebody writing their first condition
-            // learns the two shapes a branch is written in.
             rows.push(ui.hint('Sem condições — o grupo passa sempre. ' + EXAMPLES));
         }
 
-        var controls = [
-            ui.field('Grupo', ui.select({
+        var controls = current.children.length > 0
+            ? [ui.field('Grupo', ui.select({
                 value: current.mode,
                 options: MODES,
                 onChange: function (value) {
                     current.mode = value;
                     publish();
                 },
-            })),
-            ui.checkbox({
-                checked: current.negate,
-                label: 'negar',
-                onChange: function (value) {
-                    current.negate = value;
-                    publish();
-                },
-            }),
-        ];
+            }))]
+            : [];
 
-        // The path is left for the writer to choose. Pre-filling the first
-        // suggestion used to drop an unrelated state path into the file — and
-        // because it was a valid path, nothing reported it — so the condition
-        // silently tested something nobody asked about. An empty path is
-        // reported instead, which is the truth about an unfinished condition.
-        // A fresh object per click, so two new conditions cannot share one.
         function newLeaf() {
             return { condition: 'equals', left: '', right: true };
         }
@@ -305,15 +407,11 @@
             }),
         ]);
 
-        // Beyond one level of nesting the indentation stops helping, so the
-        // deeper levels are labelled rather than pushed further right.
-        var body = depth >= 2
-            ? [ui.hint('Nível ' + (depth + 1) + ' de aninhamento.'), ui.el('div', {}, rows)]
-            : ui.el('div', {}, rows);
+        var body = ui.el('div', { class: 'condition-children' }, rows);
 
         return ui.el('div', {}, [
             ui.inline(controls),
-            body,
+            depth >= 2 ? [ui.hint('Nível ' + (depth + 1) + ' de aninhamento.'), body] : [body],
             adders,
         ]);
     }

@@ -22,20 +22,15 @@
 
     var STATE_ROOTS = [
         'flags', 'inventory', 'relationship', 'objectives',
-        'stats', 'time', 'dialogues', 'paths',
+        'stats', 'time', 'dialogue', 'paths', 'input',
     ];
 
     /** Effect type → the string fields it must declare. */
     var EFFECT_STRING_FIELDS = {
         set_flag: ['flag'],
         add_relationship: ['character_id', 'relationship_kind'],
-        add: ['target'],
         add_item: ['item_id'],
         remove_item: ['item_id'],
-        unlock_objective: ['objective_id'],
-        complete_objective: ['objective_id'],
-        unlock_dialogue: ['dialogue_id'],
-        unlock_path: ['path_id'],
         play_music: ['music_id'],
     };
 
@@ -43,25 +38,18 @@
     var EFFECT_NUMBER_FIELDS = {
         set_flag: [],
         add_relationship: ['value'],
-        add: ['value'],
         add_item: [],
         remove_item: [],
-        unlock_objective: [],
-        complete_objective: [],
-        unlock_dialogue: [],
-        unlock_path: [],
         play_music: [],
     };
 
     /** The known segment kinds. */
-    var SEGMENT_TYPES = ['text', 'styled_text', 'pause', 'interactive_text'];
+    var SEGMENT_TYPES = ['text',"whisper", "shout", 'thought', 'styled_text', 'pause', 'interactive_text', 'variable'];
 
     /**
      * Validates a model.
      *
      * `options` may carry:
-     *   - `fileName`: the file the model was imported from, used to flag a
-     *     `dialogue_id` that does not match it;
      *   - `parseErrors`: per-node segment problems from the text editor, which
      *     cannot be recovered from the model because a malformed directive never
      *     becomes a segment.
@@ -79,27 +67,20 @@
             warnings.push({ severity: 'warning', code: code, message: message, path: path });
         }
 
-        if (!model.dialogue_id) {
-            error('missing_dialogue_id', 'Falta o "dialogue_id".', 'dialogue_id');
-        } else if (settings.fileName && settings.fileName !== model.dialogue_id) {
-            warn(
-                'dialogue_id_mismatch',
-                'O ficheiro chama-se "' + settings.fileName + '" mas o diálogo declara "' + model.dialogue_id + '". '
-                + 'O nome do ficheiro é o identificador que os outros diálogos usam.',
-                'dialogue_id',
-            );
-        }
-
         var nodeIds = Object.keys(model.nodes || {});
 
         if (nodeIds.length === 0) {
-            error('missing_nodes', 'O diálogo não tem nós.', 'nodes');
+            error('missing_nodes', 'O diálogo não tem nós: adiciona pelo menos um em «Estrutura».', 'nodes');
         }
 
+        // The start node is the first step of the list, so the editor keeps it
+        // in step itself. These two fire only for a model that arrived without
+        // that pass — a draft from an older version, say — and say where the
+        // beginning now comes from.
         if (!model.start_node) {
-            error('missing_start_node', 'Falta o "start_node".', 'start_node');
+            error('missing_start_node', 'Falta o nó inicial: o início é o primeiro nó da lista em «Estrutura».', 'start_node');
         } else if (!model.nodes[model.start_node]) {
-            error('unknown_start_node', 'O nó inicial "' + model.start_node + '" não existe.', 'start_node');
+            error('unknown_start_node', 'O nó inicial "' + model.start_node + '" não existe: o início é o primeiro nó da lista em «Estrutura».', 'start_node');
         }
 
         validateCondition(model.entry_conditions, 'entry_conditions', error, warn);
@@ -125,6 +106,8 @@
         nodeIds.forEach(function (nodeId) {
             validateNode(model, nodeId, error, warn);
         });
+
+        validateInputReferences(model, warn);
 
         if (model.start_node && model.nodes[model.start_node]) {
             validateReachability(model, nodeIds, warn);
@@ -157,20 +140,21 @@
             warn(
                 'removed_node_type',
                 'O nó "' + nodeId + '" é do tipo "' + node.type + '", que o diálogo já não trata. '
-                + 'É ignorado pelo jogo; a encenação passou a ser do sistema de cenas.',
+                + 'É ignorado pelo jogo; a encenação passou a ser do sistema de cenas. '
+                + 'Converte-o num tipo atual ou elimina-o.',
                 path + '.type',
             );
             return;
         }
 
         if (!node || Forger.model.NODE_TYPES.indexOf(node.type) === -1) {
-            error('unknown_node_type', 'O nó "' + nodeId + '" tem um tipo não suportado.', path + '.type');
+            error('unknown_node_type', 'O nó "' + nodeId + '" tem um tipo não suportado: escolhe um dos tipos da lista.', path + '.type');
             return;
         }
 
         if (Forger.model.supportsNext(node.type)) {
             if (node.next && !model.nodes[node.next]) {
-                error('unknown_next_node', 'O nó "' + nodeId + '" aponta para "' + node.next + '", que não existe.', path + '.next');
+                error('unknown_next_node', 'O nó "' + nodeId + '" aponta para "' + node.next + '", que não existe: o destino tem de ser o id de um nó existente.', path + '.next');
             }
         }
 
@@ -183,12 +167,23 @@
                 validateChoices(model, nodeId, node, error, warn);
                 break;
 
+            case 'player_input':
+                validatePlayerInput(model, nodeId, node, error, warn);
+                break;
+
             case 'character_enter':
+            case 'character_action':
             case 'character_exit':
                 if (!node.character_id) {
-                    error('missing_character_id', 'O nó "' + nodeId + '" não define "character_id".', path + '.character_id');
+                    error('missing_character_id', 'O nó "' + nodeId + '" não diz que personagem é: escolhe um em «Personagem».', path + '.character_id');
                 } else {
                     warnIfUnknownCharacter(node.character_id, path + '.character_id', warn);
+                }
+
+                // A depth is only ever read next to the character it names, so
+                // an unknown reference points at a scene that will not stage.
+                if (node.depth_of) {
+                    warnIfUnknownCharacter(node.depth_of, path + '.depth_of', warn);
                 }
                 break;
 
@@ -209,7 +204,7 @@
         var path = 'nodes.' + nodeId;
 
         if (!node.speaker_id) {
-            error('missing_speaker_id', 'A fala "' + nodeId + '" não define "speaker_id".', path + '.speaker_id');
+            error('missing_speaker_id', 'A fala "' + nodeId + '" não diz quem fala: escolhe um personagem em «Falante».', path + '.speaker_id');
         } else {
             warnIfUnknownCharacter(node.speaker_id, path + '.speaker_id', warn);
         }
@@ -220,13 +215,13 @@
         if (node.auto_advance !== undefined && typeof node.auto_advance !== 'boolean') {
             error(
                 'invalid_auto_advance',
-                'A fala "' + nodeId + '" tem "auto_advance" que não é verdadeiro/falso.',
+                'A fala "' + nodeId + '" tem "auto_advance" que não é verdadeiro/falso: escreve true ou false.',
                 path + '.auto_advance',
             );
         }
 
         if (!Array.isArray(node.text) || node.text.length === 0) {
-            error('missing_text', 'A fala "' + nodeId + '" não tem texto.', path + '.text');
+            error('missing_text', 'A fala "' + nodeId + '" está sem texto: escreve o que é dito em «Texto da fala».', path + '.text');
             return;
         }
 
@@ -246,13 +241,30 @@
             var segmentPath = pathPrefix + '[' + index + ']';
 
             if (!segment || SEGMENT_TYPES.indexOf(segment.type) === -1) {
-                error('invalid_segment', 'O segmento ' + index + ' de "' + nodeId + '" tem um tipo não suportado.', segmentPath);
+                error('invalid_segment', 'O segmento ' + index + ' de "' + nodeId + '" tem um tipo não suportado: esperado text, thought, pause, styled_text ou interactive_text.', segmentPath);
                 return;
             }
 
             if (segment.type === 'pause') {
                 if (typeof segment.duration_ms !== 'number' || segment.duration_ms < 0) {
-                    error('invalid_segment', 'A pausa ' + index + ' de "' + nodeId + '" precisa de "duration_ms".', segmentPath);
+                    error('invalid_segment', 'A pausa ' + index + ' de "' + nodeId + '" precisa de "duration_ms" — um número de milissegundos, como {pause:400}.', segmentPath);
+                }
+                return;
+            }
+
+            if (segment.type === 'thought') {
+                if (typeof segment.value !== 'string' || segment.value === '') {
+                    error('missing_thought_text', 'O pensamento ' + index + ' de "' + nodeId + '" está sem texto: escreve {thought|o que se pensa}.', segmentPath);
+                }
+                return;
+            }
+
+            if (segment.type === 'variable') {
+                // A variable reference has to name the input it speaks back, as
+                // {input.nome} (or {name} / {elements}, their old spelling). What
+                // it points at is checked across the whole document, not here.
+                if (typeof segment.value !== 'string' || !segment.value) {
+                    error('missing_variable_name', 'A variável ' + index + ' de "' + nodeId + '" está sem nome: escreve {input.nome}.', segmentPath);
                 }
                 return;
             }
@@ -262,9 +274,9 @@
             }
 
             if (!segment.interaction_id) {
-                error('missing_interaction_id', 'O segmento clicável ' + index + ' de "' + nodeId + '" não tem "interaction_id".', segmentPath);
+                error('missing_interaction_id', 'O texto clicável ' + index + ' de "' + nodeId + '" não tem "interaction_id": escreve {click id|texto|destino}.', segmentPath);
             } else if (seenInteractions.indexOf(segment.interaction_id) !== -1) {
-                error('duplicate_interaction_id', 'O id de interação "' + segment.interaction_id + '" repete-se em "' + nodeId + '".', segmentPath);
+                error('duplicate_interaction_id', 'O id de interação "' + segment.interaction_id + '" repete-se em "' + nodeId + '": dá um nome diferente a cada texto clicável.', segmentPath);
             } else {
                 seenInteractions.push(segment.interaction_id);
             }
@@ -272,9 +284,9 @@
             var destination = segment.on_click && segment.on_click.next;
 
             if (!destination) {
-                error('missing_interaction_destination', 'O segmento clicável de "' + nodeId + '" não tem destino.', segmentPath);
+                error('missing_interaction_destination', 'O texto clicável ' + index + ' de "' + nodeId + '" não tem destino: escreve {click id|texto|id_do_no}.', segmentPath);
             } else if (!model.nodes[destination]) {
-                error('unknown_next_node', 'O segmento clicável de "' + nodeId + '" aponta para "' + destination + '", que não existe.', segmentPath);
+                error('unknown_next_node', 'O texto clicável de "' + nodeId + '" aponta para "' + destination + '", que não existe: escreve o id de um nó que exista.', segmentPath);
             }
         });
     }
@@ -289,20 +301,20 @@
 
         if (node.prompt) {
             if (!node.prompt.speaker_id) {
-                error('missing_speaker_id', 'A pergunta de "' + nodeId + '" não define "speaker_id".', path + '.prompt.speaker_id');
+                error('missing_speaker_id', 'A pergunta de "' + nodeId + '" não diz quem fala: escolhe um personagem em «Falante da pergunta».', path + '.prompt.speaker_id');
             } else {
                 warnIfUnknownCharacter(node.prompt.speaker_id, path + '.prompt.speaker_id', warn);
             }
 
             if (!Array.isArray(node.prompt.text) || node.prompt.text.length === 0) {
-                error('missing_text', 'A pergunta de "' + nodeId + '" não tem texto.', path + '.prompt.text');
+                error('missing_text', 'A pergunta de "' + nodeId + '" está sem texto: escreve-a em «Pergunta».', path + '.prompt.text');
             } else {
                 validateSegments(model, nodeId, node.prompt.text, path + '.prompt.text', error);
             }
         }
 
         if (!Array.isArray(node.choices) || node.choices.length === 0) {
-            error('missing_choices', 'O nó de escolha "' + nodeId + '" não tem opções.', path + '.choices');
+            error('missing_choices', 'O nó de escolha "' + nodeId + '" não tem opções: adiciona pelo menos uma em «Opções de resposta».', path + '.choices');
             return;
         }
 
@@ -312,21 +324,21 @@
             var choicePath = path + '.choices[' + index + ']';
 
             if (!choice.choice_id) {
-                error('missing_choice_id', 'A opção ' + index + ' de "' + nodeId + '" não tem "choice_id".', choicePath);
+                error('missing_choice_id', 'A opção ' + index + ' de "' + nodeId + '" está sem texto: o id é gerado a partir do texto, por isso escreve-o primeiro.', choicePath);
             } else if (seen.indexOf(choice.choice_id) !== -1) {
-                error('duplicate_choice_id', 'O id de opção "' + choice.choice_id + '" repete-se em "' + nodeId + '".', choicePath);
+                error('duplicate_choice_id', 'O id de opção "' + choice.choice_id + '" repete-se em "' + nodeId + '": os ids são gerados a partir do texto, por isso duas opções com o mesmo texto colidem.', choicePath);
             } else {
                 seen.push(choice.choice_id);
             }
 
             if (!choice.text) {
-                warn('missing_choice_text', 'A opção "' + choice.choice_id + '" de "' + nodeId + '" não tem texto.', choicePath);
+                warn('missing_choice_text', 'A opção "' + choice.choice_id + '" de "' + nodeId + '" não tem texto: o jogador veria uma opção vazia.', choicePath);
             }
 
             if (!choice.next) {
-                error('missing_choice_destination', 'A opção "' + choice.choice_id + '" de "' + nodeId + '" não tem destino.', choicePath + '.next');
+                error('missing_choice_destination', 'A opção "' + choice.choice_id + '" de "' + nodeId + '" não tem destino: escolhe para onde ela leva.', choicePath + '.next');
             } else if (!model.nodes[choice.next]) {
-                error('unknown_next_node', 'A opção "' + choice.choice_id + '" de "' + nodeId + '" aponta para "' + choice.next + '", que não existe.', choicePath + '.next');
+                error('unknown_next_node', 'A opção "' + choice.choice_id + '" de "' + nodeId + '" aponta para "' + choice.next + '", que não existe: escreve o id de um nó que exista.', choicePath + '.next');
             }
 
             validateCondition(choice.visible_if, choicePath + '.visible_if', error, warn);
@@ -334,12 +346,75 @@
         });
     }
 
+    /** A call-to-action node needs a question, a variable to fill, and — for a choice — options. */
+    function validatePlayerInput(model, nodeId, node, error, warn) {
+        var path = 'nodes.' + nodeId;
+
+        if (!node.question) {
+            error('missing_question', 'A pergunta "' + nodeId + '" está sem texto: escreve o que se pergunta ao jogador em «Pergunta».', path + '.question');
+        }
+
+        if (!node.variable) {
+            error('missing_variable', 'A pergunta "' + nodeId + '" não diz em que variável guardar: dá-lhe um nome em «Variável».', path + '.variable');
+        }
+
+        if (node.input_type !== 'text' && node.input_type !== 'choice') {
+            error('invalid_input_type', 'A pergunta "' + nodeId + '" tem um tipo desconhecido: escolhe «Texto livre» ou «Escolha de opções».', path + '.input_type');
+        } else if (node.input_type === 'choice' && (!Array.isArray(node.options) || node.options.length < 1)) {
+            error('missing_input_options', 'A pergunta "' + nodeId + '" é de escolha mas não tem opções: adiciona pelo menos uma em «Opções».', path + '.options');
+        }
+    }
+
+    /**
+     * A variable nothing fills.
+     *
+     * "{input.nome}" speaks back what a call-to-action node collected. If no such
+     * node names it, the player is never asked and the text reads an empty value
+     * forever — worth saying once, at the line that reaches for it.
+     */
+    function validateInputReferences(model, warn) {
+        var defined = Forger.model.collectInputVariables(model);
+
+        Object.keys(model.nodes || {}).forEach(function (nodeId) {
+            var node = model.nodes[nodeId];
+
+            if (node.type === 'line') {
+                checkReferences(node.text, 'nodes.' + nodeId + '.text', nodeId, defined, warn);
+            } else if (node.type === 'choice' && node.prompt) {
+                checkReferences(node.prompt.text, 'nodes.' + nodeId + '.prompt.text', nodeId, defined, warn);
+            }
+        });
+    }
+
+    /** Warns about each "{input.nome}" a line reaches for but nothing fills. */
+    function checkReferences(segments, path, nodeId, defined, warn) {
+        (segments || []).forEach(function (segment, index) {
+            var name = referencedInput(segment && segment.type === 'variable' ? segment.value : null);
+
+            if (name && defined.indexOf(name) === -1) {
+                warn(
+                    'undefined_input_variable',
+                    'A variável "{input.' + name + '}" em "' + nodeId + '" não é preenchida por nenhuma «Pergunta ao jogador»: '
+                        + 'o jogador nunca a ouviria, e o texto ficaria sem valor.',
+                    path + '[' + index + ']',
+                );
+            }
+        });
+    }
+
+    /** The input variable a "{input.nome}" names, or null when it names none. */
+    function referencedInput(value) {
+        var text = typeof value === 'string' ? value : '';
+
+        return text.indexOf('input.') === 0 && text.length > 6 ? text.slice(6) : null;
+    }
+
     /** A conditional node needs unique branches, a default, and it must be last. */
     function validateBranches(model, nodeId, node, error, warn) {
         var path = 'nodes.' + nodeId;
 
         if (!Array.isArray(node.branches) || node.branches.length === 0) {
-            error('missing_branches', 'O nó condicional "' + nodeId + '" não tem ramos.', path + '.branches');
+            error('missing_branches', 'O nó condicional "' + nodeId + '" não tem ramos: adiciona um ramo ou define o destino do caso padrão.', path + '.branches');
             return;
         }
 
@@ -350,7 +425,7 @@
             var branchPath = path + '.branches[' + index + ']';
 
             if (!branch.branch_id) {
-                error('missing_branch_id', 'O ramo ' + index + ' de "' + nodeId + '" não tem "branch_id".', branchPath);
+                error('missing_branch_id', 'O ramo ' + index + ' de "' + nodeId + '" está sem id: o forger gera-o a partir da posição, por isso edita o nó para o corrigir.', branchPath);
             } else if (seen.indexOf(branch.branch_id) !== -1) {
                 error('duplicate_branch_id', 'O id de ramo "' + branch.branch_id + '" repete-se em "' + nodeId + '".', branchPath);
             } else {
@@ -358,9 +433,9 @@
             }
 
             if (!branch.next) {
-                error('missing_branch_destination', 'O ramo "' + branch.branch_id + '" de "' + nodeId + '" não tem destino.', branchPath + '.next');
+                error('missing_branch_destination', 'O ramo ' + index + ' de "' + nodeId + '" não tem destino: escolhe para onde ele leva.', branchPath + '.next');
             } else if (!model.nodes[branch.next]) {
-                error('unknown_next_node', 'O ramo "' + branch.branch_id + '" de "' + nodeId + '" aponta para "' + branch.next + '", que não existe.', branchPath + '.next');
+                error('unknown_next_node', 'O ramo ' + index + ' de "' + nodeId + '" aponta para "' + branch.next + '", que não existe: escreve o id de um nó que exista.', branchPath + '.next');
             }
 
             if (!branch.if) {
@@ -373,9 +448,9 @@
         });
 
         if (defaultIndex === -1) {
-            warn('no_default_branch', 'O nó condicional "' + nodeId + '" não tem caso padrão: falha quando nada corresponde.', path + '.branches');
+            warn('no_default_branch', 'O nó condicional "' + nodeId + '" não tem caso padrão: quando nenhuma condição corresponder, a conversa não segue para nenhum lado. Define o destino do último ramo.', path + '.branches');
         } else if (defaultIndex !== node.branches.length - 1) {
-            warn('default_branch_not_last', 'O nó condicional "' + nodeId + '" tem um ramo sem condição que não é o último; os seguintes nunca são alcançados.', path + '.branches[' + defaultIndex + ']');
+            warn('default_branch_not_last', 'O nó condicional "' + nodeId + '" tem o caso padrão antes do fim: os ramos abaixo dele nunca são alcançados, porque o caso padrão corresponde sempre.', path + '.branches[' + defaultIndex + ']');
         }
 
         // A ordem decide o vencedor, por isso um ramo que não pede nada que um
@@ -555,14 +630,14 @@
 
         if (effect.type === 'add_relationship') {
             warnIfUnknownCharacter(effect.character_id, path, warn);
-        }
 
-        if (effect.type === 'add' && (!parseStatePath(effect.target) || parseStatePath(effect.target).root !== 'stats')) {
-            error('invalid_effect_target', 'O efeito "add" só aceita destinos "stats.<nome>"; recebeu "' + effect.target + '".', path);
-        }
+            if (effect.direction !== 'increase' && effect.direction !== 'decrease') {
+                error('invalid_effect_value', 'O efeito "add_relationship" precisa de "direction" igual a "increase" ou "decrease".', path);
+            }
 
-        if (effect.type === 'unlock_dialogue' && !Forger.catalogue.hasDialogue(effect.dialogue_id)) {
-            warn('unknown_dialogue', 'O efeito desbloqueia o diálogo "' + effect.dialogue_id + '", que não está no catálogo carregado.', path);
+            if (typeof effect.value !== 'number' || !isFinite(effect.value) || effect.value < 1) {
+                error('invalid_effect_value', 'O efeito "add_relationship" precisa de um número >= 1 em "value".', path);
+            }
         }
     }
 
@@ -571,7 +646,7 @@
         var type = effect && effect.type;
 
         if (!EFFECT_STRING_FIELDS[type] && !EFFECT_NUMBER_FIELDS[type]) {
-            return 'Tipo de efeito não suportado: "' + String(type) + '".';
+            return 'Tipo de efeito não suportado: "' + String(type) + '". Escolhe um dos tipos da lista.';
         }
 
         var stringFields = EFFECT_STRING_FIELDS[type] || [];
@@ -580,7 +655,7 @@
             var field = stringFields[i];
 
             if (typeof effect[field] !== 'string' || !effect[field]) {
-                return 'O efeito "' + type + '" precisa de "' + field + '".';
+                return 'O efeito "' + type + '" precisa de "' + field + '" preenchido.';
             }
         }
 
@@ -596,6 +671,16 @@
 
         if (type === 'set_flag' && !isScalar(effect.value)) {
             return 'O efeito "set_flag" precisa de um "value" booleano, texto ou número.';
+        }
+
+        if (type === 'add_relationship') {
+            if (effect.direction !== 'increase' && effect.direction !== 'decrease') {
+                return 'O efeito "add_relationship" precisa de "direction" igual a "increase" ou "decrease".';
+            }
+
+            if (typeof effect.value !== 'number' || !isFinite(effect.value) || effect.value < 1) {
+                return 'O efeito "add_relationship" precisa de um número >= 1 em "value".';
+            }
         }
 
         if ((type === 'add_item' || type === 'remove_item') && effect.quantity !== undefined) {
@@ -615,12 +700,12 @@
 
         nodeIds.forEach(function (nodeId) {
             if (!reachable[nodeId]) {
-                warn('unreachable_node', 'O nó "' + nodeId + '" não é alcançável a partir de "' + model.start_node + '".', 'nodes.' + nodeId);
+                warn('unreachable_node', 'O nó "' + nodeId + '" não é alcançável: nenhum caminho chega a ele a partir de "' + model.start_node + '".', 'nodes.' + nodeId);
                 return;
             }
 
             if (!canExit[nodeId]) {
-                warn('path_without_exit', 'O nó "' + nodeId + '" não consegue chegar a um nó de fim.', 'nodes.' + nodeId);
+                warn('path_without_exit', 'O nó "' + nodeId + '" não consegue chegar a um nó de fim: a conversa ficaria sem conclusão.', 'nodes.' + nodeId);
             }
         });
     }
@@ -678,6 +763,8 @@
         return canExit;
     }
 
+    var ROOT_ALIASES = { dialogues: 'dialogue' };
+
     /** Splits a state path, rejecting anything the engine could not read. */
     function parseStatePath(path) {
         if (typeof path !== 'string') {
@@ -690,19 +777,19 @@
             return null;
         }
 
-        if (STATE_ROOTS.indexOf(segments[0]) === -1) {
+        var root = ROOT_ALIASES[segments[0]] || segments[0];
+
+        if (STATE_ROOTS.indexOf(root) === -1) {
             return null;
         }
 
-        // Only `relationship` has a third segment, and it needs it: a path that
-        // stops at the character does not say which affinity it means.
-        if (segments[0] === 'relationship') {
+        if (root === 'relationship') {
             return segments.length === 3 && segments[2]
-                ? { root: segments[0], key: segments[1], subKey: segments[2] }
+                ? { root: root, key: segments[1], subKey: segments[2] }
                 : null;
         }
 
-        return segments.length === 2 ? { root: segments[0], key: segments[1] } : null;
+        return segments.length === 2 ? { root: root, key: segments[1] } : null;
     }
 
     /**

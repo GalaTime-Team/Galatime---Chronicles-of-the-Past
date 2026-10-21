@@ -17,7 +17,7 @@ elements:
 
   caeli:
     name: Caeli
-    description: "The element of wind, sky, and storms."
+    description: "The element of wind and sky."
     type: natural
     relations:
       immune:       [corporis, lux, umbra]
@@ -28,7 +28,7 @@ elements:
 
   chaos:
     name: Chaos
-    description: "The element of disorder and electricity."
+    description: "The element of explosions and electricity."
     type: natural
     relations:
       immune:       [corporis]
@@ -89,7 +89,7 @@ elements:
       immune:       [vetus, vis]
       super_strong: []
       strong:       [caeli, ignis, lux, umbra]
-      weak:         [aqua, chaos, florere]
+      weak:         [aqua, florere]
       super_weak:   []
 
   lux:

@@ -1,0 +1,1489 @@
+# Gerado pelo Dialogue Forger. Comentários do ficheiro original não são preservados.
+
+start_node: entra_2
+nodes:
+  entra_2:
+    type: character_enter
+    character_id: kelly
+    position: center_right
+    pose: sit
+    emotion: thinking
+    next: fala
+
+  fala:
+    type: line
+    speaker_id: arthur
+    emotion: neutral
+    animation_id: idle
+    text:
+      - type: text
+        value: Hey, Kelly.
+    next: fala_2
+
+  fala_2:
+    type: line
+    speaker_id: kelly
+    emotion: neutral
+    animation_id: idle
+    text:
+      - type: text
+        value: Hm?
+    next: entra_3
+
+  entra_3:
+    type: character_enter
+    character_id: arthur
+    position: center_left
+    animation_id: step_in_from_left
+    emotion: unsure
+    next: fala_3
+
+  fala_3:
+    type: line
+    speaker_id: arthur
+    emotion: unsure
+    animation_id: idle
+    text:
+      - type: text
+        value: Do you have a second?
+    next: fala_4
+
+  fala_4:
+    type: line
+    speaker_id: kelly
+    emotion: neutral
+    animation_id: idle
+    text:
+      - type: text
+        value: No, I'm trying to figure something out here.
+    next: fala_5
+
+  fala_5:
+    type: line
+    speaker_id: arthur
+    emotion: stressed
+    animation_id: idle
+    text:
+      - type: text
+        value: Oh, ok! No problem!
+    next: escolha
+
+  escolha:
+    type: choice
+    prompt:
+      speaker_id: arthur
+      emotion: nervous
+      text:
+        - type: thought
+          value: Why am I still nervous around her? I'm not a slime anymore.
+    choices:
+      - choice_id: leave_her_alone
+        text: Leave her alone
+        next: fim_bad
+      - choice_id: insist_on_talking_with_her
+        text: Insist on talking with her
+        next: fala_6
+
+  fim_bad:
+    type: end
+    result: bad
+
+  fala_6:
+    type: line
+    speaker_id: arthur
+    emotion: annoyed
+    animation_id: idle
+    delivery: thought
+    text:
+      - type: text
+        value: No. I can't be scared anymore.
+    next: fala_7
+
+  fala_7:
+    type: line
+    speaker_id: arthur
+    emotion: serious
+    animation_id: idle
+    text:
+      - type: text
+        value: Sorry, but I need to talk to you now.
+    next: fala_8
+
+  fala_8:
+    type: line
+    speaker_id: kelly
+    emotion: suspicious
+    animation_id: idle
+    text:
+      - type: text
+        value: ...
+    next: acao
+
+  acao:
+    type: character_action
+    character_id: kelly
+    position: center_right
+    pose: stand
+    emotion: neutral
+    animation_id: stand_up_from_right
+    next: fala_9
+
+  fala_9:
+    type: line
+    speaker_id: kelly
+    emotion: neutral
+    animation_id: idle
+    text:
+      - type: text
+        value: Alright. I guess I can take a break.
+    next: fala_10
+
+  fala_10:
+    type: line
+    speaker_id: arthur
+    emotion: surprised
+    animation_id: idle
+    text:
+      - type: text
+        value: Huh?
+    next: fala_11
+
+  fala_11:
+    type: line
+    speaker_id: kelly
+    emotion: neutral
+    animation_id: idle
+    text:
+      - type: text
+        value: I said that we can talk. Now, what do you want?
+    next: fala_12
+
+  fala_12:
+    type: line
+    speaker_id: arthur
+    emotion: suspicious
+    animation_id: idle
+    delivery: thought
+    text:
+      - type: text
+        value: That was easier than I thought.
+    next: fala_13
+
+  fala_13:
+    type: line
+    speaker_id: arthur
+    emotion: serious
+    animation_id: idle
+    text:
+      - type: text
+        value: I wanted to ask you about myself.
+    next: fala_14
+
+  fala_14:
+    type: line
+    speaker_id: kelly
+    emotion: unsure
+    animation_id: idle
+    text:
+      - type: text
+        value: Yourself? You were one of the many slimes that I was testing on and you escaped. What's more to know?
+    next: fala_15
+
+  fala_15:
+    type: line
+    speaker_id: arthur
+    emotion: serious
+    animation_id: idle
+    text:
+      - type: text
+        value: I want to know about how I was as a slime? Where did I came from? Did I have a family?
+    next: fala_16
+
+  fala_16:
+    type: line
+    speaker_id: kelly
+    emotion: annoyed
+    animation_id: idle
+    text:
+      - type: text
+        value: ...
+    next: fala_17
+
+  fala_17:
+    type: line
+    speaker_id: kelly
+    emotion: annoyed
+    animation_id: idle
+    text:
+      - type: text
+        value: Are you serious?
+    next: fala_18
+
+  fala_18:
+    type: line
+    speaker_id: arthur
+    emotion: surprised
+    animation_id: idle
+    auto_advance: true
+    text:
+      - type: text
+        value: Huh!? Well-
+    next: fala_19
+
+  fala_19:
+    type: line
+    speaker_id: kelly
+    emotion: annoyed
+    animation_id: idle
+    text:
+      - type: text
+        value: "No. You "
+      - type: styled_text
+        value: can't
+        style:
+          bold: true
+          speed_multiplier: 0.8
+      - type: text
+        value: " be serious right now."
+    next: fala_20
+
+  fala_20:
+    type: line
+    speaker_id: kelly
+    emotion: frustrated
+    animation_id: idle
+    text:
+      - type: text
+        value: "You stopped me in my thoughts to ask for "
+      - type: styled_text
+        value: that
+        style:
+          bold: true
+      - type: text
+        value: "!? Why the hell would you even care for that!?"
+    next: fala_21
+
+  fala_21:
+    type: line
+    speaker_id: arthur
+    emotion: frustrated
+    animation_id: idle
+    text:
+      - type: text
+        value: Because I want to know the kind of person I was!
+    next: fala_22
+
+  fala_22:
+    type: line
+    speaker_id: kelly
+    emotion: unsure
+    animation_id: idle
+    text:
+      - type: text
+        value: The kind of person you were?
+    next: fala_23
+
+  fala_23:
+    type: line
+    speaker_id: arthur
+    emotion: annoyed
+    animation_id: idle
+    text:
+      - type: text
+        value: Yes! Ever since I was found by Pacci, I've had these constant headaches and the feeling of being lost!
+    next: fala_24
+
+  fala_24:
+    type: line
+    speaker_id: arthur
+    emotion: serious
+    animation_id: idle
+    text:
+      - type: text
+        value: I've been wondering who I was, where I came from, and if I had a family. But now I don't need to wonder. You're here and have all the answers!
+    next: fala_25
+
+  fala_25:
+    type: line
+    speaker_id: arthur
+    emotion: concerned
+    animation_id: idle
+    text:
+      - type: text
+        value: So please. Could you tell me everything you know about me?
+    next: fala_26
+
+  fala_26:
+    type: line
+    speaker_id: kelly
+    emotion: frustrated
+    animation_id: idle
+    text:
+      - type: whisper
+        value: Oh for crying out loud...
+    next: fala_27
+
+  fala_27:
+    type: line
+    speaker_id: kelly
+    emotion: annoyed
+    animation_id: idle
+    text:
+      - type: text
+        value: Look, A4.0. It seems that you don't get it, so I'll just spell it out to you.
+    next: fala_28
+
+  fala_28:
+    type: line
+    speaker_id: kelly
+    emotion: frustrated
+    animation_id: idle
+    text:
+      - type: text
+        value: "I don't know nor care about anything that's related to your "
+      - type: styled_text
+        value: "\"past life\""
+        style:
+          italic: true
+      - type: text
+        value: . Hell, I barely give a d#@n about your current life.
+    next: fala_29
+
+  fala_29:
+    type: line
+    speaker_id: kelly
+    emotion: frustrated
+    animation_id: idle
+    text:
+      - type: text
+        value: When I said that you were one of the many slimes that I tested I was serious. I didn't care about the kind of slime you were. I didn't care if you had a family or not. And I didn't even capture you.
+    next: fala_30
+
+  fala_30:
+    type: line
+    speaker_id: arthur
+    emotion: surprised
+    animation_id: idle
+    text:
+      - type: text
+        value: You... You didn't?
+    next: fala_31
+
+  fala_31:
+    type: line
+    speaker_id: kelly
+    emotion: annoyed
+    animation_id: idle
+    text:
+      - type: text
+        value: No way! I just asked some random guys to catch some slimes for me, because I couldn't be bothered to do it myself.
+    next: fala_32
+
+  fala_32:
+    type: line
+    speaker_id: kelly
+    emotion: neutral
+    animation_id: idle
+    text:
+      - type: text
+        value: "The only reason as to why I even "
+      - type: styled_text
+        value: suspected
+        style:
+          bold: true
+      - type: text
+        value: " that you were one of those slimes, was because you had the same reaction as you had back then. Besides that, I really don't know anything about you."
+    next: fala_33
+
+  fala_33:
+    type: line
+    speaker_id: arthur
+    emotion: surprised
+    animation_id: idle
+    text:
+      - type: text
+        value: ...
+    next: fala_34
+
+  fala_34:
+    type: line
+    speaker_id: arthur
+    emotion: concerned
+    animation_id: idle
+    text:
+      - type: text
+        value: So, that's it. The only lead that I had to uncover more of my past never existed.
+    next: fala_35
+
+  fala_35:
+    type: line
+    speaker_id: kelly
+    emotion: neutral
+    animation_id: idle
+    text:
+      - type: text
+        value: Indeed. It's disappointing, but that's the truth.
+    next: fala_36
+
+  fala_36:
+    type: line
+    speaker_id: arthur
+    emotion: concerned
+    animation_id: idle
+    text:
+      - type: text
+        value: ... Can't you really remember anything else? What about the people that captured me?
+    next: fala_37
+
+  fala_37:
+    type: line
+    speaker_id: kelly
+    emotion: neutral
+    animation_id: idle
+    text:
+      - type: text
+        value: Sorry, but I couldn't tell who they were. However, if I do a couple of test on you, I might just figure out something or other about yourself.
+    next: fala_38
+
+  fala_38:
+    type: line
+    speaker_id: kelly
+    emotion: happy
+    animation_id: idle
+    auto_advance: true
+    text:
+      - type: text
+        value: So, why don't you come here and-
+    next: fala_39
+
+  fala_39:
+    type: line
+    speaker_id: raphael
+    emotion: neutral
+    animation_id: idle
+    text:
+      - type: text
+        value: Sorry to interrupt your little chat, but I have business with her.
+    next: acao_2
+
+  acao_2:
+    type: character_action
+    character_id: arthur
+    position: right
+    depth_of: kelly
+    emotion: surprised
+    animation_id: step_across
+    next: entra_4
+
+  entra_4:
+    type: character_enter
+    character_id: raphael
+    position: center_left
+    animation_id: step_in_from_left
+    emotion: neutral
+    next: fala_40
+
+  fala_40:
+    type: line
+    speaker_id: arthur
+    emotion: surprised
+    animation_id: idle
+    text:
+      - type: text
+        value: Raphael!
+    next: fala_41
+
+  fala_41:
+    type: line
+    speaker_id: kelly
+    emotion: annoyed
+    animation_id: idle
+    text:
+      - type: text
+        value: Oh great. The doctor's here.
+    next: fala_42
+
+  fala_42:
+    type: line
+    speaker_id: kelly
+    emotion: frustrated
+    animation_id: idle
+    text:
+      - type: text
+        value: Can't you see I'm talking to A4.0!? Why don't you go treat some patients or something?
+    next: fala_43
+
+  fala_43:
+    type: line
+    speaker_id: raphael
+    emotion: annoyed
+    animation_id: idle
+    text:
+      - type: text
+        value: First of all, I'm not a doctor. I'm an alchemist.
+    next: fala_44
+
+  fala_44:
+    type: line
+    speaker_id: kelly
+    emotion: annoyed
+    animation_id: idle
+    delivery: thought
+    text:
+      - type: text
+        value: Then why are you dressed like one?
+    next: fala_45
+
+  fala_45:
+    type: line
+    speaker_id: raphael
+    emotion: neutral
+    animation_id: idle
+    text:
+      - type: text
+        value: "Second of all. You were "
+      - type: interactive_text
+        interaction_id: id
+        value: stabbed
+        optional: true
+        on_click:
+          next: fala_53
+      - type: text
+        value: ", remember? You "
+      - type: styled_text
+        value: are
+        style:
+          bold: true
+      - type: text
+        value: " my patient."
+    next: fala_46
+
+  fala_46:
+    type: line
+    speaker_id: kelly
+    emotion: neutral
+    animation_id: idle
+    text:
+      - type: text
+        value: Yeah, no thanks to you, jack#$s.
+    next: fala_47
+
+  fala_47:
+    type: line
+    speaker_id: raphael
+    emotion: neutral
+    animation_id: idle
+    text:
+      - type: text
+        value: And third of all. I have couple of questions I need to ask.
+    next: fala_48
+
+  fala_48:
+    type: line
+    speaker_id: kelly
+    emotion: happy
+    animation_id: idle
+    text:
+      - type: text
+        value: Pft. And if I refuse?
+    next: fala_49
+
+  fala_49:
+    type: line
+    speaker_id: raphael
+    emotion: neutral
+    animation_id: idle
+    text:
+      - type: text
+        value: Remember how I opened that door with one punch? I can give you the same treatment if you want.
+    next: fala_50
+
+  fala_50:
+    type: line
+    speaker_id: arthur
+    emotion: surprised
+    animation_id: idle
+    text:
+      - type: text
+        value: "!"
+    next: fala_51
+
+  fala_51:
+    type: line
+    speaker_id: kelly
+    emotion: serious
+    animation_id: idle
+    text:
+      - type: text
+        value: I'd like to see you try.
+    next: fala_52
+
+  fala_52:
+    type: line
+    speaker_id: arthur
+    emotion: stressed
+    animation_id: idle
+    text:
+      - type: text
+        value: Wait, hold on! I still need to ask her about my past!
+    next: ramificacao
+
+  fala_53:
+    type: line
+    speaker_id: arthur
+    emotion: surprised
+    animation_id: idle
+    text:
+      - type: text
+        value: Wait, she was what!?
+    next: fala_54
+
+  fala_54:
+    type: line
+    speaker_id: raphael
+    emotion: neutral
+    animation_id: idle
+    text:
+      - type: text
+        value: "Don't worry about it, Arthur. She'll be fine. "
+      - type: pause
+        duration_ms: 400
+      - type: text
+        value: Now, where was I? Ah, yes.
+    next: fala_47
+    effects_after:
+      - type: set_flag
+        flag: curious_stab
+        value: true
+
+  ramificacao:
+    type: conditional
+    branches:
+      - branch_id: ramo_1
+        if:
+          all:
+            - condition: equals
+              left: relationship.raphael.friendship
+              right: 0
+        next: fala_r1_1
+      - branch_id: ramo
+        if:
+          all:
+            - condition: equals
+              left: relationship.raphael.friendship
+              right: 1
+        next: fala_r2_1
+      - branch_id: ramo_2
+        if:
+          all:
+            - condition: greater_or_equal
+              left: relationship.raphael.friendship
+              right: 2
+        next: fala_r3_1
+      - branch_id: ramo_3
+        next: fim_error
+
+  fala_r1_1:
+    type: line
+    speaker_id: raphael
+    emotion: neutral
+    animation_id: idle
+    text:
+      - type: text
+        value: "Arthur, I know that you have questions, but this is official SISO business. I'm afraid that I must ask you to leave. "
+    next: fala_r1_2
+
+  fala_r1_2:
+    type: line
+    speaker_id: arthur
+    emotion: concerned
+    animation_id: idle
+    auto_advance: true
+    text:
+      - type: text
+        value: But-
+    next: fala_r1_3
+
+  fala_r1_3:
+    type: line
+    speaker_id: raphael
+    emotion: neutral
+    animation_id: idle
+    text:
+      - type: text
+        value: Don't worry about her. After I'm done with my work, you can ask her as many questions as you want. Just be patient, ok?
+    next: fala_r1_4
+
+  fala_r1_4:
+    type: line
+    speaker_id: arthur
+    emotion: trusting
+    animation_id: idle
+    text:
+      - type: text
+        value: ... Ok.
+    next: fala_r1_5
+
+  fala_r1_5:
+    type: line
+    speaker_id: raphael
+    emotion: trusting
+    animation_id: idle
+    text:
+      - type: text
+        value: Thank you, Arthur.
+    next: sai_2
+
+  sai_2:
+    type: character_exit
+    character_id: arthur
+    animation_id: step_out
+    direction: left
+    next: fala_r1_6
+
+  fala_r1_6:
+    type: line
+    speaker_id: raphael
+    emotion: neutral
+    animation_id: idle
+    text:
+      - type: text
+        value: Now, let's begin, shall we?
+    next: fim_neutro
+
+  fala_r2_1:
+    type: line
+    speaker_id: raphael
+    emotion: neutral
+    animation_id: idle
+    text:
+      - type: text
+        value: Arthur, I know that you have questions, but let's be honest here, she clearly couldn't have the answers.
+    next: fala_r2_2
+
+  fala_r2_2:
+    type: line
+    speaker_id: kelly
+    emotion: annoyed
+    animation_id: idle
+    text:
+      - type: shout
+        value: Oh, piss off!
+    next: fala_r2_3
+
+  fala_r2_3:
+    type: line
+    speaker_id: raphael
+    emotion: annoyed
+    animation_id: idle
+    text:
+      - type: text
+        value: She didn't care about your condition when you were a slime, and she doesn't care about your condition now. And even if she did, she would only care about it to further her research, not because of some sense of altruism.
+    next: fala_r2_4
+
+  fala_r2_4:
+    type: line
+    speaker_id: kelly
+    emotion: surprised
+    animation_id: idle
+    text:
+      - type: styled_text
+        value: Whaaaaaat!? Me!?
+        style:
+          wave: normal
+          wave_speed: 0.8
+    next: fala_r2_5
+
+  fala_r2_5:
+    type: line
+    speaker_id: kelly
+    emotion: annoyed
+    animation_id: idle
+    text:
+      - type: text
+        value: You insult me.
+    next: fala_r2_6
+
+  fala_r2_6:
+    type: line
+    speaker_id: raphael
+    emotion: concerned
+    animation_id: idle
+    text:
+      - type: text
+        value: Arthur, if you truly believe that she knows something about your past, then let me ask her.
+    next: fala_r2_7
+
+  fala_r2_7:
+    type: line
+    speaker_id: arthur
+    emotion: trusting
+    animation_id: idle
+    text:
+      - type: text
+        value: ... Ok. I will.
+    next: fala_r2_8
+
+  fala_r2_8:
+    type: line
+    speaker_id: raphael
+    emotion: happy
+    animation_id: idle
+    text:
+      - type: text
+        value: Thank you, Arthur. Now, wait upstairs please.
+    next: fala_r2_9
+
+  fala_r2_9:
+    type: line
+    speaker_id: arthur
+    emotion: trusting
+    animation_id: idle
+    text:
+      - type: text
+        value: Alright. Good luck.
+    next: fala_r2_10
+
+  fala_r2_10:
+    type: line
+    speaker_id: raphael
+    emotion: happy
+    animation_id: idle
+    text:
+      - type: text
+        value: Thank you.
+    next: sai_2
+
+  fim_neutro:
+    type: end
+    result: neutral
+
+  fala_r3_1:
+    type: line
+    speaker_id: raphael
+    emotion: neutral
+    animation_id: idle
+    text:
+      - type: text
+        value: Arthur, let me ask you a question. What do you plan on doing once you've gotten all of your answers?
+    next: fala_r3_2
+
+  fala_r3_2:
+    type: line
+    speaker_id: arthur
+    emotion: surprised
+    animation_id: idle
+    text:
+      - type: text
+        value: W-what?
+    next: fala_r3_3
+
+  fala_r3_3:
+    type: line
+    speaker_id: raphael
+    emotion: neutral
+    animation_id: idle
+    text:
+      - type: text
+        value: What will you do once you've gotten your answers?
+    next: fala_r3_4
+
+  fala_r3_4:
+    type: line
+    speaker_id: raphael
+    emotion: neutral
+    animation_id: idle
+    text:
+      - type: text
+        value: Are you going back to the same place you've once came? Are you going back to your slime family?
+    next: fala_r3_5
+
+  fala_r3_5:
+    type: line
+    speaker_id: arthur
+    emotion: unsure
+    animation_id: idle
+    text:
+      - type: text
+        value: Well... Yeah, maybe. Why?
+    next: fala_r3_6
+
+  fala_r3_6:
+    type: line
+    speaker_id: kelly
+    emotion: happy
+    animation_id: idle
+    text:
+      - type: text
+        value: Pft.
+    next: fala_r3_7
+
+  fala_r3_7:
+    type: line
+    speaker_id: arthur
+    emotion: annoyed
+    animation_id: idle
+    text:
+      - type: text
+        value: What's so funny!?
+    next: fala_r3_8
+
+  fala_r3_8:
+    type: line
+    speaker_id: raphael
+    emotion: neutral
+    animation_id: idle
+    text:
+      - type: text
+        value: Arthur, I'm not going to beat around the bush. You'll never be able to go back again.
+    next: fala_r3_9
+
+  fala_r3_9:
+    type: line
+    speaker_id: arthur
+    emotion: nervous
+    animation_id: idle
+    text:
+      - type: text
+        value: ... Huh?
+    next: fala_r3_10
+
+  fala_r3_10:
+    type: line
+    speaker_id: kelly
+    emotion: neutral
+    animation_id: idle
+    text:
+      - type: text
+        value: Let me spell it out for you. You're stupid and your idea is stupid. You're not a slime anymore, you're a human, a man.
+    next: fala_r3_11
+
+  fala_r3_11:
+    type: line
+    speaker_id: kelly
+    emotion: unsure
+    animation_id: idle
+    text:
+      - type: text
+        value: Well, more of a baby, but still...
+    next: fala_r3_12
+
+  fala_r3_12:
+    type: line
+    speaker_id: arthur
+    emotion: annoyed
+    animation_id: idle
+    text:
+      - type: text
+        value: Yeah, so? You recognized me? Why wouldn't they recognize me too?
+    next: fala_r3_13
+
+  fala_r3_13:
+    type: line
+    speaker_id: kelly
+    emotion: angry
+    animation_id: idle
+    auto_advance: true
+    text:
+      - type: text
+        value: ... Are you calling me as stupid as a slime? Are you reta-
+    next: fala_r3_14
+
+  fala_r3_14:
+    type: line
+    speaker_id: raphael
+    emotion: nervous
+    animation_id: idle
+    text:
+      - type: text
+        value: "What she's "
+      - type: styled_text
+        value: trying
+        style:
+          bold: true
+      - type: text
+        value: " to say is that that wouldn't work."
+    next: fala_r3_15
+
+  fala_r3_15:
+    type: line
+    speaker_id: raphael
+    emotion: neutral
+    animation_id: idle
+    text:
+      - type: text
+        value: "Think about it. She found out you were a slime because she ran tests on you. Not because of your appearance. "
+    next: fala_r3_16
+
+  fala_r3_16:
+    type: line
+    speaker_id: arthur
+    emotion: annoyed
+    animation_id: idle
+    text:
+      - type: text
+        value: You can't be certain about it! Maybe they'll recognize me by instinct!
+    next: fala_r3_17
+
+  fala_r3_17:
+    type: line
+    speaker_id: raphael
+    emotion: suspicious
+    animation_id: idle
+    text:
+      - type: text
+        value: Would they?
+    next: fala_r3_18
+
+  fala_r3_18:
+    type: line
+    speaker_id: arthur
+    emotion: annoyed
+    animation_id: idle
+    text:
+      - type: text
+        value: What's that supposed to mean?
+    next: fala_r3_19
+
+  fala_r3_19:
+    type: line
+    speaker_id: raphael
+    emotion: neutral
+    animation_id: idle
+    text:
+      - type: text
+        value: "Arthur, has "
+      - type: styled_text
+        value: any
+        style:
+          italic: true
+      - type: text
+        value: " slime attacked you?"
+    next: fala_r3_20
+
+  fala_r3_20:
+    type: line
+    speaker_id: arthur
+    emotion: suspicious
+    animation_id: idle
+    text:
+      - type: text
+        value: ... Yeah, every single one...
+    next: fala_r3_21
+
+  fala_r3_21:
+    type: line
+    speaker_id: raphael
+    emotion: neutral
+    animation_id: idle
+    text:
+      - type: text
+        value: Exactly. But if slimes recognized each other by instinct, which they probably do, why would they attack you?
+    next: fala_r3_22
+
+  fala_r3_22:
+    type: line
+    speaker_id: arthur
+    emotion: concerned
+    animation_id: idle
+    text:
+      - type: text
+        value: ...
+    next: fala_r3_23
+
+  fala_r3_23:
+    type: line
+    speaker_id: kelly
+    emotion: neutral
+    animation_id: idle
+    text:
+      - type: text
+        value: They don't recognize you as their own, idiot. Never would. So stop denying it, and accept what happened.
+    next: fala_r3_24
+
+  fala_r3_24:
+    type: line
+    speaker_id: kelly
+    emotion: serious
+    animation_id: idle
+    text:
+      - type: text
+        value: It's getting way to sad seeing you trying to cling to the past.
+    next: fala_r3_25
+
+  fala_r3_25:
+    type: line
+    speaker_id: arthur
+    emotion: frustrated
+    animation_id: idle
+    text:
+      - type: text
+        value: It's easy for you to say! You have a home and a family waiting for you! I've got nothing!
+    next: fala_r3_26
+
+  fala_r3_26:
+    type: line
+    speaker_id: arthur
+    emotion: angry
+    animation_id: idle
+    text:
+      - type: shout
+        value: NOTHING, YOU HEAR ME!!
+    next: fala_r3_27
+
+  fala_r3_27:
+    type: line
+    speaker_id: raphael
+    emotion: neutral
+    animation_id: idle
+    text:
+      - type: text
+        value: That's not true.
+    next: fala_r3_28
+
+  fala_r3_28:
+    type: line
+    speaker_id: arthur
+    emotion: annoyed
+    animation_id: idle
+    text:
+      - type: text
+        value: What do you mean?
+    next: fala_r3_29
+
+  fala_r3_29:
+    type: line
+    speaker_id: raphael
+    emotion: neutral
+    animation_id: idle
+    text:
+      - type: text
+        value: When Pacci took you in, he offered you to stay for as long as you needed.
+    next: fala_r3_30
+
+  fala_r3_30:
+    type: line
+    speaker_id: raphael
+    emotion: neutral
+    animation_id: idle
+    text:
+      - type: text
+        value: In the few days that you've been with us, not only have you made friends with Duha and the others, but you also helped us save the city.
+    next: acao_3
+
+  acao_3:
+    type: character_action
+    character_id: raphael
+    position: right
+    depth: back
+    animation_id: step_across
+    next: fala_r3_31
+
+  fala_r3_31:
+    type: line
+    speaker_id: raphael
+    emotion: neutral
+    animation_id: idle
+    text:
+      - type: text
+        value: "*Puts hand on shoulder*"
+    next: fala_r3_32
+
+  fala_r3_32:
+    type: line
+    speaker_id: raphael
+    emotion: neutral
+    animation_id: idle
+    text:
+      - type: text
+        value: "Maybe you don't have much a past, but you "
+      - type: styled_text
+        value: do
+        style:
+          bold: true
+      - type: text
+        value: " have a present. And if you work on it, you'll have a bright future ahead."
+    next: fala_r3_33
+
+  fala_r3_33:
+    type: line
+    speaker_id: arthur
+    emotion: unsure
+    animation_id: idle
+    text:
+      - type: text
+        value: Are you sure?
+    next: fala_r3_34
+
+  fala_r3_34:
+    type: line
+    speaker_id: raphael
+    emotion: neutral
+    animation_id: idle
+    text:
+      - type: text
+        value: Positive. So cheer up, boy.
+    next: fala_r3_35
+
+  fala_r3_35:
+    type: line
+    speaker_id: arthur
+    emotion: happy
+    animation_id: idle
+    text:
+      - type: text
+        value: Thanks Raphael.
+    next: fala_r3_36
+
+  fala_r3_36:
+    type: line
+    speaker_id: raphael
+    emotion: happy
+    animation_id: idle
+    text:
+      - type: text
+        value: You're welcome. Now, why don't you go upstairs and let me ask Kelly a few questions.
+    next: fala_r3_37
+
+  fala_r3_37:
+    type: line
+    speaker_id: arthur
+    emotion: happy
+    animation_id: idle
+    text:
+      - type: text
+        value: Okay.
+    next: ramificacao_2
+
+  ramificacao_2:
+    type: conditional
+    branches:
+      - branch_id: ramo
+        if:
+          all:
+            - condition: equals
+              left: flags.curious_stab
+              right: false
+        next: fim_good
+      - branch_id: ""
+        if:
+          all:
+            - condition: equals
+              left: flags.curious_stab
+              right: true
+        next: acao_4
+      - branch_id: ramo
+        next: fim_error
+
+  acao_4:
+    type: character_action
+    character_id: arthur
+    position: center_left
+    animation_id: step_across
+    next: fala_55
+
+  fala_55:
+    type: line
+    speaker_id: arthur
+    emotion: neutral
+    animation_id: idle
+    text:
+      - type: text
+        value: Actually, can I ask a question before I go?
+    next: fala_56
+
+  fala_56:
+    type: line
+    speaker_id: raphael
+    emotion: happy
+    animation_id: idle
+    text:
+      - type: text
+        value: Ahaha. You already did.
+    next: fala_57
+
+  fala_57:
+    type: line
+    speaker_id: arthur
+    emotion: happy
+    animation_id: idle
+    text:
+      - type: text
+        value: Y-yeah.
+    next: fala_58
+
+  fala_58:
+    type: line
+    speaker_id: arthur
+    emotion: neutral
+    animation_id: idle
+    text:
+      - type: text
+        value: Anyway. What was that thing about Kelly getting stabbed?
+    next: fala_59
+
+  fala_59:
+    type: line
+    speaker_id: raphael
+    emotion: nervous
+    animation_id: idle
+    text:
+      - type: text
+        value: Uh... Well.
+    next: fala_60
+
+  fala_60:
+    type: line
+    speaker_id: kelly
+    emotion: angry
+    animation_id: idle
+    text:
+      - type: text
+        value: "This absolute buffoon stabbed me before handing me to the authorities, "
+      - type: shout
+        value: that's what happened!
+    next: fala_61
+
+  fala_61:
+    type: line
+    speaker_id: arthur
+    emotion: surprised
+    animation_id: idle
+    auto_advance: true
+    text:
+      - type: text
+        value: What the-
+    next: fala_62
+
+  fala_62:
+    type: line
+    speaker_id: raphael
+    emotion: nervous
+    animation_id: idle
+    text:
+      - type: text
+        value: Look, I know it sounds bad.
+    next: fala_63
+
+  fala_63:
+    type: line
+    speaker_id: kelly
+    emotion: angry
+    animation_id: idle
+    text:
+      - type: shout
+        value: IT SOUNDS!?
+    next: fala_64
+
+  fala_64:
+    type: line
+    speaker_id: raphael
+    emotion: stressed
+    animation_id: idle
+    text:
+      - type: text
+        value: But, it was all part of the plan!
+    next: fala_65
+
+  fala_65:
+    type: line
+    speaker_id: arthur
+    emotion: surprised
+    animation_id: idle
+    text:
+      - type: shout
+        value: WHAT PLAN!?
+    next: fala_66
+
+  fala_66:
+    type: line
+    speaker_id: raphael
+    emotion: nervous
+    animation_id: idle
+    text:
+      - type: text
+        value: The plan that is finding out what those files were about.
+    next: fala_67
+
+  fala_67:
+    type: line
+    speaker_id: kelly
+    emotion: angry
+    animation_id: idle
+    text:
+      - type: text
+        value: "... You stabbed me, just so you could "
+      - type: styled_text
+        value: interrogate me!
+        style:
+          bold: true
+    next: fala_68
+
+  fala_68:
+    type: line
+    speaker_id: arthur
+    emotion: nervous
+    animation_id: idle
+    text:
+      - type: text
+        value: Isn't that illegal?
+    next: fala_69
+
+  fala_69:
+    type: line
+    speaker_id: raphael
+    emotion: annoyed
+    animation_id: idle
+    text:
+      - type: text
+        value: Wasn't the whole "poison the mana in the air" illegal too?
+    next: fala_70
+
+  fala_70:
+    type: line
+    speaker_id: kelly
+    emotion: angry
+    animation_id: idle
+    text:
+      - type: text
+        value: When I get out of these restraints, you're so f#$%@=g dead.
+    next: fala_71
+
+  fala_71:
+    type: line
+    speaker_id: arthur
+    emotion: nervous
+    animation_id: idle
+    delivery: thought
+    text:
+      - type: text
+        value: He kinda has a point though.
+    next: fala_72
+
+  fala_72:
+    type: line
+    speaker_id: raphael
+    emotion: neutral
+    animation_id: idle
+    text:
+      - type: text
+        value: Right, whatever you say, Kelly. Arthur, please keep this whole "stabbing" thing between us. I want to be a good example to Pacci and Neven.
+    next: fala_73
+
+  fala_73:
+    type: line
+    speaker_id: arthur
+    emotion: nervous
+    animation_id: idle
+    text:
+      - type: text
+        value: ... Sure.
+    next: fim_good
+
+  fim_good:
+    type: end
+    result: good
+
+  fim_error:
+    type: end
+    result: bad

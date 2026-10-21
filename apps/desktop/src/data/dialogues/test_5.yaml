@@ -1,13 +1,12 @@
-# Diálogo: test_5
 # Gerado pelo Dialogue Forger. Comentários do ficheiro original não são preservados.
 
-dialogue_id: test_5
 start_node: entra
 nodes:
   entra:
     type: character_enter
     character_id: raphael
     position: center_left
+    animation_id: step_in
     emotion: unsure
     next: entra_2
     effects_after:
@@ -15,6 +14,7 @@ nodes:
         character_id: raphael
         relationship_kind: friendship
         value: 1
+        direction: increase
 
   entra_2:
     type: character_enter
@@ -443,6 +443,7 @@ nodes:
     type: line
     speaker_id: raphael
     emotion: frustrated
+    animation_id: idle
     text:
       - type: text
         value: I appreciate the sentiment, but I can't let you get into harms way.
@@ -452,6 +453,7 @@ nodes:
         character_id: raphael
         relationship_kind: friendship
         value: 1
+        direction: increase
 
   fala_37:
     type: line
@@ -946,6 +948,7 @@ nodes:
     type: line
     speaker_id: arthur
     emotion: surprised
+    animation_id: idle
     text:
       - type: text
         value: (He looks like he's going to blow up. I should just leave him be.)
@@ -954,7 +957,8 @@ nodes:
       - type: add_relationship
         character_id: raphael
         relationship_kind: friendship
-        value: -1
+        value: 1
+        direction: decrease
 
   ramificacao_2:
     type: conditional

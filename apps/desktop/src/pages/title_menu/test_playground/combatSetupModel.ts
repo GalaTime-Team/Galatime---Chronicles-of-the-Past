@@ -234,9 +234,23 @@ export function filterCatalogue(
     return matches.slice(0, limit);
 }
 
-/** Sprite a combat unit is drawn with, resolved from the bundled sprite index. */
+/**
+ * Sprite a combat unit is drawn with, resolved from the bundled sprite index.
+ *
+ * The sprite is chosen based on the unit's side: allies (left) face right, enemies (right)
+ * face left. Characters use sprites from their `combat/` subfolder, mobs use sprites from
+ * their root folder. Falls back to any sprite in the `combat` folder when the exact
+ * facing sprite doesn't exist, and finally to the first available sprite (usually
+ * `tsp/neutral.png`) when the entity has no combat sprites at all.
+ */
 export function resolveUnitSprite(unit: CombatUnit): string | undefined {
-    return getEntityImages({ type: unit.entityType, id: unit.entityId, name: unit.name })[0]?.url;
+    const images = getEntityImages({ type: unit.entityType, id: unit.entityId, name: unit.name });
+    const facing = unit.side === 'allies' ? 'right' : 'left';
+
+    const byFacing = images.find((image) => image.name.includes(facing));
+    if (byFacing) return byFacing.url;
+
+    return images.find((image) => image.url.includes('/combat/'))?.url ?? images[0]?.url;
 }
 
 /** Reads the whole entity catalogue — characters and mobs — ready for the picker. */

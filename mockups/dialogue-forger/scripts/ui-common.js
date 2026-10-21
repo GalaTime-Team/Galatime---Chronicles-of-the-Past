@@ -16,37 +16,16 @@
     /** One datalist per kind, refreshed in place so re-renders do not leak. */
     var lists = {};
 
-    /** Values offered for the free-text fields that have a natural vocabulary. */
-    var SUGGESTIONS = {
-        // The sprite a line (or a choice question) asks for. The game matches
-        // these against the character's own art, so the list is a hint rather
-        // than a gate — a name it does not know falls back to neutral.
-        emotions: [
-            'neutral', 'surprised', 'stressed', 'happy', 'annoyed',
-            'afraid', 'frustrated', 'suspicious', 'thinking', 'unsure', 'angry',
-        ],
-        // How a `character_enter` places someone. A position is an ordering hint,
-        // not a coordinate: the stage lays itself out from the cast size.
-        positions: ['left', 'center_left', 'center', 'center_right', 'right'],
-        directions: ['left', 'right'],
-        results: ['good', 'neutral', 'bad'],
-        flags: ['flags.'],
-        stats: ['stats.'],
-        objectives: ['objectives.'],
-        // The kinds of affinity a relationship path may name. `relationship.` is
-        // deliberately absent: on its own it is not a path — the character and
-        // the kind are both required — and a half-written path in the menu is
-        // worse than none at all.
-        relationshipKinds: Forger.model.RELATIONSHIP_KINDS.slice(),
-        // The two words that answer "does the player have this?" — offered so a
-        // boolean is a pick from a list rather than four remembered keystrokes.
-        literals: ['true', 'false'],
-        paths: [
-            'flags.', 'inventory.', 'stats.', 'objectives.',
-            'time.hour', 'time.day', 'dialogues.seen', 'dialogues.unlocked',
-            'paths.unlocked',
-        ],
-    };
+    /** Every tooltip gets its own id, so `aria-describedby` never says more than it means. */
+    var infoCount = 0;
+
+    /**
+     * Values offered for the free-text fields that have a natural vocabulary.
+     *
+     * The whole table lives in `lists.js`, next to the vocabularies it draws
+     * from, so adding a value is one edit in one file.
+     */
+    var SUGGESTIONS = Forger.lists.SUGGESTIONS;
 
     /** Creates an element. `on` takes an object of event handlers. */
     function el(tag, props, children) {
@@ -105,24 +84,151 @@
     }
 
     /**
+     * Keeps a tooltip on screen.
+     *
+     * Below its "i", opening rightwards, is the default — that is where the
+     * reader's eye already is. A tooltip that would fall past the bottom of the
+     * window opens above instead, and one past the right edge opens leftwards:
+     * a field near the right of a three-column row would otherwise push its
+     * explanation off screen. A flip only happens when it actually helps — one
+     * too tall for the room above stays below it.
+     *
+     * Whichever side it opens on, the box never grows past it: a list too long
+     * for the window scrolls inside itself rather than falling off it.
+     *
+     * Measured in a frame, so the hover style that reveals the popover has
+     * already been applied, and only while it is actually open — `offsetParent`
+     * is null while it is hidden. The bar is always measured from the default
+     * spot, so where the popover already sits never decides where it goes next.
+     */
+    function flipPopover(help) {
+        if (!help) {
+            return;
+        }
+
+        window.requestAnimationFrame(function () {
+            var popover = help.querySelector('.info-popover, .syntax-popover');
+
+            if (!popover || !popover.offsetParent) {
+                return;
+            }
+
+            popover.classList.remove('is-above', 'is-right');
+
+            var margin = 8;
+            var anchor = help.getBoundingClientRect();
+            var box = popover.getBoundingClientRect();
+
+            var above = anchor.top - 7 - box.height >= margin
+                && anchor.bottom + 7 + box.height > window.innerHeight - margin;
+
+            popover.classList.toggle('is-above', above);
+            popover.classList.toggle('is-right',
+                anchor.left + box.width > window.innerWidth - margin
+                && anchor.right - box.width >= margin);
+
+            var room = above
+                ? anchor.top - 7 - margin
+                : window.innerHeight - margin - (anchor.bottom + 7);
+
+            popover.style.maxHeight = Math.max(160, room) + 'px';
+        });
+    }
+
+    // Both events bubble, unlike `mouseenter`, so one pair of listeners covers
+    // every "i" on the page however many the editors have painted.
+    document.addEventListener('mouseover', function (event) {
+        flipPopover(event.target && event.target.closest
+            ? event.target.closest('.info-help, .syntax-help')
+            : null);
+    });
+
+    document.addEventListener('focusin', function (event) {
+        flipPopover(event.target && event.target.closest
+            ? event.target.closest('.info-help, .syntax-help')
+            : null);
+    });
+
+    // A window resized under an open tooltip moves the edge it was measured
+    // against, so an open one is measured again — it is the same promise the
+    // hover makes, kept after the fact.
+    window.addEventListener('resize', function () {
+        document.querySelectorAll('.info-help, .syntax-help').forEach(function (help) {
+            var popover = help.querySelector('.info-popover, .syntax-popover');
+
+            if (popover && popover.offsetParent) {
+                flipPopover(help);
+            }
+        });
+    });
+
+    /**
+     * An "i" that explains a control without sitting under it.
+     *
+     * The explanation is written once and offered on hover or focus, so the
+     * panels stay readable for someone who already knows the format and still
+     * answer the first-time question in place. Replaces the long helper
+     * paragraphs that used to be printed under every heading and field.
+     *
+     * `body` is a string, an array of paragraphs, or an already-built node for
+     * a tooltip with structure of its own.
+     */
+    function info(options) {
+        infoCount += 1;
+
+        var tooltipId = 'forger-info-' + infoCount;
+        var title = options.title || options.label || 'Mais informação';
+        var body = options.body instanceof window.Node
+            ? options.body
+            : el('div', { class: 'info-body' }, (Array.isArray(options.body) ? options.body : [options.body || ''])
+                .filter(function (line) {
+                    return line;
+                })
+                .map(function (line) {
+                    return el('p', { text: line });
+                }));
+
+        return el('span', { class: 'info-help' }, [
+            el('button', {
+                type: 'button',
+                class: 'info-button',
+                'aria-label': options.label || title,
+                'aria-describedby': tooltipId,
+                title: title,
+                text: 'i',
+            }),
+            el('div', { id: tooltipId, class: 'info-popover', role: 'tooltip' }, [
+                el('h4', { text: title }),
+                body,
+            ]),
+        ]);
+    }
+
+    /**
      * A labelled control.
      *
-     * `hint` may be a string or an already-built node, so a hint that has to
-     * follow the control it describes can be updated in place instead of being
-     * rebuilt around it.
+     * `hint` may be a string or an already-built node. A string becomes the
+     * field's "i" tooltip, so the reading order stays label → control. A node is
+     * appended as given: the condition editor hands over a hint that rewrites
+     * itself while the writer types, and a tooltip that only opens on hover
+     * could not follow along.
      *
-     * `options.required` marks it with the same `*` the identity panel shows on
-     * "ID do diálogo", via `markRequired` so both paths look identical.
+     * `options.required` marks it with the same `*` the identity panel shows,
+     * via `markRequired` so both paths look identical.
      */
     function field(label, control, hint, options) {
-        var hintNode = !hint
-            ? null
-            : (hint instanceof window.Node ? hint : el('span', { class: 'field-hint', text: hint }));
+        var hintNode = hint instanceof window.Node
+            ? hint
+            : (typeof hint === 'string' && hint
+                ? info({ label: 'Sobre «' + label + '»', title: label, body: hint })
+                : null);
 
         var node = el('label', { class: 'field' }, [
-            el('span', { class: 'field-label', text: label }),
+            el('div', { class: 'field-label-row' }, [
+                el('span', { class: 'field-label', text: label }),
+                hintNode,
+            ]),
             control,
-            hintNode,
         ]);
 
         return options && options.required ? markRequired(node) : node;
@@ -153,8 +259,8 @@
     }
 
     /** A wrapping flex row of fields. */
-    function inline(children) {
-        return el('div', { class: 'inline' }, children);
+    function inline(children, extraClass) {
+        return el('div', { class: 'inline' + (extraClass ? ' ' + extraClass : '') }, children);
     }
 
     /**
@@ -306,6 +412,37 @@
         ]);
     }
 
+    /**
+     * A titled section of the node editor.
+     *
+     * Visible by default: the sections are how a node explains its own shape.
+     * `options.collapsible` folds a section away — used for the parts a writer
+     * opens rarely, like effects — and `options.open` leaves one of those open
+     * when it already has something in it.
+     */
+    function section(title, children, options) {
+        var settings = options || {};
+        var body = el('div', { class: 'node-section-body' }, children);
+
+        if (!settings.collapsible) {
+            return el('section', { class: 'node-section' }, [
+                el('h3', { class: 'node-section-title', text: title }),
+                body,
+            ]);
+        }
+
+        var details = el('details', { class: 'node-section' });
+
+        if (settings.open) {
+            details.setAttribute('open', 'open');
+        }
+
+        details.appendChild(el('summary', { class: 'node-section-title', text: title }));
+        details.appendChild(body);
+
+        return details;
+    }
+
     /** A titled section, optionally collapsible and collapsed by default. */
     function block(title, children, options) {
         var settings = options || {};
@@ -357,7 +494,6 @@
             extra: Forger.catalogue.characters(),
             onInput: options.onChange,
         });
-
         node.classList.add('character-select');
 
         return node;
@@ -401,6 +537,8 @@
         append: append,
         field: field,
         markRequired: markRequired,
+        info: info,
+        section: section,
         inline: inline,
         text: text,
         textarea: textarea,

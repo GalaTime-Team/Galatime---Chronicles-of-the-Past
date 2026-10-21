@@ -343,7 +343,7 @@ export function CombatFormationEntity({
                     outline: keyboardFocused ? '2px solid #fff' : 'none',
                     outlineOffset: keyboardFocused ? '2px' : '0',
                 }}
-                className="group relative flex h-11 w-11 shrink-0 items-center justify-center outline-none sm:h-14 sm:w-14"
+                className="group relative flex h-14 w-14 shrink-0 items-center justify-center outline-none sm:h-20 sm:w-20"
             >
                 {/* Two inert transform layers, one per reaction, so the lunge and the hit
                     shake never fight over the same property - and neither collides with
@@ -380,7 +380,7 @@ export function CombatFormationEntity({
                                         src={entity.spriteUrl || UNKNOWN_ENTITY_IMAGE}
                                         alt={entity.name}
                                         fallbackSrc={UNKNOWN_ENTITY_IMAGE}
-                                        className="h-5 w-5 sm:h-10 sm:w-10"
+                                        className="h-8 w-8 sm:h-16 sm:w-16"
                                     />
                                 </div>
                                 {/* The element-tinted flash of the blow, clipped to the sprite. */}
@@ -400,7 +400,7 @@ export function CombatFormationEntity({
                             {reflected && (
                                 <span
                                     aria-hidden="true"
-                                    className="pointer-events-none absolute left-1/2 top-0 z-40 h-5 w-5 -translate-x-1/2 border-2 border-galatime-stats-manaTo sm:h-10 sm:w-10"
+                                    className="pointer-events-none absolute left-1/2 top-0 z-40 h-8 w-8 -translate-x-1/2 border-2 border-galatime-stats-manaTo sm:h-16 sm:w-16"
                                     style={{ animation: `combat-shield 460ms ease-out ${ARENA_IMPACT_MS}ms both` }}
                                 />
                             )}
