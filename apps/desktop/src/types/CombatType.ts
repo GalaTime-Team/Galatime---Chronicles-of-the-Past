@@ -57,6 +57,22 @@ export interface CombatStats {
     physicalDefense: number;
     magicalDefense: number;
     speed: number;
+    /**
+     * Outgoing accuracy modifier, in points.
+     *
+     * It changes how well the unit's *own* attacks land; it never makes the
+     * unit easier to hit. The default `0` is a modifier, not a percentage: the
+     * authored chance to hit lives on the action.
+     */
+    accuracy: number;
+    /**
+     * Incoming evasion modifier, in points.
+     *
+     * It makes the unit harder to hit — the mirror of {@link accuracy}.
+     */
+    evasion: number;
+    /** Outgoing critical chance, in percent. */
+    critChance: number;
 }
 
 /** A flat addition to a stat block, as authored in a skill `buff`/`debuff`. */
@@ -69,6 +85,53 @@ export interface CombatStatDelta {
     physical_defense?: number;
     magical_defense?: number;
     speed?: number;
+    accuracy?: number;
+    evasion?: number;
+    crit_chance?: number;
+}
+
+/**
+ * How a status reads to the units that clean or dispel it.
+ *
+ * `positive` is a gift, `negative` a curse, `neutral` a control status that
+ * only an explicit status id removes.
+ */
+export type CombatEffectPolarity = 'positive' | 'negative' | 'neutral';
+
+/** Where a status moves its bearer, as authored by a `move` effect. */
+export interface CombatMoveSpec {
+    /** `self` moves the caster, `target` moves the unit the effect landed on. */
+    who: 'self' | 'target';
+    /** Destination line; `other` means "the line the bearer is not in". */
+    toLine: 'front' | 'rear' | 'other';
+    /** Trades places with the caster instead of just stepping across. */
+    swapWithCaster: boolean;
+}
+
+/** How far back a `rewind` pulls its target, and what it restores. */
+export interface CombatRewindSpec {
+    /** How many of the target's own turns to undo; `null` means all of them. */
+    turns: number | null;
+    /** Which pools are restored. Empty means every pool. */
+    resources: Array<'hp' | 'mana' | 'stamina'>;
+    /** Whether the statuses of the rewound turns are undone too. */
+    cleanse: boolean;
+}
+
+/**
+ * One snapshot of a unit's past, kept so a `rewind` can undo it.
+ *
+ * The timeline is the unit's own: it records what it had at the start of each
+ * of its turns, so rewinding is "go back to how things were N turns ago".
+ */
+export interface CombatTimelineEntry {
+    /** The unit's turn count when the snapshot was taken. */
+    turn: number;
+    hp: number;
+    mana: number;
+    stamina: number;
+    /** The statuses the unit carried at that moment. */
+    effects: CombatEffectInstance[];
 }
 
 /** One live status effect on a unit. */
@@ -94,8 +157,39 @@ export interface CombatEffectInstance {
      * reference schema's `mode: multiply` without a second effect type.
      */
     statMultipliers: CombatStatDelta | null;
+    /**
+     * How the status reads to a cleanse or a dispel.
+     *
+     * Derived from the effect body (a debuff or a damage-over-time reads as
+     * `negative`, a buff as `positive`), and overridable by the author.
+     */
+    polarity: CombatEffectPolarity;
+    /** Resources the holder regains on each of the effect's turns. */
+    regenPerTurn: CombatStatDelta | null;
+    /** Resources the holder pays on each of the effect's turns. */
+    selfUpkeep: CombatStatDelta | null;
+    /** Health the holder pays on the turn after the effect lands. */
+    deferredCost: CombatStatDelta | null;
+    /** Status ids the holder cannot suffer while the effect lives. */
+    immunities: string[] | null;
     /** Action kinds the effect forbids (`silenced` blocks attacks). */
     preventActions: string[] | null;
+    /** The holder may not use skills while the effect lives. */
+    preventSkills: boolean;
+    /** The holder cannot be chosen as a target while the effect lives. */
+    untargetable: boolean;
+    /** The holder cannot be healed by anybody else while the effect lives. */
+    healBlock: boolean;
+    /** The holder reflects the next hit it takes. */
+    counter: boolean;
+    /** How many turns the effect shifts the holder's place in the order. */
+    turnOffset: number;
+    /** How many cooldown turns the effect takes off the holder's actions. */
+    cooldownTick: number;
+    /** Where the effect moves its bearer. */
+    move: CombatMoveSpec | null;
+    /** How far back the effect rewinds its bearer. */
+    rewind: CombatRewindSpec | null;
     /** Flat damage the effect deals to its owner at the start of its turn. */
     damagePerTurn: number;
     /** How many copies are stacked; `1` when the effect does not stack. */
@@ -172,6 +266,13 @@ export interface CombatUnit {
      * mid-fight comes back with the wear it already took.
      */
     carriedWeapons: CarriedWeapon[];
+    /**
+     * The unit's recent past, one snapshot per turn.
+     *
+     * A `rewind` reads it to put the unit back the way it was, so the mechanic
+     * needs no separate undo log.
+     */
+    timeline: CombatTimelineEntry[];
 }
 
 /**
@@ -211,6 +312,8 @@ export type CombatActionKind =
 export interface CombatActionCost {
     mana: number;
     stamina: number;
+    /** Health the action takes from its own user. */
+    hp: number;
     /** Turns the action stays unavailable after use. */
     cooldown: number;
 }
@@ -245,6 +348,29 @@ export interface CombatAction {
      * accuracy by range, exponential stacking, ammo) never fires on a skill.
      */
     weapon?: WeaponActionSpec;
+    /**
+     * The action bites harder by day (×1.5) and softer at night (×0.5).
+     *
+     * The flag is on the action, not on the effect, because a solar skill is
+     * solar in every part of itself.
+     */
+    solar: boolean;
+    /** The mirror of {@link solar}: ×1.5 at night, ×0.5 by day. */
+    nocturnal: boolean;
+    /** Base chance of a critical hit, in percent. */
+    critChance: number;
+    /** The hit always lands, whatever the accuracy roll would say. */
+    ignoreAccuracy: boolean;
+    /** Fraction of the target's defence the hit ignores (0 … 1). */
+    defensePierce: number;
+    /** Extra multipliers per element of the defender. */
+    bonusVsElements: Record<string, number>;
+    /** Extra multiplier against a target below a fraction of its health. */
+    bonusVsHpBelow: { threshold: number; multiplier: number } | null;
+    /** Health fraction below which the target panics and flees the fight. */
+    fleeBelowHp: number | null;
+    /** The status that guarantees a critical hit against its bearer. */
+    guaranteedCritVsStatus: string | null;
 }
 
 /**Damage-channel modifiers folded from a defender's passive abilities.
@@ -311,6 +437,10 @@ export interface CombatActionImpact {
     baseDamage: number;
     /** Rounded damage applied across every hit. */
     finalDamage: number;
+    /** Chance of a critical hit, in percent. */
+    critChance: number;
+    /** Chance of the hit landing, in percent (0 … 100). */
+    hitChance: number;
 }
 
 /** Damage breakdown for one attacker/target pair. */
@@ -344,6 +474,12 @@ export interface AttackResolution {
     baseDamage: number;
     /** Final damage applied across every hit. */
     finalDamage: number;
+    /** Chance of a critical hit, in percent. */
+    critChance: number;
+    /** `true` when at least one of the hits was critical. */
+    isCrit: boolean;
+    /** Chance of a hit landing, in percent. */
+    hitChance: number;
     /** Target HP before the hit. */
     targetHpBefore: number;
     /** Target HP after the hit. */
@@ -383,6 +519,23 @@ export type CombatEvent =
         turns: number | null;
     }
     | { type: 'effect_expired'; unitId: string; effectId: string }
+    /** A status the target could not suffer, because it is immune to it. */
+    | { type: 'effect_resisted'; unitId: string; effectId: string; statusEffect: string | null }
+    /**
+     * A unit was rewound: its resources went back to what they were, and the
+     * statuses of the rewound turns were undone.
+     */
+    | {
+        type: 'unit_rewound';
+        unitId: string;
+        /** How many of the unit's turns were undone. */
+        turns: number;
+        restoredHp: number;
+        restoredMana: number;
+        restoredStamina: number;
+        /** Statuses the rewind removed. */
+        removedEffectIds: string[];
+    }
     | { type: 'flee_attempted'; unitId: string; escaped: boolean }
     | {
         type: 'resource_changed';
@@ -472,6 +625,9 @@ export type CombatEvent =
  */
 export type CombatTurnGauges = Record<string, number>;
 
+/** Whether the sun is up. Decides what `solar` and `nocturnal` skills are worth. */
+export type CombatTimePhase = 'day' | 'night';
+
 /** The serializable shape of a fight. The frontend renders this directly. */
 export interface CombatState {
     sessionId: string;
@@ -480,6 +636,15 @@ export interface CombatState {
     round: number;
     /** Index into {@link CombatState.order}. */
     turnIndex: number;
+    /**
+     * The hour of the day the fight happens at.
+     *
+     * Taken from the world clock when the fight opens, and fixed for its whole
+     * duration — the sun does not move while two people are hitting each other.
+     */
+    hour: number;
+    /** Whether the sun is up, derived from {@link CombatState.hour}. */
+    timePhase: CombatTimePhase;
     /**
      * Turn queue for the current round, fastest first.
      *
@@ -539,6 +704,12 @@ export interface CombatEncounter {
     id: string;
     name: string;
     description?: string;
+    /**
+     * Forces the phase of the fight, ignoring the world clock's hour.
+     *
+     * Left out, the fight takes the hour of the day it starts at.
+     */
+    timePhase?: CombatTimePhase;
     allies: CombatEncounterMember[];
     enemies: CombatEncounterMember[];
 }
@@ -615,6 +786,20 @@ export interface StartCombatOptions {
     encounter?: CombatEncounter;
     /** Deterministic randomness. Defaults to `Math.random`. */
     random?: CombatRandom;
+    /**
+     * The hour of the day the fight happens at.
+     *
+     * Defaults to the world clock's hour. The fight keeps this hour for its
+     * whole duration.
+     */
+    hour?: number;
+    /**
+     * Forces the phase, ignoring the hour.
+     *
+     * For the few fights that happen at a fixed time (a duel under the moon,
+     * a test), where the hour itself does not matter.
+     */
+    timePhase?: CombatTimePhase;
     /**
      * Whether the fight's inventories are written back to the entity store when it
      * ends. On by default, so the game's items survive a battle; the Test

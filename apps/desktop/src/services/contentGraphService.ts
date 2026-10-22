@@ -23,6 +23,18 @@ const PUBLIC_SKILL_FIELDS = [
     'costs',
     'effects',
     'collateral',
+    'solar',
+    'nocturnal',
+    'crit_chance',
+    'ignore_accuracy',
+    'defense_pierce',
+    'bonus_vs_elements',
+    'bonus_vs_hp_below',
+    'flee_below_hp',
+    'guaranteed_crit_vs_status',
+    'kind',
+    'range',
+    'damage_variance',
 ] as const;
 
 const PUBLIC_EFFECT_FIELDS = [
@@ -39,11 +51,32 @@ const PUBLIC_EFFECT_FIELDS = [
     'resource_regen',
     'resource_drain',
     'damage',
+    'damage_per_turn',
     'damage_variance',
     'can_stack',
     'regen_variance',
     'heal',
     'drain',
+    'polarity',
+    'cleanse',
+    'cleanse_all',
+    'dispel',
+    'dispel_all',
+    'dispel_status',
+    'regen_per_turn',
+    'status_immunities',
+    'prevent_skills',
+    'untargetable',
+    'heal_block',
+    'counter',
+    'turn_offset',
+    'cooldown_tick',
+    'move',
+    'rewind',
+    'drain_to',
+    'self_upkeep',
+    'deferred_cost',
+    'self_damage_per_target',
 ] as const;
 
 function clone(value: unknown): unknown {
@@ -80,7 +113,7 @@ export function toPublicAttack(skill: AttackSkill): PublicAttack {
             } else if (field === 'learning_cost') {
                 result.learning_cost = { experience_points: skill.learning_cost?.experience_points ?? 0 };
             } else if (field === 'costs') {
-                result.costs = pickFields(skill.costs ?? {}, ['mana', 'stamina', 'cooldown']);
+                result.costs = pickFields(skill.costs ?? {}, ['mana', 'stamina', 'cooldown', 'hp']);
             } else if (field === 'collateral') {
                 result.collateral = pickFields(skill.collateral ?? {}, [
                     'chance', 'apply_to', 'include_primary_targets', 'include_primary_target',

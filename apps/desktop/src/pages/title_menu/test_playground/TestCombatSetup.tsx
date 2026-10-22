@@ -31,6 +31,10 @@ interface TestCombatSetupProps {
     setup: CombatSetup;
     /** Catalogue indexed by {@link catalogueKey}, so a filled slot can show its sprite. */
     entities: ReadonlyMap<string, CatalogueEntity>;
+    /** The hour of the day the fight will happen at. */
+    hour: number;
+    /** Moves the world's clock, and with it the hour of the next fight. */
+    onHourChange: (hour: number) => void;
     onFill: (side: CombatSide, line: CombatLine, index: number, entity: CatalogueEntity) => void;
     onClear: (side: CombatSide, line: CombatLine, index: number) => void;
     onToggleControl: (side: CombatSide, line: CombatLine, index: number) => void;
@@ -57,6 +61,8 @@ interface TestCombatSetupProps {
 export function TestCombatSetup({
     setup,
     entities,
+    hour,
+    onHourChange,
     onFill,
     onClear,
     onToggleControl,
@@ -149,6 +155,28 @@ export function TestCombatSetup({
             </div>
 
             <footer className="flex shrink-0 flex-wrap items-center justify-between gap-3 border-t border-white/10 pt-3">
+                {/* The hour of the day: a solar skill bites harder by day and a
+                    nocturnal one at night, so the fight is worth setting up in
+                    the light the author had in mind. */}
+                <label className="flex items-center gap-2 text-xs uppercase tracking-[0.15em] text-white/50">
+                    <span>{t('playground.combat.hour')}</span>
+                    <input
+                        type="range"
+                        min={0}
+                        max={23}
+                        step={1}
+                        value={hour}
+                        onChange={(event) => onHourChange(Number(event.target.value))}
+                        className="w-32 accent-white"
+                    />
+                    <span className="font-mono tabular-nums text-white/80">
+                        {String(hour).padStart(2, '0')}:00
+                    </span>
+                    <span className="text-white/40">
+                        {hour >= 6 && hour < 18 ? t('playground.combat.day') : t('playground.combat.night')}
+                    </span>
+                </label>
+
                 {/* Only a blocked start needs saying; a ready setup speaks for itself. */}
                 <p aria-live="polite" className="text-sm text-galatime-warning">
                     {valid ? '' : t('playground.combat.needsBothSides')}

@@ -22,6 +22,41 @@ export const DIALOGUE_CHARACTER_EXIT_DURATION = 0.35;
 /** How long a sprite change takes to cross-fade. */
 export const DIALOGUE_CHARACTER_EXPRESSION_DURATION = 0.25;
 
+/**
+ * How long a character takes to stand up or sit down.
+ *
+ * The pose itself is a change of size and height, and this is how long that
+ * change takes to settle. It is the same for both directions: getting up and
+ * sitting down are one movement each.
+ */
+export const DIALOGUE_POSE_CHANGE_DURATION = 0.32;
+
+/**
+ * How long a step across the stage takes.
+ *
+ * Shorter than the pose change: a step is a quick movement, and the character
+ * is only shifting a little to the side.
+ */
+export const DIALOGUE_STEP_ACROSS_DURATION = 0.28;
+
+/**
+ * How far a character steps across the stage, as a percentage of their own
+ * width.
+ *
+ * A step, not a walk: the character stays where they belong in the line, they
+ * just shift their weight to the side.
+ */
+export const DIALOGUE_STEP_ACROSS_TRAVEL_PERCENT = 3;
+
+/**
+ * How far a character rises when they stand up, as a percentage of their own
+ * height.
+ *
+ * The pose change already makes them taller; this is the little lift that
+ * sells the movement.
+ */
+export const DIALOGUE_STAND_UP_LIFT_PERCENT = 5;
+
 /** How long the whole choice list takes to arrive. */
 export const DIALOGUE_CHOICE_ENTER_DURATION = 0.25;
 

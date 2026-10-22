@@ -1,0 +1,2775 @@
+skills:
+  - id: water
+    name: Water
+    description: Add a description.
+    element_id: aqua
+    learning_cost:
+      experience_points: 1
+    learning_requirements:
+      required_attack_ids: []
+    targeting: self
+    costs:
+      mana: 2
+      stamina: 0
+      cooldown: 0
+    effects:
+      - effect_id: water_effect
+        status_effect: Water's Embrace
+        apply_to: self
+        turns: 2
+        buff:
+          magical_defense: 6
+        polarity: positive
+  - id: water_bolt
+    name: Water Bolt
+    description: Add a description.
+    element_id: aqua
+    learning_cost:
+      experience_points: 1
+    learning_requirements:
+      required_attack_ids:
+        - water
+    targeting: enemy_one
+    damage:
+      kind: magical
+      damage_type: magical
+      power:
+        kind: fixed
+        value: 14
+    accuracy: 100
+    hit_count: 1
+    costs:
+      mana: 4
+      stamina: 0
+      cooldown: 0
+  - id: tide_crash
+    name: Tide Crash
+    description: Add a description.
+    element_id: aqua
+    learning_cost:
+      experience_points: 2
+    learning_requirements:
+      required_attack_ids:
+        - water_bolt
+    targeting: enemy_one
+    damage:
+      kind: magical
+      damage_type: magical
+      power:
+        kind: fixed
+        value: 16
+    accuracy: 95
+    hit_count: 1
+    costs:
+      mana: 6
+      stamina: 0
+      cooldown: 0
+  - id: riptide
+    name: Riptide
+    description: Add a description.
+    element_id: aqua
+    learning_cost:
+      experience_points: 3
+    learning_requirements:
+      required_attack_ids:
+        - tide_crash
+    targeting: enemy_one
+    damage:
+      kind: magical
+      damage_type: magical
+      power:
+        kind: fixed
+        value: 20
+    accuracy: 95
+    hit_count: 1
+    costs:
+      mana: 9
+      stamina: 0
+      cooldown: 0
+  - id: surging_tide
+    name: Surging Tide
+    description: Add a description.
+    element_id: aqua
+    learning_cost:
+      experience_points: 3
+    learning_requirements:
+      required_attack_ids:
+        - tide_crash
+    targeting: enemies_all
+    damage:
+      kind: magical
+      damage_type: magical
+      power:
+        kind: fixed
+        value: 16
+    accuracy: 95
+    hit_count: 1
+    costs:
+      mana: 12
+      stamina: 0
+      cooldown: 0
+  - id: blood_current
+    name: Blood Current
+    description: Add a description.
+    element_id: aqua
+    learning_cost:
+      experience_points: 4
+    learning_requirements:
+      required_attack_ids:
+        - riptide
+    targeting: enemy_one
+    damage:
+      kind: magical
+      damage_type: magical
+      power:
+        kind: fixed
+        value: 26
+    accuracy: 95
+    hit_count: 1
+    costs:
+      mana: 14
+      stamina: 0
+      cooldown: 0
+  - id: drowning_tide
+    name: Drowning Tide
+    description: Add a description.
+    element_id: aqua
+    learning_cost:
+      experience_points: 6
+    learning_requirements:
+      required_attack_ids:
+        - riptide
+        - surging_tide
+    targeting: enemies_all
+    damage:
+      kind: magical
+      damage_type: magical
+      power:
+        kind: fixed
+        value: 20
+    accuracy: 90
+    hit_count: 1
+    costs:
+      mana: 18
+      stamina: 0
+      cooldown: 0
+  - id: healing_mist
+    name: Healing Mist
+    description: Add a description.
+    element_id: aqua
+    learning_cost:
+      experience_points: 1
+    learning_requirements:
+      required_attack_ids:
+        - water
+    targeting: ally_one
+    costs:
+      mana: 6
+      stamina: 0
+      cooldown: 0
+  - id: cleansing_rain
+    name: Cleansing Rain
+    description: Add a description.
+    element_id: aqua
+    learning_cost:
+      experience_points: 2
+    learning_requirements:
+      required_attack_ids:
+        - healing_mist
+    targeting: ally_one
+    costs:
+      mana: 5
+      stamina: 0
+      cooldown: 0
+  - id: mending_stream
+    name: Mending Stream
+    description: Add a description.
+    element_id: aqua
+    learning_cost:
+      experience_points: 2
+    learning_requirements:
+      required_attack_ids:
+        - healing_mist
+    targeting: ally_one
+    costs:
+      mana: 9
+      stamina: 0
+      cooldown: 0
+  - id: mana_spring
+    name: Mana Spring
+    description: Add a description.
+    element_id: aqua
+    learning_cost:
+      experience_points: 2
+    learning_requirements:
+      required_attack_ids:
+        - healing_mist
+    targeting: ally_one
+    costs:
+      mana: 7
+      stamina: 0
+      cooldown: 0
+  - id: tidal_blessing
+    name: Tidal Blessing
+    description: Add a description.
+    element_id: aqua
+    learning_cost:
+      experience_points: 4
+    learning_requirements:
+      required_attack_ids:
+        - cleansing_rain
+        - mending_stream
+    targeting: allies_all
+    costs:
+      mana: 14
+      stamina: 0
+      cooldown: 0
+    effects:
+      - effect_id: tidal_blessing_effect
+        status_effect: Tidal Blessing
+        apply_to: allies_all
+        turns: 3
+        buff:
+          magical_attack: 10
+          speed: 5
+  - id: oceans_embrace
+    name: Oceans Embrace
+    description: Add a description.
+    element_id: aqua
+    learning_cost:
+      experience_points: 3
+    learning_requirements:
+      required_attack_ids:
+        - mending_stream
+    targeting: allies_all
+    costs:
+      mana: 16
+      stamina: 0
+      cooldown: 0
+  - id: life_spring
+    name: Life Spring
+    description: Add a description.
+    element_id: aqua
+    learning_cost:
+      experience_points: 4
+    learning_requirements:
+      required_attack_ids:
+        - mana_spring
+    targeting: ally_one
+    costs:
+      mana: 11
+      stamina: 0
+      cooldown: 0
+  - id: rain_of_renewal
+    name: Rain Of Renewal
+    description: Add a description.
+    element_id: aqua
+    learning_cost:
+      experience_points: 7
+    learning_requirements:
+      required_attack_ids:
+        - oceans_embrace
+        - tidal_blessing
+    targeting: allies_all
+    costs:
+      mana: 22
+      stamina: 0
+      cooldown: 0
+  - id: water_prison
+    name: Water Prison
+    description: Add a description.
+    element_id: aqua
+    learning_cost:
+      experience_points: 1
+    learning_requirements:
+      required_attack_ids:
+        - water
+    targeting: enemy_one
+    costs:
+      mana: 10
+      stamina: 0
+      cooldown: 0
+  - id: mist_veil
+    name: Mist Veil
+    description: Add a description.
+    element_id: aqua
+    learning_cost:
+      experience_points: 2
+    learning_requirements:
+      required_attack_ids:
+        - water_prison
+    targeting: allies_all
+    costs:
+      mana: 9
+      stamina: 0
+      cooldown: 0
+    effects:
+      - effect_id: mist_veil_effect
+        status_effect: Mist Veil
+        apply_to: allies_all
+        turns: 2
+        buff:
+          speed: 12
+  - id: flood
+    name: Flood
+    description: Add a description.
+    element_id: aqua
+    learning_cost:
+      experience_points: 3
+    learning_requirements:
+      required_attack_ids:
+        - water_prison
+    targeting: enemies_all
+    costs:
+      mana: 14
+      stamina: 0
+      cooldown: 0
+  - id: undertow
+    name: Undertow
+    description: Add a description.
+    element_id: aqua
+    learning_cost:
+      experience_points: 4
+    learning_requirements:
+      required_attack_ids:
+        - flood
+    targeting: enemy_one
+    costs:
+      mana: 12
+      stamina: 0
+      cooldown: 0
+  - id: calm_waters
+    name: Calm Waters
+    description: Add a description.
+    element_id: aqua
+    learning_cost:
+      experience_points: 4
+    learning_requirements:
+      required_attack_ids:
+        - mist_veil
+    targeting: allies_all
+    costs:
+      mana: 12
+      stamina: 0
+      cooldown: 0
+  - id: hydro_aegis
+    name: Hydro Aegis
+    description: Add a description.
+    element_id: aqua
+    learning_cost:
+      experience_points: 5
+    learning_requirements:
+      required_attack_ids:
+        - mist_veil
+        - water_prison
+    targeting: self
+    costs:
+      mana: 13
+      stamina: 0
+      cooldown: 0
+    effects:
+      - effect_id: hydro_aegis_effect
+        status_effect: Iron Guard
+        apply_to: self
+        turns: 3
+        buff:
+          physical_defense: 14
+          magical_defense: 14
+  - id: steam_burst
+    name: Steam Burst
+    description: Add a description.
+    element_id: aqua
+    learning_cost:
+      experience_points: 4
+    learning_requirements:
+      required_attack_ids:
+        - frost_spike
+    targeting: enemy_one
+    damage:
+      kind: magical
+      damage_type: magical
+      power:
+        kind: fixed
+        value: 16
+    accuracy: 95
+    hit_count: 1
+    costs:
+      mana: 10
+      stamina: 0
+      cooldown: 0
+    effects:
+      - effect_id: steam_burst_effect
+        status_effect: Weakened
+        apply_to: target
+        turns: 2
+        debuff:
+          magical_defense: 8
+  - id: ice
+    name: Ice
+    description: Add a description.
+    element_id: aqua
+    learning_cost:
+      experience_points: 1
+    learning_requirements:
+      required_attack_ids: []
+    targeting: self
+    costs:
+      mana: 2
+      stamina: 0
+      cooldown: 0
+    effects:
+      - effect_id: ice_effect
+        status_effect: Frost Guard
+        apply_to: self
+        turns: 2
+        buff:
+          physical_defense: 8
+          speed: 4
+        polarity: positive
+  - id: frost_spike
+    name: Frost Spike
+    description: Add a description.
+    element_id: aqua
+    learning_cost:
+      experience_points: 1
+    learning_requirements:
+      required_attack_ids:
+        - ice
+    targeting: enemy_one
+    damage:
+      kind: magical
+      damage_type: magical
+      power:
+        kind: fixed
+        value: 10
+    accuracy: 100
+    hit_count: 1
+    costs:
+      mana: 4
+      stamina: 0
+      cooldown: 0
+  - id: ice_shard_volley
+    name: Ice Shard Volley
+    description: Add a description.
+    element_id: aqua
+    learning_cost:
+      experience_points: 2
+    learning_requirements:
+      required_attack_ids:
+        - frost_spike
+    targeting: enemy_one
+    damage:
+      kind: magical
+      damage_type: magical
+      power:
+        kind: fixed
+        value: 6
+    accuracy: 95
+    hit_count: 4
+    costs:
+      mana: 8
+      stamina: 0
+      cooldown: 0
+  - id: glacier
+    name: Glacier
+    description: Add a description.
+    element_id: aqua
+    learning_cost:
+      experience_points: 2
+    learning_requirements:
+      required_attack_ids:
+        - frost_spike
+    targeting: enemies_all
+    damage:
+      kind: magical
+      damage_type: magical
+      power:
+        kind: fixed
+        value: 7
+    accuracy: 95
+    hit_count: 3
+    costs:
+      mana: 12
+      stamina: 0
+      cooldown: 0
+  - id: hailstorm
+    name: Hailstorm
+    description: Add a description.
+    element_id: aqua
+    learning_cost:
+      experience_points: 6
+    learning_requirements:
+      required_attack_ids:
+        - ice_shard_volley
+        - glacier
+    targeting: enemies_all
+    damage:
+      kind: magical
+      damage_type: magical
+      power:
+        kind: fixed
+        value: 8
+    accuracy: 90
+    hit_count: 4
+    costs:
+      mana: 18
+      stamina: 0
+      cooldown: 0
+  - id: shatter
+    name: Shatter
+    description: Add a description.
+    element_id: aqua
+    learning_cost:
+      experience_points: 4
+    learning_requirements:
+      required_attack_ids:
+        - glacier
+    targeting: enemy_one
+    damage:
+      kind: magical
+      damage_type: magical
+      power:
+        kind: fixed
+        value: 24
+    accuracy: 100
+    hit_count: 1
+    costs:
+      mana: 12
+      stamina: 0
+      cooldown: 0
+    effects:
+      - effect_id: shatter_effect
+        status_effect: Weakened
+        apply_to: target
+        turns: 2
+        debuff:
+          physical_defense: 8
+  - id: piercing_ice
+    name: Piercing Ice
+    description: Add a description.
+    element_id: aqua
+    learning_cost:
+      experience_points: 4
+    learning_requirements:
+      required_attack_ids:
+        - ice_shard_volley
+    targeting: enemy_one
+    damage:
+      kind: magical
+      damage_type: magical
+      power:
+        kind: fixed
+        value: 22
+    accuracy: 95
+    hit_count: 1
+    costs:
+      mana: 11
+      stamina: 0
+      cooldown: 0
+    effects:
+      - effect_id: piercing_ice_effect
+        status_effect: Weakened
+        apply_to: target
+        turns: 2
+        debuff:
+          physical_defense: 8
+  - id: chill
+    name: Chill
+    description: Add a description.
+    element_id: aqua
+    learning_cost:
+      experience_points: 1
+    learning_requirements:
+      required_attack_ids:
+        - ice
+    targeting: enemy_one
+    costs:
+      mana: 6
+      stamina: 0
+      cooldown: 0
+    effects:
+      - effect_id: chill_effect
+        status_effect: Slowed
+        apply_to: target
+        turns: 2
+        debuff:
+          speed: 10
+  - id: frostbite
+    name: Frostbite
+    description: Add a description.
+    element_id: aqua
+    learning_cost:
+      experience_points: 2
+    learning_requirements:
+      required_attack_ids:
+        - chill
+    targeting: enemy_one
+    costs:
+      mana: 9
+      stamina: 0
+      cooldown: 0
+    effects:
+      - effect_id: frostbite_effect
+        status_effect: Poisoned
+        apply_to: target
+        turns: 3
+        damage: 6
+        damage_variance:
+          - 0.8
+          - 1.2
+      - effect_id: frostbite_effect_2
+        status_effect: Slowed
+        apply_to: target
+        turns: 3
+        debuff:
+          speed: 6
+  - id: brittle_frost
+    name: Brittle Frost
+    description: Add a description.
+    element_id: aqua
+    learning_cost:
+      experience_points: 2
+    learning_requirements:
+      required_attack_ids:
+        - chill
+    targeting: enemy_one
+    costs:
+      mana: 9
+      stamina: 0
+      cooldown: 0
+    effects:
+      - effect_id: brittle_frost_effect
+        status_effect: Weakened
+        apply_to: target
+        turns: 3
+        debuff:
+          physical_defense: 10
+          magical_defense: 10
+  - id: rime
+    name: Rime
+    description: Add a description.
+    element_id: aqua
+    learning_cost:
+      experience_points: 4
+    learning_requirements:
+      required_attack_ids:
+        - frostbite
+    targeting: enemy_one
+    costs:
+      mana: 13
+      stamina: 0
+      cooldown: 0
+    effects:
+      - effect_id: rime_effect
+        status_effect: Poisoned
+        apply_to: target
+        turns: 3
+        damage: 9
+        damage_variance:
+          - 0.8
+          - 1.2
+      - effect_id: rime_effect_2
+        status_effect: Slowed
+        apply_to: target
+        turns: 3
+        debuff:
+          speed: 10
+  - id: sleet
+    name: Sleet
+    description: Add a description.
+    element_id: aqua
+    learning_cost:
+      experience_points: 3
+    learning_requirements:
+      required_attack_ids:
+        - brittle_frost
+    targeting: enemies_all
+    costs:
+      mana: 15
+      stamina: 0
+      cooldown: 0
+    effects:
+      - effect_id: sleet_effect
+        status_effect: Weakened
+        apply_to: enemies_all
+        turns: 2
+        debuff:
+          physical_defense: 8
+          magical_defense: 8
+          speed: 6
+  - id: winters_decay
+    name: Winters Decay
+    description: Add a description.
+    element_id: aqua
+    learning_cost:
+      experience_points: 6
+    learning_requirements:
+      required_attack_ids:
+        - rime
+        - sleet
+    targeting: enemies_all
+    costs:
+      mana: 20
+      stamina: 0
+      cooldown: 0
+    effects:
+      - effect_id: winters_decay_effect
+        status_effect: Poisoned
+        apply_to: enemies_all
+        turns: 3
+        damage: 7
+        damage_variance:
+          - 0.8
+          - 1.2
+      - effect_id: winters_decay_effect_2
+        status_effect: Slowed
+        apply_to: enemies_all
+        turns: 3
+        debuff:
+          speed: 8
+  - id: freeze
+    name: Freeze
+    description: Add a description.
+    element_id: aqua
+    learning_cost:
+      experience_points: 1
+    learning_requirements:
+      required_attack_ids:
+        - ice
+    targeting: enemy_one
+    damage:
+      kind: magical
+      damage_type: magical
+      power:
+        kind: fixed
+        value: 10
+    accuracy: 100
+    hit_count: 1
+    costs:
+      mana: 12
+      stamina: 0
+      cooldown: 0
+    effects:
+      - effect_id: freeze_effect
+        status_effect: Frozen
+        apply_to: target
+        turns: 1
+  - id: deep_freeze
+    name: Deep Freeze
+    description: Add a description.
+    element_id: aqua
+    learning_cost:
+      experience_points: 3
+    learning_requirements:
+      required_attack_ids:
+        - freeze
+    targeting: enemy_one
+    costs:
+      mana: 16
+      stamina: 0
+      cooldown: 0
+    effects:
+      - effect_id: deep_freeze_effect
+        status_effect: Frozen
+        apply_to: target
+        turns: 2
+  - id: hoarfrost
+    name: Hoarfrost
+    description: Add a description.
+    element_id: aqua
+    learning_cost:
+      experience_points: 4
+    learning_requirements:
+      required_attack_ids:
+        - freeze
+    targeting: enemies_all
+    costs:
+      mana: 18
+      stamina: 0
+      cooldown: 0
+    effects:
+      - effect_id: hoarfrost_effect
+        status_effect: Frozen
+        apply_to: enemies_all
+        turns: 1
+        debuff:
+          speed: 8
+  - id: permafrost
+    name: Permafrost
+    description: Add a description.
+    element_id: aqua
+    learning_cost:
+      experience_points: 7
+    learning_requirements:
+      required_attack_ids:
+        - deep_freeze
+        - hoarfrost
+    targeting: enemies_all
+    costs:
+      mana: 24
+      stamina: 0
+      cooldown: 0
+    effects:
+      - effect_id: permafrost_effect
+        status_effect: Frozen
+        apply_to: enemies_all
+        turns: 2
+        debuff:
+          physical_defense: 10
+  - id: frost_armor
+    name: Frost Armor
+    description: Add a description.
+    element_id: aqua
+    learning_cost:
+      experience_points: 1
+    learning_requirements:
+      required_attack_ids:
+        - ice
+    targeting: self
+    costs:
+      mana: 10
+      stamina: 0
+      cooldown: 0
+    effects:
+      - effect_id: frost_armor_effect
+        status_effect: Iron Guard
+        apply_to: self
+        turns: 3
+        buff:
+          physical_defense: 12
+          magical_defense: 12
+  - id: ice_wall
+    name: Ice Wall
+    description: Add a description.
+    element_id: aqua
+    learning_cost:
+      experience_points: 3
+    learning_requirements:
+      required_attack_ids:
+        - frost_armor
+    targeting: allies_all
+    costs:
+      mana: 15
+      stamina: 0
+      cooldown: 0
+    effects:
+      - effect_id: ice_wall_effect
+        status_effect: Iron Guard
+        apply_to: allies_all
+        turns: 2
+        buff:
+          physical_defense: 10
+          magical_defense: 10
+  - id: frozen_aegis
+    name: Frozen Aegis
+    description: Add a description.
+    element_id: aqua
+    learning_cost:
+      experience_points: 5
+    learning_requirements:
+      required_attack_ids:
+        - ice_wall
+    targeting: self
+    costs:
+      mana: 14
+      stamina: 0
+      cooldown: 0
+    effects:
+      - effect_id: frozen_aegis_effect
+        status_effect: Iron Guard
+        apply_to: self
+        turns: 3
+        buff:
+          physical_defense: 18
+          magical_defense: 18
+  - id: crystal_prison
+    name: Crystal Prison
+    description: Add a description.
+    element_id: aqua
+    learning_cost:
+      experience_points: 5
+    learning_requirements:
+      required_attack_ids:
+        - frost_armor
+        - freeze
+    targeting: enemy_one
+    costs:
+      mana: 18
+      stamina: 0
+      cooldown: 0
+    effects:
+      - effect_id: crystal_prison_effect
+        status_effect: Frozen
+        apply_to: target
+        turns: 2
+        debuff:
+          speed: 10
+  - id: rime_barrier
+    name: Rime Barrier
+    description: Add a description.
+    element_id: aqua
+    learning_cost:
+      experience_points: 4
+    learning_requirements:
+      required_attack_ids:
+        - mist_veil
+    targeting: self
+    costs:
+      mana: 12
+      stamina: 0
+      cooldown: 0
+    effects:
+      - effect_id: rime_barrier_effect
+        status_effect: Iron Guard
+        apply_to: self
+        turns: 2
+        buff:
+          physical_defense: 12
+          speed: 8
+  - id: glacial_torrent
+    name: Glacial Torrent
+    description: Add a description.
+    element_id: aqua
+    learning_cost:
+      experience_points: 12
+    learning_requirements:
+      required_attack_ids:
+        - drowning_tide
+        - permafrost
+    targeting: enemies_all
+    damage:
+      kind: magical
+      damage_type: magical
+      power:
+        kind: fixed
+        value: 26
+    accuracy: 90
+    hit_count: 1
+    costs:
+      mana: 30
+      stamina: 0
+      cooldown: 0
+    effects:
+      - effect_id: glacial_torrent_effect
+        status_effect: Frozen
+        apply_to: enemies_all
+        turns: 1
+  - id: flora
+    name: Flora
+    description: Add a description.
+    element_id: florere
+    learning_cost:
+      experience_points: 1
+    learning_requirements:
+      required_attack_ids: []
+    targeting: self
+    costs:
+      mana: 2
+      stamina: 0
+      cooldown: 0
+    effects:
+      - effect_id: flora_effect
+        status_effect: Verdant Pulse
+        apply_to: self
+        turns: 2
+        buff:
+          physical_defense: 6
+          speed: 4
+        polarity: positive
+  - id: bloom
+    name: Bloom
+    description: Add a description.
+    element_id: florere
+    learning_cost:
+      experience_points: 1
+    learning_requirements:
+      required_attack_ids:
+        - flora
+    targeting: ally_one
+    costs:
+      mana: 6
+      stamina: 0
+      cooldown: 0
+  - id: healing_pollen
+    name: Healing Pollen
+    description: Add a description.
+    element_id: florere
+    learning_cost:
+      experience_points: 2
+    learning_requirements:
+      required_attack_ids:
+        - bloom
+    targeting: ally_one
+    costs:
+      mana: 9
+      stamina: 0
+      cooldown: 0
+  - id: regrowth
+    name: Regrowth
+    description: Add a description.
+    element_id: florere
+    learning_cost:
+      experience_points: 2
+    learning_requirements:
+      required_attack_ids:
+        - bloom
+    targeting: ally_one
+    costs:
+      mana: 8
+      stamina: 0
+      cooldown: 0
+  - id: cleansing_pollen
+    name: Cleansing Pollen
+    description: Add a description.
+    element_id: florere
+    learning_cost:
+      experience_points: 3
+    learning_requirements:
+      required_attack_ids:
+        - regrowth
+    targeting: ally_one
+    costs:
+      mana: 8
+      stamina: 0
+      cooldown: 0
+  - id: mending_roots
+    name: Mending Roots
+    description: Add a description.
+    element_id: florere
+    learning_cost:
+      experience_points: 3
+    learning_requirements:
+      required_attack_ids:
+        - regrowth
+    targeting: ally_one
+    costs:
+      mana: 11
+      stamina: 0
+      cooldown: 0
+  - id: verdant_bloom
+    name: Verdant Bloom
+    description: Add a description.
+    element_id: florere
+    learning_cost:
+      experience_points: 4
+    learning_requirements:
+      required_attack_ids:
+        - healing_pollen
+    targeting: allies_all
+    costs:
+      mana: 15
+      stamina: 0
+      cooldown: 0
+  - id: everbloom
+    name: Everbloom
+    description: Add a description.
+    element_id: florere
+    learning_cost:
+      experience_points: 6
+    learning_requirements:
+      required_attack_ids:
+        - verdant_bloom
+        - mending_roots
+    targeting: allies_all
+    costs:
+      mana: 21
+      stamina: 0
+      cooldown: 0
+  - id: barkskin
+    name: Barkskin
+    description: Add a description.
+    element_id: florere
+    learning_cost:
+      experience_points: 1
+    learning_requirements:
+      required_attack_ids:
+        - flora
+    targeting: self
+    costs:
+      mana: 9
+      stamina: 0
+      cooldown: 0
+    effects:
+      - effect_id: barkskin_effect
+        status_effect: Iron Guard
+        apply_to: self
+        turns: 3
+        buff:
+          physical_defense: 12
+  - id: thorn_barrier
+    name: Thorn Barrier
+    description: Add a description.
+    element_id: florere
+    learning_cost:
+      experience_points: 2
+    learning_requirements:
+      required_attack_ids:
+        - barkskin
+    targeting: self
+    costs:
+      mana: 10
+      stamina: 0
+      cooldown: 0
+  - id: ironbark
+    name: Ironbark
+    description: Add a description.
+    element_id: florere
+    learning_cost:
+      experience_points: 3
+    learning_requirements:
+      required_attack_ids:
+        - barkskin
+    targeting: self
+    costs:
+      mana: 13
+      stamina: 0
+      cooldown: 0
+    effects:
+      - effect_id: ironbark_effect
+        status_effect: Iron Guard
+        apply_to: self
+        turns: 3
+        buff:
+          physical_defense: 18
+          magical_defense: 12
+  - id: bramble_guard
+    name: Bramble Guard
+    description: Add a description.
+    element_id: florere
+    learning_cost:
+      experience_points: 4
+    learning_requirements:
+      required_attack_ids:
+        - thorn_barrier
+    targeting: self
+    costs:
+      mana: 14
+      stamina: 0
+      cooldown: 0
+  - id: living_bulwark
+    name: Living Bulwark
+    description: Add a description.
+    element_id: florere
+    learning_cost:
+      experience_points: 6
+    learning_requirements:
+      required_attack_ids:
+        - ironbark
+        - bramble_guard
+    targeting: allies_all
+    costs:
+      mana: 20
+      stamina: 0
+      cooldown: 0
+  - id: photosynthesis
+    name: Photosynthesis
+    description: Add a description.
+    element_id: florere
+    learning_cost:
+      experience_points: 1
+    learning_requirements:
+      required_attack_ids:
+        - flora
+    targeting: self
+    costs:
+      mana: 7
+      stamina: 0
+      cooldown: 0
+    effects:
+      - effect_id: photosynthesis_effect
+        status_effect: Regen
+        apply_to: self
+        turns: 3
+        resource_regen:
+          mana: 8
+  - id: sunbloom
+    name: Sunbloom
+    description: Add a description.
+    element_id: florere
+    learning_cost:
+      experience_points: 3
+    learning_requirements:
+      required_attack_ids:
+        - photosynthesis
+    targeting: self
+    costs:
+      mana: 11
+      stamina: 0
+      cooldown: 0
+    effects:
+      - effect_id: sunbloom_effect
+        status_effect: Power Up
+        apply_to: self
+        turns: 3
+        buff:
+          magical_attack: 12
+  - id: sap_flow
+    name: Sap Flow
+    description: Add a description.
+    element_id: florere
+    learning_cost:
+      experience_points: 3
+    learning_requirements:
+      required_attack_ids:
+        - photosynthesis
+    targeting: self
+    costs:
+      mana: 11
+      stamina: 0
+      cooldown: 0
+  - id: gaian_blessing
+    name: Gaian Blessing
+    description: Add a description.
+    element_id: florere
+    learning_cost:
+      experience_points: 6
+    learning_requirements:
+      required_attack_ids:
+        - sunbloom
+        - sap_flow
+    targeting: allies_all
+    costs:
+      mana: 19
+      stamina: 0
+      cooldown: 0
+  - id: nettle_lash
+    name: Nettle Lash
+    description: Add a description.
+    element_id: florere
+    learning_cost:
+      experience_points: 4
+    learning_requirements:
+      required_attack_ids:
+        - poison_spores
+    targeting: enemy_one
+    damage:
+      kind: magical
+      damage_type: magical
+      power:
+        kind: fixed
+        value: 16
+    accuracy: 95
+    hit_count: 1
+    costs:
+      mana: 10
+      stamina: 0
+      cooldown: 0
+  - id: world_bloom
+    name: World Bloom
+    description: Add a description.
+    element_id: florere
+    learning_cost:
+      experience_points: 10
+    learning_requirements:
+      required_attack_ids:
+        - everbloom
+        - gaian_blessing
+    targeting: allies_all
+    costs:
+      mana: 26
+      stamina: 0
+      cooldown: 0
+  - id: rot
+    name: Rot
+    description: Add a description.
+    element_id: florere
+    learning_cost:
+      experience_points: 1
+    learning_requirements:
+      required_attack_ids: []
+    targeting: self
+    costs:
+      mana: 2
+      stamina: 0
+      cooldown: 0
+    effects:
+      - effect_id: rot_effect
+        status_effect: Hollow Bloom
+        apply_to: self
+        turns: 2
+        buff:
+          magical_defense: 6
+        polarity: positive
+  - id: poison_spores
+    name: Poison Spores
+    description: Add a description.
+    element_id: florere
+    learning_cost:
+      experience_points: 1
+    learning_requirements:
+      required_attack_ids:
+        - rot
+    targeting: enemy_one
+    costs:
+      mana: 7
+      stamina: 0
+      cooldown: 0
+    effects:
+      - effect_id: poison_spores_effect
+        status_effect: Poisoned
+        apply_to: target
+        turns: 3
+        damage: 6
+        damage_variance:
+          - 0.8
+          - 1.2
+  - id: toxic_bloom
+    name: Toxic Bloom
+    description: Add a description.
+    element_id: florere
+    learning_cost:
+      experience_points: 2
+    learning_requirements:
+      required_attack_ids:
+        - poison_spores
+    targeting: enemy_one
+    costs:
+      mana: 10
+      stamina: 0
+      cooldown: 0
+    effects:
+      - effect_id: toxic_bloom_effect
+        status_effect: Poisoned
+        apply_to: target
+        turns: 3
+        damage: 9
+        damage_variance:
+          - 0.8
+          - 1.2
+      - effect_id: toxic_bloom_effect_2
+        status_effect: Weakened
+        apply_to: target
+        turns: 3
+        debuff:
+          physical_defense: 6
+  - id: corrosive_spores
+    name: Corrosive Spores
+    description: Add a description.
+    element_id: florere
+    learning_cost:
+      experience_points: 2
+    learning_requirements:
+      required_attack_ids:
+        - poison_spores
+    targeting: enemy_one
+    costs:
+      mana: 10
+      stamina: 0
+      cooldown: 0
+    effects:
+      - effect_id: corrosive_spores_effect
+        status_effect: Weakened
+        apply_to: target
+        turns: 3
+        debuff:
+          physical_defense: 10
+          magical_defense: 10
+  - id: spore_cloud
+    name: Spore Cloud
+    description: Add a description.
+    element_id: florere
+    learning_cost:
+      experience_points: 3
+    learning_requirements:
+      required_attack_ids:
+        - poison_spores
+    targeting: enemies_all
+    costs:
+      mana: 11
+      stamina: 0
+      cooldown: 0
+    effects:
+      - effect_id: spore_cloud_effect
+        status_effect: Mind Fog
+        apply_to: enemies_all
+        turns: 3
+        debuff:
+          magical_defense: 15
+  - id: withering_blight
+    name: Withering Blight
+    description: Add a description.
+    element_id: florere
+    learning_cost:
+      experience_points: 6
+    learning_requirements:
+      required_attack_ids:
+        - toxic_bloom
+        - corrosive_spores
+    targeting: enemies_all
+    costs:
+      mana: 20
+      stamina: 0
+      cooldown: 0
+    effects:
+      - effect_id: withering_blight_effect
+        status_effect: Poisoned
+        apply_to: enemies_all
+        turns: 3
+        damage: 8
+        damage_variance:
+          - 0.8
+          - 1.2
+      - effect_id: withering_blight_effect_2
+        status_effect: Weakened
+        apply_to: enemies_all
+        turns: 3
+        debuff:
+          physical_defense: 8
+  - id: vine_whip
+    name: Vine Whip
+    description: Add a description.
+    element_id: florere
+    learning_cost:
+      experience_points: 1
+    learning_requirements:
+      required_attack_ids:
+        - rot
+    targeting: enemy_one
+    damage:
+      kind: magical
+      damage_type: magical
+      power:
+        kind: fixed
+        value: 14
+    accuracy: 95
+    hit_count: 1
+    costs:
+      mana: 6
+      stamina: 0
+      cooldown: 0
+  - id: entangle
+    name: Entangle
+    description: Add a description.
+    element_id: florere
+    learning_cost:
+      experience_points: 2
+    learning_requirements:
+      required_attack_ids:
+        - vine_whip
+    targeting: enemy_one
+    costs:
+      mana: 12
+      stamina: 0
+      cooldown: 0
+    effects:
+      - effect_id: entangle_effect
+        status_effect: Rooted
+        apply_to: target
+        turns: 2
+  - id: thorn_lash
+    name: Thorn Lash
+    description: Add a description.
+    element_id: florere
+    learning_cost:
+      experience_points: 2
+    learning_requirements:
+      required_attack_ids:
+        - vine_whip
+    targeting: enemy_one
+    damage:
+      kind: magical
+      damage_type: magical
+      power:
+        kind: fixed
+        value: 6
+    accuracy: 95
+    hit_count: 3
+    costs:
+      mana: 9
+      stamina: 0
+      cooldown: 0
+  - id: strangle_vines
+    name: Strangle Vines
+    description: Add a description.
+    element_id: florere
+    learning_cost:
+      experience_points: 4
+    learning_requirements:
+      required_attack_ids:
+        - thorn_lash
+    targeting: enemy_one
+    damage:
+      kind: magical
+      damage_type: magical
+      power:
+        kind: fixed
+        value: 20
+    accuracy: 95
+    hit_count: 1
+    costs:
+      mana: 13
+      stamina: 0
+      cooldown: 0
+    effects:
+      - effect_id: strangle_vines_effect
+        status_effect: Frozen
+        apply_to: target
+        turns: 1
+  - id: grasping_roots
+    name: Grasping Roots
+    description: Add a description.
+    element_id: florere
+    learning_cost:
+      experience_points: 4
+    learning_requirements:
+      required_attack_ids:
+        - entangle
+    targeting: enemies_all
+    costs:
+      mana: 16
+      stamina: 0
+      cooldown: 0
+    effects:
+      - effect_id: grasping_roots_effect
+        status_effect: Rooted
+        apply_to: enemies_all
+        turns: 1
+        debuff:
+          speed: 10
+  - id: choking_grove
+    name: Choking Grove
+    description: Add a description.
+    element_id: florere
+    learning_cost:
+      experience_points: 7
+    learning_requirements:
+      required_attack_ids:
+        - grasping_roots
+        - strangle_vines
+    targeting: enemies_all
+    costs:
+      mana: 22
+      stamina: 0
+      cooldown: 0
+    effects:
+      - effect_id: choking_grove_effect
+        status_effect: Rooted
+        apply_to: enemies_all
+        turns: 2
+        damage: 6
+        damage_variance:
+          - 0.8
+          - 1.2
+  - id: leech_seed
+    name: Leech Seed
+    description: Add a description.
+    element_id: florere
+    learning_cost:
+      experience_points: 1
+    learning_requirements:
+      required_attack_ids:
+        - rot
+    targeting: enemy_one
+    damage:
+      kind: magical
+      damage_type: magical
+      power:
+        kind: fixed
+        value: 12
+    accuracy: 95
+    hit_count: 1
+    costs:
+      mana: 7
+      stamina: 0
+      cooldown: 0
+  - id: siphon_roots
+    name: Siphon Roots
+    description: Add a description.
+    element_id: florere
+    learning_cost:
+      experience_points: 2
+    learning_requirements:
+      required_attack_ids:
+        - leech_seed
+    targeting: enemy_one
+    damage:
+      kind: magical
+      damage_type: magical
+      power:
+        kind: fixed
+        value: 16
+    accuracy: 95
+    hit_count: 1
+    costs:
+      mana: 9
+      stamina: 0
+      cooldown: 0
+  - id: bloodsap
+    name: Bloodsap
+    description: Add a description.
+    element_id: florere
+    learning_cost:
+      experience_points: 2
+    learning_requirements:
+      required_attack_ids:
+        - leech_seed
+    targeting: enemy_one
+    damage:
+      kind: magical
+      damage_type: magical
+      power:
+        kind: fixed
+        value: 8
+    accuracy: 95
+    hit_count: 1
+    costs:
+      mana: 10
+      stamina: 0
+      cooldown: 0
+  - id: sanguine_vines
+    name: Sanguine Vines
+    description: Add a description.
+    element_id: florere
+    learning_cost:
+      experience_points: 4
+    learning_requirements:
+      required_attack_ids:
+        - siphon_roots
+    targeting: enemy_one
+    damage:
+      kind: magical
+      damage_type: magical
+      power:
+        kind: fixed
+        value: 22
+    accuracy: 95
+    hit_count: 1
+    costs:
+      mana: 13
+      stamina: 0
+      cooldown: 0
+  - id: draining_canopy
+    name: Draining Canopy
+    description: Add a description.
+    element_id: florere
+    learning_cost:
+      experience_points: 6
+    learning_requirements:
+      required_attack_ids:
+        - bloodsap
+        - sanguine_vines
+    targeting: enemies_all
+    damage:
+      kind: magical
+      damage_type: magical
+      power:
+        kind: fixed
+        value: 14
+    accuracy: 90
+    hit_count: 1
+    costs:
+      mana: 19
+      stamina: 0
+      cooldown: 0
+  - id: blight_bark
+    name: Blight Bark
+    description: Add a description.
+    element_id: florere
+    learning_cost:
+      experience_points: 4
+    learning_requirements:
+      required_attack_ids:
+        - barkskin
+    targeting: self
+    costs:
+      mana: 12
+      stamina: 0
+      cooldown: 0
+    effects:
+      - effect_id: blight_bark_effect
+        status_effect: Iron Guard
+        apply_to: self
+        turns: 3
+        buff:
+          physical_defense: 12
+  - id: blightfall
+    name: Blightfall
+    description: Add a description.
+    element_id: florere
+    learning_cost:
+      experience_points: 9
+    learning_requirements:
+      required_attack_ids:
+        - withering_blight
+        - choking_grove
+    targeting: enemies_all
+    costs:
+      mana: 25
+      stamina: 0
+      cooldown: 0
+    effects:
+      - effect_id: blightfall_effect
+        status_effect: Poisoned
+        apply_to: enemies_all
+        turns: 3
+        damage: 10
+        damage_variance:
+          - 0.8
+          - 1.2
+      - effect_id: blightfall_effect_2
+        status_effect: Frozen
+        apply_to: enemies_all
+        turns: 1
+  - id: world_tree
+    name: World Tree
+    description: Add a description.
+    element_id: florere
+    learning_cost:
+      experience_points: 14
+    learning_requirements:
+      required_attack_ids:
+        - world_bloom
+        - blightfall
+    targeting: allies_all
+    costs:
+      mana: 32
+      stamina: 0
+      cooldown: 0
+  - id: fire
+    name: Fire
+    description: Add a description.
+    element_id: ignis
+    learning_cost:
+      experience_points: 1
+    learning_requirements:
+      required_attack_ids: []
+    targeting: enemy_one
+    damage:
+      kind: magical
+      damage_type: magical
+      power:
+        kind: fixed
+        value: 4
+    accuracy: 100
+    hit_count: 1
+    costs:
+      mana: 2
+      stamina: 0
+      cooldown: 0
+    effects:
+      - effect_id: fire_effect
+        status_effect: Burning
+        apply_to: target
+        turns: 2
+        debuff:
+          physical_defense: 6
+          speed: 4
+        polarity: negative
+  - id: ember
+    name: Ember
+    description: Add a description.
+    element_id: ignis
+    learning_cost:
+      experience_points: 1
+    learning_requirements:
+      required_attack_ids:
+        - fire
+    targeting: enemy_one
+    damage:
+      kind: magical
+      damage_type: magical
+      power:
+        kind: fixed
+        value: 8
+    accuracy: 100
+    hit_count: 1
+    costs:
+      mana: 4
+      stamina: 0
+      cooldown: 0
+  - id: fireball
+    name: Fireball
+    description: Add a description.
+    element_id: ignis
+    learning_cost:
+      experience_points: 1
+    learning_requirements:
+      required_attack_ids:
+        - fire
+    targeting: enemy_one
+    damage:
+      kind: magical
+      damage_type: magical
+      power:
+        kind: fixed
+        value: 14
+    accuracy: 100
+    hit_count: 1
+    costs:
+      mana: 6
+      stamina: 0
+      cooldown: 0
+  - id: burn
+    name: Burn
+    description: Add a description.
+    element_id: ignis
+    learning_cost:
+      experience_points: 1
+    learning_requirements:
+      required_attack_ids:
+        - fire
+    targeting: enemy_one
+    costs:
+      mana: 6
+      stamina: 0
+      cooldown: 0
+    effects:
+      - effect_id: burn_effect
+        status_effect: Burning
+        apply_to: target
+        turns: 2
+        damage: 5
+        damage_variance:
+          - 0.8
+          - 1.2
+  - id: flame_wave
+    name: Flame Wave
+    description: Add a description.
+    element_id: ignis
+    learning_cost:
+      experience_points: 1
+    learning_requirements:
+      required_attack_ids:
+        - fire
+    targeting: enemies_row
+    damage:
+      kind: magical
+      damage_type: magical
+      power:
+        kind: fixed
+        value: 12
+    accuracy: 95
+    hit_count: 1
+    costs:
+      mana: 10
+      stamina: 0
+      cooldown: 0
+  - id: cinder_spray
+    name: Cinder Spray
+    description: Add a description.
+    element_id: ignis
+    learning_cost:
+      experience_points: 2
+    learning_requirements:
+      required_attack_ids:
+        - ember
+    targeting: enemy_one
+    damage:
+      kind: magical
+      damage_type: magical
+      power:
+        kind: fixed
+        value: 6
+    accuracy: 95
+    hit_count: 3
+    costs:
+      mana: 6
+      stamina: 0
+      cooldown: 0
+  - id: flame_burst
+    name: Flame Burst
+    description: Add a description.
+    element_id: ignis
+    learning_cost:
+      experience_points: 2
+    learning_requirements:
+      required_attack_ids:
+        - fireball
+    targeting: enemy_one
+    damage:
+      kind: magical
+      damage_type: magical
+      power:
+        kind: fixed
+        value: 18
+    accuracy: 95
+    hit_count: 1
+    costs:
+      mana: 9
+      stamina: 0
+      cooldown: 0
+  - id: fire_lance
+    name: Fire Lance
+    description: Add a description.
+    element_id: ignis
+    learning_cost:
+      experience_points: 3
+    learning_requirements:
+      required_attack_ids:
+        - flame_burst
+    targeting: enemy_one
+    damage:
+      kind: magical
+      damage_type: magical
+      power:
+        kind: fixed
+        value: 24
+    accuracy: 95
+    hit_count: 1
+    costs:
+      mana: 12
+      stamina: 0
+      cooldown: 0
+    effects:
+      - effect_id: fire_lance_effect
+        status_effect: Weakened
+        apply_to: target
+        turns: 2
+        debuff:
+          physical_defense: 5
+  - id: solar_flare
+    name: Solar Flare
+    description: Add a description.
+    element_id: ignis
+    learning_cost:
+      experience_points: 5
+    learning_requirements:
+      required_attack_ids:
+        - fire_lance
+    targeting: enemy_one
+    damage:
+      kind: magical
+      damage_type: magical
+      power:
+        kind: fixed
+        value: 30
+    accuracy: 95
+    hit_count: 1
+    costs:
+      mana: 18
+      stamina: 0
+      cooldown: 0
+  - id: spark_storm
+    name: Spark Storm
+    description: Add a description.
+    element_id: ignis
+    learning_cost:
+      experience_points: 3
+    learning_requirements:
+      required_attack_ids:
+        - cinder_spray
+    targeting: enemies_all
+    damage:
+      kind: magical
+      damage_type: magical
+      power:
+        kind: fixed
+        value: 7
+    accuracy: 90
+    hit_count: 3
+    costs:
+      mana: 14
+      stamina: 0
+      cooldown: 0
+  - id: flashpoint
+    name: Flashpoint
+    description: Add a description.
+    element_id: ignis
+    learning_cost:
+      experience_points: 4
+    learning_requirements:
+      required_attack_ids:
+        - flame_burst
+    targeting: enemy_one
+    damage:
+      kind: magical
+      damage_type: magical
+      power:
+        kind: fixed
+        value: 16
+    accuracy: 95
+    hit_count: 1
+    costs:
+      mana: 12
+      stamina: 0
+      cooldown: 0
+    effects:
+      - effect_id: flashpoint_effect
+        status_effect: Burning
+        apply_to: target
+        turns: 2
+        damage: 5
+        damage_variance:
+          - 0.8
+          - 1.2
+        effect_hit_chance: 0.5
+  - id: magma_surge
+    name: Magma Surge
+    description: Add a description.
+    element_id: ignis
+    learning_cost:
+      experience_points: 5
+    learning_requirements:
+      required_attack_ids:
+        - fire_lance
+    targeting: enemies_row
+    damage:
+      kind: magical
+      damage_type: magical
+      power:
+        kind: fixed
+        value: 20
+    accuracy: 95
+    hit_count: 1
+    costs:
+      mana: 16
+      stamina: 0
+      cooldown: 0
+    effects:
+      - effect_id: magma_surge_effect
+        status_effect: Burning
+        apply_to: enemies_row
+        turns: 2
+        damage: 5
+        damage_variance:
+          - 0.8
+          - 1.2
+  - id: immolate
+    name: Immolate
+    description: Add a description.
+    element_id: ignis
+    learning_cost:
+      experience_points: 2
+    learning_requirements:
+      required_attack_ids:
+        - burn
+    targeting: enemy_one
+    costs:
+      mana: 9
+      stamina: 0
+      cooldown: 0
+    effects:
+      - effect_id: immolate_effect
+        status_effect: Burning
+        apply_to: target
+        turns: 3
+        damage: 8
+        damage_variance:
+          - 0.8
+          - 1.2
+  - id: cinder_mark
+    name: Cinder Mark
+    description: Add a description.
+    element_id: ignis
+    learning_cost:
+      experience_points: 2
+    learning_requirements:
+      required_attack_ids:
+        - burn
+    targeting: enemy_one
+    costs:
+      mana: 8
+      stamina: 0
+      cooldown: 0
+    effects:
+      - effect_id: cinder_mark_effect
+        status_effect: Burning
+        apply_to: target
+        turns: 2
+        damage: 4
+        damage_variance:
+          - 0.8
+          - 1.2
+      - effect_id: cinder_mark_effect_2
+        status_effect: Weakened
+        apply_to: target
+        turns: 2
+        debuff:
+          magical_attack: 5
+  - id: pyre
+    name: Pyre
+    description: Add a description.
+    element_id: ignis
+    learning_cost:
+      experience_points: 4
+    learning_requirements:
+      required_attack_ids:
+        - immolate
+    targeting: enemy_one
+    costs:
+      mana: 13
+      stamina: 0
+      cooldown: 0
+    effects:
+      - effect_id: pyre_effect
+        status_effect: Burning
+        apply_to: target
+        turns: 3
+        damage: 12
+        damage_variance:
+          - 0.8
+          - 1.2
+      - effect_id: pyre_effect_2
+        status_effect: Slowed
+        apply_to: target
+        turns: 3
+        debuff:
+          speed: 5
+  - id: kindling
+    name: Kindling
+    description: Add a description.
+    element_id: ignis
+    learning_cost:
+      experience_points: 4
+    learning_requirements:
+      required_attack_ids:
+        - cinder_mark
+    targeting: enemy_one
+    costs:
+      mana: 10
+      stamina: 0
+      cooldown: 0
+  - id: ashen_veil
+    name: Ashen Veil
+    description: Add a description.
+    element_id: ignis
+    learning_cost:
+      experience_points: 3
+    learning_requirements:
+      required_attack_ids:
+        - cinder_mark
+    targeting: self
+    costs:
+      mana: 10
+      stamina: 0
+      cooldown: 0
+    effects:
+      - effect_id: ashen_veil_effect
+        status_effect: Power Up
+        apply_to: self
+        turns: 2
+        buff:
+          speed: 10
+  - id: inferno
+    name: Inferno
+    description: Add a description.
+    element_id: ignis
+    learning_cost:
+      experience_points: 4
+    learning_requirements:
+      required_attack_ids:
+        - flame_wave
+    targeting: enemies_all
+    damage:
+      kind: magical
+      damage_type: magical
+      power:
+        kind: fixed
+        value: 22
+    accuracy: 90
+    hit_count: 1
+    costs:
+      mana: 16
+      stamina: 0
+      cooldown: 0
+  - id: firestorm
+    name: Firestorm
+    description: Add a description.
+    element_id: ignis
+    learning_cost:
+      experience_points: 6
+    learning_requirements:
+      required_attack_ids:
+        - inferno
+    targeting: enemies_all
+    damage:
+      kind: magical
+      damage_type: magical
+      power:
+        kind: fixed
+        value: 28
+    accuracy: 90
+    hit_count: 1
+    costs:
+      mana: 22
+      stamina: 0
+      cooldown: 0
+  - id: conflagration
+    name: Conflagration
+    description: Add a description.
+    element_id: ignis
+    learning_cost:
+      experience_points: 7
+    learning_requirements:
+      required_attack_ids:
+        - pyre
+        - inferno
+    targeting: enemies_all
+    damage:
+      kind: magical
+      damage_type: magical
+      power:
+        kind: fixed
+        value: 24
+    accuracy: 90
+    hit_count: 1
+    costs:
+      mana: 24
+      stamina: 0
+      cooldown: 0
+    effects:
+      - effect_id: conflagration_effect
+        status_effect: Burning
+        apply_to: enemies_all
+        turns: 3
+        damage: 6
+        damage_variance:
+          - 0.8
+          - 1.2
+  - id: thermal_blast
+    name: Thermal Blast
+    description: Add a description.
+    element_id: ignis
+    learning_cost:
+      experience_points: 4
+    learning_requirements:
+      required_attack_ids:
+        - melt_armor
+    targeting: enemy_one
+    damage:
+      kind: magical
+      damage_type: magical
+      power:
+        kind: fixed
+        value: 20
+    accuracy: 95
+    hit_count: 1
+    costs:
+      mana: 14
+      stamina: 0
+      cooldown: 0
+  - id: heat
+    name: Heat
+    description: Add a description.
+    element_id: ignis
+    learning_cost:
+      experience_points: 1
+    learning_requirements:
+      required_attack_ids: []
+    targeting: self
+    costs:
+      mana: 2
+      stamina: 0
+      cooldown: 0
+    effects:
+      - effect_id: heat_effect
+        status_effect: Searing Focus
+        apply_to: self
+        turns: 2
+        buff:
+          magical_attack: 6
+          speed: 4
+        polarity: positive
+  - id: scorch
+    name: Scorch
+    description: Add a description.
+    element_id: ignis
+    learning_cost:
+      experience_points: 1
+    learning_requirements:
+      required_attack_ids:
+        - heat
+    targeting: enemy_one
+    costs:
+      mana: 6
+      stamina: 0
+      cooldown: 0
+    effects:
+      - effect_id: scorch_effect
+        status_effect: Weakened
+        apply_to: target
+        turns: 2
+        debuff:
+          physical_defense: 8
+  - id: melt_armor
+    name: Melt Armor
+    description: Add a description.
+    element_id: ignis
+    learning_cost:
+      experience_points: 1
+    learning_requirements:
+      required_attack_ids:
+        - heat
+    targeting: enemy_one
+    costs:
+      mana: 8
+      stamina: 0
+      cooldown: 0
+    effects:
+      - effect_id: melt_armor_effect
+        status_effect: Weakened
+        apply_to: target
+        turns: 3
+        debuff:
+          physical_defense: 12
+  - id: heat_wave
+    name: Heat Wave
+    description: Add a description.
+    element_id: ignis
+    learning_cost:
+      experience_points: 1
+    learning_requirements:
+      required_attack_ids:
+        - heat
+    targeting: enemy_one
+    costs:
+      mana: 8
+      stamina: 0
+      cooldown: 0
+    effects:
+      - effect_id: heat_wave_effect
+        status_effect: Weakened
+        apply_to: target
+        turns: 2
+        debuff:
+          physical_defense: 6
+          magical_defense: 6
+          accuracy: 5
+  - id: flame_charge
+    name: Flame Charge
+    description: Add a description.
+    element_id: ignis
+    learning_cost:
+      experience_points: 1
+    learning_requirements:
+      required_attack_ids:
+        - heat
+    targeting: enemy_one
+    damage:
+      kind: magical
+      damage_type: magical
+      power:
+        kind: fixed
+        value: 14
+    accuracy: 100
+    hit_count: 1
+    costs:
+      mana: 8
+      stamina: 0
+      cooldown: 0
+    effects:
+      - effect_id: flame_charge_effect
+        status_effect: Power Up
+        apply_to: self
+        turns: 3
+        buff:
+          speed: 8
+  - id: thermal_erosion
+    name: Thermal Erosion
+    description: Add a description.
+    element_id: ignis
+    learning_cost:
+      experience_points: 2
+    learning_requirements:
+      required_attack_ids:
+        - scorch
+    targeting: enemy_one
+    costs:
+      mana: 9
+      stamina: 0
+      cooldown: 0
+    effects:
+      - effect_id: thermal_erosion_effect
+        status_effect: Weakened
+        apply_to: target
+        turns: 3
+        debuff:
+          physical_defense: 10
+          magical_defense: 10
+  - id: slag_shell
+    name: Slag Shell
+    description: Add a description.
+    element_id: ignis
+    learning_cost:
+      experience_points: 3
+    learning_requirements:
+      required_attack_ids:
+        - melt_armor
+    targeting: enemy_one
+    costs:
+      mana: 11
+      stamina: 0
+      cooldown: 0
+    effects:
+      - effect_id: slag_shell_effect
+        status_effect: Weakened
+        apply_to: target
+        turns: 3
+        debuff:
+          physical_defense: 16
+  - id: molten_exposure
+    name: Molten Exposure
+    description: Add a description.
+    element_id: ignis
+    learning_cost:
+      experience_points: 3
+    learning_requirements:
+      required_attack_ids:
+        - melt_armor
+    targeting: enemy_one
+    costs:
+      mana: 11
+      stamina: 0
+      cooldown: 0
+    effects:
+      - effect_id: molten_exposure_effect
+        status_effect: Weakened
+        apply_to: target
+        turns: 3
+        debuff:
+          physical_defense: 14
+  - id: crippling_heat
+    name: Crippling Heat
+    description: Add a description.
+    element_id: ignis
+    learning_cost:
+      experience_points: 2
+    learning_requirements:
+      required_attack_ids:
+        - heat_wave
+    targeting: enemy_one
+    costs:
+      mana: 10
+      stamina: 0
+      cooldown: 0
+    effects:
+      - effect_id: crippling_heat_effect
+        status_effect: Weakened
+        apply_to: target
+        turns: 2
+        debuff:
+          physical_defense: 8
+          magical_defense: 8
+          speed: 8
+  - id: heat_sink
+    name: Heat Sink
+    description: Add a description.
+    element_id: ignis
+    learning_cost:
+      experience_points: 4
+    learning_requirements:
+      required_attack_ids:
+        - thermal_erosion
+    targeting: self
+    costs:
+      mana: 10
+      stamina: 0
+      cooldown: 0
+  - id: thermal_shockwave
+    name: Thermal Shockwave
+    description: Add a description.
+    element_id: ignis
+    learning_cost:
+      experience_points: 4
+    learning_requirements:
+      required_attack_ids:
+        - crippling_heat
+    targeting: enemies_all
+    damage:
+      kind: magical
+      damage_type: magical
+      power:
+        kind: fixed
+        value: 12
+    accuracy: 90
+    hit_count: 1
+    costs:
+      mana: 14
+      stamina: 0
+      cooldown: 0
+    effects:
+      - effect_id: thermal_shockwave_effect
+        status_effect: Weakened
+        apply_to: enemies_all
+        turns: 2
+        debuff:
+          physical_defense: 6
+  - id: heat_shock
+    name: Heat Shock
+    description: Add a description.
+    element_id: ignis
+    learning_cost:
+      experience_points: 2
+    learning_requirements:
+      required_attack_ids:
+        - flame_charge
+    targeting: enemy_one
+    damage:
+      kind: magical
+      damage_type: magical
+      power:
+        kind: fixed
+        value: 18
+    accuracy: 95
+    hit_count: 1
+    costs:
+      mana: 10
+      stamina: 0
+      cooldown: 0
+  - id: thermal_lance
+    name: Thermal Lance
+    description: Add a description.
+    element_id: ignis
+    learning_cost:
+      experience_points: 3
+    learning_requirements:
+      required_attack_ids:
+        - heat_shock
+    targeting: enemy_one
+    damage:
+      kind: magical
+      damage_type: magical
+      power:
+        kind: fixed
+        value: 24
+    accuracy: 95
+    hit_count: 1
+    costs:
+      mana: 13
+      stamina: 0
+      cooldown: 0
+  - id: furnace_breath
+    name: Furnace Breath
+    description: Add a description.
+    element_id: ignis
+    learning_cost:
+      experience_points: 3
+    learning_requirements:
+      required_attack_ids:
+        - flame_charge
+    targeting: enemies_all
+    damage:
+      kind: magical
+      damage_type: magical
+      power:
+        kind: fixed
+        value: 14
+    accuracy: 95
+    hit_count: 1
+    costs:
+      mana: 14
+      stamina: 0
+      cooldown: 0
+  - id: magma_cascade
+    name: Magma Cascade
+    description: Add a description.
+    element_id: ignis
+    learning_cost:
+      experience_points: 4
+    learning_requirements:
+      required_attack_ids:
+        - heat_shock
+    targeting: enemy_one
+    damage:
+      kind: magical
+      damage_type: magical
+      power:
+        kind: fixed
+        value: 16
+    accuracy: 90
+    hit_count: 2
+    costs:
+      mana: 12
+      stamina: 0
+      cooldown: 0
+  - id: inner_fire
+    name: Inner Fire
+    description: Add a description.
+    element_id: ignis
+    learning_cost:
+      experience_points: 1
+    learning_requirements:
+      required_attack_ids:
+        - heat
+    targeting: self
+    costs:
+      mana: 8
+      stamina: 0
+      cooldown: 0
+    effects:
+      - effect_id: inner_fire_effect
+        status_effect: Power Up
+        apply_to: self
+        turns: 3
+        buff:
+          magical_attack: 10
+          speed: 5
+  - id: blaze_heart
+    name: Blaze Heart
+    description: Add a description.
+    element_id: ignis
+    learning_cost:
+      experience_points: 3
+    learning_requirements:
+      required_attack_ids:
+        - inner_fire
+    targeting: self
+    costs:
+      mana: 12
+      stamina: 0
+      cooldown: 0
+    effects:
+      - effect_id: blaze_heart_effect
+        status_effect: Power Up
+        apply_to: self
+        turns: 3
+        buff:
+          magical_attack: 15
+          speed: 8
+  - id: tempest_flame
+    name: Tempest Flame
+    description: Add a description.
+    element_id: ignis
+    learning_cost:
+      experience_points: 5
+    learning_requirements:
+      required_attack_ids:
+        - blaze_heart
+    targeting: self
+    costs:
+      mana: 16
+      stamina: 0
+      cooldown: 0
+    effects:
+      - effect_id: tempest_flame_effect
+        status_effect: Power Up
+        apply_to: self
+        turns: 3
+        buff:
+          magical_attack: 20
+          speed: 10
+  - id: white_heat
+    name: White Heat
+    description: Add a description.
+    element_id: ignis
+    learning_cost:
+      experience_points: 6
+    learning_requirements:
+      required_attack_ids:
+        - tempest_flame
+    targeting: self
+    costs:
+      mana: 18
+      stamina: 0
+      cooldown: 0
+    effects:
+      - effect_id: white_heat_effect
+        status_effect: Power Up
+        apply_to: self
+        turns: 2
+        buff:
+          magical_attack: 25
+          speed: 12
+  - id: solar_kiln
+    name: Solar Kiln
+    description: Add a description.
+    element_id: ignis
+    learning_cost:
+      experience_points: 4
+    learning_requirements:
+      required_attack_ids:
+        - inner_fire
+    targeting: allies_all
+    costs:
+      mana: 14
+      stamina: 0
+      cooldown: 0
+    effects:
+      - effect_id: solar_kiln_effect
+        status_effect: Power Up
+        apply_to: allies_all
+        turns: 3
+        buff:
+          magical_attack: 8
+          speed: 6
+  - id: volcanic_wrath
+    name: Volcanic Wrath
+    description: Add a description.
+    element_id: ignis
+    learning_cost:
+      experience_points: 6
+    learning_requirements:
+      required_attack_ids:
+        - thermal_lance
+        - slag_shell
+    targeting: enemy_one
+    damage:
+      kind: magical
+      damage_type: magical
+      power:
+        kind: fixed
+        value: 28
+    accuracy: 95
+    hit_count: 1
+    costs:
+      mana: 20
+      stamina: 0
+      cooldown: 0
+    effects:
+      - effect_id: volcanic_wrath_effect
+        status_effect: Weakened
+        apply_to: target
+        turns: 2
+        debuff:
+          physical_defense: 10
+  - id: steam_explosion
+    name: Steam Explosion
+    description: Add a description.
+    element_id: ignis
+    learning_cost:
+      experience_points: 4
+    learning_requirements:
+      required_attack_ids:
+        - burn
+    targeting: enemies_all
+    damage:
+      kind: magical
+      damage_type: magical
+      power:
+        kind: fixed
+        value: 18
+    accuracy: 90
+    hit_count: 1
+    costs:
+      mana: 14
+      stamina: 0
+      cooldown: 0
+    effects:
+      - effect_id: steam_explosion_effect
+        status_effect: Weakened
+        apply_to: enemies_all
+        turns: 2
+        debuff:
+          physical_defense: 6
+  - id: apocalyptic_inferno
+    name: Apocalyptic Inferno
+    description: Add a description.
+    element_id: ignis
+    learning_cost:
+      experience_points: 12
+    learning_requirements:
+      required_attack_ids:
+        - conflagration
+        - volcanic_wrath
+    targeting: enemies_all
+    damage:
+      kind: magical
+      damage_type: magical
+      power:
+        kind: fixed
+        value: 26
+    accuracy: 90
+    hit_count: 1
+    costs:
+      mana: 30
+      stamina: 0
+      cooldown: 0
+    effects:
+      - effect_id: apocalyptic_inferno_effect
+        status_effect: Burning
+        apply_to: enemies_all
+        turns: 3
+        damage: 10
+        damage_variance:
+          - 0.8
+          - 1.2

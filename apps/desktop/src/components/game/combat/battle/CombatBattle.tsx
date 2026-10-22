@@ -137,6 +137,8 @@ export function CombatBattle({
                     targetPreviews={targetPreviews}
                     sequence={sequence}
                     animationsEnabled={animationsEnabled}
+                    hour={state.hour}
+                    timePhase={state.timePhase}
                     onEntitySelect={(entity) => {
                         if (entity) onEntitySelect?.(entity.id);
                     }}

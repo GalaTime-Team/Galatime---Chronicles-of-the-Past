@@ -21,6 +21,7 @@ import {
     followSessionInteraction,
     selectSessionChoice,
     startSession,
+    submitSessionInput,
     validateDialogueFile,
 } from '../services/dialogue/sessionService';
 import { playMusic } from './audioController';
@@ -87,6 +88,20 @@ export function triggerDialogueInteraction(
     actionId?: string,
 ): DialogueResult<DialogueResponse> {
     return followSessionInteraction(sessionId, interactionId, actionId);
+}
+
+/**
+ * Answers a question the dialogue asked.
+ *
+ * The answer is stored under the question's own variable (`input.<variable>`)
+ * and the conversation carries on from there.
+ */
+export function submitDialogueInput(
+    sessionId: string,
+    value: string,
+    actionId?: string,
+): DialogueResult<DialogueResponse> {
+    return submitSessionInput(sessionId, value, actionId);
 }
 
 /**

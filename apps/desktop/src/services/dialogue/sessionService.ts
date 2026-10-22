@@ -10,14 +10,14 @@ import type {
     DialogueValidationReport,
 } from '../../types/DialogueType';
 import type { StateChange, WorldState, WorldStateInput } from '../../types/WorldStateType';
-import { createDialogueError, createDialogueIssue } from '../../utils/dialogueUtils';
+import { createDialogueError } from '../../utils/dialogueUtils';
 import { cloneWorldState, createWorldState } from '../state/worldStateService';
 import { isKnownCharacter, primeCharacterRegistry } from './characterRegistryService';
 import { evaluateCondition } from './conditionService';
 import { collectReferencedCharacterIds } from './dialogueTraversal';
 import { emitDialogueEvent } from './eventService';
 import { listDialogueIds, loadDialogue } from './loaderService';
-import { advanceToNode, continueFromNode, followInteraction, selectChoice } from './nodeService';
+import { advanceToNode, continueFromNode, followInteraction, selectChoice, submitInput } from './nodeService';
 import type { NodeContext } from './nodeService';
 import { createInMemoryPersistence } from './persistenceService';
 import type { DialoguePersistence } from './persistenceService';
@@ -207,6 +207,26 @@ export function followSessionInteraction(
 }
 
 /**
+ * Stores the answer the player gave to a question the dialogue asked.
+ *
+ * The answer lands in `input.<variable>` and the conversation carries on from
+ * the node's destination.
+ */
+export function submitSessionInput(
+    sessionId: string,
+    value: string,
+    actionId?: string,
+): DialogueResult<DialogueResponse> {
+    return stepSession(sessionId, actionId, (context, session) => {
+        if (session.currentNodeId === null) {
+            return guardFailure('session_completed', `Session "${sessionId}" has no current node.`);
+        }
+
+        return submitInput(context, session.currentNodeId, value);
+    });
+}
+
+/**
  * Closes a session and hands the updated world state back to the game.
  *
  * Safe to call on a conversation that already finished: the state is returned
@@ -259,20 +279,10 @@ async function prepareDialogue(
     const knownDialogueIds = new Set(await listDialogueIds());
 
     const report = validateDialogue(definition, {
+        dialogueId,
         isKnownCharacter,
         dialogueExists: (id) => knownDialogueIds.has(id),
     });
-
-    // The file name is the identity every other dialogue references, so a
-    // mismatch means `unlock_dialogue` would look for a file that is not there.
-    if (report.dialogue_id && report.dialogue_id !== dialogueId) {
-        report.warnings.push(createDialogueIssue(
-            'warning',
-            'dialogue_id_mismatch',
-            `File "${dialogueId}.yaml" declares dialogue_id "${report.dialogue_id}"; the file name is what other dialogues reference.`,
-            'dialogue_id',
-        ));
-    }
 
     return { ok: true, data: { definition, report } };
 }
@@ -360,6 +370,7 @@ function runStep(
 
     const advanced = walk({
         definition: session.definition,
+        dialogueId: session.dialogue_id,
         state: draftState,
         castState: draftCastState,
         isKnownCharacter,

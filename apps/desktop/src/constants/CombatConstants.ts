@@ -133,6 +133,51 @@ export const RESOURCE_REGEN_MAX_FRACTION = 1 / 8;
 /** Chance that `flee` escapes the fight outright. */
 export const FLEE_CHANCE = 0.5;
 
+/**
+ * Multiplier a `solar` skill gets by day.
+ *
+ * Symmetric around ×1 (`SOLAR_NIGHT_MULTIPLIER` is its mirror), so a solar
+ * skill is neutral across a full day and the *hour* only decides which branch
+ * the holder wants to be holding.
+ */
+export const SOLAR_DAY_MULTIPLIER = 1.5;
+
+/** Multiplier a `solar` skill gets at night. */
+export const SOLAR_NIGHT_MULTIPLIER = 0.5;
+
+/** Multiplier a critical hit deals. */
+export const CRIT_MULTIPLIER = 1.75;
+
+/**
+ * Fraction of a landed hit a `counter` status throws back at the attacker.
+ */
+export const COUNTER_REFLECT_FRACTION = 0.5;
+
+/**
+ * Lowest hit chance an attack may fall to.
+ *
+ * A roll of zero would never land, which reads as a broken action rather than
+ * a hard one; five points is as bad as a shot gets.
+ */
+export const MIN_EFFECTIVE_ACCURACY = 5;
+
+/**
+ * First hour of the day, in the 24-hour clock.
+ *
+ * Before it, the world is in `night`; after {@link NIGHT_START_HOUR}, again.
+ */
+export const DAY_START_HOUR = 6;
+
+/** Hour the sun goes down. */
+export const NIGHT_START_HOUR = 18;
+
+/**
+ * How many of a unit's past turns are remembered.
+ *
+ * The timeline is what a `rewind` reads, so this is how far back one can go.
+ */
+export const MAX_REWIND_HISTORY = 12;
+
 /** Feedback entries kept in `CombatState.log` before the oldest are dropped. */
 export const MAX_LOG_ENTRIES = 200;
 

@@ -1,0 +1,1650 @@
+skills:
+- id: spark
+  name: Spark
+  description: The most basic burst of force a tiny, unstable pop. Minimal damage
+    with wide variance — it exists so the student learns to release energy before
+    controlling it.
+  element_id: chaos
+  learning_cost:
+    experience_points: 1
+  learning_requirements:
+    required_attack_ids: []
+  targeting: enemy_one
+  damage:
+    kind: magical
+    damage_type: magical
+    power:
+      kind: fixed
+      value: 4
+  accuracy: 90
+  hit_count: 1
+  costs:
+    mana: 2
+    stamina: 0
+    cooldown: 0
+  effects:
+    - effect_id: spark_effect
+      status_effect: Jolt
+      apply_to: target
+      turns: 1
+      debuff:
+        speed: 8
+        accuracy: 5
+      polarity: negative
+- id: burst
+  name: Burst
+  description: A single blast with wide variance (±40%) — the first shape every
+    chaos user learns.
+  element_id: chaos
+  learning_cost:
+    experience_points: 1
+  learning_requirements:
+    required_attack_ids:
+    - spark
+  targeting: enemy_one
+  damage:
+    kind: magical
+    damage_type: magical
+    power:
+      kind: fixed
+      value: 14
+  accuracy: 95
+  hit_count: 1
+  costs:
+    mana: 4
+    stamina: 0
+    cooldown: 0
+- id: volley_burst
+  name: Volley Burst
+  description: A rapid spray of small bursts; total damage scales with MATK.
+  element_id: chaos
+  learning_cost:
+    experience_points: 2
+  learning_requirements:
+    required_attack_ids:
+    - burst
+  targeting: enemy_one
+  damage:
+    kind: magical
+    damage_type: magical
+    power:
+      kind: fixed
+      value: 5
+  accuracy: 95
+  hit_count: 4
+  costs:
+    mana: 7
+    stamina: 0
+    cooldown: 0
+- id: unstable_blast
+  name: Unstable Blast
+  description: Erratic blast; wide variance, can crit for double.
+  element_id: chaos
+  learning_cost:
+    experience_points: 3
+  learning_requirements:
+    required_attack_ids:
+    - burst
+  targeting: enemy_one
+  damage:
+    kind: magical
+    damage_type: magical
+    power:
+      kind: fixed
+      value: 20
+  accuracy: 80
+  hit_count: 1
+  costs:
+    mana: 10
+    stamina: 0
+    cooldown: 0
+- id: detonate
+  name: Detonate
+  description: A heavy, delayed detonation; MDEF −8 for 2 turns.
+  element_id: chaos
+  learning_cost:
+    experience_points: 4
+  learning_requirements:
+    required_attack_ids:
+    - volley_burst
+  targeting: enemy_one
+  damage:
+    kind: magical
+    damage_type: magical
+    power:
+      kind: fixed
+      value: 24
+  accuracy: 90
+  hit_count: 1
+  costs:
+    mana: 12
+    stamina: 0
+    cooldown: 0
+- id: shatter_burst
+  name: Shatter Burst
+  description: PDEF −10 for 2 turns; punches through armour.
+  element_id: chaos
+  learning_cost:
+    experience_points: 5
+  learning_requirements:
+    required_attack_ids:
+    - detonate
+  targeting: enemy_one
+  damage:
+    kind: magical
+    damage_type: magical
+    power:
+      kind: fixed
+      value: 28
+  accuracy: 95
+  hit_count: 1
+  costs:
+    mana: 15
+    stamina: 0
+    cooldown: 0
+- id: cataclysm
+  name: Cataclysm
+  description: A field-wide detonation; 8 HP recoil to the user.
+  element_id: chaos
+  learning_cost:
+    experience_points: 7
+  learning_requirements:
+    required_attack_ids:
+    - detonate
+    - unstable_blast
+  targeting: enemies_all
+  damage:
+    kind: magical
+    damage_type: magical
+    power:
+      kind: fixed
+      value: 22
+  accuracy: 90
+  hit_count: 1
+  costs:
+    mana: 22
+    stamina: 0
+    cooldown: 0
+- id: explosion
+  name: Explosion
+  description: AoE blast; 10 HP recoil to the user and 4 HP splash to allies.
+  element_id: chaos
+  learning_cost:
+    experience_points: 1
+  learning_requirements:
+    required_attack_ids:
+    - spark
+  targeting: enemies_all
+  damage:
+    kind: magical
+    damage_type: magical
+    power:
+      kind: fixed
+      value: 16
+  accuracy: 95
+  hit_count: 1
+  costs:
+    mana: 14
+    stamina: 0
+    cooldown: 0
+- id: shockwave
+  name: Shockwave
+  description: AoE blast; SPD −10 to all enemies.
+  element_id: chaos
+  learning_cost:
+    experience_points: 3
+  learning_requirements:
+    required_attack_ids:
+    - explosion
+  targeting: enemies_all
+  damage:
+    kind: magical
+    damage_type: magical
+    power:
+      kind: fixed
+      value: 16
+  accuracy: 90
+  hit_count: 1
+  costs:
+    mana: 14
+    stamina: 0
+    cooldown: 0
+- id: concussive_blast
+  name: Concussive Blast
+  description: Pushes the target back a row; SPD −10 for 2 turns.
+  element_id: chaos
+  learning_cost:
+    experience_points: 3
+  learning_requirements:
+    required_attack_ids:
+    - explosion
+  targeting: enemy_one
+  damage:
+    kind: magical
+    damage_type: magical
+    power:
+      kind: fixed
+      value: 20
+  accuracy: 95
+  hit_count: 1
+  costs:
+    mana: 13
+    stamina: 0
+    cooldown: 0
+- id: blast_rush
+  name: Blast Rush
+  description: A charging blast; 8 HP recoil to the user, pushes the target back.
+  element_id: chaos
+  learning_cost:
+    experience_points: 4
+  learning_requirements:
+    required_attack_ids:
+    - concussive_blast
+  targeting: enemy_one
+  damage:
+    kind: magical
+    damage_type: magical
+    power:
+      kind: fixed
+      value: 18
+  accuracy: 95
+  hit_count: 1
+  costs:
+    mana: 12
+    stamina: 0
+    cooldown: 0
+- id: minefield
+  name: Minefield
+  description: Plant a charge enemies that move take 10 damage and are slowed.
+  element_id: chaos
+  learning_cost:
+    experience_points: 4
+  learning_requirements:
+    required_attack_ids:
+    - explosion
+  targeting: enemies_all
+  hit_count: 1
+  costs:
+    mana: 15
+    stamina: 0
+    cooldown: 0
+- id: shrapnel_storm
+  name: Shrapnel Storm
+  description: A storm of shrapnel rakes every enemy.
+  element_id: chaos
+  learning_cost:
+    experience_points: 6
+  learning_requirements:
+    required_attack_ids:
+    - shockwave
+    - concussive_blast
+  targeting: enemies_all
+  damage:
+    kind: magical
+    damage_type: magical
+    power:
+      kind: fixed
+      value: 12
+  accuracy: 90
+  hit_count: 3
+  costs:
+    mana: 19
+    stamina: 0
+    cooldown: 0
+- id: demolition
+  name: Demolition
+  description: AoE wrecking blast; PDEF −10 for 2 turns.
+  element_id: chaos
+  learning_cost:
+    experience_points: 5
+  learning_requirements:
+    required_attack_ids:
+    - shrapnel_storm
+  targeting: enemies_all
+  damage:
+    kind: magical
+    damage_type: magical
+    power:
+      kind: fixed
+      value: 20
+  accuracy: 90
+  hit_count: 1
+  costs:
+    mana: 18
+    stamina: 0
+    cooldown: 0
+- id: overcharge
+  name: Overcharge
+  description: MATK +20 for 3 turns; 8 HP/turn self-damage.
+  element_id: chaos
+  learning_cost:
+    experience_points: 1
+  learning_requirements:
+    required_attack_ids:
+    - spark
+  targeting: self
+  hit_count: 1
+  costs:
+    mana: 8
+    stamina: 0
+    cooldown: 0
+- id: adrenal_surge
+  name: Adrenal Surge
+  description: MATK +12 and SPD +10 for 2 turns; 5 HP/turn self-damage.
+  element_id: chaos
+  learning_cost:
+    experience_points: 3
+  learning_requirements:
+    required_attack_ids:
+    - overcharge
+  targeting: self
+  hit_count: 1
+  costs:
+    mana: 9
+    stamina: 0
+    cooldown: 0
+- id: recoil_guard
+  name: Recoil Guard
+  description: PDEF +12 and reflect 4 damage to attackers; 4 HP/turn self-damage.
+  element_id: chaos
+  learning_cost:
+    experience_points: 3
+  learning_requirements:
+    required_attack_ids:
+    - overcharge
+  targeting: self
+  hit_count: 1
+  costs:
+    mana: 11
+    stamina: 0
+    cooldown: 0
+- id: volatile_core
+  name: Volatile Core
+  description: MATK +20, SPD +12 and PDEF +10 for 3 turns; 10 HP/turn self-damage.
+  element_id: chaos
+  learning_cost:
+    experience_points: 6
+  learning_requirements:
+    required_attack_ids:
+    - adrenal_surge
+    - recoil_guard
+  targeting: self
+  hit_count: 1
+  costs:
+    mana: 16
+    stamina: 0
+    cooldown: 0
+- id: thunderclap
+  name: Thunderclap
+  description: A blast crackling with lightning; 30% chance to stun.
+  element_id: chaos
+  learning_cost:
+    experience_points: 4
+  learning_requirements:
+    required_attack_ids:
+    - lightning_bolt
+  targeting: enemy_one
+  damage:
+    kind: magical
+    damage_type: magical
+    power:
+      kind: fixed
+      value: 20
+  accuracy: 95
+  hit_count: 1
+  costs:
+    mana: 12
+    stamina: 0
+    cooldown: 0
+- id: charge
+  name: Charge
+  description: The most basic manipulation of electricity a static charge that crackles
+    in the hand. No combat value — it exists so the student learns to hold the current
+    before directing it.
+  element_id: chaos
+  learning_cost:
+    experience_points: 1
+  learning_requirements:
+    required_attack_ids: []
+  targeting: self
+  hit_count: 1
+  costs:
+    mana: 2
+    stamina: 0
+    cooldown: 0
+  effects:
+    - effect_id: charge_effect
+      status_effect: Static Surge
+      apply_to: self
+      turns: 2
+      buff:
+        magical_attack: 8
+        speed: 6
+      polarity: positive
+- id: lightning_bolt
+  name: Lightning Bolt
+  description: A fast bolt; 25% chance to stun. The first electric shape a student
+    learns.
+  element_id: chaos
+  learning_cost:
+    experience_points: 1
+  learning_requirements:
+    required_attack_ids:
+    - charge
+  targeting: enemy_one
+  damage:
+    kind: magical
+    damage_type: magical
+    power:
+      kind: fixed
+      value: 14
+  accuracy: 100
+  hit_count: 1
+  costs:
+    mana: 4
+    stamina: 0
+    cooldown: 0
+- id: discharge
+  name: Discharge
+  description: A cheap AoE zap; very low cooldown.
+  element_id: chaos
+  learning_cost:
+    experience_points: 1
+  learning_requirements:
+    required_attack_ids:
+    - charge
+  targeting: enemies_all
+  damage:
+    kind: magical
+    damage_type: magical
+    power:
+      kind: fixed
+      value: 8
+  accuracy: 95
+  hit_count: 1
+  costs:
+    mana: 8
+    stamina: 0
+    cooldown: 0
+- id: chain_lightning
+  name: Chain Lightning
+  description: Jumps between three enemies; damage falls off per jump.
+  element_id: chaos
+  learning_cost:
+    experience_points: 1
+  learning_requirements:
+    required_attack_ids:
+    - charge
+  targeting: enemies_all
+  damage:
+    kind: magical
+    damage_type: magical
+    power:
+      kind: fixed
+      value: 14
+  accuracy: 95
+  hit_count: 1
+  costs:
+    mana: 14
+    stamina: 0
+    cooldown: 0
+- id: arc_burst
+  name: Arc Burst
+  description: A stronger bolt; 30% chance to stun.
+  element_id: chaos
+  learning_cost:
+    experience_points: 2
+  learning_requirements:
+    required_attack_ids:
+    - lightning_bolt
+  targeting: enemy_one
+  damage:
+    kind: magical
+    damage_type: magical
+    power:
+      kind: fixed
+      value: 18
+  accuracy: 95
+  hit_count: 1
+  costs:
+    mana: 8
+    stamina: 0
+    cooldown: 0
+- id: forked_lightning
+  name: Forked Lightning
+  description: A bolt that forks to strike two targets.
+  element_id: chaos
+  learning_cost:
+    experience_points: 2
+  learning_requirements:
+    required_attack_ids:
+    - lightning_bolt
+  targeting: enemy_one
+  damage:
+    kind: magical
+    damage_type: magical
+    power:
+      kind: fixed
+      value: 12
+  accuracy: 95
+  hit_count: 2
+  costs:
+    mana: 10
+    stamina: 0
+    cooldown: 0
+- id: arc_lash
+  name: Arc Lash
+  description: A flurry of repeated zaps.
+  element_id: chaos
+  learning_cost:
+    experience_points: 3
+  learning_requirements:
+    required_attack_ids:
+    - discharge
+  targeting: enemy_one
+  damage:
+    kind: magical
+    damage_type: magical
+    power:
+      kind: fixed
+      value: 7
+  accuracy: 95
+  hit_count: 3
+  costs:
+    mana: 11
+    stamina: 0
+    cooldown: 0
+- id: overload_arc
+  name: Overload Arc
+  description: An overloaded arc that rakes the enemy line twice.
+  element_id: chaos
+  learning_cost:
+    experience_points: 4
+  learning_requirements:
+    required_attack_ids:
+    - arc_lash
+  targeting: enemies_all
+  damage:
+    kind: magical
+    damage_type: magical
+    power:
+      kind: fixed
+      value: 12
+  accuracy: 90
+  hit_count: 2
+  costs:
+    mana: 15
+    stamina: 0
+    cooldown: 0
+- id: chain_storm
+  name: Chain Storm
+  description: A storm of chained arcs; 20% chance to stun each enemy.
+  element_id: chaos
+  learning_cost:
+    experience_points: 7
+  learning_requirements:
+    required_attack_ids:
+    - chain_lightning
+    - arc_burst
+  targeting: enemies_all
+  damage:
+    kind: magical
+    damage_type: magical
+    power:
+      kind: fixed
+      value: 16
+  accuracy: 90
+  hit_count: 1
+  costs:
+    mana: 20
+    stamina: 0
+    cooldown: 0
+- id: shock
+  name: Shock
+  description: Paralyze the target cannot act for 2 turns.
+  element_id: chaos
+  learning_cost:
+    experience_points: 1
+  learning_requirements:
+    required_attack_ids:
+    - charge
+  targeting: enemy_one
+  hit_count: 1
+  costs:
+    mana: 10
+    stamina: 0
+    cooldown: 0
+- id: stun_bolt
+  name: Stun Bolt
+  description: A heavy bolt; 40% chance to stun.
+  element_id: chaos
+  learning_cost:
+    experience_points: 2
+  learning_requirements:
+    required_attack_ids:
+    - shock
+  targeting: enemy_one
+  damage:
+    kind: magical
+    damage_type: magical
+    power:
+      kind: fixed
+      value: 20
+  accuracy: 95
+  hit_count: 1
+  costs:
+    mana: 12
+    stamina: 0
+    cooldown: 0
+- id: numbing_current
+  name: Numbing Current
+  description: SPD −12 and ACC −10% for 3 turns.
+  element_id: chaos
+  learning_cost:
+    experience_points: 2
+  learning_requirements:
+    required_attack_ids:
+    - shock
+  targeting: enemy_one
+  hit_count: 1
+  costs:
+    mana: 9
+    stamina: 0
+    cooldown: 0
+- id: static_overload
+  name: Static Overload
+  description: ACC −15% and 6 HP/turn for 3 turns to every enemy.
+  element_id: chaos
+  learning_cost:
+    experience_points: 4
+  learning_requirements:
+    required_attack_ids:
+    - numbing_current
+  targeting: enemies_all
+  hit_count: 1
+  costs:
+    mana: 14
+    stamina: 0
+    cooldown: 0
+- id: paralyzing_field
+  name: Paralyzing Field
+  description: Paralyze every enemy for 1 turn and SPD −10.
+  element_id: chaos
+  learning_cost:
+    experience_points: 6
+  learning_requirements:
+    required_attack_ids:
+    - stun_bolt
+    - numbing_current
+  targeting: enemies_all
+  hit_count: 1
+  costs:
+    mana: 18
+    stamina: 0
+    cooldown: 0
+- id: static_field
+  name: Static Field
+  description: Reflect 6 damage to any attacker.
+  element_id: chaos
+  learning_cost:
+    experience_points: 1
+  learning_requirements:
+    required_attack_ids:
+    - charge
+  targeting: self
+  hit_count: 1
+  costs:
+    mana: 10
+    stamina: 0
+    cooldown: 0
+- id: conductive_skin
+  name: Conductive Skin
+  description: PDEF +10 and reflect 8 damage to attackers.
+  element_id: chaos
+  learning_cost:
+    experience_points: 3
+  learning_requirements:
+    required_attack_ids:
+    - static_field
+  targeting: self
+  hit_count: 1
+  costs:
+    mana: 12
+    stamina: 0
+    cooldown: 0
+- id: capacitor
+  name: Capacitor
+  description: MDEF +12, MATK +8 and regenerate 6 MP/turn.
+  element_id: chaos
+  learning_cost:
+    experience_points: 4
+  learning_requirements:
+    required_attack_ids:
+    - conductive_skin
+  targeting: self
+  hit_count: 1
+  costs:
+    mana: 15
+    stamina: 0
+    cooldown: 0
+- id: magnetic_pull
+  name: Magnetic Pull
+  description: Pull the target forward a row and SPD −10 for 2 turns.
+  element_id: chaos
+  learning_cost:
+    experience_points: 1
+  learning_requirements:
+    required_attack_ids:
+    - charge
+  targeting: enemy_one
+  hit_count: 1
+  costs:
+    mana: 7
+    stamina: 0
+    cooldown: 0
+- id: grounding
+  name: Grounding
+  description: Ground the enemy line movement sealed for 1 turn and SPD −8.
+  element_id: chaos
+  learning_cost:
+    experience_points: 3
+  learning_requirements:
+    required_attack_ids:
+    - magnetic_pull
+  targeting: enemies_all
+  hit_count: 1
+  costs:
+    mana: 12
+    stamina: 0
+    cooldown: 0
+- id: insulating_aura
+  name: Insulating Aura
+  description: PDEF +8 and MDEF +8 for 3 turns to all allies.
+  element_id: chaos
+  learning_cost:
+    experience_points: 4
+  learning_requirements:
+    required_attack_ids:
+    - grounding
+  targeting: allies_all
+  hit_count: 1
+  costs:
+    mana: 14
+    stamina: 0
+    cooldown: 0
+- id: tesla_coil
+  name: Tesla Coil
+  description: A coil storm; reflects 10 damage and 25% chance to stun.
+  element_id: chaos
+  learning_cost:
+    experience_points: 7
+  learning_requirements:
+    required_attack_ids:
+    - capacitor
+    - insulating_aura
+  targeting: enemies_all
+  damage:
+    kind: magical
+    damage_type: magical
+    power:
+      kind: fixed
+      value: 18
+  accuracy: 90
+  hit_count: 1
+  costs:
+    mana: 22
+    stamina: 0
+    cooldown: 0
+- id: flashpoint
+  name: Flashpoint
+  description: Lightning ignites a blast; wide variance.
+  element_id: chaos
+  learning_cost:
+    experience_points: 4
+  learning_requirements:
+    required_attack_ids:
+    - burst
+  targeting: enemy_one
+  damage:
+    kind: magical
+    damage_type: magical
+    power:
+      kind: fixed
+      value: 22
+  accuracy: 95
+  hit_count: 1
+  costs:
+    mana: 12
+    stamina: 0
+    cooldown: 0
+- id: time
+  name: Time
+  description: The most basic manipulation of time a held breath, a skipped heartbeat,
+    a second that refuses to pass. No combat value — it exists so the student learns
+    to shape the element before directing it.
+  element_id: spatium
+  learning_cost:
+    experience_points: 1
+  learning_requirements:
+    required_attack_ids: []
+  targeting: self
+  hit_count: 1
+  costs:
+    mana: 2
+    stamina: 0
+    cooldown: 0
+  effects:
+    - effect_id: time_effect
+      status_effect: Timehold
+      apply_to: self
+      turns: 2
+      buff:
+        speed: 10
+        evasion: 6
+      polarity: positive
+- id: haste
+  name: Haste
+  description: SPD +15 for 2 turns. The ally's place in the order advances.
+  element_id: spatium
+  learning_cost:
+    experience_points: 1
+  learning_requirements:
+    required_attack_ids:
+    - time
+  targeting: ally_one
+  hit_count: 1
+  costs:
+    mana: 8
+    stamina: 0
+    cooldown: 0
+- id: quickening
+  name: Quickening
+  description: SPD +20 and MATK +8 for 3 turns.
+  element_id: spatium
+  learning_cost:
+    experience_points: 2
+  learning_requirements:
+    required_attack_ids:
+    - haste
+  targeting: ally_one
+  hit_count: 1
+  costs:
+    mana: 12
+    stamina: 0
+    cooldown: 0
+- id: hastened_hour
+  name: Hastened Hour
+  description: SPD +30 for 3 turns; the ally's cooldowns tick down by one.
+  element_id: spatium
+  learning_cost:
+    experience_points: 4
+  learning_requirements:
+    required_attack_ids:
+    - quickening
+  targeting: ally_one
+  hit_count: 1
+  costs:
+    mana: 17
+    stamina: 0
+    cooldown: 0
+- id: slow
+  name: Slow
+  description: SPD −12 for 2 turns. The target's place in the order slips back.
+  element_id: spatium
+  learning_cost:
+    experience_points: 1
+  learning_requirements:
+    required_attack_ids:
+    - time
+  targeting: enemy_one
+  hit_count: 1
+  costs:
+    mana: 8
+    stamina: 0
+    cooldown: 0
+- id: drag
+  name: Drag
+  description: SPD −18 and ACC −8% for 3 turns.
+  element_id: spatium
+  learning_cost:
+    experience_points: 2
+  learning_requirements:
+    required_attack_ids:
+    - slow
+  targeting: enemy_one
+  hit_count: 1
+  costs:
+    mana: 12
+    stamina: 0
+    cooldown: 0
+- id: wasting_hour
+  name: Wasting Hour
+  description: SPD −25 for 3 turns; the target's turn is pushed behind every other
+    unit's.
+  element_id: spatium
+  learning_cost:
+    experience_points: 4
+  learning_requirements:
+    required_attack_ids:
+    - drag
+  targeting: enemy_one
+  hit_count: 1
+  costs:
+    mana: 18
+    stamina: 0
+    cooldown: 0
+- id: time_lock
+  name: Time Lock
+  description: Seal the target's actions for 1 turn.
+  element_id: spatium
+  learning_cost:
+    experience_points: 1
+  learning_requirements:
+    required_attack_ids:
+    - time
+  targeting: enemy_one
+  hit_count: 1
+  costs:
+    mana: 13
+    stamina: 0
+    cooldown: 0
+- id: stasis
+  name: Stasis
+  description: Seal the target's actions for 2 turns; it regenerates no HP while held.
+  element_id: spatium
+  learning_cost:
+    experience_points: 3
+  learning_requirements:
+    required_attack_ids:
+    - time_lock
+  targeting: enemy_one
+  hit_count: 1
+  costs:
+    mana: 17
+    stamina: 0
+    cooldown: 0
+- id: frozen_hour
+  name: Frozen Hour
+  description: Seal every enemy's actions for 1 turn and SPD −8.
+  element_id: spatium
+  learning_cost:
+    experience_points: 4
+  learning_requirements:
+    required_attack_ids:
+    - time_lock
+  targeting: enemies_all
+  hit_count: 1
+  costs:
+    mana: 19
+    stamina: 0
+    cooldown: 0
+- id: suspended_hour
+  name: Suspended Hour
+  description: Seal every enemy's actions for 2 turns.
+  element_id: spatium
+  learning_cost:
+    experience_points: 7
+  learning_requirements:
+    required_attack_ids:
+    - stasis
+    - frozen_hour
+  targeting: enemies_all
+  hit_count: 1
+  costs:
+    mana: 25
+    stamina: 0
+    cooldown: 0
+- id: stasis_guard
+  name: Stasis Guard
+  description: ACC +25% and MDEF +14 for 2 turns; no enemy may target the bearer for
+    1 turn.
+  element_id: spatium
+  learning_cost:
+    experience_points: 2
+  learning_requirements:
+    required_attack_ids:
+    - time_lock
+  targeting: self
+  hit_count: 1
+  costs:
+    mana: 14
+    stamina: 0
+    cooldown: 0
+- id: delayed_strike
+  name: Delayed Strike
+  description: A strike that does not land now — it lands a turn from now.
+  element_id: spatium
+  learning_cost:
+    experience_points: 1
+  learning_requirements:
+    required_attack_ids:
+    - time
+  targeting: enemy_one
+  damage:
+    kind: magical
+    damage_type: magical
+    power:
+      kind: fixed
+      value: 10
+  accuracy: 100
+  hit_count: 1
+  costs:
+    mana: 9
+    stamina: 0
+    cooldown: 0
+- id: deferred_blow
+  name: Deferred Blow
+  description: A heavier delayed strike; PDEF −8 for 2 turns when it lands.
+  element_id: spatium
+  learning_cost:
+    experience_points: 3
+  learning_requirements:
+    required_attack_ids:
+    - delayed_strike
+  targeting: enemy_one
+  damage:
+    kind: magical
+    damage_type: magical
+    power:
+      kind: fixed
+      value: 16
+  accuracy: 100
+  hit_count: 1
+  costs:
+    mana: 14
+    stamina: 0
+    cooldown: 0
+- id: echo
+  name: Echo
+  description: Repeat the bearer's previous attack against the target at 60% power.
+  element_id: spatium
+  learning_cost:
+    experience_points: 2
+  learning_requirements:
+    required_attack_ids:
+    - time
+  targeting: enemy_one
+  hit_count: 1
+  costs:
+    mana: 12
+    stamina: 0
+    cooldown: 0
+- id: echo_cascade
+  name: Echo Cascade
+  description: The echo repeats against every enemy at 45% power.
+  element_id: spatium
+  learning_cost:
+    experience_points: 4
+  learning_requirements:
+    required_attack_ids:
+    - echo
+  targeting: enemies_all
+  damage:
+    kind: magical
+    damage_type: magical
+    power:
+      kind: fixed
+      value: 8
+  accuracy: 95
+  hit_count: 1
+  costs:
+    mana: 18
+    stamina: 0
+    cooldown: 0
+- id: deferred_verdict
+  name: Deferred Verdict
+  description: A reckoning placed at the end of the round it lands on every enemy,
+    and PDEF −8 to every enemy for 2 turns.
+  element_id: spatium
+  learning_cost:
+    experience_points: 7
+  learning_requirements:
+    required_attack_ids:
+    - deferred_blow
+    - echo_cascade
+  targeting: enemies_all
+  damage:
+    kind: magical
+    damage_type: magical
+    power:
+      kind: fixed
+      value: 20
+  accuracy: 90
+  hit_count: 1
+  costs:
+    mana: 24
+    stamina: 0
+    cooldown: 0
+- id: rewind
+  name: Rewind
+  description: Restore 24 HP. A wound is taken back.
+  element_id: spatium
+  learning_cost:
+    experience_points: 1
+  learning_requirements:
+    required_attack_ids:
+    - time
+  targeting: ally_one
+  hit_count: 1
+  costs:
+    mana: 9
+    stamina: 0
+    cooldown: 0
+- id: second_wind
+  name: Second Wind
+  description: Restore 20 HP and regenerate 6 MP/turn for 3 turns.
+  element_id: spatium
+  learning_cost:
+    experience_points: 3
+  learning_requirements:
+    required_attack_ids:
+    - rewind
+  targeting: ally_one
+  hit_count: 1
+  costs:
+    mana: 13
+    stamina: 0
+    cooldown: 0
+- id: unmake
+  name: Unmake
+  description: Remove one positive effect from the target and drain 8 HP from it to
+    the user.
+  element_id: spatium
+  learning_cost:
+    experience_points: 3
+  learning_requirements:
+    required_attack_ids:
+    - rewind
+  targeting: enemy_one
+  hit_count: 1
+  costs:
+    mana: 12
+    stamina: 0
+    cooldown: 0
+- id: eternal_rewind
+  name: Eternal Rewind
+  description: Restore 20 HP to all allies and remove one positive effect from every
+    enemy.
+  element_id: spatium
+  learning_cost:
+    experience_points: 7
+  learning_requirements:
+    required_attack_ids:
+    - second_wind
+    - unmake
+  targeting: allies_all
+  hit_count: 1
+  costs:
+    mana: 24
+    stamina: 0
+    cooldown: 0
+- id: chronoshift
+  name: Chronoshift
+  description: The bearer takes the target's place in the order of time the target's
+    next turn is pushed back and the bearer's pulled forward.
+  element_id: spatium
+  learning_cost:
+    experience_points: 4
+  learning_requirements:
+    required_attack_ids:
+    - warp
+  targeting: enemy_one
+  hit_count: 1
+  costs:
+    mana: 15
+    stamina: 0
+    cooldown: 0
+- id: space
+  name: Space
+  description: The most basic manipulation of space the distance between two things,
+    held open for a moment. No combat value — it exists so the student learns to
+    shape the element before directing it.
+  element_id: spatium
+  learning_cost:
+    experience_points: 1
+  learning_requirements:
+    required_attack_ids: []
+  targeting: self
+  effects:
+    - effect_id: space_effect
+      status_effect: Driftward
+      apply_to: self
+      turns: 2
+      buff:
+        evasion: 8
+        accuracy: 5
+      polarity: positive
+  hit_count: 1
+  costs:
+    mana: 2
+    stamina: 0
+    cooldown: 0
+- id: blink
+  name: Blink
+  description: Step out of reach ACC +15% for 2 turns; the bearer moves to the rear
+    line.
+  element_id: spatium
+  learning_cost:
+    experience_points: 1
+  learning_requirements:
+    required_attack_ids:
+    - space
+  targeting: self
+  hit_count: 1
+  costs:
+    mana: 12
+    stamina: 0
+    cooldown: 0
+- id: blink_strike
+  name: Blink Strike
+  description: Strike and step back before the answer comes; ACC +10% for 2 turns.
+  element_id: spatium
+  learning_cost:
+    experience_points: 3
+  learning_requirements:
+    required_attack_ids:
+    - blink
+  targeting: enemy_one
+  damage:
+    kind: magical
+    damage_type: magical
+    power:
+      kind: fixed
+      value: 14
+  accuracy: 95
+  hit_count: 1
+  costs:
+    mana: 15
+    stamina: 0
+    cooldown: 0
+- id: vanish
+  name: Vanish
+  description: ACC +25% and MDEF +10 for 2 turns; the bearer may counter the next
+    hit it takes.
+  element_id: spatium
+  learning_cost:
+    experience_points: 3
+  learning_requirements:
+    required_attack_ids:
+    - blink
+  targeting: self
+  hit_count: 1
+  costs:
+    mana: 18
+    stamina: 0
+    cooldown: 0
+- id: phase_step
+  name: Phase Step
+  description: Bring an ally forward into the front line; PDEF +12 and MATK +8 for
+    2 turns.
+  element_id: spatium
+  learning_cost:
+    experience_points: 3
+  learning_requirements:
+    required_attack_ids:
+    - blink
+  targeting: ally_one
+  hit_count: 1
+  costs:
+    mana: 16
+    stamina: 0
+    cooldown: 0
+- id: great_vanishing
+  name: Great Vanishing
+  description: ACC +20% and MDEF +8 for 2 turns to all allies; the whole team steps
+    out of reach at once.
+  element_id: spatium
+  learning_cost:
+    experience_points: 6
+  learning_requirements:
+    required_attack_ids:
+    - vanish
+    - phase_step
+  targeting: allies_all
+  hit_count: 1
+  costs:
+    mana: 26
+    stamina: 0
+    cooldown: 0
+- id: warp
+  name: Warp
+  description: Swap the bearer's position with the target's; the target is dragged
+    into the front line.
+  element_id: spatium
+  learning_cost:
+    experience_points: 1
+  learning_requirements:
+    required_attack_ids:
+    - space
+  targeting: enemy_one
+  hit_count: 1
+  costs:
+    mana: 15
+    stamina: 0
+    cooldown: 0
+- id: displace
+  name: Displace
+  description: Drag the target into the bearer's line and push the bearer to the rear;
+    MATK −10 for 2 turns.
+  element_id: spatium
+  learning_cost:
+    experience_points: 3
+  learning_requirements:
+    required_attack_ids:
+    - warp
+  targeting: enemy_one
+  damage:
+    kind: magical
+    damage_type: magical
+    power:
+      kind: fixed
+      value: 14
+  accuracy: 100
+  hit_count: 1
+  costs:
+    mana: 19
+    stamina: 0
+    cooldown: 0
+- id: transpose
+  name: Transpose
+  description: Swap the positions of two allies; the one moved into the front line
+    gains PDEF +10 for 2 turns.
+  element_id: spatium
+  learning_cost:
+    experience_points: 3
+  learning_requirements:
+    required_attack_ids:
+    - warp
+  targeting: ally_one
+  hit_count: 1
+  costs:
+    mana: 18
+    stamina: 0
+    cooldown: 0
+- id: fold
+  name: Fold
+  description: Fold the space between the lines drag every enemy into the front line;
+    ACC −8% to every enemy for 2 turns.
+  element_id: spatium
+  learning_cost:
+    experience_points: 4
+  learning_requirements:
+    required_attack_ids:
+    - displace
+  targeting: enemies_all
+  damage:
+    kind: magical
+    damage_type: magical
+    power:
+      kind: fixed
+      value: 12
+  accuracy: 95
+  hit_count: 1
+  costs:
+    mana: 24
+    stamina: 0
+    cooldown: 0
+- id: paradox
+  name: Paradox
+  description: The target and the bearer trade places twice; ACC −20% and SPD −10
+    for 2 turns.
+  element_id: spatium
+  learning_cost:
+    experience_points: 6
+  learning_requirements:
+    required_attack_ids:
+    - warp
+    - displace
+  targeting: enemy_one
+  damage:
+    kind: magical
+    damage_type: magical
+    power:
+      kind: fixed
+      value: 18
+  accuracy: 95
+  hit_count: 1
+  costs:
+    mana: 27
+    stamina: 0
+    cooldown: 0
+- id: gravity_well
+  name: Gravity Well
+  description: Drag the target into the bearer's line and hold it there; SPD −10
+    for 2 turns.
+  element_id: spatium
+  learning_cost:
+    experience_points: 1
+  learning_requirements:
+    required_attack_ids:
+    - space
+  targeting: enemy_one
+  hit_count: 1
+  costs:
+    mana: 15
+    stamina: 0
+    cooldown: 0
+- id: implosion
+  name: Implosion
+  description: Crush the target under a closing well; PDEF −10 for 2 turns.
+  element_id: spatium
+  learning_cost:
+    experience_points: 3
+  learning_requirements:
+    required_attack_ids:
+    - gravity_well
+  targeting: enemy_one
+  damage:
+    kind: magical
+    damage_type: magical
+    power:
+      kind: fixed
+      value: 18
+  accuracy: 100
+  hit_count: 1
+  costs:
+    mana: 19
+    stamina: 0
+    cooldown: 0
+- id: vortex
+  name: Vortex
+  description: Drag every enemy into one spot; SPD −12 and ACC −8% for 2 turns.
+  element_id: spatium
+  learning_cost:
+    experience_points: 4
+  learning_requirements:
+    required_attack_ids:
+    - gravity_well
+  targeting: enemies_all
+  hit_count: 1
+  costs:
+    mana: 24
+    stamina: 0
+    cooldown: 0
+- id: singularity
+  name: Singularity
+  description: The well closes on one target; PDEF −12 for 2 turns.
+  element_id: spatium
+  learning_cost:
+    experience_points: 5
+  learning_requirements:
+    required_attack_ids:
+    - implosion
+  targeting: enemy_one
+  damage:
+    kind: magical
+    damage_type: magical
+    power:
+      kind: fixed
+      value: 24
+  accuracy: 100
+  hit_count: 1
+  costs:
+    mana: 25
+    stamina: 0
+    cooldown: 0
+- id: event_horizon
+  name: Event Horizon
+  description: The space closes on the target it cannot act for 1 turn and takes 8
+    damage each turn for 2 turns.
+  element_id: spatium
+  learning_cost:
+    experience_points: 7
+  learning_requirements:
+    required_attack_ids:
+    - implosion
+    - vortex
+  targeting: enemy_one
+  hit_count: 1
+  costs:
+    mana: 29
+    stamina: 0
+    cooldown: 0
+- id: future_sight
+  name: Future Sight
+  description: ACC +20% for 3 turns; the bearer may counter the next hit it takes.
+  element_id: spatium
+  learning_cost:
+    experience_points: 1
+  learning_requirements:
+    required_attack_ids:
+    - space
+  targeting: self
+  hit_count: 1
+  costs:
+    mana: 14
+    stamina: 0
+    cooldown: 0
+- id: prescience
+  name: Prescience
+  description: ACC +30% for 3 turns; the bearer counters the next hit it takes.
+  element_id: spatium
+  learning_cost:
+    experience_points: 3
+  learning_requirements:
+    required_attack_ids:
+    - future_sight
+  targeting: self
+  hit_count: 1
+  costs:
+    mana: 19
+    stamina: 0
+    cooldown: 0
+- id: oracle
+  name: Oracle
+  description: ACC +20% for 3 turns; the ally counters the next hit it takes.
+  element_id: spatium
+  learning_cost:
+    experience_points: 3
+  learning_requirements:
+    required_attack_ids:
+    - future_sight
+  targeting: ally_one
+  hit_count: 1
+  costs:
+    mana: 20
+    stamina: 0
+    cooldown: 0
+- id: prophecy
+  name: Prophecy
+  description: The bearer sees the enemy's whole next move ACC −12% and SPD −8
+    to every enemy for 2 turns.
+  element_id: spatium
+  learning_cost:
+    experience_points: 4
+  learning_requirements:
+    required_attack_ids:
+    - prescience
+  targeting: enemies_all
+  hit_count: 1
+  costs:
+    mana: 25
+    stamina: 0
+    cooldown: 0
+- id: inevitable
+  name: Inevitable
+  description: The strike is unavoidable it ignores the target's ACC and cannot be
+    evaded.
+  element_id: spatium
+  learning_cost:
+    experience_points: 6
+  learning_requirements:
+    required_attack_ids:
+    - prescience
+    - oracle
+  targeting: enemy_one
+  damage:
+    kind: magical
+    damage_type: magical
+    power:
+      kind: fixed
+      value: 22
+  accuracy: 100
+  hit_count: 1
+  costs:
+    mana: 28
+    stamina: 0
+    cooldown: 0
+- id: fixed_point
+  name: Fixed Point
+  description: The bearer fixes themselves in one point of space and holds it they
+    cannot be displaced for 3 turns and PDEF +14.
+  element_id: spatium
+  learning_cost:
+    experience_points: 4
+  learning_requirements:
+    required_attack_ids:
+    - time_lock
+  targeting: self
+  hit_count: 1
+  costs:
+    mana: 17
+    stamina: 0
+    cooldown: 0
+- id: entropy_storm
+  name: Entropy Storm
+  description: Seal every enemy's actions for 1 turn; 12 HP recoil to the user.
+  element_id: chaos
+  learning_cost:
+    experience_points: 12
+  learning_requirements:
+    required_attack_ids:
+    - cataclysm
+    - chain_storm
+  targeting: enemies_all
+  damage:
+    kind: magical
+    damage_type: magical
+    power:
+      kind: fixed
+      value: 26
+  accuracy: 90
+  hit_count: 1
+  costs:
+    mana: 30
+    stamina: 0
+    cooldown: 0
+- id: eternal_now
+  name: Eternal Now
+  description: Every enemy is sealed for 1 turn and dragged into one point, and every
+    ally gains SPD +20 for 3 turns.
+  element_id: spatium
+  learning_cost:
+    experience_points: 12
+  learning_requirements:
+    required_attack_ids:
+    - suspended_hour
+    - event_horizon
+  targeting: enemies_all
+  damage:
+    kind: magical
+    damage_type: magical
+    power:
+      kind: fixed
+      value: 24
+  accuracy: 90
+  hit_count: 1
+  costs:
+    mana: 30
+    stamina: 0
+    cooldown: 0

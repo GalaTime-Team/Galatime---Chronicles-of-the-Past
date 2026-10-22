@@ -1,0 +1,458 @@
+# Gerado pelo Dialogue Forger. Comentários do ficheiro original não são preservados.
+
+start_node: entra
+nodes:
+  entra:
+    type: character_enter
+    character_id: duha
+    position: center_left
+    pose: sit
+    next: entra_2
+
+  entra_2:
+    type: character_enter
+    character_id: nicima
+    position: center_right
+    pose: sit
+    next: fala
+
+  fala:
+    type: line
+    speaker_id: duha
+    emotion: annoyed
+    animation_id: idle
+    text:
+      - type: text
+        value: ...
+    next: fala_2
+
+  fala_2:
+    type: line
+    speaker_id: nicima
+    emotion: neutral
+    animation_id: idle
+    text:
+      - type: text
+        value: "*humming*"
+    next: fala_3
+
+  fala_3:
+    type: line
+    speaker_id: duha
+    emotion: annoyed
+    animation_id: idle
+    text:
+      - type: text
+        value: What's taking him so long?
+    next: fala_4
+
+  fala_4:
+    type: line
+    speaker_id: nicima
+    emotion: neutral
+    animation_id: idle
+    text:
+      - type: text
+        value: "I think h-he's just late as usu-su-sual. "
+    next: fala_5
+
+  fala_5:
+    type: line
+    speaker_id: duha
+    emotion: annoyed
+    animation_id: idle
+    text:
+      - type: text
+        value: I thought I told him to met him at 5. It's...
+    next: fala_6
+
+  fala_6:
+    type: line
+    speaker_id: duha
+    emotion: neutral
+    animation_id: idle
+    text:
+      - type: text
+        value: 5:18... Of course.
+    next: fala_7
+
+  fala_7:
+    type: line
+    speaker_id: nicima
+    emotion: neutral
+    animation_id: idle
+    text:
+      - type: text
+        value: L-let's keep wai-waiting for him.
+    next: fala_8
+
+  fala_8:
+    type: line
+    speaker_id: duha
+    emotion: neutral
+    animation_id: idle
+    text:
+      - type: text
+        value: ...
+    next: fala_9
+
+  fala_9:
+    type: line
+    speaker_id: duha
+    emotion: neutral
+    animation_id: idle
+    text:
+      - type: text
+        value: Hey, Nicima.
+    next: fala_10
+
+  fala_10:
+    type: line
+    speaker_id: nicima
+    emotion: neutral
+    animation_id: idle
+    text:
+      - type: text
+        value: Hm?
+    next: fala_11
+
+  fala_11:
+    type: line
+    speaker_id: duha
+    emotion: concerned
+    animation_id: idle
+    text:
+      - type: text
+        value: Do you... regret coming with me?
+    next: fala_12
+
+  fala_12:
+    type: line
+    speaker_id: nicima
+    emotion: surprised
+    animation_id: idle
+    text:
+      - type: text
+        value: W-w-what!? Why a-are you ask-k-king that!?
+    next: fala_13
+
+  fala_13:
+    type: line
+    speaker_id: duha
+    emotion: concerned
+    animation_id: idle
+    text:
+      - type: text
+        value: We've been on this adventuring thing for a while, and we've barely been able to scrape by.
+    next: fala_14
+
+  fala_14:
+    type: line
+    speaker_id: duha
+    emotion: annoyed
+    animation_id: idle
+    text:
+      - type: text
+        value: There were nights where we didn't even had money to feed ourselves. There just wasn't anything for us to do.
+    next: fala_15
+
+  fala_15:
+    type: line
+    speaker_id: duha
+    emotion: concerned
+    animation_id: idle
+    text:
+      - type: text
+        value: I try to plan things out and keep the group afloat. But, I'm not sure for how long I can keep this up.
+    next: fala_16
+
+  fala_16:
+    type: line
+    speaker_id: nicima
+    emotion: concerned
+    animation_id: idle
+    text:
+      - type: text
+        value: Duha...
+    next: fala_17
+
+  fala_17:
+    type: line
+    speaker_id: duha
+    emotion: concerned
+    animation_id: idle
+    text:
+      - type: text
+        value: So, I've been wondering, if-
+    next: acao
+
+  acao:
+    type: character_action
+    character_id: nicima
+    position: center_right
+    pose: sit
+    depth: back
+    next: fala_18
+
+  fala_18:
+    type: line
+    speaker_id: nicima
+    emotion: concerned
+    animation_id: idle
+    text:
+      - type: text
+        value: "*hugs*"
+    next: fala_19
+
+  fala_19:
+    type: line
+    speaker_id: duha
+    emotion: surprised
+    animation_id: idle
+    text:
+      - type: text
+        value: "!"
+    next: fala_20
+
+  fala_20:
+    type: line
+    speaker_id: nicima
+    emotion: concerned
+    animation_id: idle
+    text:
+      - type: text
+        value: Duha, I didn't kn-know you felt this-is way.
+    next: acao_2
+
+  acao_2:
+    type: character_action
+    character_id: nicima
+    position: center
+    pose: sit
+    depth: front
+    emotion: happy
+    next: fala_21
+
+  fala_21:
+    type: line
+    speaker_id: nicima
+    emotion: happy
+    animation_id: idle
+    text:
+      - type: text
+        value: But y-you don't need to wo-wo-worry about it. I don't re-regret adventuring with you-ou-ou.
+    next: fala_22
+
+  fala_22:
+    type: line
+    speaker_id: duha
+    emotion: concerned
+    animation_id: idle
+    text:
+      - type: text
+        value: Are you sure?
+    next: fala_23
+
+  fala_23:
+    type: line
+    speaker_id: nicima
+    emotion: concerned
+    animation_id: idle
+    text:
+      - type: text
+        value: Back when I was at-at the con-ven-vent, I was always ner-ner-nervous and by myself-elf. I always me-me-essed things up and no one w-w-wanted to be my friend.
+    next: fala_24
+
+  fala_24:
+    type: line
+    speaker_id: nicima
+    emotion: concerned
+    animation_id: idle
+    text:
+      - type: text
+        value: I-I wanted t-t-to leave that pla-place more than any-ny-nything, but I didn't ha-ha-have the courage to.
+    next: fala_25
+
+  fala_25:
+    type: line
+    speaker_id: nicima
+    emotion: happy
+    animation_id: idle
+    text:
+      - type: text
+        value: "But then y-y-you looked at m-m-me and gave me the coura-ra-rage and a chance to leave and start a new life-fe. "
+    next: fala_26
+
+  fala_26:
+    type: line
+    speaker_id: duha
+    emotion: happy
+    animation_id: idle
+    text:
+      - type: text
+        value: Hah, yeah. I still remember the day we ran of Sedra.
+    next: fala_27
+
+  fala_27:
+    type: line
+    speaker_id: nicima
+    emotion: happy
+    animation_id: idle
+    text:
+      - type: text
+        value: And eve-ve-ver since that d-day, I've been to s-s-so many places, help-p-ped so many people. I've even made n-new friends.
+    next: fala_28
+
+  fala_28:
+    type: line
+    speaker_id: nicima
+    emotion: happy
+    animation_id: idle
+    text:
+      - type: text
+        value: S-s-sure, there's some bump-p-ps in the road, but I would-d-dn't change anything.
+    next: fala_29
+
+  fala_29:
+    type: line
+    speaker_id: duha
+    emotion: happy
+    animation_id: idle
+    auto_advance: true
+    text:
+      - type: text
+        value: Nicima... I-
+    next: fala_30
+
+  fala_30:
+    type: line
+    speaker_id: barasturon
+    emotion: neutral
+    animation_id: idle
+    text:
+      - type: shout
+        value: Hey guys!
+    next: fala_31
+
+  fala_31:
+    type: line
+    speaker_id: duha
+    emotion: surprised
+    animation_id: idle
+    text:
+      - type: text
+        value: Aeeii!
+    next: fala_32
+
+  fala_32:
+    type: line
+    speaker_id: nicima
+    emotion: surprised
+    animation_id: idle
+    text:
+      - type: text
+        value: Eeek!
+    next: entra_3
+
+  entra_3:
+    type: character_enter
+    character_id: barasturon
+    position: left
+    animation_id: run_in_from_left
+    emotion: nervous
+    next: fala_33
+
+  fala_33:
+    type: line
+    speaker_id: barasturon
+    emotion: nervous
+    animation_id: idle
+    auto_advance: true
+    text:
+      - type: text
+        value: Gods, sorry I'm late, but I-
+    next: fala_34
+
+  fala_34:
+    type: line
+    speaker_id: barasturon
+    emotion: unsure
+    animation_id: idle
+    text:
+      - type: text
+        value: Uh... What are you two doing.
+    next: fala_35
+
+  fala_35:
+    type: line
+    speaker_id: nicima
+    emotion: nervous
+    animation_id: idle
+    text:
+      - type: text
+        value: Nothing!
+    next: fala_36
+
+  fala_36:
+    type: line
+    speaker_id: duha
+    emotion: nervous
+    animation_id: idle
+    text:
+      - type: text
+        value: Yeah, nothing!
+    next: fala_37
+
+  fala_37:
+    type: line
+    speaker_id: duha
+    emotion: annoyed
+    animation_id: idle
+    text:
+      - type: text
+        value: More importantly. You're late! Where the heck were you!?
+    next: fala_38
+
+  fala_38:
+    type: line
+    speaker_id: barasturon
+    emotion: nervous
+    animation_id: idle
+    text:
+      - type: text
+        value: Right, right. Sorry I'm late.
+    next: fala_39
+
+  fala_39:
+    type: line
+    speaker_id: barasturon
+    emotion: happy
+    animation_id: idle
+    text:
+      - type: text
+        value: But I found some work for us!
+    next: fala_40
+
+  fala_40:
+    type: line
+    speaker_id: duha
+    emotion: surprised
+    animation_id: idle
+    text:
+      - type: text
+        value: Really? That's great!
+    next: fala_41
+
+  fala_41:
+    type: line
+    speaker_id: duha
+    emotion: happy
+    animation_id: idle
+    text:
+      - type: text
+        value: What's it about?
+    next: fim
+
+  fim:
+    type: end
+    result: good

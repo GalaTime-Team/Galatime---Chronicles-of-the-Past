@@ -126,6 +126,12 @@ function scaleEffect(effect: AttackEffect, factor: number): AttackEffect {
     if (effect.resource_drain) next.resource_drain = scaleNumericRecord(effect.resource_drain, factor);
     if (effect.buff) next.buff = scaleNumericRecord(effect.buff, factor);
     if (effect.debuff) next.debuff = scaleNumericRecord(effect.debuff, factor);
+    // The per-turn payouts are output too: a stronger tier regenerates more.
+    if (effect.regen_per_turn) next.regen_per_turn = scaleNumericRecord(effect.regen_per_turn, factor);
+    if (effect.self_upkeep) next.self_upkeep = scaleNumericRecord(effect.self_upkeep, factor);
+    if (effect.deferred_cost) next.deferred_cost = scaleNumericRecord(effect.deferred_cost, factor);
+    if (effect.heal !== undefined) next.heal = scaleRounded(effect.heal, factor);
+    if (effect.damage_per_turn !== undefined) next.damage_per_turn = scaleRounded(effect.damage_per_turn, factor);
 
     return next;
 }
@@ -173,6 +179,7 @@ export function applySkillLevel(skill: PublicAttack, level: number): PublicAttac
     next.costs = {
         mana: scaleRounded(authoredCosts.mana, costFactor),
         stamina: scaleRounded(authoredCosts.stamina, costFactor),
+        hp: scaleRounded(authoredCosts.hp, costFactor),
         cooldown: Math.round(readNumber(authoredCosts.cooldown, 0)) + extraCooldown,
     };
 

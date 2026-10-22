@@ -1,0 +1,1946 @@
+skills:
+  - id: age_of_ash
+    name: Age of Ash
+    description: 7 mag damage per turn for 3 turns; shreds stats to all enemies.
+    element_id: vetus
+    learning_cost:
+      experience_points: 8
+    learning_requirements:
+      required_attack_ids: [slow_decay, crumbling_ward]
+    targeting: enemies_all
+    damage: 0
+    accuracy: 0
+    hit_count: 1
+    costs:
+      mana: 26
+      stamina: 0
+      cooldown: 2
+  - id: ancestral_wrath
+    name: Ancestral Wrath
+    description: Heaviest single hit in the tree.
+    element_id: vetus
+    learning_cost:
+      experience_points: 8
+    learning_requirements:
+      required_attack_ids: [relic_blast, relic_wake]
+    targeting: enemy_one
+    damage: 42
+    accuracy: 90
+    hit_count: 1
+    costs:
+      mana: 28
+      stamina: 8
+      cooldown: 3
+  - id: ancient
+    name: Ancient
+    description: Attunement to old power; listen to relics, runes and oaths. No combat value.
+    element_id: vetus
+    learning_cost:
+      experience_points: 1
+    learning_requirements:
+      required_attack_ids: []
+    targeting: self
+    damage: 0
+    accuracy: 0
+    hit_count: 1
+    costs:
+      mana: 2
+      stamina: 2
+      cooldown: 0
+    effects:
+      - effect_id: ancient_effect
+        status_effect: Old Guard
+        apply_to: self
+        turns: 2
+        buff:
+          physical_defense: 6
+          magical_defense: 6
+        polarity: positive
+  - id: ancient_strike
+    name: Ancient Strike
+    description: A relic blow unsung for a century.
+    element_id: vetus
+    learning_cost:
+      experience_points: 1
+    learning_requirements:
+      required_attack_ids: [ancient]
+    targeting: enemy_one
+    damage: 20
+    accuracy: 95
+    hit_count: 1
+    costs:
+      mana: 6
+      stamina: 4
+      cooldown: 0
+  - id: ashen_rite
+    name: Ashen Rite
+    description: Mag 20 to all enemies; lose 4 HP per enemy.
+    element_id: vetus
+    learning_cost:
+      experience_points: 3
+    learning_requirements:
+      required_attack_ids: [forbidden_chant]
+    targeting: enemies_all
+    damage: 20
+    accuracy: 90
+    hit_count: 1
+    costs:
+      mana: 24
+      stamina: 0
+      hp: 10
+      cooldown: 0
+  - id: blood_hymn
+    name: Blood Hymn
+    description: Mag 32; lose 12 HP.
+    element_id: vetus
+    learning_cost:
+      experience_points: 5
+    learning_requirements:
+      required_attack_ids: [forbidden_chant, oath_of_blood]
+    targeting: enemy_one
+    damage: 32
+    accuracy: 90
+    hit_count: 1
+    costs:
+      mana: 26
+      stamina: 0
+      hp: 12
+      cooldown: 0
+  - id: breaking_seal
+    name: Breaking Seal
+    description: Remove one control status; restore 12 MP; SPD +10 for 2 turns.
+    element_id: vetus
+    learning_cost:
+      experience_points: 3
+    learning_requirements:
+      required_attack_ids: [seal]
+    targeting: self
+    damage: 0
+    accuracy: 0
+    hit_count: 1
+    costs:
+      mana: 9
+      stamina: 0
+      cooldown: 0
+  - id: covenant_of_the_martyr
+    name: Covenant of the Martyr
+    description: Lose 24 HP; PATK +24 and MDEF +20 for 3 turns; regen 10 HP/turn.
+    element_id: vetus
+    learning_cost:
+      experience_points: 9
+    learning_requirements:
+      required_attack_ids: [oathbound, sworn_vigil]
+    targeting: self
+    damage: 0
+    accuracy: 0
+    hit_count: 1
+    costs:
+      mana: 32
+      stamina: 0
+      hp: 20
+      cooldown: 3
+  - id: crumbling_ward
+    name: Crumbling Ward
+    description: MATK -14 for 3 turns.
+    element_id: vetus
+    learning_cost:
+      experience_points: 2
+    learning_requirements:
+      required_attack_ids: [time_worn]
+    targeting: enemy_one
+    damage: 0
+    accuracy: 0
+    hit_count: 1
+    costs:
+      mana: 14
+      stamina: 0
+      cooldown: 0
+  - id: debt_of_the_ancients
+    name: Debt of the Ancients
+    description: Allies PATK +12 and PDEF +10 for 3 turns; lose 16 HP next turn.
+    element_id: vetus
+    learning_cost:
+      experience_points: 5
+    learning_requirements:
+      required_attack_ids: [oath_of_old, rune_field]
+    targeting: allies_all
+    damage: 0
+    accuracy: 0
+    hit_count: 1
+    costs:
+      mana: 22
+      stamina: 0
+      hp: 16
+      cooldown: 0
+  - id: dirge_of_the_deep
+    name: Dirge of the Deep
+    description: Mag 30; lose 8 HP at start of next 2 turns.
+    element_id: vetus
+    learning_cost:
+      experience_points: 4
+    learning_requirements:
+      required_attack_ids: [hymn_of_ash]
+    targeting: enemy_one
+    damage: 30
+    accuracy: 90
+    hit_count: 1
+    costs:
+      mana: 24
+      stamina: 0
+      hp: 6
+      cooldown: 0
+  - id: eternal_dust
+    name: Eternal Dust
+    description: 11 mag damage per turn for 4 turns.
+    element_id: vetus
+    learning_cost:
+      experience_points: 5
+    learning_requirements:
+      required_attack_ids: [rust_of_ages, mark_of_ruin]
+    targeting: enemy_one
+    damage: 0
+    accuracy: 0
+    hit_count: 1
+    costs:
+      mana: 21
+      stamina: 0
+      cooldown: 0
+  - id: forbidden_chant
+    name: Forbidden Chant
+    description: MATK +20 for 3 turns; lose 5 HP per turn.
+    element_id: vetus
+    learning_cost:
+      experience_points: 1
+    learning_requirements:
+      required_attack_ids: [ancient]
+    targeting: self
+    damage: 0
+    accuracy: 0
+    hit_count: 1
+    costs:
+      mana: 16
+      stamina: 0
+      cooldown: 0
+  - id: hymn_of_ash
+    name: Hymn of Ash
+    description: Mag 26; costs 8 HP.
+    element_id: vetus
+    learning_cost:
+      experience_points: 3
+    learning_requirements:
+      required_attack_ids: [forbidden_chant]
+    targeting: enemy_one
+    damage: 26
+    accuracy: 90
+    hit_count: 1
+    costs:
+      mana: 20
+      stamina: 0
+      hp: 8
+      cooldown: 0
+  - id: inscription_of_the_ancestor
+    name: Inscription of the Ancestor
+    description: MATK +30 for 2 turns and MDEF +16 for 3 turns.
+    element_id: vetus
+    learning_cost:
+      experience_points: 8
+    learning_requirements:
+      required_attack_ids: [rune_of_fury, rune_field]
+    targeting: self
+    damage: 0
+    accuracy: 0
+    hit_count: 1
+    costs:
+      mana: 26
+      stamina: 0
+      cooldown: 2
+  - id: mark_of_ruin
+    name: Mark of Ruin
+    description: MATK -12 and MDEF -10 for 3 turns.
+    element_id: vetus
+    learning_cost:
+      experience_points: 2
+    learning_requirements:
+      required_attack_ids: [rune_of_power]
+    targeting: enemy_one
+    damage: 0
+    accuracy: 0
+    hit_count: 1
+    costs:
+      mana: 12
+      stamina: 0
+      cooldown: 0
+  - id: oath_of_blood
+    name: Oath of Blood
+    description: Restore 26 HP; lose 12 HP next turn.
+    element_id: vetus
+    learning_cost:
+      experience_points: 2
+    learning_requirements:
+      required_attack_ids: [oath_of_old]
+    targeting: self
+    damage: 0
+    accuracy: 0
+    hit_count: 1
+    costs:
+      mana: 14
+      stamina: 0
+      cooldown: 0
+  - id: oath_of_old
+    name: Oath of Old
+    description: PATK +10 for 2 turns; lose 10 HP next turn.
+    element_id: vetus
+    learning_cost:
+      experience_points: 1
+    learning_requirements:
+      required_attack_ids: [ancient]
+    targeting: self
+    damage: 0
+    accuracy: 0
+    hit_count: 1
+    costs:
+      mana: 12
+      stamina: 0
+      cooldown: 0
+  - id: oath_of_steel
+    name: Oath of Steel
+    description: PDEF +16 for 3 turns; lose 8 HP next turn.
+    element_id: vetus
+    learning_cost:
+      experience_points: 3
+    learning_requirements:
+      required_attack_ids: [oath_of_old]
+    targeting: self
+    damage: 0
+    accuracy: 0
+    hit_count: 1
+    costs:
+      mana: 16
+      stamina: 0
+      cooldown: 0
+  - id: oathbound
+    name: Oathbound
+    description: PATK +14 and PDEF +14 for 3 turns; lose 14 HP next turn.
+    element_id: vetus
+    learning_cost:
+      experience_points: 5
+    learning_requirements:
+      required_attack_ids: [oath_of_blood, oath_of_steel]
+    targeting: self
+    damage: 0
+    accuracy: 0
+    hit_count: 1
+    costs:
+      mana: 24
+      stamina: 0
+      cooldown: 0
+  - id: relic_blast
+    name: Relic Blast
+    description: Stored relic power released across the enemy line.
+    element_id: vetus
+    learning_cost:
+      experience_points: 2
+    learning_requirements:
+      required_attack_ids: [ancient_strike]
+    targeting: enemies_all
+    damage: 16
+    accuracy: 90
+    hit_count: 1
+    costs:
+      mana: 14
+      stamina: 3
+      cooldown: 0
+  - id: relic_edge
+    name: Relic Edge
+    description: Three short cuts from the same relic.
+    element_id: vetus
+    learning_cost:
+      experience_points: 2
+    learning_requirements:
+      required_attack_ids: [ancient_strike]
+    targeting: enemy_one
+    damage: 7
+    accuracy: 95
+    hit_count: 3
+    costs:
+      mana: 7
+      stamina: 3
+      cooldown: 0
+  - id: relic_pommel
+    name: Relic Pommel
+    description: PDEF -12 for 3 turns.
+    element_id: vetus
+    learning_cost:
+      experience_points: 3
+    learning_requirements:
+      required_attack_ids: [relic_edge]
+    targeting: enemy_one
+    damage: 12
+    accuracy: 95
+    hit_count: 1
+    costs:
+      mana: 11
+      stamina: 4
+      cooldown: 0
+  - id: relic_toll
+    name: Relic Toll
+    description: Drain 8 MP from the target.
+    element_id: vetus
+    learning_cost:
+      experience_points: 2
+    learning_requirements:
+      required_attack_ids: [ancient_strike]
+    targeting: enemy_one
+    damage: 14
+    accuracy: 95
+    hit_count: 1
+    costs:
+      mana: 9
+      stamina: 3
+      cooldown: 0
+  - id: relic_wake
+    name: Relic Wake
+    description: MATK +14 for 3 turns.
+    element_id: vetus
+    learning_cost:
+      experience_points: 3
+    learning_requirements:
+      required_attack_ids: [relic_blast]
+    targeting: self
+    damage: 0
+    accuracy: 0
+    hit_count: 1
+    costs:
+      mana: 13
+      stamina: 2
+      cooldown: 0
+  - id: rune_field
+    name: Rune Field
+    description: Buffs allies and weakens enemies.
+    element_id: vetus
+    learning_cost:
+      experience_points: 5
+    learning_requirements:
+      required_attack_ids: [rune_of_ward, mark_of_ruin]
+    targeting: allies_all
+    damage: 0
+    accuracy: 0
+    hit_count: 1
+    costs:
+      mana: 20
+      stamina: 0
+      cooldown: 0
+  - id: rune_of_fury
+    name: Rune of Fury
+    description: MATK +20 for 3 turns; burns 4 MP per turn.
+    element_id: vetus
+    learning_cost:
+      experience_points: 3
+    learning_requirements:
+      required_attack_ids: [rune_of_power]
+    targeting: self
+    damage: 0
+    accuracy: 0
+    hit_count: 1
+    costs:
+      mana: 14
+      stamina: 0
+      cooldown: 0
+  - id: rune_of_power
+    name: Rune of Power
+    description: MATK +12 for 3 turns.
+    element_id: vetus
+    learning_cost:
+      experience_points: 1
+    learning_requirements:
+      required_attack_ids: [ancient]
+    targeting: self
+    damage: 0
+    accuracy: 0
+    hit_count: 1
+    costs:
+      mana: 10
+      stamina: 0
+      cooldown: 0
+  - id: rune_of_thorns
+    name: Rune of Thorns
+    description: Reflect 10 damage for 3 turns.
+    element_id: vetus
+    learning_cost:
+      experience_points: 3
+    learning_requirements:
+      required_attack_ids: [rune_of_ward]
+    targeting: self
+    damage: 0
+    accuracy: 0
+    hit_count: 1
+    costs:
+      mana: 15
+      stamina: 0
+      cooldown: 0
+  - id: rune_of_ward
+    name: Rune of Ward
+    description: PDEF +12 and MDEF +12 for 3 turns.
+    element_id: vetus
+    learning_cost:
+      experience_points: 2
+    learning_requirements:
+      required_attack_ids: [rune_of_power]
+    targeting: self
+    damage: 0
+    accuracy: 0
+    hit_count: 1
+    costs:
+      mana: 12
+      stamina: 0
+      cooldown: 0
+  - id: rust_of_ages
+    name: Rust of Ages
+    description: 6 mag damage per turn for 3 turns; SPD -8.
+    element_id: vetus
+    learning_cost:
+      experience_points: 2
+    learning_requirements:
+      required_attack_ids: [time_worn]
+    targeting: enemy_one
+    damage: 0
+    accuracy: 0
+    hit_count: 1
+    costs:
+      mana: 13
+      stamina: 0
+      cooldown: 0
+  - id: seal
+    name: Seal
+    description: Target cannot use skills for 2 turns.
+    element_id: vetus
+    learning_cost:
+      experience_points: 1
+    learning_requirements:
+      required_attack_ids: [ancient]
+    targeting: enemy_one
+    damage: 0
+    accuracy: 0
+    hit_count: 1
+    costs:
+      mana: 14
+      stamina: 0
+      cooldown: 0
+  - id: seal_of_bonds
+    name: Seal of Bonds
+    description: Target cannot act for 1 turn; 6 mag damage per turn for 2 turns.
+    element_id: vetus
+    learning_cost:
+      experience_points: 2
+    learning_requirements:
+      required_attack_ids: [seal]
+    targeting: enemy_one
+    damage: 0
+    accuracy: 0
+    hit_count: 1
+    costs:
+      mana: 16
+      stamina: 0
+      cooldown: 0
+  - id: seal_of_seizure
+    name: Seal of Seizure
+    description: Remove one buff from target; restore 15 MP.
+    element_id: vetus
+    learning_cost:
+      experience_points: 4
+    learning_requirements:
+      required_attack_ids: [seal, rune_of_ward]
+    targeting: enemy_one
+    damage: 0
+    accuracy: 0
+    hit_count: 1
+    costs:
+      mana: 18
+      stamina: 0
+      cooldown: 0
+  - id: seal_of_the_tomb
+    name: Seal of the Tomb
+    description: All enemies sealed for 2 turns; MDEF -10 for 2 turns.
+    element_id: vetus
+    learning_cost:
+      experience_points: 8
+    learning_requirements:
+      required_attack_ids: [seal_of_bonds, writ_of_nullity]
+    targeting: enemies_all
+    damage: 0
+    accuracy: 0
+    hit_count: 1
+    costs:
+      mana: 30
+      stamina: 0
+      cooldown: 2
+  - id: slow_decay
+    name: Slow Decay
+    description: 5 mag damage per turn for 3 turns; SPD -6 for 2 turns to all enemies.
+    element_id: vetus
+    learning_cost:
+      experience_points: 3
+    learning_requirements:
+      required_attack_ids: [rust_of_ages]
+    targeting: enemies_all
+    damage: 0
+    accuracy: 0
+    hit_count: 1
+    costs:
+      mana: 17
+      stamina: 0
+      cooldown: 0
+  - id: song_of_the_old_gods
+    name: Song of the Old Gods
+    description: Mag 30 to all; lose 20 HP and 5 HP per turn for 2 turns.
+    element_id: vetus
+    learning_cost:
+      experience_points: 9
+    learning_requirements:
+      required_attack_ids: [dirge_of_the_deep, ashen_rite]
+    targeting: enemies_all
+    damage: 30
+    accuracy: 90
+    hit_count: 1
+    costs:
+      mana: 36
+      stamina: 0
+      hp: 20
+      cooldown: 3
+  - id: sunder_relic
+    name: Sunder Relic
+    description: Ignores half PDEF; PDEF -10 for 3 turns.
+    element_id: vetus
+    learning_cost:
+      experience_points: 5
+    learning_requirements:
+      required_attack_ids: [relic_pommel, mark_of_ruin]
+    targeting: enemy_one
+    damage: 24
+    accuracy: 95
+    hit_count: 1
+    costs:
+      mana: 18
+      stamina: 4
+      cooldown: 0
+  - id: sworn_vigil
+    name: Sworn Vigil
+    description: Regenerate 14 HP/turn for 3 turns; lose 6 HP/turn.
+    element_id: vetus
+    learning_cost:
+      experience_points: 4
+    learning_requirements:
+      required_attack_ids: [oath_of_blood]
+    targeting: self
+    damage: 0
+    accuracy: 0
+    hit_count: 1
+    costs:
+      mana: 18
+      stamina: 0
+      cooldown: 0
+  - id: the_last_epoch
+    name: The Last Epoch
+    description: Mag 34 to all enemies; lose 30 HP; enemies sealed and MATK -12.
+    element_id: vetus
+    learning_cost:
+      experience_points: 14
+    learning_requirements:
+      required_attack_ids: [ancestral_wrath, covenant_of_the_martyr]
+    targeting: enemies_all
+    damage: 34
+    accuracy: 90
+    hit_count: 1
+    costs:
+      mana: 40
+      stamina: 0
+      hp: 30
+      cooldown: 3
+  - id: time_worn
+    name: Time Worn
+    description: PDEF -12 and MDEF -8 for 3 turns.
+    element_id: vetus
+    learning_cost:
+      experience_points: 1
+    learning_requirements:
+      required_attack_ids: [ancient]
+    targeting: enemy_one
+    damage: 0
+    accuracy: 0
+    hit_count: 1
+    costs:
+      mana: 11
+      stamina: 0
+      cooldown: 0
+  - id: unspoken_name
+    name: Unspoken Name
+    description: Seal target for 2 turns; lose 10 HP and 4 HP per turn for 2 turns.
+    element_id: vetus
+    learning_cost:
+      experience_points: 5
+    learning_requirements:
+      required_attack_ids: [forbidden_chant, seal]
+    targeting: enemy_one
+    damage: 0
+    accuracy: 0
+    hit_count: 1
+    costs:
+      mana: 28
+      stamina: 0
+      hp: 10
+      cooldown: 0
+  - id: writ_of_nullity
+    name: Writ of Nullity
+    description: Target cannot use skills for 3 turns; MATK -12 for 3 turns.
+    element_id: vetus
+    learning_cost:
+      experience_points: 4
+    learning_requirements:
+      required_attack_ids: [seal_of_bonds]
+    targeting: enemy_one
+    damage: 0
+    accuracy: 0
+    hit_count: 1
+    costs:
+      mana: 21
+      stamina: 0
+      cooldown: 0
+  - id: arcane_aegis
+    name: Arcane Aegis
+    description: Absorb 34 damage and MDEF +16 for 3 turns.
+    element_id: vis
+    learning_cost:
+      experience_points: 5
+    learning_requirements:
+      required_attack_ids: ['mana_barrier', 'deep_focus']
+    targeting: self
+    damage: 0
+    accuracy: 0
+    hit_count: 1
+    costs:
+      mana: 19
+  - id: arcane_apotheosis
+    name: Arcane Apotheosis
+    description: Drain 14 MP from every enemy; the stolen mana becomes 14 mag damage on each and a 24-point barrier on every ally for 3 turns.
+    element_id: vis
+    learning_cost:
+      experience_points: 14
+    learning_requirements:
+      required_attack_ids: ['arcane_convergence', 'ward_of_the_font']
+    targeting: enemies_all
+    damage: 24
+    accuracy: 90
+    hit_count: 1
+    costs:
+      mana: 40
+  - id: arcane_ascendance
+    name: Arcane Ascendance
+    description: MATK +30 for 2 turns and regenerate 6 MP/turn for 3 turns.
+    element_id: vis
+    learning_cost:
+      experience_points: 7
+    learning_requirements:
+      required_attack_ids: ['arcane_overcharge', 'arcane_expenditure']
+    targeting: self
+    damage: 0
+    accuracy: 0
+    hit_count: 1
+    costs:
+      mana: 28
+  - id: arcane_collapse
+    name: Arcane Collapse
+    description: Spend 25 MP the strike ignores half of the target's MDEF.
+    element_id: vis
+    learning_cost:
+      experience_points: 9
+    learning_requirements:
+      required_attack_ids: ['arcane_expenditure', 'arcane_immolation']
+    targeting: enemy_one
+    damage: 38
+    accuracy: 90
+    hit_count: 1
+    costs:
+      mana: 32
+  - id: arcane_convergence
+    name: Arcane Convergence
+    description: Every shard and every lance folded into one point of force.
+    element_id: vis
+    learning_cost:
+      experience_points: 7
+    learning_requirements:
+      required_attack_ids: ['arcane_lance', 'arcane_volley']
+    targeting: enemies_all
+    damage: 24
+    accuracy: 90
+    hit_count: 1
+    costs:
+      mana: 28
+  - id: arcane_dissolution
+    name: Arcane Dissolution
+    description: Remove every positive status from the target; MATK −12 and MDEF −8 for 3 turns.
+    element_id: vis
+    learning_cost:
+      experience_points: 3
+    learning_requirements:
+      required_attack_ids: ['dispel_magic']
+    targeting: enemy_one
+    damage: 0
+    accuracy: 0
+    hit_count: 1
+    costs:
+      mana: 16
+  - id: arcane_expenditure
+    name: Arcane Expenditure
+    description: Spend 18 MP the bolt ignores the target's MDEF entirely.
+    element_id: vis
+    learning_cost:
+      experience_points: 6
+    learning_requirements:
+      required_attack_ids: ['manawrath', 'mana_burn']
+    targeting: enemy_one
+    damage: 26
+    accuracy: 95
+    hit_count: 1
+    costs:
+      mana: 26
+  - id: arcane_immolation
+    name: Arcane Immolation
+    description: Burn 12 MP to set the whole enemy line ablaze with raw mana.
+    element_id: vis
+    learning_cost:
+      experience_points: 4
+    learning_requirements:
+      required_attack_ids: ['mana_burn', 'arcane_overcharge']
+    targeting: enemies_all
+    damage: 24
+    accuracy: 90
+    hit_count: 1
+    costs:
+      mana: 20
+  - id: arcane_lance
+    name: Arcane Lance
+    description: A pierced spear of mana that punches through a ward.
+    element_id: vis
+    learning_cost:
+      experience_points: 3
+    learning_requirements:
+      required_attack_ids: ['arcane_missile']
+    targeting: enemy_one
+    damage: 26
+    accuracy: 95
+    hit_count: 1
+    costs:
+      mana: 13
+  - id: arcane_missile
+    name: Arcane Missile
+    description: A volley of four small arcane darts.
+    element_id: vis
+    learning_cost:
+      experience_points: 2
+    learning_requirements:
+      required_attack_ids: ['mana_bolt']
+    targeting: enemy_one
+    damage: 6
+    accuracy: 95
+    hit_count: 4
+    costs:
+      mana: 9
+  - id: arcane_overcharge
+    name: Arcane Overcharge
+    description: MATK +22 for 3 turns; the surge costs 9 MP every turn.
+    element_id: vis
+    learning_cost:
+      experience_points: 3
+    learning_requirements:
+      required_attack_ids: ['overcharge']
+    targeting: self
+    damage: 0
+    accuracy: 0
+    hit_count: 1
+    costs:
+      mana: 17
+  - id: arcane_payload
+    name: Arcane Payload
+    description: Siphon 8 MP from every enemy and hurl it back. The stolen mana becomes the damage; the user keeps none of it.
+    element_id: vis
+    learning_cost:
+      experience_points: 5
+    learning_requirements:
+      required_attack_ids: ['arcane_siphon', 'mana_burst']
+    targeting: enemies_all
+    damage: 16
+    accuracy: 90
+    hit_count: 1
+    costs:
+      mana: 20
+  - id: arcane_purge
+    name: Arcane Purge
+    description: Remove every positive status from every enemy; MATK −12 and MDEF −8 for 3 turns to all enemies.
+    element_id: vis
+    learning_cost:
+      experience_points: 6
+    learning_requirements:
+      required_attack_ids: ['arcane_dissolution', 'dispel_field']
+    targeting: enemies_all
+    damage: 0
+    accuracy: 0
+    hit_count: 1
+    costs:
+      mana: 27
+  - id: arcane_ruin
+    name: Arcane Ruin
+    description: The burst broken into three overlapping waves.
+    element_id: vis
+    learning_cost:
+      experience_points: 4
+    learning_requirements:
+      required_attack_ids: ['mana_burst']
+    targeting: enemies_all
+    damage: 14
+    accuracy: 95
+    hit_count: 3
+    costs:
+      mana: 16
+  - id: arcane_silence
+    name: Arcane Silence
+    description: Seal the target's skills for 2 turns.
+    element_id: vis
+    learning_cost:
+      experience_points: 2
+    learning_requirements:
+      required_attack_ids: ['mana']
+    targeting: enemy_one
+    damage: 0
+    accuracy: 0
+    hit_count: 1
+    costs:
+      mana: 15
+  - id: arcane_siphon
+    name: Arcane Siphon
+    description: On hit, drain 12 MP from the target to the user.
+    element_id: vis
+    learning_cost:
+      experience_points: 2
+    learning_requirements:
+      required_attack_ids: ['siphon']
+    targeting: enemy_one
+    damage: 14
+    accuracy: 95
+    hit_count: 1
+    costs:
+      mana: 13
+  - id: arcane_tithe
+    name: Arcane Tithe
+    description: Drain 18 MP from the target and give it to an ally; MATK −8 for 3 turns.
+    element_id: vis
+    learning_cost:
+      experience_points: 4
+    learning_requirements:
+      required_attack_ids: ['arcane_siphon', 'mana_well']
+    targeting: enemy_one
+    damage: 0
+    accuracy: 0
+    hit_count: 1
+    costs:
+      mana: 17
+  - id: arcane_unmake
+    name: Arcane Unmake
+    description: Strip every status from every enemy and deal mag 18 to all.
+    element_id: vis
+    learning_cost:
+      experience_points: 9
+    learning_requirements:
+      required_attack_ids: ['arcane_purge', 'silence_field']
+    targeting: enemies_all
+    damage: 0
+    accuracy: 0
+    hit_count: 1
+    costs:
+      mana: 36
+  - id: arcane_volley
+    name: Arcane Volley
+    description: A storm of six shards. Feeble alone, relentless in a row.
+    element_id: vis
+    learning_cost:
+      experience_points: 3
+    learning_requirements:
+      required_attack_ids: ['arcane_missile']
+    targeting: enemy_one
+    damage: 5
+    accuracy: 95
+    hit_count: 6
+    costs:
+      mana: 12
+  - id: arcane_ward
+    name: Arcane Ward
+    description: Reflect 8 damage to attackers and MDEF +10 for 3 turns to all allies.
+    element_id: vis
+    learning_cost:
+      experience_points: 6
+    learning_requirements:
+      required_attack_ids: ['warding_ward', 'mana_barrier']
+    targeting: allies_all
+    damage: 0
+    accuracy: 0
+    hit_count: 1
+    costs:
+      mana: 22
+  - id: deep_focus
+    name: Deep Focus
+    description: Regenerate 12 MP/turn for 3 turns and MATK +8.
+    element_id: vis
+    learning_cost:
+      experience_points: 2
+    learning_requirements:
+      required_attack_ids: ['focus']
+    targeting: self
+    damage: 0
+    accuracy: 0
+    hit_count: 1
+    costs:
+      mana: 12
+  - id: dispel_field
+    name: Dispel Field
+    description: Remove one positive status from every enemy.
+    element_id: vis
+    learning_cost:
+      experience_points: 4
+    learning_requirements:
+      required_attack_ids: ['dispel_magic']
+    targeting: enemies_all
+    damage: 0
+    accuracy: 0
+    hit_count: 1
+    costs:
+      mana: 21
+  - id: dispel_magic
+    name: Dispel Magic
+    description: Remove one positive status from the target.
+    element_id: vis
+    learning_cost:
+      experience_points: 1
+    learning_requirements:
+      required_attack_ids: ['mana']
+    targeting: enemy_one
+    damage: 0
+    accuracy: 0
+    hit_count: 1
+    costs:
+      mana: 11
+  - id: focus
+    name: Focus
+    description: Regenerate 8 MP/turn for 3 turns.
+    element_id: vis
+    learning_cost:
+      experience_points: 1
+    learning_requirements:
+      required_attack_ids: ['mana']
+    targeting: self
+    damage: 0
+    accuracy: 0
+    hit_count: 1
+    costs:
+      mana: 7
+  - id: mana
+    name: Mana
+    description: The most basic manipulation of mana the sense of a reserve inside the body that is not blood and not breath, and the first thread drawn from it. No combat value — it exists so the student learns to shape the element before directing it.
+    element_id: vis
+    learning_cost:
+      experience_points: 1
+    learning_requirements:
+      required_attack_ids: []
+    targeting: self
+    damage: 0
+    accuracy: 0
+    hit_count: 1
+    costs:
+      mana: 2
+    effects:
+      - effect_id: mana_effect
+        status_effect: Mana Current
+        apply_to: self
+        turns: 2
+        buff:
+          magical_defense: 8
+          magical_attack: 4
+        polarity: positive
+  - id: mana_barrier
+    name: Mana Barrier
+    description: PDEF +10 and MDEF +10 for 3 turns; every ally absorbs 10 damage.
+    element_id: vis
+    learning_cost:
+      experience_points: 3
+    learning_requirements:
+      required_attack_ids: ['mana_shield']
+    targeting: allies_all
+    damage: 0
+    accuracy: 0
+    hit_count: 1
+    costs:
+      mana: 17
+  - id: mana_bolt
+    name: Mana Bolt
+    description: A concentrated lance of raw mana. The first shape every vis bearer learns, and the first pillar the whole game leans on.
+    element_id: vis
+    learning_cost:
+      experience_points: 1
+    learning_requirements:
+      required_attack_ids: ['mana']
+    targeting: enemy_one
+    damage: 14
+    accuracy: 100
+    hit_count: 1
+    costs:
+      mana: 4
+  - id: mana_burn
+    name: Mana Burn
+    description: Ignite your own reserve for +10 mag damage; the user loses 8 MP.
+    element_id: vis
+    learning_cost:
+      experience_points: 2
+    learning_requirements:
+      required_attack_ids: ['arcane_siphon']
+    targeting: enemy_one
+    damage: 18
+    accuracy: 95
+    hit_count: 1
+    costs:
+      mana: 10
+  - id: mana_burst
+    name: Mana Burst
+    description: A detonation of raw mana across the whole enemy line.
+    element_id: vis
+    learning_cost:
+      experience_points: 2
+    learning_requirements:
+      required_attack_ids: ['mana_bolt']
+    targeting: enemies_all
+    damage: 18
+    accuracy: 95
+    hit_count: 1
+    costs:
+      mana: 17
+  - id: mana_font
+    name: Mana Font
+    description: Restore 20 MP to all allies and regenerate 6 MP/turn for 3 turns.
+    element_id: vis
+    learning_cost:
+      experience_points: 6
+    learning_requirements:
+      required_attack_ids: ['mana_well', 'deep_focus']
+    targeting: allies_all
+    damage: 0
+    accuracy: 0
+    hit_count: 1
+    costs:
+      mana: 22
+  - id: mana_mend
+    name: Mana Mend
+    description: Spend 12 MP to restore 30 HP to an ally. Mana is flesh, if you are willing to pay.
+    element_id: vis
+    learning_cost:
+      experience_points: 4
+    learning_requirements:
+      required_attack_ids: ['mana_well']
+    targeting: ally_one
+    damage: 0
+    accuracy: 0
+    hit_count: 1
+    costs:
+      mana: 16
+  - id: mana_nova
+    name: Mana Nova
+    description: The reserve detonated all at once.
+    element_id: vis
+    learning_cost:
+      experience_points: 6
+    learning_requirements:
+      required_attack_ids: ['mana_burst', 'arcane_ruin']
+    targeting: enemies_all
+    damage: 22
+    accuracy: 90
+    hit_count: 1
+    costs:
+      mana: 25
+  - id: mana_shield
+    name: Mana Shield
+    description: A barrier that absorbs 24 damage, spending 4 MP each turn it stands.
+    element_id: vis
+    learning_cost:
+      experience_points: 1
+    learning_requirements:
+      required_attack_ids: ['mana']
+    targeting: self
+    damage: 0
+    accuracy: 0
+    hit_count: 1
+    costs:
+      mana: 10
+  - id: mana_well
+    name: Mana Well
+    description: Restore 26 MP to an ally. Cheap and spammable.
+    element_id: vis
+    learning_cost:
+      experience_points: 2
+    learning_requirements:
+      required_attack_ids: ['focus']
+    targeting: ally_one
+    damage: 0
+    accuracy: 0
+    hit_count: 1
+    costs:
+      mana: 10
+  - id: manawrath
+    name: Manawrath
+    description: Spend 15 MP on a single overwhelming strike.
+    element_id: vis
+    learning_cost:
+      experience_points: 4
+    learning_requirements:
+      required_attack_ids: ['arcane_overcharge']
+    targeting: enemy_one
+    damage: 30
+    accuracy: 95
+    hit_count: 1
+    costs:
+      mana: 22
+  - id: null_field
+    name: Null Field
+    description: Remove one negative status from every ally; MDEF +10 for 2 turns.
+    element_id: vis
+    learning_cost:
+      experience_points: 4
+    learning_requirements:
+      required_attack_ids: ['dispel_magic']
+    targeting: allies_all
+    damage: 0
+    accuracy: 0
+    hit_count: 1
+    costs:
+      mana: 18
+  - id: nullification
+    name: Nullification
+    description: Seal the target's skills for 2 turns; MATK −15 for 3 turns.
+    element_id: vis
+    learning_cost:
+      experience_points: 4
+    learning_requirements:
+      required_attack_ids: ['arcane_silence']
+    targeting: enemy_one
+    damage: 0
+    accuracy: 0
+    hit_count: 1
+    costs:
+      mana: 21
+  - id: overcharge
+    name: Overcharge
+    description: MATK +12 for 3 turns; the surge costs 5 MP every turn.
+    element_id: vis
+    learning_cost:
+      experience_points: 1
+    learning_requirements:
+      required_attack_ids: ['mana']
+    targeting: self
+    damage: 0
+    accuracy: 0
+    hit_count: 1
+    costs:
+      mana: 12
+  - id: silence_field
+    name: Silence Field
+    description: Seal every enemy's skills for 1 turn; MATK −10 for 2 turns.
+    element_id: vis
+    learning_cost:
+      experience_points: 7
+    learning_requirements:
+      required_attack_ids: ['nullification', 'dispel_field']
+    targeting: enemies_all
+    damage: 0
+    accuracy: 0
+    hit_count: 1
+    costs:
+      mana: 29
+  - id: siphon
+    name: Siphon
+    description: Drain 10 MP from the target to the user.
+    element_id: vis
+    learning_cost:
+      experience_points: 1
+    learning_requirements:
+      required_attack_ids: ['mana']
+    targeting: enemy_one
+    damage: 0
+    accuracy: 0
+    hit_count: 1
+    costs:
+      mana: 10
+  - id: siphon_storm
+    name: Siphon Storm
+    description: On hit, drain 12 MP from every enemy to the user.
+    element_id: vis
+    learning_cost:
+      experience_points: 7
+    learning_requirements:
+      required_attack_ids: ['arcane_siphon', 'void_siphon']
+    targeting: enemies_all
+    damage: 16
+    accuracy: 90
+    hit_count: 1
+    costs:
+      mana: 28
+  - id: siphon_ward
+    name: Siphon Ward
+    description: Absorb 20 damage for 3 turns and restore 5 MP each turn it stands.
+    element_id: vis
+    learning_cost:
+      experience_points: 4
+    learning_requirements:
+      required_attack_ids: ['mana_shield', 'deep_focus']
+    targeting: self
+    damage: 0
+    accuracy: 0
+    hit_count: 1
+    costs:
+      mana: 18
+  - id: void_siphon
+    name: Void Siphon
+    description: Drain 14 MP from every enemy to the user; MATK −10 for 3 turns.
+    element_id: vis
+    learning_cost:
+      experience_points: 4
+    learning_requirements:
+      required_attack_ids: ['siphon']
+    targeting: enemies_all
+    damage: 0
+    accuracy: 0
+    hit_count: 1
+    costs:
+      mana: 19
+  - id: ward_of_the_font
+    name: Ward Of The Font
+    description: Absorb 24 damage and MDEF +14 for 3 turns to all allies.
+    element_id: vis
+    learning_cost:
+      experience_points: 8
+    learning_requirements:
+      required_attack_ids: ['arcane_aegis', 'mana_font']
+    targeting: allies_all
+    damage: 0
+    accuracy: 0
+    hit_count: 1
+    costs:
+      mana: 30
+  - id: warding_ward
+    name: Warding Ward
+    description: Reflect 8 damage to attackers for 3 turns.
+    element_id: vis
+    learning_cost:
+      experience_points: 2
+    learning_requirements:
+      required_attack_ids: ['mana_shield']
+    targeting: self
+    damage: 0
+    accuracy: 0
+    hit_count: 1
+    costs:
+      mana: 14
+  - id: adrenaline
+    name: Adrenaline
+    description: Burn the reserves for speed PATK +24 for 2 turns; the surge costs 6 stamina every turn it lasts.
+    element_id: corporis
+    learning_cost:
+      experience_points: 5
+    learning_requirements:
+      required_attack_ids: [focused_stance]
+    targeting: self
+    damage: 0
+    accuracy: 0
+    hit_count: 1
+    costs:
+      mana: 0
+      stamina: 16
+      cooldown: 3
+    effects: "PATK +24 for 2 turns (6 stamina per turn)"
+  - id: ascendant_form
+    name: Ascendant Form
+    description: Strike, hold and breathe as one motion deal phys 26 to every enemy and drive them back a row; for 3 turns the bearer gains PDEF +20, reflects 10 physical damage to attackers and regains 8 stamina each turn.
+    element_id: corporis
+    learning_cost:
+      experience_points: 14
+    learning_requirements:
+      required_attack_ids: [earthsplitter, immovable]
+    targeting: enemies_all
+    damage: 26
+    accuracy: 90
+    hit_count: 1
+    costs:
+      mana: 0
+      stamina: 40
+      cooldown: 3
+    effects: "PDEF +20; reflect 10 phys; regain 8 stamina per turn for 3 turns"
+  - id: bone_crusher
+    name: Bone Crusher
+    description: The whole body behind one fist. The heaviest single strike in the lane.
+    element_id: corporis
+    learning_cost:
+      experience_points: 3
+    learning_requirements:
+      required_attack_ids: [heavy_blow]
+    targeting: enemy_one
+    damage: 32
+    accuracy: 90
+    hit_count: 1
+    costs:
+      mana: 0
+      stamina: 16
+      cooldown: 1
+    effects: ""
+  - id: break_free
+    name: Break Free
+    description: Snap out of a hold remove one control status from yourself, gain SPD +10 for 2 turns and restore 6 stamina.
+    element_id: corporis
+    learning_cost:
+      experience_points: 3
+    learning_requirements:
+      required_attack_ids: [grapple]
+    targeting: self
+    damage: 0
+    accuracy: 0
+    hit_count: 1
+    costs:
+      mana: 0
+      stamina: 8
+    effects: "remove one control; SPD +10 for 2 turns; restore 6 stamina"
+  - id: bull_rush
+    name: Bull Rush
+    description: Shoulder into the target and drive it back a row. Damage is modest; the displacement is the point.
+    element_id: corporis
+    learning_cost:
+      experience_points: 1
+    learning_requirements:
+      required_attack_ids: [force]
+    targeting: enemy_one
+    damage: 14
+    accuracy: 95
+    hit_count: 1
+    costs:
+      mana: 0
+      stamina: 8
+    effects: ""
+  - id: bulwark
+    name: Bulwark
+    description: Put your own body between an ally and the blow PDEF +20 and MDEF +10 for 2 turns.
+    element_id: corporis
+    learning_cost:
+      experience_points: 4
+    learning_requirements:
+      required_attack_ids: [iron_guard]
+    targeting: ally_one
+    damage: 0
+    accuracy: 0
+    hit_count: 1
+    costs:
+      mana: 0
+      stamina: 14
+    effects: "PDEF +20 and MDEF +10 for 2 turns"
+  - id: counter_stance
+    name: Counter Stance
+    description: Invite the blow and send it back reflect 8 physical damage to attackers for 2 turns.
+    element_id: corporis
+    learning_cost:
+      experience_points: 1
+    learning_requirements:
+      required_attack_ids: [force]
+    targeting: self
+    damage: 0
+    accuracy: 0
+    hit_count: 1
+    costs:
+      mana: 0
+      stamina: 9
+    effects: "reflect 8 physical damage for 2 turns"
+  - id: disarm
+    name: Disarm
+    description: Strip the weapon and one buff from a grappled target.
+    element_id: corporis
+    learning_cost:
+      experience_points: 3
+    learning_requirements:
+      required_attack_ids: [grapple]
+    targeting: enemy_one
+    damage: 8
+    accuracy: 95
+    hit_count: 1
+    costs:
+      mana: 0
+      stamina: 11
+    effects: "removes one buff"
+  - id: earthsplitter
+    name: Earthsplitter
+    description: A rising blow that cracks the ground under the target; PDEF -10 for 2 turns. The heaviest single hit in the tree.
+    element_id: corporis
+    learning_cost:
+      experience_points: 8
+    learning_requirements:
+      required_attack_ids: [bone_crusher, uppercut]
+    targeting: enemy_one
+    damage: 42
+    accuracy: 85
+    hit_count: 1
+    costs:
+      mana: 0
+      stamina: 30
+      cooldown: 3
+    effects: "PDEF -10 for 2 turns"
+  - id: fist_storm
+    name: Fist Storm
+    description: A flurry that ends with the uppercut; the last hit may stun for 1 turn. Six weak blows or one maelstrom.
+    element_id: corporis
+    learning_cost:
+      experience_points: 4
+    learning_requirements:
+      required_attack_ids: [flurry, uppercut]
+    targeting: enemy_one
+    damage: 4
+    accuracy: 90
+    hit_count: 6
+    costs:
+      mana: 0
+      stamina: 14
+      cooldown: 1
+    effects: "last hit may stun for 1 turn"
+  - id: flurry
+    name: Flurry
+    description: Four short punches instead of one heavy one. Weaker each, cheaper together.
+    element_id: corporis
+    learning_cost:
+      experience_points: 2
+    learning_requirements:
+      required_attack_ids: [heavy_blow]
+    targeting: enemy_one
+    damage: 5
+    accuracy: 95
+    hit_count: 4
+    costs:
+      mana: 0
+      stamina: 9
+    effects: ""
+  - id: focused_stance
+    name: Focused Stance
+    description: Weight centred, breathing settled PATK +12 and PDEF +8 for 3 turns. The body becomes a harder thing to move.
+    element_id: corporis
+    learning_cost:
+      experience_points: 3
+    learning_requirements:
+      required_attack_ids: [steady_breath]
+    targeting: self
+    damage: 0
+    accuracy: 0
+    hit_count: 1
+    costs:
+      mana: 0
+      stamina: 12
+    effects: "PATK +12 and PDEF +8 for 3 turns"
+  - id: footwork
+    name: Footwork
+    description: Move well and the breath comes back on its own SPD +12 for 3 turns and restore 6 stamina.
+    element_id: corporis
+    learning_cost:
+      experience_points: 3
+    learning_requirements:
+      required_attack_ids: [steady_breath]
+    targeting: self
+    damage: 0
+    accuracy: 0
+    hit_count: 1
+    costs:
+      mana: 0
+      stamina: 10
+    effects: "SPD +12 for 3 turns; restore 6 stamina"
+  - id: force
+    name: Force
+    description: The most basic manipulation of force the sense of weight in the hips and of a shoulder that loads before it strikes. No combat value.
+    element_id: corporis
+    learning_cost:
+      experience_points: 1
+    learning_requirements:
+      required_attack_ids: []
+    targeting: self
+    damage: 0
+    accuracy: 0
+    hit_count: 1
+    costs:
+      mana: 0
+      stamina: 2
+    effects:
+      - effect_id: force_effect
+        status_effect: Brace
+        apply_to: self
+        turns: 3
+        buff:
+          physical_attack: 8
+          speed: 12
+        resource_regen:
+          stamina: 6
+        polarity: positive
+  - id: grapple
+    name: Grapple
+    description: Clinch and lock the target cannot move or act for 1 turn.
+    element_id: corporis
+    learning_cost:
+      experience_points: 1
+    learning_requirements:
+      required_attack_ids: [force]
+    targeting: enemy_one
+    damage: 0
+    accuracy: 0
+    hit_count: 1
+    costs:
+      mana: 0
+      stamina: 10
+    effects: "target cannot move or act for 1 turn"
+  - id: guard
+    name: Guard
+    description: Hands up, weight back PDEF +16 until the next turn.
+    element_id: corporis
+    learning_cost:
+      experience_points: 1
+    learning_requirements:
+      required_attack_ids: [force]
+    targeting: self
+    damage: 0
+    accuracy: 0
+    hit_count: 1
+    costs:
+      mana: 0
+      stamina: 5
+    effects: "PDEF +16 until next turn"
+  - id: headlong_charge
+    name: Headlong Charge
+    description: A running assault that drives the target back a row; 25% chance to stun for 1 turn.
+    element_id: corporis
+    learning_cost:
+      experience_points: 3
+    learning_requirements:
+      required_attack_ids: [bull_rush]
+    targeting: enemy_one
+    damage: 18
+    accuracy: 90
+    hit_count: 1
+    costs:
+      mana: 0
+      stamina: 13
+      cooldown: 1
+    effects: "25% chance to stun for 1 turn"
+  - id: heavy_blow
+    name: Heavy Blow
+    description: A full-weight blow from the loaded shoulder. Costs stamina because it costs effort; lands on almost anything.
+    element_id: corporis
+    learning_cost:
+      experience_points: 1
+    learning_requirements:
+      required_attack_ids: [force]
+    targeting: enemy_one
+    damage: 22
+    accuracy: 95
+    hit_count: 1
+    costs:
+      mana: 0
+      stamina: 6
+    effects: ""
+  - id: hold_fast
+    name: Hold Fast
+    description: Keep the lock the target's actions stay sealed for 2 turns and it takes 6 phys damage each turn.
+    element_id: corporis
+    learning_cost:
+      experience_points: 3
+    learning_requirements:
+      required_attack_ids: [grapple]
+    targeting: enemy_one
+    damage: 0
+    accuracy: 0
+    hit_count: 1
+    costs:
+      mana: 0
+      stamina: 13
+      cooldown: 1
+    effects: "actions sealed for 2 turns; 6 phys damage per turn"
+  - id: immovable
+    name: Immovable
+    description: The stance that does not move PDEF +20, reflect 12 physical damage to attackers for 3 turns and regain 4 stamina each turn it stands.
+    element_id: corporis
+    learning_cost:
+      experience_points: 7
+    learning_requirements:
+      required_attack_ids: [retaliation, bulwark]
+    targeting: self
+    damage: 0
+    accuracy: 0
+    hit_count: 1
+    costs:
+      mana: 0
+      stamina: 24
+      cooldown: 2
+    effects: "PDEF +20; reflect 12 phys for 3 turns; regain 4 stamina per turn"
+  - id: iron_guard
+    name: Iron Guard
+    description: Brace behind a locked elbow PDEF +22 and MDEF +10 for 2 turns.
+    element_id: corporis
+    learning_cost:
+      experience_points: 3
+    learning_requirements:
+      required_attack_ids: [guard]
+    targeting: self
+    damage: 0
+    accuracy: 0
+    hit_count: 1
+    costs:
+      mana: 0
+      stamina: 12
+    effects: "PDEF +22 and MDEF +10 for 2 turns"
+  - id: iron_lungs
+    name: Iron Lungs
+    description: Lungs that do not tire regenerate 5 stamina each turn for 3 turns.
+    element_id: corporis
+    learning_cost:
+      experience_points: 3
+    learning_requirements:
+      required_attack_ids: [steady_breath]
+    targeting: self
+    damage: 0
+    accuracy: 0
+    hit_count: 1
+    costs:
+      mana: 0
+      stamina: 9
+    effects: "regenerate 5 stamina per turn for 3 turns"
+  - id: off_balance
+    name: Off Balance
+    description: Off-balance the target it cannot act next turn, PDEF -12 and SPD -10 for 3 turns.
+    element_id: corporis
+    learning_cost:
+      experience_points: 3
+    learning_requirements:
+      required_attack_ids: [throw]
+    targeting: enemy_one
+    damage: 0
+    accuracy: 0
+    hit_count: 1
+    costs:
+      mana: 0
+      stamina: 13
+    effects: "cannot act next turn; PDEF -12 and SPD -10 for 3 turns"
+  - id: parry
+    name: Parry
+    description: Deflect with the forearm instead of absorbing with the body SPD +10 and ACC +15 for 2 turns; a parried hit triggers a counter for 12 phys.
+    element_id: corporis
+    learning_cost:
+      experience_points: 1
+    learning_requirements:
+      required_attack_ids: [force]
+    targeting: self
+    damage: 0
+    accuracy: 0
+    hit_count: 1
+    costs:
+      mana: 0
+      stamina: 8
+    effects: "SPD +10 and ACC +15 for 2 turns; counter 12 phys"
+  - id: perfect_parry
+    name: Perfect Parry
+    description: A clean deflection ACC +20 and SPD +10 for 2 turns; a parried hit refunds 6 stamina and triggers a counter for 16 phys.
+    element_id: corporis
+    learning_cost:
+      experience_points: 5
+    learning_requirements:
+      required_attack_ids: [parry, guard]
+    targeting: self
+    damage: 0
+    accuracy: 0
+    hit_count: 1
+    costs:
+      mana: 0
+      stamina: 16
+      cooldown: 1
+    effects: "ACC +20 and SPD +10 for 2 turns; refund 6 stamina; counter 16 phys"
+  - id: retaliation
+    name: Retaliation
+    description: Standing where the next blow will land PDEF +10 and reflect 14 physical damage to attackers for 3 turns.
+    element_id: corporis
+    learning_cost:
+      experience_points: 4
+    learning_requirements:
+      required_attack_ids: [counter_stance]
+    targeting: self
+    damage: 0
+    accuracy: 0
+    hit_count: 1
+    costs:
+      mana: 0
+      stamina: 15
+    effects: "PDEF +10 and reflect 14 phys for 3 turns"
+  - id: riposte
+    name: Riposte
+    description: The answer to a deflected blow a counter-strike that ignores 30% of the target's PDEF.
+    element_id: corporis
+    learning_cost:
+      experience_points: 4
+    learning_requirements:
+      required_attack_ids: [parry, heavy_blow]
+    targeting: enemy_one
+    damage: 16
+    accuracy: 100
+    hit_count: 1
+    costs:
+      mana: 0
+      stamina: 10
+    effects: "ignores 30% PDEF"
+  - id: second_breath
+    name: Second Breath
+    description: Spend your own reserves to mend your own flesh restore 26 HP, paying 10 stamina into the wound. Never another's.
+    element_id: corporis
+    learning_cost:
+      experience_points: 3
+    learning_requirements:
+      required_attack_ids: [steady_breath]
+    targeting: self
+    damage: 0
+    accuracy: 0
+    hit_count: 1
+    costs:
+      mana: 0
+      stamina: 14
+      cooldown: 1
+    effects: "restore 26 HP (costs 10 stamina)"
+  - id: steady_breath
+    name: Steady Breath
+    description: Find the breath restore 10 stamina. The cheapest technique in the tree, and the reason every other one is repeatable.
+    element_id: corporis
+    learning_cost:
+      experience_points: 1
+    learning_requirements:
+      required_attack_ids: [force]
+    targeting: self
+    damage: 0
+    accuracy: 0
+    hit_count: 1
+    costs:
+      mana: 0
+      stamina: 4
+    effects: "restore 10 stamina"
+  - id: submission
+    name: Submission
+    description: Finish the hold the target's actions stay sealed for 2 turns and it takes 10 phys damage each turn for 2 turns.
+    element_id: corporis
+    learning_cost:
+      experience_points: 7
+    learning_requirements:
+      required_attack_ids: [hold_fast, off_balance]
+    targeting: enemy_one
+    damage: 0
+    accuracy: 0
+    hit_count: 1
+    costs:
+      mana: 0
+      stamina: 22
+      cooldown: 2
+    effects: "actions sealed 2 turns; 10 phys damage per turn for 2 turns"
+  - id: sunder_blow
+    name: Sunder Blow
+    description: Strike where the guard is already open off-balance the target, then break its armour. PDEF -12 for 3 turns.
+    element_id: corporis
+    learning_cost:
+      experience_points: 4
+    learning_requirements:
+      required_attack_ids: [heavy_blow, off_balance]
+    targeting: enemy_one
+    damage: 10
+    accuracy: 95
+    hit_count: 1
+    costs:
+      mana: 0
+      stamina: 12
+    effects: "PDEF -12 for 3 turns"
+  - id: sweep
+    name: Sweep
+    description: Trip the whole line every enemy loses its next action and is slowed. SPD -15 for 2 turns.
+    element_id: corporis
+    learning_cost:
+      experience_points: 4
+    learning_requirements:
+      required_attack_ids: [grapple]
+    targeting: enemies_all
+    damage: 0
+    accuracy: 0
+    hit_count: 1
+    costs:
+      mana: 0
+      stamina: 17
+      cooldown: 2
+    effects: "SPD -15 for 2 turns"
+  - id: throw
+    name: Throw
+    description: Put the target on the floor. Damage scales with the target's weight and ignores half of its PDEF.
+    element_id: corporis
+    learning_cost:
+      experience_points: 1
+    learning_requirements:
+      required_attack_ids: [force]
+    targeting: enemy_one
+    damage: 20
+    accuracy: 90
+    hit_count: 1
+    costs:
+      mana: 0
+      stamina: 12
+    effects: "ignores half PDEF"
+  - id: unbroken
+    name: Unbroken
+    description: The body that has decided to keep going restore 30 HP, regenerate 8 stamina each turn for 3 turns and PATK +14 for 3 turns.
+    element_id: corporis
+    learning_cost:
+      experience_points: 7
+    learning_requirements:
+      required_attack_ids: [iron_lungs, second_breath]
+    targeting: self
+    damage: 0
+    accuracy: 0
+    hit_count: 1
+    costs:
+      mana: 0
+      stamina: 22
+      cooldown: 2
+    effects: "restore 30 HP; regen 8 stamina per turn for 3 turns; PATK +14 for 3 turns"
+  - id: uppercut
+    name: Uppercut
+    description: A rising strike under the chin; 30% chance to stun for 1 turn.
+    element_id: corporis
+    learning_cost:
+      experience_points: 1
+    learning_requirements:
+      required_attack_ids: [force]
+    targeting: enemy_one
+    damage: 16
+    accuracy: 95
+    hit_count: 1
+    costs:
+      mana: 0
+      stamina: 7
+    effects: "30% chance to stun for 1 turn"
+  - id: war_cry
+    name: War Cry
+    description: The voice, not the magic PATK +10 to every ally for 3 turns and restore 8 stamina to every ally.
+    element_id: corporis
+    learning_cost:
+      experience_points: 5
+    learning_requirements:
+      required_attack_ids: [focused_stance]
+    targeting: allies_all
+    damage: 0
+    accuracy: 0
+    hit_count: 1
+    costs:
+      mana: 0
+      stamina: 18
+      cooldown: 2
+    effects: "allies PATK +10 for 3 turns; restore 8 stamina to allies"

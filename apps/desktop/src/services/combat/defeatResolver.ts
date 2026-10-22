@@ -72,7 +72,7 @@ function firstFreeSlot(taken: ReadonlySet<number>): number | null {
  * slots (the fallen still hold theirs); every step forward is reported so the log
  * can show it.
  */
-function promoteRearLines(state: CombatState, events: CombatEvent[]): void {
+export function promoteRearLines(state: CombatState, events: CombatEvent[]): void {
     const sides: CombatSide[] = ['allies', 'enemies'];
 
     for (const side of sides) {

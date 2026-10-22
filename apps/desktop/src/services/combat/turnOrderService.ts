@@ -76,7 +76,42 @@ export function planTurnOrder(
         return a.unit.id.localeCompare(b.unit.id);
     });
 
-    return { order: queued.map((turn) => turn.unitId), gauges: banked };
+    return { order: applyTurnOffsets(queued.map((turn) => turn.unitId), living), gauges: banked };
+}
+
+/**
+ * How many places a unit's place in the order is pushed by its live effects.
+ *
+ * A `turn_offset` effect moves the unit one place forward or back in the
+ * queue: positive is earlier, negative is later.
+ */
+function turnOffsetOf(unit: CombatUnit): number {
+    return unit.effects.reduce((sum, effect) => sum + (effect.turnOffset ?? 0), 0);
+}
+
+/**
+ * Applies the turn offsets to the queue.
+ *
+ * The offset moves the unit's *first* turn in the round, which is the one the
+ * order speaks about: a unit pushed back acts later, a unit pulled forward
+ * acts sooner.
+ */
+function applyTurnOffsets(order: string[], units: readonly CombatUnit[]): string[] {
+    const result = [...order];
+
+    for (const unit of units) {
+        const offset = turnOffsetOf(unit);
+        if (offset === 0) continue;
+
+        const index = result.indexOf(unit.id);
+        if (index < 0) continue;
+
+        result.splice(index, 1);
+        const target = Math.min(Math.max(index + offset, 0), result.length);
+        result.splice(target, 0, unit.id);
+    }
+
+    return result;
 }
 
 export interface TurnAdvance {

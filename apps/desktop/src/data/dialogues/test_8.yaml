@@ -1,0 +1,676 @@
+# Gerado pelo Dialogue Forger. Comentários do ficheiro original não são preservados.
+
+start_node: entra
+nodes:
+  entra:
+    type: character_enter
+    character_id: raphael
+    position: left
+    pose: sit
+    emotion: thinking
+    next: entra_2
+
+  entra_2:
+    type: character_enter
+    character_id: kelly
+    position: right
+    pose: sit
+    emotion: thinking
+    next: fala
+
+  fala:
+    type: line
+    speaker_id: raphael
+    emotion: neutral
+    animation_id: idle
+    text:
+      - type: text
+        value: Hehe. Check
+    next: fala_2
+
+  fala_2:
+    type: line
+    speaker_id: kelly
+    emotion: annoyed
+    animation_id: idle
+    text:
+      - type: text
+        value: Mother...
+    next: fala_3
+
+  fala_3:
+    type: line
+    speaker_id: arthur
+    emotion: neutral
+    animation_id: idle
+    text:
+      - type: text
+        value: Hey! Is anyone home?
+    next: fala_4
+
+  fala_4:
+    type: line
+    speaker_id: raphael
+    emotion: neutral
+    animation_id: idle
+    text:
+      - type: text
+        value: In the living room, Arthur!
+    next: fala_5
+
+  fala_5:
+    type: line
+    speaker_id: raphael
+    emotion: thinking
+    animation_id: idle
+    delivery: thought
+    text:
+      - type: text
+        value: That's odd. Why do I feel like we've done this scenario in another test?
+    next: fala_6
+
+  fala_6:
+    type: line
+    speaker_id: kelly
+    emotion: suspicious
+    animation_id: idle
+    text:
+      - type: text
+        value: ...
+    next: sai
+
+  sai:
+    type: character_exit
+    character_id: raphael
+    direction: right
+    next: entra_3
+
+  entra_3:
+    type: character_enter
+    character_id: raphael
+    position: center_right
+    pose: sit
+    emotion: happy
+    next: entra_4
+
+  entra_4:
+    type: character_enter
+    character_id: arthur
+    position: center_left
+    animation_id: step_in
+    emotion: neutral
+    next: entra_5
+
+  entra_5:
+    type: character_enter
+    character_id: barasturon
+    position: left
+    animation_id: step_in
+    emotion: happy
+    next: fala_7
+
+  fala_7:
+    type: line
+    speaker_id: arthur
+    emotion: neutral
+    animation_id: idle
+    text:
+      - type: text
+        value: Hey, Raphael. Hey Kelly.
+    next: fala_8
+
+  fala_8:
+    type: line
+    speaker_id: raphael
+    emotion: neutral
+    animation_id: idle
+    text:
+      - type: text
+        value: Hello Arthur.
+    next: fala_9
+
+  fala_9:
+    type: line
+    speaker_id: barasturon
+    emotion: suspicious
+    animation_id: idle
+    text:
+      - type: text
+        value: Sup, man... Wait, isn't that the chick that we beat on the old city's tunnels?
+    next: fala_10
+
+  fala_10:
+    type: line
+    speaker_id: kelly
+    emotion: annoyed
+    animation_id: idle
+    text:
+      - type: text
+        value: I have a name, you know? It's Kelly.
+    next: fala_11
+
+  fala_11:
+    type: line
+    speaker_id: barasturon
+    emotion: nervous
+    animation_id: idle
+    text:
+      - type: text
+        value: "R-right, Kelly. N-nice to see you again. "
+      - type: thought
+        value: Didn't know that was his type.
+    next: fala_12
+
+  fala_12:
+    type: line
+    speaker_id: raphael
+    emotion: neutral
+    animation_id: idle
+    text:
+      - type: text
+        value: So, what brings you here?
+    next: fala_13
+
+  fala_13:
+    type: line
+    speaker_id: barasturon
+    emotion: neutral
+    animation_id: idle
+    text:
+      - type: text
+        value: We've got, like, a weird question about Arthur.
+    next: fala_14
+
+  fala_14:
+    type: line
+    speaker_id: raphael
+    emotion: suspicious
+    animation_id: idle
+    delivery: thought
+    text:
+      - type: text
+        value: Yeah. One of the devs is definitively reusing ideas... Oh well.
+    next: fala_15
+
+  fala_15:
+    type: line
+    speaker_id: raphael
+    emotion: neutral
+    animation_id: idle
+    text:
+      - type: text
+        value: Go on.
+    next: fala_16
+
+  fala_16:
+    type: line
+    speaker_id: kelly
+    emotion: happy
+    animation_id: idle
+    delivery: thought
+    text:
+      - type: text
+        value: Now's my chance.
+    next: fala_17
+
+  fala_17:
+    type: line
+    speaker_id: arthur
+    emotion: neutral
+    animation_id: idle
+    text:
+      - type: text
+        value: So, you know how I used to be a slime that got turned into a human, right?
+    next: fala_18
+
+  fala_18:
+    type: line
+    speaker_id: barasturon
+    animation_id: idle
+    text:
+      - type: text
+        value: Crazy story, by the way.
+    next: fala_19
+
+  fala_19:
+    type: line
+    speaker_id: raphael
+    emotion: neutral
+    animation_id: idle
+    text:
+      - type: text
+        value: Yes and yes.
+    next: fala_20
+
+  fala_20:
+    type: line
+    speaker_id: arthur
+    emotion: neutral
+    animation_id: idle
+    text:
+      - type: text
+        value: And thanks to Kelly's experiments, I got turned into a human, right?
+    next: fala_21
+
+  fala_21:
+    type: line
+    speaker_id: kelly
+    emotion: thinking
+    animation_id: idle
+    text:
+      - type: text
+        value: ...
+    next: fala_22
+
+  fala_22:
+    type: line
+    speaker_id: kelly
+    emotion: unsure
+    animation_id: idle
+    text:
+      - type: text
+        value: I guess that my tests contributed to your transformation, yes.
+    next: fala_23
+
+  fala_23:
+    type: line
+    speaker_id: barasturon
+    emotion: unsure
+    animation_id: idle
+    delivery: thought
+    text:
+      - type: text
+        value: What kind of wacko experiments did she do on Arnold?
+    next: fala_24
+
+  fala_24:
+    type: line
+    speaker_id: arthur
+    emotion: neutral
+    animation_id: idle
+    text:
+      - type: text
+        value: So, we've been thinking. If I was "reborned" as a human thanks to Kelly, would that make her my "mom"?
+    next: fala_25
+
+  fala_25:
+    type: line
+    speaker_id: kelly
+    emotion: concerned
+    animation_id: idle
+    text:
+      - type: text
+        value: ...
+    next: fala_26
+
+  fala_26:
+    type: line
+    speaker_id: raphael
+    emotion: concerned
+    animation_id: idle
+    text:
+      - type: text
+        value: "... Arthur, are you alright? "
+      - type: thought
+        value: What kind of plot is this?
+    next: fala_27
+
+  fala_27:
+    type: line
+    speaker_id: barasturon
+    emotion: concerned
+    animation_id: idle
+    text:
+      - type: text
+        value: Crazy question, I know. But like... It kinda does, doesn't it?
+    next: fala_28
+
+  fala_28:
+    type: line
+    speaker_id: raphael
+    emotion: thinking
+    animation_id: idle
+    text:
+      - type: text
+        value: ...
+    next: fala_29
+
+  fala_29:
+    type: line
+    speaker_id: kelly
+    emotion: annoyed
+    animation_id: idle
+    text:
+      - type: text
+        value: Are you guys messing with me?
+    next: fala_30
+
+  fala_30:
+    type: line
+    speaker_id: kelly
+    emotion: annoyed
+    animation_id: idle
+    auto_advance: true
+    text:
+      - type: text
+        value: There's no way that-
+    next: fala_31
+
+  fala_31:
+    type: line
+    speaker_id: raphael
+    emotion: neutral
+    animation_id: idle
+    text:
+      - type: text
+        value: No no, dear. They have a point.
+    next: fala_32
+
+  fala_32:
+    type: line
+    speaker_id: kelly
+    emotion: surprised
+    animation_id: idle
+    text:
+      - type: text
+        value: ... What!?
+    next: fala_33
+
+  fala_33:
+    type: line
+    speaker_id: kelly
+    emotion: angry
+    animation_id: idle
+    text:
+      - type: shout
+        value: NO THEY DON'T!
+    next: fala_34
+
+  fala_34:
+    type: line
+    speaker_id: raphael
+    emotion: neutral
+    animation_id: idle
+    text:
+      - type: text
+        value: No no, think about it.
+    next: fala_35
+
+  fala_35:
+    type: line
+    speaker_id: raphael
+    emotion: thinking
+    animation_id: idle
+    text:
+      - type: text
+        value: You made him human, so you're his mother.
+    next: fala_36
+
+  fala_36:
+    type: line
+    speaker_id: kelly
+    emotion: angry
+    animation_id: idle
+    text:
+      - type: shout
+        value: HE WAS A F#$%"&G SLIME!!
+    next: fala_37
+
+  fala_37:
+    type: line
+    speaker_id: arthur
+    emotion: nervous
+    animation_id: idle
+    text:
+      - type: text
+        value: Y-yeah. I was...
+    next: fala_38
+
+  fala_38:
+    type: line
+    speaker_id: barasturon
+    emotion: nervous
+    animation_id: idle
+    text:
+      - type: text
+        value: But now he's a human, not a slime... So, like...
+    next: fala_39
+
+  fala_39:
+    type: line
+    speaker_id: kelly
+    emotion: surprised
+    animation_id: idle
+    text:
+      - type: text
+        value: ... No.
+    next: fala_40
+
+  fala_40:
+    type: line
+    speaker_id: kelly
+    emotion: frustrated
+    animation_id: idle
+    text:
+      - type: text
+        value: No, he can't be my son! I'm way too young to have children!
+    next: fala_41
+
+  fala_41:
+    type: line
+    speaker_id: raphael
+    emotion: neutral
+    animation_id: idle
+    text:
+      - type: text
+        value: Kelly, I know that it's hard to swallow.
+    next: fala_42
+
+  fala_42:
+    type: line
+    speaker_id: raphael
+    emotion: happy
+    animation_id: idle
+    text:
+      - type: text
+        value: But don't worry, I'm sure you'll do a great mom. *laughter*
+    next: fala_43
+
+  fala_43:
+    type: line
+    speaker_id: kelly
+    emotion: angry
+    animation_id: idle
+    auto_advance: true
+    text:
+      - type: styled_text
+        value: Why you little shi-
+        style:
+          bold: true
+          jitter: normal
+          jitter_speed: 0.8
+    next: fala_44
+
+  fala_44:
+    type: line
+    speaker_id: arthur
+    emotion: thinking
+    animation_id: idle
+    text:
+      - type: text
+        value: Actually, that makes me think about something?
+    next: fala_45
+
+  fala_45:
+    type: line
+    speaker_id: barasturon
+    emotion: neutral
+    animation_id: idle
+    text:
+      - type: text
+        value: What is it, dude?
+    next: fala_46
+
+  fala_46:
+    type: line
+    speaker_id: arthur
+    emotion: thinking
+    animation_id: idle
+    auto_advance: true
+    text:
+      - type: text
+        value: "{speed=0.8|So, if Kelly is my mom-}"
+    next: fala_47
+
+  fala_47:
+    type: line
+    speaker_id: kelly
+    emotion: frustrated
+    animation_id: idle
+    text:
+      - type: shout
+        value: I'm not!
+    next: fala_48
+
+  fala_48:
+    type: line
+    speaker_id: arthur
+    emotion: thinking
+    animation_id: idle
+    text:
+      - type: text
+        value: "{speed=0.8|And Raphael is with her...}"
+    next: fala_49
+
+  fala_49:
+    type: line
+    speaker_id: raphael
+    emotion: nervous
+    animation_id: idle
+    text:
+      - type: whisper
+        value: Oh no...
+    next: fala_50
+
+  fala_50:
+    type: line
+    speaker_id: arthur
+    emotion: thinking
+    animation_id: idle
+    text:
+      - type: text
+        value: Would that mean that Raphael is... My step-dad?
+    next: fala_51
+
+  fala_51:
+    type: line
+    speaker_id: raphael
+    emotion: stressed
+    animation_id: idle
+    text:
+      - type: text
+        value: ...
+    next: fala_52
+
+  fala_52:
+    type: line
+    speaker_id: kelly
+    emotion: surprised
+    animation_id: idle
+    text:
+      - type: text
+        value: ...
+    next: fala_53
+
+  fala_53:
+    type: line
+    speaker_id: kelly
+    emotion: happy
+    animation_id: idle
+    text:
+      - type: text
+        value: "*laughter*"
+    next: fala_54
+
+  fala_54:
+    type: line
+    speaker_id: raphael
+    emotion: stressed
+    animation_id: idle
+    text:
+      - type: text
+        value: Oh no...
+    next: fala_55
+
+  fala_55:
+    type: line
+    speaker_id: kelly
+    emotion: happy
+    animation_id: idle
+    text:
+      - type: shout
+        value: "*laughter* HOLY S%$T!!"
+    next: fala_56
+
+  fala_56:
+    type: line
+    speaker_id: barasturon
+    emotion: happy
+    animation_id: idle
+    text:
+      - type: text
+        value: Wow, you have a family now. Congratulations, man!
+    next: fala_57
+
+  fala_57:
+    type: line
+    speaker_id: raphael
+    emotion: stressed
+    animation_id: idle
+    delivery: thought
+    text:
+      - type: text
+        value: How am I going to explain this to Pacci and Neven...
+    next: fala_58
+
+  fala_58:
+    type: line
+    speaker_id: kelly
+    emotion: happy
+    animation_id: idle
+    text:
+      - type: text
+        value: He-he-he-hey. Don't get mad "dad".
+    next: acao
+
+  acao:
+    type: character_action
+    character_id: kelly
+    position: center_right
+    depth: back
+    emotion: happy
+    next: fala_59
+
+  fala_59:
+    type: line
+    speaker_id: kelly
+    emotion: happy
+    animation_id: idle
+    text:
+      - type: text
+        value: Think about it, you always wanted to have a kid of your own, didn't you?
+    next: fala_60
+
+  fala_60:
+    type: line
+    speaker_id: raphael
+    emotion: angry
+    animation_id: idle
+    text:
+      - type: text
+        value: "{shout style jitter|CAN IT!}"
+    next: fim
+
+  fim:
+    type: end
+    result: comical

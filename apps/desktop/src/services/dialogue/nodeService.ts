@@ -9,17 +9,26 @@ import type {
     DialogueEffect,
     DialogueError,
     DialogueCastEvent,
+    DialogueDelivery,
     DialogueNode,
     DialogueNodeView,
     DialogueSegment,
     EffectOutcome,
     LineNode,
+    PlayerInputNode,
 } from '../../types/DialogueType';
 import type { WorldState } from '../../types/WorldStateType';
 import { createDialogueError, normalizeSegments } from '../../utils/dialogueUtils';
 import { applyEffects } from './effectService';
 import { evaluateCondition } from './conditionService';
-import { enterCharacter, exitCharacter, setCharacterEmotion, type CastState } from './castStateService';
+import {
+    changeCharacter,
+    enterCharacter,
+    exitCharacter,
+    setCharacterEmotion,
+    type CastState,
+} from './castStateService';
+import { resolveVariableSegments } from './variableService';
 
 /**
  * Interprets individual nodes and walks the dialogue graph.
@@ -39,6 +48,8 @@ export const MAX_AUTO_NODE_STEPS = 256;
 /** Everything a node needs in order to be interpreted. */
 export interface NodeContext {
     definition: DialogueDefinition;
+    /** The dialogue's id, which is the name of the file it came from. */
+    dialogueId: string;
     state: WorldState;
     /** Who is in the conversation; the enter/exit nodes maintain it. */
     castState: CastState;
@@ -75,7 +86,7 @@ export function advanceToNode(context: NodeContext, startNodeId: string): Advanc
             return errorResult(
                 createDialogueError(
                     'dialogue_invalid',
-                    `Dialogue "${context.definition.dialogue_id}" did not reach a player-facing node within `
+                    `Dialogue "${context.dialogueId}" did not reach a player-facing node within `
                     + `${MAX_AUTO_NODE_STEPS} steps. Check for a cycle without an exit.`,
                     { node_id: currentId },
                 ),
@@ -96,7 +107,7 @@ export function advanceToNode(context: NodeContext, startNodeId: string): Advanc
             return errorResult(
                 createDialogueError(
                     'node_not_found',
-                    `Node "${nodeId}" does not exist in dialogue "${context.definition.dialogue_id}".`,
+                    `Node "${nodeId}" does not exist in dialogue "${context.dialogueId}".`,
                     { node_id: nodeId },
                 ),
                 outcome,
@@ -115,7 +126,7 @@ export function advanceToNode(context: NodeContext, startNodeId: string): Advanc
                 return {
                     nodeId,
                     nodeType: 'line',
-                    view: buildLineView(nodeId, node),
+                    view: buildLineView(nodeId, node, context.state),
                     choices: [],
                     interactions: collectInteractions(node.text),
                     completed: false,
@@ -133,8 +144,24 @@ export function advanceToNode(context: NodeContext, startNodeId: string): Advanc
                 return {
                     nodeId,
                     nodeType: 'choice',
-                    view: buildChoiceView(nodeId, node),
+                    view: buildChoiceView(nodeId, node, context.state),
                     choices: buildChoiceViews(node, context.state),
+                    interactions: new Map(),
+                    completed: false,
+                    result: null,
+                    outcome,
+                    castEvents,
+                    error: null,
+                };
+
+            case 'player_input':
+                // The conversation stops and waits: the player has to answer
+                // before the dialogue can go on.
+                return {
+                    nodeId,
+                    nodeType: 'player_input',
+                    view: buildPlayerInputView(nodeId, node),
+                    choices: [],
                     interactions: new Map(),
                     completed: false,
                     result: null,
@@ -168,6 +195,9 @@ export function advanceToNode(context: NodeContext, startNodeId: string): Advanc
                 castEvents.push(enterCharacter(context.castState, {
                     character_id: node.character_id,
                     position: node.position,
+                    pose: node.pose,
+                    depth: node.depth,
+                    depth_of: node.depth_of,
                     animation_id: node.animation_id,
                     emotion: node.emotion,
                 }));
@@ -186,6 +216,33 @@ export function advanceToNode(context: NodeContext, startNodeId: string): Advanc
                 const event = exitCharacter(context.castState, node.character_id, {
                     animation_id: node.animation_id,
                     direction: node.direction,
+                });
+
+                if (event) {
+                    castEvents.push(event);
+                }
+
+                mergeOutcome(outcome, applyEffects(node.effects_after, {
+                    state: context.state,
+                    isKnownCharacter: context.isKnownCharacter,
+                    source: `nodes.${nodeId}.effects_after`,
+                }));
+
+                currentId = node.next ?? null;
+                break;
+            }
+
+            case 'character_action': {
+                // Someone already on stage moves, sits down or changes layers.
+                // There is no entrance animation here: they never left.
+                const event = changeCharacter(context.castState, {
+                    character_id: node.character_id,
+                    position: node.position,
+                    pose: node.pose,
+                    depth: node.depth,
+                    depth_of: node.depth_of,
+                    emotion: node.emotion,
+                    animation_id: node.animation_id,
                 });
 
                 if (event) {
@@ -249,7 +306,7 @@ export function advanceToNode(context: NodeContext, startNodeId: string): Advanc
     return errorResult(
         createDialogueError(
             'dialogue_invalid',
-            `Dialogue "${context.definition.dialogue_id}" ran out of nodes without reaching an "end" node.`,
+            `Dialogue "${context.dialogueId}" ran out of nodes without reaching an "end" node.`,
             {},
         ),
         outcome,
@@ -270,7 +327,7 @@ export function continueFromNode(context: NodeContext, nodeId: string): AdvanceR
         return errorResult(
             createDialogueError(
                 'node_not_found',
-                `Node "${nodeId}" does not exist in dialogue "${context.definition.dialogue_id}".`,
+                `Node "${nodeId}" does not exist in dialogue "${context.dialogueId}".`,
                 { node_id: nodeId },
             ),
         );
@@ -280,6 +337,14 @@ export function continueFromNode(context: NodeContext, nodeId: string): AdvanceR
         return errorResult(createDialogueError(
             'dialogue_invalid',
             `Node "${nodeId}" is a choice node and must be advanced by selecting a choice.`,
+            { node_id: nodeId },
+        ));
+    }
+
+    if (node.type === 'player_input') {
+        return errorResult(createDialogueError(
+            'dialogue_invalid',
+            `Node "${nodeId}" asks the player a question and must be answered before it continues.`,
             { node_id: nodeId },
         ));
     }
@@ -397,6 +462,97 @@ export function selectChoice(
 }
 
 /**
+ * Stores the player's answer and moves on.
+ *
+ * The answer lands in `input.<variable>`, which is where a later line reads it
+ * from (`{input.<variable>}`) and where a condition compares against it. The
+ * node's `effects_after` are applied on the way out, exactly as they are for a
+ * line the player has finished reading.
+ *
+ * The answer is trimmed: what the player typed around the value is not part
+ * of the value, and a stray space would make a comparison fail for no reason
+ * a reader could see.
+ */
+export function submitInput(
+    context: NodeContext,
+    nodeId: string,
+    value: string,
+): AdvanceResult {
+    const node = context.definition.nodes[nodeId];
+
+    if (!node || node.type !== 'player_input') {
+        return errorResult(createDialogueError(
+            'input_not_found',
+            `Node "${nodeId}" does not ask the player anything.`,
+            { node_id: nodeId },
+        ));
+    }
+
+    if (!node.variable) {
+        return errorResult(createDialogueError(
+            'input_invalid',
+            `Node "${nodeId}" does not say which variable holds the answer.`,
+            { node_id: nodeId },
+        ));
+    }
+
+    const answer = value.trim();
+
+    if (node.input_type === 'choice' && (node.options ?? []).length > 0) {
+        // A pick from a list can only be one of the options offered: anything
+        // else would be an answer the player was never given the chance to
+        // give.
+        if (!(node.options ?? []).includes(answer)) {
+            return errorResult(createDialogueError(
+                'input_invalid',
+                `"${answer}" is not one of the options offered by node "${nodeId}".`,
+                { node_id: nodeId, value: answer },
+            ));
+        }
+    }
+
+    const previous = context.state.input[node.variable] ?? null;
+
+    context.state.input[node.variable] = answer;
+
+    const outcome = emptyOutcome();
+
+    outcome.changes.push({
+        kind: 'input_set',
+        target: `input.${node.variable}`,
+        previous,
+        next: answer,
+        source: `nodes.${nodeId}.input`,
+    });
+
+    mergeOutcome(outcome, applyEffects(node.effects_after, {
+        state: context.state,
+        isKnownCharacter: context.isKnownCharacter,
+        source: `nodes.${nodeId}.effects_after`,
+    }));
+
+    const next = node.next ?? null;
+
+    if (next === null) {
+        return errorResult(
+            createDialogueError(
+                'dialogue_invalid',
+                `Node "${nodeId}" asks the player something but has no destination.`,
+                { node_id: nodeId },
+            ),
+            outcome,
+        );
+    }
+
+    const advanced = advanceToNode(context, next);
+
+    return {
+        ...advanced,
+        outcome: mergeOutcome(outcome, advanced.outcome),
+    };
+}
+
+/**
  * Follows an interactive text segment.
  *
  * The source line's `effects_after` is intentionally **not** applied: clicking
@@ -472,17 +628,32 @@ function collectInteractions(segments: DialogueSegment[]): Map<string, string> {
 }
 
 /** Builds the presentation view of a spoken line. */
-function buildLineView(nodeId: string, node: LineNode): DialogueNodeView {
+function buildLineView(nodeId: string, node: LineNode, state: WorldState): DialogueNodeView {
+    const delivery = resolveDelivery(node.delivery);
+    const text = resolveVariableSegments(node.text, state);
+
+    // A line that is wholly a thought, a whisper or a shout carries the
+    // delivery on the node; a line that is only partly one says so in its own
+    // segments. The two are merged here so the box only has to look at one
+    // place — the segments themselves say how each piece is delivered.
+    const segments: DialogueSegment[] = delivery === 'spoken'
+        ? text
+        : text.map((segment) => (segment.type === 'text'
+            ? { type: delivery, value: segment.value }
+            : segment));
+
     return {
         id: nodeId,
         type: 'line',
         speaker_id: node.speaker_id,
         emotion: node.emotion ?? null,
         animation_id: node.animation_id ?? null,
-        text: node.text,
+        text: segments,
         prompt: null,
         next_action: 'continue',
         auto_advance: node.auto_advance === true,
+        delivery,
+        input_request: null,
     };
 }
 
@@ -494,7 +665,7 @@ function buildLineView(nodeId: string, node: LineNode): DialogueNodeView {
  * drives the sprite, and the text is what gets typed out. Only `next_action`
  * marks the difference.
  */
-function buildChoiceView(nodeId: string, node: ChoiceNode): DialogueNodeView {
+function buildChoiceView(nodeId: string, node: ChoiceNode, state: WorldState): DialogueNodeView {
     const prompt = node.prompt ?? null;
 
     return {
@@ -503,12 +674,57 @@ function buildChoiceView(nodeId: string, node: ChoiceNode): DialogueNodeView {
         speaker_id: prompt?.speaker_id ?? null,
         emotion: prompt?.emotion ?? null,
         animation_id: null,
-        text: prompt ? normalizeSegments(prompt.text) : [],
+        text: prompt ? resolveVariableSegments(normalizeSegments(prompt.text), state) : [],
         prompt,
         next_action: 'choose',
         // A question is answered by a decision, so it can never skip itself.
         auto_advance: false,
+        delivery: 'spoken',
+        input_request: null,
     };
+}
+
+/**
+ * Builds the presentation view of a question the player is asked.
+ *
+ * The node has no speaker of its own: the question is asked by the game, not
+ * by anybody on stage, so the box shows the question and waits for an answer.
+ */
+function buildPlayerInputView(nodeId: string, node: PlayerInputNode): DialogueNodeView {
+    return {
+        id: nodeId,
+        type: 'player_input',
+        speaker_id: null,
+        emotion: null,
+        animation_id: null,
+        text: [],
+        prompt: null,
+        next_action: 'input',
+        // The player has to answer, so the box can never move on by itself.
+        auto_advance: false,
+        delivery: 'spoken',
+        input_request: {
+            question: node.question ?? '',
+            variable: node.variable ?? '',
+            input_type: node.input_type === 'choice' ? 'choice' : 'text',
+            placeholder: node.placeholder ?? '',
+            options: [...(node.options ?? [])],
+        },
+    };
+}
+
+/**
+ * The delivery a line declares, or the ordinary one.
+ *
+ * A line that names a delivery the format does not know is spoken: a typo
+ * must not make the line unsayable.
+ */
+function resolveDelivery(delivery: string | undefined): DialogueDelivery {
+    if (delivery === 'thought' || delivery === 'whisper' || delivery === 'shout') {
+        return delivery;
+    }
+
+    return 'spoken';
 }
 
 /**

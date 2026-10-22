@@ -1,5 +1,5 @@
 import type { AbilityDisplayEntry } from '../../../../types/AbilityType';
-import type { CombatActionImpact, CombatStats, CombatUnitStatus } from '../../../../types/CombatType';
+import type { CombatActionImpact, CombatStats, CombatTimePhase, CombatUnitStatus } from '../../../../types/CombatType';
 import type { ArenaSequence } from '../battle/combatArenaSequence';
 
 /**
@@ -112,6 +112,15 @@ export interface CombatFormationHUDProps {
     sequence?: ArenaSequence | null;
     /** Turns the reactions off entirely; a defeated unit then leaves at once. */
     animationsEnabled?: boolean;
+    /**
+     * The hour of the day the fight happens at.
+     *
+     * Shown on the board so a ×0.5 the player cannot explain is not filed as a
+     * bug: a solar skill is worth less at night, and the board says so.
+     */
+    hour?: number;
+    /** Whether the sun is up. */
+    timePhase?: CombatTimePhase;
     /** Selection is visual-only; clearing a pin reports `null`. */
     onEntitySelect?: (entity: CombatFormationEntity | null) => void;
     className?: string;

@@ -12,9 +12,15 @@ import type {
     CombatUnit,
 } from '../../types/CombatType';
 import { createCombatError } from '../../utils/combatUtils';
+import { isUntargetable } from './effectResolver';
 import { isRangeAllowedFromLine, rangeReachesLine } from './positionRules';
 
-/** Units an action may address before positional reach is considered. */
+/**
+ * Units an action may address before positional reach is considered.
+ *
+ * A unit under an `untargetable` status cannot be chosen: it is not a legal
+ * target for anybody, not even for a single-target heal.
+ */
 export function candidateTargets(
     units: readonly CombatUnit[],
     actor: CombatUnit,
@@ -22,23 +28,27 @@ export function candidateTargets(
 ): CombatUnit[] {
     const alive = units.filter((unit) => unit.status === 'alive');
 
-    switch (action.targeting) {
-        case 'self':
-            return alive.filter((unit) => unit.id === actor.id);
-        case 'enemies_all':
-            return alive.filter((unit) => unit.side !== actor.side);
-        case 'allies_all':
-            return alive.filter((unit) => unit.side === actor.side);
-        case 'both_teams':
-            return alive;
-        case 'enemy_one':
-        default:
-            // A single-target action may be aimed at anyone on the field, the
-            // actor's own side included: friendly fire is a real choice, and a
-            // single-target heal needs the same freedom. Only `self` and the
-            // team-scoped rules restrict the roster.
-            return alive;
-    }
+    const reachable = (() => {
+        switch (action.targeting) {
+            case 'self':
+                return alive.filter((unit) => unit.id === actor.id);
+            case 'enemies_all':
+                return alive.filter((unit) => unit.side !== actor.side);
+            case 'allies_all':
+                return alive.filter((unit) => unit.side === actor.side);
+            case 'both_teams':
+                return alive;
+            case 'enemy_one':
+            default:
+                // A single-target action may be aimed at anyone on the field, the
+                // actor's own side included: friendly fire is a real choice, and a
+                // single-target heal needs the same freedom. Only `self` and the
+                // team-scoped rules restrict the roster.
+                return alive;
+        }
+    })();
+
+    return reachable.filter((unit) => unit.id === actor.id || !isUntargetable(unit));
 }
 
 /**

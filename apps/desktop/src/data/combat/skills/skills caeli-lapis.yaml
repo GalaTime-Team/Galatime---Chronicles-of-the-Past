@@ -1,0 +1,2135 @@
+skills:
+  - id: wind
+    name: Wind
+    description: The most basic manipulation of wind , a gentle gust and a shift of air. No combat value — it exists so the student learns to shape the element before directing it.
+    element_id: caeli
+    learning_cost:
+      experience_points: 1
+    learning_requirements:
+      required_attack_ids: []
+    targeting: self
+    costs:
+      mana: 2
+      stamina: 0
+      cooldown: 0
+    effects:
+      - effect_id: wind_effect
+        status_effect: Tailwind
+        apply_to: self
+        turns: 2
+        buff:
+          speed: 8
+          evasion: 6
+        polarity: positive
+  - id: wind_slash
+    name: Wind Slash
+    description: A quick triple cut of compressed air. The first shape every caeli user learns; total damage scales with SPD.
+    element_id: caeli
+    learning_cost:
+      experience_points: 1
+    learning_requirements:
+      required_attack_ids:
+        - wind
+    targeting: enemy_one
+    damage:
+      kind: magical
+      damage_type: magical
+      power:
+        kind: fixed
+        value: 5
+    accuracy: 95
+    hit_count: 3
+    costs:
+      mana: 4
+      stamina: 0
+      cooldown: 0
+  - id: razor_wind
+    name: Razor Wind
+    description: A finer, faster flurry — more hits, each razor-thin.
+    element_id: caeli
+    learning_cost:
+      experience_points: 2
+    learning_requirements:
+      required_attack_ids:
+        - wind_slash
+    targeting: enemy_one
+    damage:
+      kind: magical
+      damage_type: magical
+      power:
+        kind: fixed
+        value: 5
+    accuracy: 95
+    hit_count: 5
+    costs:
+      mana: 7
+      stamina: 0
+      cooldown: 0
+  - id: cutting_gale
+    name: Cutting Gale
+    description: A single heavy wind-edge; PDEF −6 for 2 turns.
+    element_id: caeli
+    learning_cost:
+      experience_points: 2
+    learning_requirements:
+      required_attack_ids:
+        - wind_slash
+    targeting: enemy_one
+    damage:
+      kind: magical
+      damage_type: magical
+      power:
+        kind: fixed
+        value: 14
+    accuracy: 95
+    hit_count: 1
+    costs:
+      mana: 8
+      stamina: 0
+      cooldown: 0
+    effects:
+      - effect_id: cutting_gale_effect
+        status_effect: Cutting Gale
+        apply_to: target
+        turns: 2
+        debuff:
+          physical_defense: 6
+        polarity: negative
+  - id: tempest_flurry
+    name: Tempest Flurry
+    description: A blur of cuts; scales hard with SPD.
+    element_id: caeli
+    learning_cost:
+      experience_points: 4
+    learning_requirements:
+      required_attack_ids:
+        - razor_wind
+    targeting: enemy_one
+    damage:
+      kind: magical
+      damage_type: magical
+      power:
+        kind: fixed
+        value: 6
+    accuracy: 95
+    hit_count: 6
+    costs:
+      mana: 11
+      stamina: 0
+      cooldown: 0
+  - id: vacuum_blade
+    name: Vacuum Blade
+    description: A blade of voided air; PDEF −10 for 2 turns, ignores some defence.
+    element_id: caeli
+    learning_cost:
+      experience_points: 4
+    learning_requirements:
+      required_attack_ids:
+        - cutting_gale
+    targeting: enemy_one
+    damage:
+      kind: magical
+      damage_type: magical
+      power:
+        kind: fixed
+        value: 22
+    defense_pierce: 0.5
+    accuracy: 95
+    hit_count: 1
+    costs:
+      mana: 11
+      stamina: 0
+      cooldown: 0
+    effects:
+      - effect_id: vacuum_blade_effect
+        status_effect: Vacuum Blade
+        apply_to: target
+        turns: 2
+        debuff:
+          physical_defense: 10
+        polarity: negative
+  - id: storm_of_blades
+    name: Storm Of Blades
+    description: A swirling gale of edges that rakes every enemy.
+    element_id: caeli
+    learning_cost:
+      experience_points: 6
+    learning_requirements:
+      required_attack_ids:
+        - tempest_flurry
+        - cutting_gale
+    targeting: enemies_all
+    damage:
+      kind: magical
+      damage_type: magical
+      power:
+        kind: fixed
+        value: 6
+    accuracy: 90
+    hit_count: 4
+    costs:
+      mana: 18
+      stamina: 0
+      cooldown: 0
+  - id: tailwind
+    name: Tailwind
+    description: SPD +12 for 3 turns; the ally acts earlier.
+    element_id: caeli
+    learning_cost:
+      experience_points: 1
+    learning_requirements:
+      required_attack_ids:
+        - wind
+    targeting: ally_one
+    costs:
+      mana: 5
+      stamina: 0
+      cooldown: 0
+    effects:
+      - effect_id: tailwind_effect
+        status_effect: Tailwind
+        apply_to: ally_one
+        turns: 3
+        buff:
+          speed: 12
+        polarity: positive
+  - id: updraft
+    name: Updraft
+    description: SPD +15 for 2 turns — a sharp burst of evasion *(see hooks)*.
+    element_id: caeli
+    learning_cost:
+      experience_points: 1
+    learning_requirements:
+      required_attack_ids:
+        - wind
+    targeting: self
+    costs:
+      mana: 5
+      stamina: 0
+      cooldown: 0
+    effects:
+      - effect_id: updraft_effect
+        status_effect: Updraft
+        apply_to: self
+        turns: 2
+        buff:
+          speed: 15
+        polarity: positive
+  - id: windborne
+    name: Windborne
+    description: SPD +10 for 3 turns to all allies.
+    element_id: caeli
+    learning_cost:
+      experience_points: 2
+    learning_requirements:
+      required_attack_ids:
+        - tailwind
+    targeting: allies_all
+    costs:
+      mana: 9
+      stamina: 0
+      cooldown: 0
+    effects:
+      - effect_id: windborne_effect
+        status_effect: Windborne
+        apply_to: allies_all
+        turns: 3
+        buff:
+          speed: 10
+        polarity: positive
+  - id: zephyr_veil
+    name: Zephyr Veil
+    description: SPD +8 and PDEF +6 for 2 turns; the wind deflects blows.
+    element_id: caeli
+    learning_cost:
+      experience_points: 3
+    learning_requirements:
+      required_attack_ids:
+        - updraft
+    targeting: allies_all
+    costs:
+      mana: 10
+      stamina: 0
+      cooldown: 0
+    effects:
+      - effect_id: zephyr_veil_effect
+        status_effect: Zephyr Veil
+        apply_to: allies_all
+        turns: 2
+        buff:
+          speed: 8
+          physical_defense: 6
+        polarity: positive
+  - id: slipstream
+    name: Slipstream
+    description: SPD +14 for 3 turns; allies act earlier and dodge more.
+    element_id: caeli
+    learning_cost:
+      experience_points: 5
+    learning_requirements:
+      required_attack_ids:
+        - windborne
+        - zephyr_veil
+    targeting: allies_all
+    costs:
+      mana: 14
+      stamina: 0
+      cooldown: 0
+    effects:
+      - effect_id: slipstream_effect
+        status_effect: Slipstream
+        apply_to: allies_all
+        turns: 3
+        buff:
+          speed: 14
+        polarity: positive
+  - id: eye_of_the_storm
+    name: Eye Of The Storm
+    description: SPD +18, MATK +8 and ACC +10% for 3 turns; the calm centre of the gale.
+    element_id: caeli
+    learning_cost:
+      experience_points: 5
+    learning_requirements:
+      required_attack_ids:
+        - slipstream
+    targeting: self
+    costs:
+      mana: 13
+      stamina: 0
+      cooldown: 0
+    effects:
+      - effect_id: eye_of_the_storm_effect
+        status_effect: Eye Of The Storm
+        apply_to: self
+        turns: 3
+        buff:
+          speed: 18
+          magical_attack: 8
+          accuracy: 10
+        polarity: positive
+  - id: gust
+    name: Gust
+    description: Push the target back a row and delay its next turn (SPD −10, 1 turn).
+    element_id: caeli
+    learning_cost:
+      experience_points: 1
+    learning_requirements:
+      required_attack_ids:
+        - wind
+    targeting: enemy_one
+    costs:
+      mana: 4
+      stamina: 0
+      cooldown: 0
+    effects:
+      - effect_id: gust_effect
+        status_effect: Gust
+        apply_to: target
+        turns: 1
+        debuff:
+          speed: 10
+        polarity: negative
+  - id: pressure_edge
+    name: Pressure Edge
+    description: ACC −15% for 3 turns.
+    element_id: caeli
+    learning_cost:
+      experience_points: 1
+    learning_requirements:
+      required_attack_ids:
+        - wind
+    targeting: enemy_one
+    costs:
+      mana: 4
+      stamina: 0
+      cooldown: 0
+    effects:
+      - effect_id: pressure_edge_effect
+        status_effect: Pressure Edge
+        apply_to: target
+        turns: 3
+        debuff:
+          accuracy: 15
+        polarity: negative
+  - id: squall
+    name: Squall
+    description: ACC −12% for 3 turns to all enemies.
+    element_id: caeli
+    learning_cost:
+      experience_points: 3
+    learning_requirements:
+      required_attack_ids:
+        - pressure_edge
+    targeting: enemies_all
+    costs:
+      mana: 8
+      stamina: 0
+      cooldown: 0
+    effects:
+      - effect_id: squall_effect
+        status_effect: Squall
+        apply_to: enemies_all
+        turns: 3
+        debuff:
+          accuracy: 12
+        polarity: negative
+  - id: galeforce_shove
+    name: Galeforce Shove
+    description: A buffeting shove; pushes the target back a row and SPD −8 for 2 turns.
+    element_id: caeli
+    learning_cost:
+      experience_points: 3
+    learning_requirements:
+      required_attack_ids:
+        - gust
+    targeting: enemy_one
+    damage:
+      kind: magical
+      damage_type: magical
+      power:
+        kind: fixed
+        value: 12
+    accuracy: 90
+    hit_count: 1
+    costs:
+      mana: 7
+      stamina: 0
+      cooldown: 0
+    effects:
+      - effect_id: galeforce_shove_effect
+        status_effect: Galeforce Shove
+        apply_to: target
+        turns: 2
+        debuff:
+          speed: 8
+        polarity: negative
+  - id: crosswind
+    name: Crosswind
+    description: ACC −12% and SPD −8 for 3 turns.
+    element_id: caeli
+    learning_cost:
+      experience_points: 4
+    learning_requirements:
+      required_attack_ids:
+        - squall
+    targeting: enemies_all
+    costs:
+      mana: 12
+      stamina: 0
+      cooldown: 0
+    effects:
+      - effect_id: crosswind_effect
+        status_effect: Crosswind
+        apply_to: enemies_all
+        turns: 3
+        debuff:
+          accuracy: 12
+          speed: 8
+        polarity: negative
+  - id: uproot
+    name: Uproot
+    description: Yank the target into the air , SPD −15 for 2 turns and delay its turn.
+    element_id: caeli
+    learning_cost:
+      experience_points: 4
+    learning_requirements:
+      required_attack_ids:
+        - galeforce_shove
+    targeting: enemy_one
+    costs:
+      mana: 10
+      stamina: 0
+      cooldown: 0
+    effects:
+      - effect_id: uproot_effect
+        status_effect: Uproot
+        apply_to: target
+        turns: 2
+        debuff:
+          speed: 15
+        polarity: negative
+  - id: windfunnel
+    name: Windfunnel
+    description: Seal every enemy's actions for 1 turn and ACC −10%.
+    element_id: caeli
+    learning_cost:
+      experience_points: 7
+    learning_requirements:
+      required_attack_ids:
+        - crosswind
+        - uproot
+    targeting: enemies_all
+    costs:
+      mana: 18
+      stamina: 0
+      cooldown: 0
+    effects:
+      - effect_id: windfunnel_effect
+        status_effect: Windfunnel
+        apply_to: enemies_all
+        turns: 1
+        prevent_actions: true
+        polarity: negative
+      - effect_id: windfunnel_effect_2
+        status_effect: Windfunnel
+        apply_to: enemies_all
+        turns: 1
+        debuff:
+          accuracy: 10
+        polarity: negative
+  - id: downburst
+    name: Downburst
+    description: A violent downdraft slams the target down; SPD −10 for 2 turns.
+    element_id: caeli
+    learning_cost:
+      experience_points: 4
+    learning_requirements:
+      required_attack_ids:
+        - skyfall
+    targeting: enemy_one
+    damage:
+      kind: magical
+      damage_type: magical
+      power:
+        kind: fixed
+        value: 20
+    accuracy: 95
+    hit_count: 1
+    costs:
+      mana: 11
+      stamina: 0
+      cooldown: 0
+    effects:
+      - effect_id: downburst_effect
+        status_effect: Downburst
+        apply_to: target
+        turns: 2
+        debuff:
+          speed: 10
+        polarity: negative
+  - id: sky
+    name: Sky
+    description: The most basic attunement to sky , a sense of altitude and pressure. No combat value — it exists so the student learns to feel the sky before commanding it.
+    element_id: caeli
+    learning_cost:
+      experience_points: 1
+    learning_requirements:
+      required_attack_ids: []
+    targeting: self
+    costs:
+      mana: 2
+      stamina: 0
+      cooldown: 0
+    effects:
+      - effect_id: sky_effect
+        status_effect: High Ground
+        apply_to: self
+        turns: 2
+        buff:
+          speed: 10
+          accuracy: 8
+        polarity: positive
+  - id: skyfall
+    name: Skyfall
+    description: An aerial drop with wide variance (±50%) — can crit hard, can whiff.
+    element_id: caeli
+    learning_cost:
+      experience_points: 1
+    learning_requirements:
+      required_attack_ids:
+        - sky
+    targeting: enemy_one
+    damage:
+      kind: magical
+      damage_type: magical
+      power:
+        kind: fixed
+        value: 16
+      damage_variance:
+        - 0.5
+        - 1.5
+    accuracy: 85
+    hit_count: 1
+    costs:
+      mana: 6
+      stamina: 0
+      cooldown: 0
+  - id: dive_bomb
+    name: Dive Bomb
+    description: A steep dive; high variance, heavy on a hit.
+    element_id: caeli
+    learning_cost:
+      experience_points: 2
+    learning_requirements:
+      required_attack_ids:
+        - skyfall
+    targeting: enemy_one
+    damage:
+      kind: magical
+      damage_type: magical
+      power:
+        kind: fixed
+        value: 22
+      damage_variance:
+        - 0.5
+        - 1.5
+    accuracy: 85
+    hit_count: 1
+    costs:
+      mana: 9
+      stamina: 0
+      cooldown: 0
+  - id: cloudpiercer
+    name: Cloudpiercer
+    description: A piercing thrust from above; ignores some defence.
+    element_id: caeli
+    learning_cost:
+      experience_points: 2
+    learning_requirements:
+      required_attack_ids:
+        - skyfall
+    targeting: enemy_one
+    damage:
+      kind: magical
+      damage_type: magical
+      power:
+        kind: fixed
+        value: 18
+    defense_pierce: 0.3
+    accuracy: 100
+    hit_count: 1
+    costs:
+      mana: 9
+      stamina: 0
+      cooldown: 0
+  - id: skydive
+    name: Skydive
+    description: A full-height dive; heavy and erratic.
+    element_id: caeli
+    learning_cost:
+      experience_points: 4
+    learning_requirements:
+      required_attack_ids:
+        - dive_bomb
+    targeting: enemy_one
+    damage:
+      kind: magical
+      damage_type: magical
+      power:
+        kind: fixed
+        value: 28
+      damage_variance:
+        - 0.5
+        - 1.5
+    accuracy: 85
+    hit_count: 1
+    costs:
+      mana: 13
+      stamina: 0
+      cooldown: 0
+  - id: meteor_drop
+    name: Meteor Drop
+    description: The sky itself falls; enormous variance, can crit for double.
+    element_id: caeli
+    learning_cost:
+      experience_points: 6
+    learning_requirements:
+      required_attack_ids:
+        - skydive
+    targeting: enemy_one
+    damage:
+      kind: magical
+      damage_type: magical
+      power:
+        kind: fixed
+        value: 34
+      damage_variance:
+        - 0.5
+        - 1.5
+    accuracy: 80
+    hit_count: 1
+    costs:
+      mana: 17
+      stamina: 0
+      cooldown: 0
+  - id: rain_of_lances
+    name: Rain Of Lances
+    description: A volley of sky-lances rakes the enemy line; ignores some defence.
+    element_id: caeli
+    learning_cost:
+      experience_points: 5
+    learning_requirements:
+      required_attack_ids:
+        - cloudpiercer
+    targeting: enemies_all
+    damage:
+      kind: magical
+      damage_type: magical
+      power:
+        kind: fixed
+        value: 14
+    defense_pierce: 0.3
+    accuracy: 95
+    hit_count: 1
+    costs:
+      mana: 15
+      stamina: 0
+      cooldown: 0
+  - id: hail
+    name: Hail
+    description: A cheap fall of ice and grit across the whole enemy line.
+    element_id: caeli
+    learning_cost:
+      experience_points: 1
+    learning_requirements:
+      required_attack_ids:
+        - sky
+    targeting: enemies_all
+    damage:
+      kind: magical
+      damage_type: magical
+      power:
+        kind: fixed
+        value: 8
+    accuracy: 95
+    hit_count: 1
+    costs:
+      mana: 7
+      stamina: 0
+      cooldown: 0
+  - id: gale_front
+    name: Gale Front
+    description: A sweeping front of wind; SPD −6 to all enemies.
+    element_id: caeli
+    learning_cost:
+      experience_points: 3
+    learning_requirements:
+      required_attack_ids:
+        - hail
+    targeting: enemies_all
+    damage:
+      kind: magical
+      damage_type: magical
+      power:
+        kind: fixed
+        value: 10
+    accuracy: 95
+    hit_count: 1
+    costs:
+      mana: 10
+      stamina: 0
+      cooldown: 0
+    effects:
+      - effect_id: gale_front_effect
+        status_effect: Gale Front
+        apply_to: enemies_all
+        turns: 2
+        debuff:
+          speed: 6
+        polarity: negative
+  - id: squall_line
+    name: Squall Line
+    description: Repeated squall bursts across the line.
+    element_id: caeli
+    learning_cost:
+      experience_points: 3
+    learning_requirements:
+      required_attack_ids:
+        - hail
+    targeting: enemies_all
+    damage:
+      kind: magical
+      damage_type: magical
+      power:
+        kind: fixed
+        value: 8
+    accuracy: 90
+    hit_count: 2
+    costs:
+      mana: 11
+      stamina: 0
+      cooldown: 0
+  - id: hail_barrage
+    name: Hail Barrage
+    description: A relentless barrage of hail.
+    element_id: caeli
+    learning_cost:
+      experience_points: 4
+    learning_requirements:
+      required_attack_ids:
+        - squall_line
+    targeting: enemies_all
+    damage:
+      kind: magical
+      damage_type: magical
+      power:
+        kind: fixed
+        value: 7
+    accuracy: 90
+    hit_count: 3
+    costs:
+      mana: 13
+      stamina: 0
+      cooldown: 0
+  - id: tempest
+    name: Tempest
+    description: A full tempest; ACC −10% to all enemies.
+    element_id: caeli
+    learning_cost:
+      experience_points: 5
+    learning_requirements:
+      required_attack_ids:
+        - gale_front
+    targeting: enemies_all
+    damage:
+      kind: magical
+      damage_type: magical
+      power:
+        kind: fixed
+        value: 14
+    accuracy: 90
+    hit_count: 1
+    costs:
+      mana: 15
+      stamina: 0
+      cooldown: 0
+    effects:
+      - effect_id: tempest_effect
+        status_effect: Tempest
+        apply_to: enemies_all
+        turns: 2
+        debuff:
+          accuracy: 10
+        polarity: negative
+  - id: cyclone
+    name: Cyclone
+    description: A spinning storm tears the whole field; SPD −10 to all enemies.
+    element_id: caeli
+    learning_cost:
+      experience_points: 7
+    learning_requirements:
+      required_attack_ids:
+        - squall_line
+        - tempest
+    targeting: enemies_all
+    damage:
+      kind: magical
+      damage_type: magical
+      power:
+        kind: fixed
+        value: 18
+    accuracy: 90
+    hit_count: 1
+    costs:
+      mana: 20
+      stamina: 0
+      cooldown: 0
+    effects:
+      - effect_id: cyclone_effect
+        status_effect: Cyclone
+        apply_to: enemies_all
+        turns: 2
+        debuff:
+          speed: 10
+        polarity: negative
+  - id: cyclonic_pull
+    name: Cyclonic Pull
+    description: Drag the enemy line into a cluster, or pull a back-line target forward.
+    element_id: caeli
+    learning_cost:
+      experience_points: 1
+    learning_requirements:
+      required_attack_ids:
+        - sky
+    targeting: enemies_all
+    costs:
+      mana: 8
+      stamina: 0
+      cooldown: 0
+  - id: sky_shield
+    name: Sky Shield
+    description: Incoming ranged damage −30% for 3 turns.
+    element_id: caeli
+    learning_cost:
+      experience_points: 1
+    learning_requirements:
+      required_attack_ids:
+        - sky
+    targeting: self
+    costs:
+      mana: 8
+      stamina: 0
+      cooldown: 0
+  - id: sky_pressure
+    name: Sky Pressure
+    description: ACC −15% for 3 turns to all enemies.
+    element_id: caeli
+    learning_cost:
+      experience_points: 3
+    learning_requirements:
+      required_attack_ids:
+        - cyclonic_pull
+    targeting: enemies_all
+    costs:
+      mana: 10
+      stamina: 0
+      cooldown: 0
+    effects:
+      - effect_id: sky_pressure_effect
+        status_effect: Sky Pressure
+        apply_to: enemies_all
+        turns: 3
+        debuff:
+          accuracy: 15
+        polarity: negative
+  - id: vortex_field
+    name: Vortex Field
+    description: Seal clustered enemies' actions for 1 turn and SPD −8.
+    element_id: caeli
+    learning_cost:
+      experience_points: 4
+    learning_requirements:
+      required_attack_ids:
+        - cyclonic_pull
+    targeting: enemies_all
+    costs:
+      mana: 13
+      stamina: 0
+      cooldown: 0
+    effects:
+      - effect_id: vortex_field_effect
+        status_effect: Vortex Field
+        apply_to: enemies_all
+        turns: 1
+        prevent_actions: true
+        polarity: negative
+      - effect_id: vortex_field_effect_2
+        status_effect: Vortex Field
+        apply_to: enemies_all
+        turns: 1
+        debuff:
+          speed: 8
+        polarity: negative
+  - id: sky_bulwark
+    name: Sky Bulwark
+    description: Ranged damage taken −20% for 3 turns for all allies.
+    element_id: caeli
+    learning_cost:
+      experience_points: 3
+    learning_requirements:
+      required_attack_ids:
+        - sky_shield
+    targeting: allies_all
+    costs:
+      mana: 12
+      stamina: 0
+      cooldown: 0
+  - id: horizon_veil
+    name: Horizon Veil
+    description: ACC −18% for 3 turns; enemy ranged attacks scatter.
+    element_id: caeli
+    learning_cost:
+      experience_points: 5
+    learning_requirements:
+      required_attack_ids:
+        - sky_pressure
+    targeting: enemies_all
+    costs:
+      mana: 14
+      stamina: 0
+      cooldown: 0
+    effects:
+      - effect_id: horizon_veil_effect
+        status_effect: Horizon Veil
+        apply_to: enemies_all
+        turns: 3
+        debuff:
+          accuracy: 18
+        polarity: negative
+  - id: eye_of_heaven
+    name: Eye Of Heaven
+    description: Seal every enemy's actions for 1 turn and ACC −15%.
+    element_id: caeli
+    learning_cost:
+      experience_points: 7
+    learning_requirements:
+      required_attack_ids:
+        - vortex_field
+        - horizon_veil
+    targeting: enemies_all
+    costs:
+      mana: 20
+      stamina: 0
+      cooldown: 0
+    effects:
+      - effect_id: eye_of_heaven_effect
+        status_effect: Eye Of Heaven
+        apply_to: enemies_all
+        turns: 1
+        prevent_actions: true
+        polarity: negative
+      - effect_id: eye_of_heaven_effect_2
+        status_effect: Eye Of Heaven
+        apply_to: enemies_all
+        turns: 1
+        debuff:
+          accuracy: 15
+        polarity: negative
+  - id: cloudstep
+    name: Cloudstep
+    description: Ride the wind , SPD +14 for 2 turns and reposition freely.
+    element_id: caeli
+    learning_cost:
+      experience_points: 4
+    learning_requirements:
+      required_attack_ids:
+        - tailwind
+    targeting: self
+    costs:
+      mana: 9
+      stamina: 0
+      cooldown: 0
+    effects:
+      - effect_id: cloudstep_effect
+        status_effect: Cloudstep
+        apply_to: self
+        turns: 2
+        buff:
+          speed: 14
+        polarity: positive
+  - id: tempest_ascendant
+    name: Tempest Ascendant
+    description: Seal every enemy's actions for 1 turn and SPD −15 to all; wind and sky become one.
+    element_id: caeli
+    learning_cost:
+      experience_points: 12
+    learning_requirements:
+      required_attack_ids:
+        - storm_of_blades
+        - cyclone
+    targeting: enemies_all
+    damage:
+      kind: magical
+      damage_type: magical
+      power:
+        kind: fixed
+        value: 24
+    accuracy: 90
+    hit_count: 1
+    costs:
+      mana: 30
+      stamina: 0
+      cooldown: 0
+    effects:
+      - effect_id: tempest_ascendant_effect
+        status_effect: Tempest Ascendant
+        apply_to: enemies_all
+        turns: 1
+        prevent_actions: true
+        polarity: negative
+      - effect_id: tempest_ascendant_effect_2
+        status_effect: Tempest Ascendant
+        apply_to: enemies_all
+        turns: 1
+        debuff:
+          speed: 15
+        polarity: negative
+  - id: earth
+    name: Earth
+    description: The most basic manipulation of earth , a handful of soil, a shifted pebble, a feel for the ground beneath. No combat value — it exists so the student learns to shape the element before directing it.
+    element_id: lapis
+    learning_cost:
+      experience_points: 1
+    learning_requirements:
+      required_attack_ids: []
+    targeting: self
+    costs:
+      mana: 2
+      stamina: 0
+      cooldown: 0
+    effects:
+      - effect_id: earth_effect
+        status_effect: Rooted Stance
+        apply_to: self
+        turns: 2
+        buff:
+          physical_defense: 10
+          speed: 4
+        polarity: positive
+  - id: rock_throw
+    name: Rock Throw
+    description: A fist-sized stone hurled with force. The first attack every lapis user learns.
+    element_id: lapis
+    learning_cost:
+      experience_points: 1
+    learning_requirements:
+      required_attack_ids:
+        - earth
+    targeting: enemy_one
+    damage:
+      kind: magical
+      damage_type: magical
+      power:
+        kind: fixed
+        value: 14
+    accuracy: 100
+    hit_count: 1
+    costs:
+      mana: 4
+      stamina: 0
+      cooldown: 0
+  - id: stone_barrage
+    name: Stone Barrage
+    description: A rapid spray of small stones; individually weak, together a stoning.
+    element_id: lapis
+    learning_cost:
+      experience_points: 2
+    learning_requirements:
+      required_attack_ids:
+        - rock_throw
+    targeting: enemy_one
+    damage:
+      kind: magical
+      damage_type: magical
+      power:
+        kind: fixed
+        value: 6
+    accuracy: 95
+    hit_count: 3
+    costs:
+      mana: 6
+      stamina: 0
+      cooldown: 0
+  - id: earthquake
+    name: Earthquake
+    description: The ground itself heaves, striking **both sides** — the user's own line included. Expensive, indiscriminate, terrifying.
+    element_id: lapis
+    learning_cost:
+      experience_points: 3
+    learning_requirements:
+      required_attack_ids:
+        - stone_barrage
+    targeting: both_teams
+    damage:
+      kind: magical
+      damage_type: magical
+      power:
+        kind: fixed
+        value: 12
+    accuracy: 95
+    hit_count: 1
+    costs:
+      mana: 12
+      stamina: 0
+      cooldown: 0
+  - id: aftershock
+    name: Aftershock
+    description: A second, focused tremor that splits the earth beneath a single target.
+    element_id: lapis
+    learning_cost:
+      experience_points: 4
+    learning_requirements:
+      required_attack_ids:
+        - earthquake
+    targeting: enemy_one
+    damage:
+      kind: magical
+      damage_type: magical
+      power:
+        kind: fixed
+        value: 20
+    accuracy: 95
+    hit_count: 1
+    costs:
+      mana: 14
+      stamina: 0
+      cooldown: 0
+  - id: world_splitter
+    name: World Splitter
+    description: The master's quake , a fault line opens across the whole field, friend and foe alike.
+    element_id: lapis
+    learning_cost:
+      experience_points: 6
+    learning_requirements:
+      required_attack_ids:
+        - earthquake
+        - aftershock
+    targeting: both_teams
+    damage:
+      kind: magical
+      damage_type: magical
+      power:
+        kind: fixed
+        value: 16
+    accuracy: 90
+    hit_count: 1
+    costs:
+      mana: 18
+      stamina: 0
+      cooldown: 0
+  - id: fault_line
+    name: Fault Line
+    description: A crack races across the ground, erupting under every enemy.
+    element_id: lapis
+    learning_cost:
+      experience_points: 3
+    learning_requirements:
+      required_attack_ids:
+        - stone_barrage
+    targeting: enemies_all
+    damage:
+      kind: magical
+      damage_type: magical
+      power:
+        kind: fixed
+        value: 10
+    accuracy: 95
+    hit_count: 1
+    costs:
+      mana: 10
+      stamina: 0
+      cooldown: 0
+  - id: gravel_burst
+    name: Gravel Burst
+    description: The fault line bursts into a spray of gravel; cheap, wide, stinging.
+    element_id: lapis
+    learning_cost:
+      experience_points: 4
+    learning_requirements:
+      required_attack_ids:
+        - fault_line
+    targeting: enemies_all
+    damage:
+      kind: magical
+      damage_type: magical
+      power:
+        kind: fixed
+        value: 7
+    accuracy: 95
+    hit_count: 1
+    costs:
+      mana: 11
+      stamina: 0
+      cooldown: 0
+  - id: landslide
+    name: Landslide
+    description: A whole slope of stone tears loose and sweeps the enemy line; SPD −6 for 2 turns.
+    element_id: lapis
+    learning_cost:
+      experience_points: 5
+    learning_requirements:
+      required_attack_ids:
+        - fault_line
+        - gravel_burst
+    targeting: enemies_all
+    damage:
+      kind: magical
+      damage_type: magical
+      power:
+        kind: fixed
+        value: 15
+    accuracy: 90
+    hit_count: 1
+    costs:
+      mana: 15
+      stamina: 0
+      cooldown: 0
+    effects:
+      - effect_id: landslide_effect
+        status_effect: Landslide
+        apply_to: enemies_all
+        turns: 2
+        debuff:
+          speed: 6
+        polarity: negative
+  - id: mud_trap
+    name: Mud Trap
+    description: The ground turns to mud , the target is slowed (SPD −10) and rooted (cannot act) for 1 turn.
+    element_id: lapis
+    learning_cost:
+      experience_points: 1
+    learning_requirements:
+      required_attack_ids:
+        - earth
+    targeting: enemy_one
+    costs:
+      mana: 6
+      stamina: 0
+      cooldown: 0
+    effects:
+      - effect_id: mud_trap_effect
+        status_effect: Mud Trap
+        apply_to: target
+        turns: 1
+        prevent_actions: true
+        polarity: negative
+      - effect_id: mud_trap_effect_2
+        status_effect: Mud Trap
+        apply_to: target
+        turns: 1
+        debuff:
+          speed: 10
+        polarity: negative
+  - id: quicksand
+    name: Quicksand
+    description: The earth softens under every enemy , SPD −8 for 2 turns.
+    element_id: lapis
+    learning_cost:
+      experience_points: 2
+    learning_requirements:
+      required_attack_ids:
+        - mud_trap
+    targeting: enemies_all
+    costs:
+      mana: 8
+      stamina: 0
+      cooldown: 0
+    effects:
+      - effect_id: quicksand_effect
+        status_effect: Quicksand
+        apply_to: enemies_all
+        turns: 2
+        debuff:
+          speed: 8
+        polarity: negative
+  - id: mudslide
+    name: Mudslide
+    description: A wave of churned earth pins the whole enemy line , cannot act for 1 turn and SPD −10.
+    element_id: lapis
+    learning_cost:
+      experience_points: 5
+    learning_requirements:
+      required_attack_ids:
+        - mud_trap
+        - quicksand
+    targeting: enemies_all
+    costs:
+      mana: 14
+      stamina: 0
+      cooldown: 0
+    effects:
+      - effect_id: mudslide_effect
+        status_effect: Mudslide
+        apply_to: enemies_all
+        turns: 1
+        prevent_actions: true
+        polarity: negative
+      - effect_id: mudslide_effect_2
+        status_effect: Mudslide
+        apply_to: enemies_all
+        turns: 1
+        debuff:
+          speed: 10
+        polarity: negative
+  - id: sinkhole
+    name: Sinkhole
+    description: The ground collapses beneath one target , cannot act for 1 turn and SPD −15 for 2 turns.
+    element_id: lapis
+    learning_cost:
+      experience_points: 4
+    learning_requirements:
+      required_attack_ids:
+        - quicksand
+    targeting: enemy_one
+    costs:
+      mana: 13
+      stamina: 0
+      cooldown: 0
+    effects:
+      - effect_id: sinkhole_effect
+        status_effect: Sinkhole
+        apply_to: target
+        turns: 1
+        prevent_actions: true
+        polarity: negative
+      - effect_id: sinkhole_effect_2
+        status_effect: Sinkhole
+        apply_to: target
+        turns: 2
+        debuff:
+          speed: 15
+        polarity: negative
+  - id: sandstorm
+    name: Sandstorm
+    description: A blinding storm of dust and sand , every enemy's accuracy −12% for 2 turns.
+    element_id: lapis
+    learning_cost:
+      experience_points: 1
+    learning_requirements:
+      required_attack_ids:
+        - earth
+    targeting: enemies_all
+    costs:
+      mana: 7
+      stamina: 0
+      cooldown: 0
+    effects:
+      - effect_id: sandstorm_effect
+        status_effect: Sandstorm
+        apply_to: enemies_all
+        turns: 2
+        debuff:
+          accuracy: 12
+        polarity: negative
+  - id: dust_devil
+    name: Dust Devil
+    description: A spinning devil of dust , ACC −10% and SPD −8 for 2 turns.
+    element_id: lapis
+    learning_cost:
+      experience_points: 3
+    learning_requirements:
+      required_attack_ids:
+        - sandstorm
+    targeting: enemies_all
+    costs:
+      mana: 11
+      stamina: 0
+      cooldown: 0
+    effects:
+      - effect_id: dust_devil_effect
+        status_effect: Dust Devil
+        apply_to: enemies_all
+        turns: 2
+        debuff:
+          accuracy: 10
+          speed: 8
+        polarity: negative
+  - id: sand_blind
+    name: Sand Blind
+    description: A zero-visibility wall of sand , ACC −18% for 3 turns.
+    element_id: lapis
+    learning_cost:
+      experience_points: 5
+    learning_requirements:
+      required_attack_ids:
+        - sandstorm
+        - dust_devil
+    targeting: enemies_all
+    costs:
+      mana: 15
+      stamina: 0
+      cooldown: 0
+    effects:
+      - effect_id: sand_blind_effect
+        status_effect: Sand Blind
+        apply_to: enemies_all
+        turns: 3
+        debuff:
+          accuracy: 18
+        polarity: negative
+  - id: solid_ground
+    name: Solid Ground
+    description: The ground beneath the user's line hardens , allies gain PDEF +6 for 2 turns and cannot be pushed or displaced.
+    element_id: lapis
+    learning_cost:
+      experience_points: 1
+    learning_requirements:
+      required_attack_ids:
+        - earth
+    targeting: allies_all
+    costs:
+      mana: 6
+      stamina: 0
+      cooldown: 0
+    effects:
+      - effect_id: solid_ground_effect
+        status_effect: Solid Ground
+        apply_to: allies_all
+        turns: 2
+        buff:
+          physical_defense: 6
+        polarity: positive
+  - id: tremorsense
+    name: Tremorsense
+    description: The user reads the world through the ground , SPD +14 for 2 turns — nothing escapes their notice.
+    element_id: lapis
+    learning_cost:
+      experience_points: 2
+    learning_requirements:
+      required_attack_ids:
+        - solid_ground
+    targeting: self
+    costs:
+      mana: 9
+      stamina: 0
+      cooldown: 0
+    effects:
+      - effect_id: tremorsense_effect
+        status_effect: Tremorsense
+        apply_to: self
+        turns: 2
+        buff:
+          speed: 14
+        polarity: positive
+  - id: grounded_stance
+    name: Grounded Stance
+    description: The user plants the line in living stone , PDEF +8 and SPD +6 for 2 turns.
+    element_id: lapis
+    learning_cost:
+      experience_points: 3
+    learning_requirements:
+      required_attack_ids:
+        - solid_ground
+    targeting: allies_all
+    costs:
+      mana: 11
+      stamina: 0
+      cooldown: 0
+    effects:
+      - effect_id: grounded_stance_effect
+        status_effect: Grounded Stance
+        apply_to: allies_all
+        turns: 2
+        buff:
+          physical_defense: 8
+          speed: 6
+        polarity: positive
+  - id: unyielding_earth
+    name: Unyielding Earth
+    description: PDEF +12 and MDEF +12 for 3 turns; the user stands as the mountain stands.
+    element_id: lapis
+    learning_cost:
+      experience_points: 5
+    learning_requirements:
+      required_attack_ids:
+        - tremorsense
+        - grounded_stance
+    targeting: self
+    costs:
+      mana: 13
+      stamina: 0
+      cooldown: 0
+    effects:
+      - effect_id: unyielding_earth_effect
+        status_effect: Unyielding Earth
+        apply_to: self
+        turns: 3
+        buff:
+          physical_defense: 12
+          magical_defense: 12
+        polarity: positive
+  - id: burrow
+    name: Burrow
+    description: The user sinks into the earth , SPD +16 for 2 turns and immune to displacement; strikes from below.
+    element_id: lapis
+    learning_cost:
+      experience_points: 4
+    learning_requirements:
+      required_attack_ids:
+        - tremorsense
+    targeting: self
+    costs:
+      mana: 12
+      stamina: 0
+      cooldown: 0
+    effects:
+      - effect_id: burrow_effect
+        status_effect: Burrow
+        apply_to: self
+        turns: 2
+        buff:
+          speed: 16
+        polarity: positive
+  - id: stone_vein
+    name: Stone Vein
+    description: Stone veins erupt from the earth; PDEF −8 for 2 turns. You cannot raise stone from the ground without first learning to shape stone itself.
+    element_id: lapis
+    learning_cost:
+      experience_points: 4
+    learning_requirements:
+      required_attack_ids:
+        - boulder
+    targeting: enemy_one
+    damage:
+      kind: magical
+      damage_type: magical
+      power:
+        kind: fixed
+        value: 18
+    accuracy: 95
+    hit_count: 1
+    costs:
+      mana: 14
+      stamina: 0
+      cooldown: 0
+    effects:
+      - effect_id: stone_vein_effect
+        status_effect: Stone Vein
+        apply_to: target
+        turns: 2
+        debuff:
+          physical_defense: 8
+        polarity: negative
+  - id: stone
+    name: Stone
+    description: The most basic manipulation of stone , a pebble shaped, a flake pried loose, a feel for the grain. No combat value — it exists so the student learns to shape the element before directing it.
+    element_id: lapis
+    learning_cost:
+      experience_points: 1
+    learning_requirements:
+      required_attack_ids: []
+    targeting: self
+    costs:
+      mana: 2
+      stamina: 0
+      cooldown: 0
+    effects:
+      - effect_id: stone_effect
+        status_effect: Stone Guard
+        apply_to: self
+        turns: 2
+        buff:
+          physical_defense: 12
+          magical_defense: 4
+        polarity: positive
+  - id: boulder
+    name: Boulder
+    description: A boulder torn from the ground and dropped on one enemy. Very heavy, very costly — the first true blow.
+    element_id: lapis
+    learning_cost:
+      experience_points: 1
+    learning_requirements:
+      required_attack_ids:
+        - stone
+    targeting: enemy_one
+    damage:
+      kind: magical
+      damage_type: magical
+      power:
+        kind: fixed
+        value: 24
+    accuracy: 90
+    hit_count: 1
+    costs:
+      mana: 12
+      stamina: 0
+      cooldown: 0
+  - id: granite_fist
+    name: Granite Fist
+    description: The user's fist, sheathed in granite, strikes twice in a single blow.
+    element_id: lapis
+    learning_cost:
+      experience_points: 3
+    learning_requirements:
+      required_attack_ids:
+        - boulder
+    targeting: enemy_one
+    damage:
+      kind: magical
+      damage_type: magical
+      power:
+        kind: fixed
+        value: 12
+    accuracy: 90
+    hit_count: 2
+    costs:
+      mana: 13
+      stamina: 0
+      cooldown: 0
+  - id: crushing_blow
+    name: Crushing Blow
+    description: A full-body strike that flattens the target; PDEF −8 for 2 turns.
+    element_id: lapis
+    learning_cost:
+      experience_points: 4
+    learning_requirements:
+      required_attack_ids:
+        - boulder
+    targeting: enemy_one
+    damage:
+      kind: magical
+      damage_type: magical
+      power:
+        kind: fixed
+        value: 28
+    accuracy: 90
+    hit_count: 1
+    costs:
+      mana: 15
+      stamina: 0
+      cooldown: 0
+    effects:
+      - effect_id: crushing_blow_effect
+        status_effect: Crushing Blow
+        apply_to: target
+        turns: 2
+        debuff:
+          physical_defense: 8
+        polarity: negative
+  - id: avalanche
+    name: Avalanche
+    description: A whole slope of stone crashes down on the enemy line; SPD −8 for 2 turns.
+    element_id: lapis
+    learning_cost:
+      experience_points: 5
+    learning_requirements:
+      required_attack_ids:
+        - granite_fist
+    targeting: enemies_all
+    damage:
+      kind: magical
+      damage_type: magical
+      power:
+        kind: fixed
+        value: 18
+    accuracy: 90
+    hit_count: 1
+    costs:
+      mana: 16
+      stamina: 0
+      cooldown: 0
+    effects:
+      - effect_id: avalanche_effect
+        status_effect: Avalanche
+        apply_to: enemies_all
+        turns: 2
+        debuff:
+          speed: 8
+        polarity: negative
+  - id: mountain_crusher
+    name: Mountain Crusher
+    description: The mountain itself falls on one target; PDEF −10 for 2 turns. The heaviest single hit in the game.
+    element_id: lapis
+    learning_cost:
+      experience_points: 7
+    learning_requirements:
+      required_attack_ids:
+        - crushing_blow
+        - avalanche
+    targeting: enemy_one
+    damage:
+      kind: magical
+      damage_type: magical
+      power:
+        kind: fixed
+        value: 34
+    accuracy: 85
+    hit_count: 1
+    costs:
+      mana: 20
+      stamina: 0
+      cooldown: 0
+    effects:
+      - effect_id: mountain_crusher_effect
+        status_effect: Mountain Crusher
+        apply_to: target
+        turns: 2
+        debuff:
+          physical_defense: 10
+        polarity: negative
+  - id: stone_skin
+    name: Stone Skin
+    description: The user's skin hardens to stone , PDEF +12 for 3 turns.
+    element_id: lapis
+    learning_cost:
+      experience_points: 1
+    learning_requirements:
+      required_attack_ids:
+        - stone
+    targeting: self
+    costs:
+      mana: 8
+      stamina: 0
+      cooldown: 0
+    effects:
+      - effect_id: stone_skin_effect
+        status_effect: Stone Skin
+        apply_to: self
+        turns: 3
+        buff:
+          physical_defense: 12
+        polarity: positive
+  - id: crystal_shield
+    name: Crystal Shield
+    description: A lattice of crystal sheathes the user , MDEF +12 for 3 turns and a barrier that absorbs the first hits.
+    element_id: lapis
+    learning_cost:
+      experience_points: 1
+    learning_requirements:
+      required_attack_ids:
+        - stone
+    targeting: self
+    costs:
+      mana: 9
+      stamina: 0
+      cooldown: 0
+    effects:
+      - effect_id: crystal_shield_effect
+        status_effect: Crystal Shield
+        apply_to: self
+        turns: 3
+        buff:
+          magical_defense: 12
+        polarity: positive
+  - id: granite_hide
+    name: Granite Hide
+    description: The skin becomes true granite , PDEF +16 and MDEF +6 for 3 turns.
+    element_id: lapis
+    learning_cost:
+      experience_points: 3
+    learning_requirements:
+      required_attack_ids:
+        - stone_skin
+    targeting: self
+    costs:
+      mana: 13
+      stamina: 0
+      cooldown: 0
+    effects:
+      - effect_id: granite_hide_effect
+        status_effect: Granite Hide
+        apply_to: self
+        turns: 3
+        buff:
+          physical_defense: 16
+          magical_defense: 6
+        polarity: positive
+  - id: crystal_aegis
+    name: Crystal Aegis
+    description: A shared lattice of crystal , MDEF +10 for 2 turns to all allies.
+    element_id: lapis
+    learning_cost:
+      experience_points: 3
+    learning_requirements:
+      required_attack_ids:
+        - crystal_shield
+    targeting: allies_all
+    costs:
+      mana: 14
+      stamina: 0
+      cooldown: 0
+    effects:
+      - effect_id: crystal_aegis_effect
+        status_effect: Crystal Aegis
+        apply_to: allies_all
+        turns: 2
+        buff:
+          magical_defense: 10
+        polarity: positive
+  - id: living_fortress
+    name: Living Fortress
+    description: PDEF +18 and MDEF +18 for 3 turns; the user *is* the fortress.
+    element_id: lapis
+    learning_cost:
+      experience_points: 6
+    learning_requirements:
+      required_attack_ids:
+        - granite_hide
+        - crystal_aegis
+    targeting: self
+    costs:
+      mana: 16
+      stamina: 0
+      cooldown: 0
+    effects:
+      - effect_id: living_fortress_effect
+        status_effect: Living Fortress
+        apply_to: self
+        turns: 3
+        buff:
+          physical_defense: 18
+          magical_defense: 18
+        polarity: positive
+  - id: fortress
+    name: Fortress
+    description: The user plants themselves and becomes the target , enemies are taunted into attacking them, and the user gains PDEF +8 for 2 turns.
+    element_id: lapis
+    learning_cost:
+      experience_points: 1
+    learning_requirements:
+      required_attack_ids:
+        - stone
+    targeting: self
+    costs:
+      mana: 10
+      stamina: 0
+      cooldown: 0
+    effects:
+      - effect_id: fortress_effect
+        status_effect: Fortress
+        apply_to: self
+        turns: 2
+        buff:
+          physical_defense: 8
+        polarity: positive
+  - id: guardian_stance
+    name: Guardian Stance
+    description: The user guards the line , every ally gains PDEF +8 for 2 turns.
+    element_id: lapis
+    learning_cost:
+      experience_points: 3
+    learning_requirements:
+      required_attack_ids:
+        - fortress
+    targeting: allies_all
+    costs:
+      mana: 13
+      stamina: 0
+      cooldown: 0
+    effects:
+      - effect_id: guardian_stance_effect
+        status_effect: Guardian Stance
+        apply_to: allies_all
+        turns: 2
+        buff:
+          physical_defense: 8
+        polarity: positive
+  - id: unbreakable
+    name: Unbreakable
+    description: PDEF +20 for 2 turns and cannot be displaced; the user does not move.
+    element_id: lapis
+    learning_cost:
+      experience_points: 5
+    learning_requirements:
+      required_attack_ids:
+        - guardian_stance
+    targeting: self
+    costs:
+      mana: 14
+      stamina: 0
+      cooldown: 0
+    effects:
+      - effect_id: unbreakable_effect
+        status_effect: Unbreakable
+        apply_to: self
+        turns: 2
+        buff:
+          physical_defense: 20
+        polarity: positive
+  - id: monolith
+    name: Monolith
+    description: The user rises as a monolith , taunts all enemies and gains PDEF +12 and MDEF +8 for 2 turns.
+    element_id: lapis
+    learning_cost:
+      experience_points: 5
+    learning_requirements:
+      required_attack_ids:
+        - guardian_stance
+    targeting: self
+    costs:
+      mana: 15
+      stamina: 0
+      cooldown: 0
+    effects:
+      - effect_id: monolith_effect
+        status_effect: Monolith
+        apply_to: self
+        turns: 2
+        buff:
+          physical_defense: 12
+          magical_defense: 8
+        polarity: positive
+  - id: aegis_of_the_mountain
+    name: Aegis Of The Mountain
+    description: The mountain shelters its own , PDEF +10 and MDEF +6 for 3 turns to all allies.
+    element_id: lapis
+    learning_cost:
+      experience_points: 6
+    learning_requirements:
+      required_attack_ids:
+        - monolith
+    targeting: allies_all
+    costs:
+      mana: 17
+      stamina: 0
+      cooldown: 0
+    effects:
+      - effect_id: aegis_of_the_mountain_effect
+        status_effect: Aegis Of The Mountain
+        apply_to: allies_all
+        turns: 3
+        buff:
+          physical_defense: 10
+          magical_defense: 6
+        polarity: positive
+  - id: petrify
+    name: Petrify
+    description: The target's flesh begins to turn to stone , slowed (SPD −10), then cannot act for 1 turn.
+    element_id: lapis
+    learning_cost:
+      experience_points: 1
+    learning_requirements:
+      required_attack_ids:
+        - stone
+    targeting: enemy_one
+    costs:
+      mana: 11
+      stamina: 0
+      cooldown: 0
+    effects:
+      - effect_id: petrify_effect
+        status_effect: Petrify
+        apply_to: target
+        turns: 1
+        prevent_actions: true
+        polarity: negative
+      - effect_id: petrify_effect_2
+        status_effect: Petrify
+        apply_to: target
+        turns: 1
+        debuff:
+          speed: 10
+        polarity: negative
+  - id: stone_bind
+    name: Stone Bind
+    description: The petrification takes hold completely , the target cannot act for 2 turns.
+    element_id: lapis
+    learning_cost:
+      experience_points: 3
+    learning_requirements:
+      required_attack_ids:
+        - petrify
+    targeting: enemy_one
+    costs:
+      mana: 15
+      stamina: 0
+      cooldown: 0
+    effects:
+      - effect_id: stone_bind_effect
+        status_effect: Stone Bind
+        apply_to: target
+        turns: 2
+        prevent_actions: true
+        polarity: negative
+  - id: crumbling_touch
+    name: Crumbling Touch
+    description: The user's touch crumbles whatever it strikes , PDEF −12 for 2 turns.
+    element_id: lapis
+    learning_cost:
+      experience_points: 4
+    learning_requirements:
+      required_attack_ids:
+        - petrify
+    targeting: enemy_one
+    costs:
+      mana: 13
+      stamina: 0
+      cooldown: 0
+    effects:
+      - effect_id: crumbling_touch_effect
+        status_effect: Crumbling Touch
+        apply_to: target
+        turns: 2
+        debuff:
+          physical_defense: 12
+        polarity: negative
+  - id: petrifying_gaze
+    name: Petrifying Gaze
+    description: The user's gaze sweeps the line , every enemy is slowed (SPD −12) and cannot act for 1 turn.
+    element_id: lapis
+    learning_cost:
+      experience_points: 6
+    learning_requirements:
+      required_attack_ids:
+        - stone_bind
+        - crumbling_touch
+    targeting: enemies_all
+    costs:
+      mana: 19
+      stamina: 0
+      cooldown: 0
+    effects:
+      - effect_id: petrifying_gaze_effect
+        status_effect: Petrifying Gaze
+        apply_to: enemies_all
+        turns: 1
+        prevent_actions: true
+        polarity: negative
+      - effect_id: petrifying_gaze_effect_2
+        status_effect: Petrifying Gaze
+        apply_to: enemies_all
+        turns: 1
+        debuff:
+          speed: 12
+        polarity: negative
+  - id: petrified_body
+    name: Petrified Body
+    description: The user's flesh turns fully to stone , PDEF +14 but SPD −6 for 3 turns — the price of the shell.
+    element_id: lapis
+    learning_cost:
+      experience_points: 5
+    learning_requirements:
+      required_attack_ids:
+        - petrifying_gaze
+    targeting: self
+    costs:
+      mana: 14
+      stamina: 0
+      cooldown: 0
+    effects:
+      - effect_id: petrified_body_effect
+        status_effect: Petrified Body
+        apply_to: self
+        turns: 3
+        buff:
+          physical_defense: 14
+        debuff:
+          speed: 6
+        polarity: negative
+  - id: geode
+    name: Geode
+    description: A geode — stone grown around crystal — shatters against the target; MDEF −10 for 2 turns. You cannot grow crystal without first understanding the stone that cradles it.
+    element_id: lapis
+    learning_cost:
+      experience_points: 4
+    learning_requirements:
+      required_attack_ids:
+        - sandstorm
+    targeting: enemy_one
+    damage:
+      kind: magical
+      damage_type: magical
+      power:
+        kind: fixed
+        value: 16
+    accuracy: 95
+    hit_count: 1
+    costs:
+      mana: 13
+      stamina: 0
+      cooldown: 0
+    effects:
+      - effect_id: geode_effect
+        status_effect: Geode
+        apply_to: target
+        turns: 2
+        debuff:
+          magical_defense: 10
+        polarity: negative
+  - id: tectonic_cataclysm
+    name: Tectonic Cataclysm
+    description: Seal every enemy's actions for 1 turn and SPD −15 for 2 turns; the tectonic plates themselves turn.
+    element_id: lapis
+    learning_cost:
+      experience_points: 12
+    learning_requirements:
+      required_attack_ids:
+        - world_splitter
+        - mountain_crusher
+    targeting: enemies_all
+    damage:
+      kind: magical
+      damage_type: magical
+      power:
+        kind: fixed
+        value: 24
+    accuracy: 90
+    hit_count: 1
+    costs:
+      mana: 30
+      stamina: 0
+      cooldown: 0
+    effects:
+      - effect_id: tectonic_cataclysm_effect
+        status_effect: Tectonic Cataclysm
+        apply_to: enemies_all
+        turns: 1
+        prevent_actions: true
+        polarity: negative
+      - effect_id: tectonic_cataclysm_effect_2
+        status_effect: Tectonic Cataclysm
+        apply_to: enemies_all
+        turns: 2
+        debuff:
+          speed: 15
+        polarity: negative

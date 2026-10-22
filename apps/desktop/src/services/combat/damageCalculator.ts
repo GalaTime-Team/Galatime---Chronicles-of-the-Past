@@ -18,18 +18,34 @@
  * lane (position) modifier, the bracing reduction and the ability modifier folded
  * from the defender's passives are applied on top.
  *
+ * On top of that sit the *traits* the skill catalogue authors — the ones the
+ * skill forger writes and the engine reads:
+ *
+ * - `solar` / `nocturnal` — the hour of the day the fight happens at (x1.5 by
+ *   day for a solar skill, x0.5 at night; the nocturnal mirror).
+ * - `defense_pierce` — the fraction of the target's defence the hit ignores.
+ * - `bonus_vs_elements` — an extra multiplier per element of the defender.
+ * - `bonus_vs_hp_below` — an extra multiplier against a wounded target.
+ * - `crit_chance` / `guaranteed_crit_vs_status` — the critical hit (x1.75).
+ * - `accuracy` / `evasion` — the attacker's aim and the defender's dodge.
+ * - `ignore_accuracy` — the hit lands whatever the roll says.
+ *
  * Every consumer — the turn resolver and the HUD preview — goes through
  * {@link resolveDamage}, so this chain exists exactly once.
  */
 
 import {
+    CRIT_MULTIPLIER,
     DAMAGE_VARIANCE_RANGE,
     DEFEND_DAMAGE_REDUCTION,
     DEFAULT_ACCURACY,
+    MIN_EFFECTIVE_ACCURACY,
     MINIMUM_DAMAGE,
     MINIMUM_DEFENSE,
     POWER_DIVISOR,
     RANDOMIZE_POWER_RANGE,
+    SOLAR_DAY_MULTIPLIER,
+    SOLAR_NIGHT_MULTIPLIER,
 } from '../../constants/CombatConstants';
 import type {
     AttackModifier,
@@ -38,6 +54,8 @@ import type {
     CombatLine,
     CombatRandom,
     CombatStats,
+    CombatTimePhase,
+    CombatUnit,
     DamageType,
 } from '../../types/CombatType';
 import type { ElementData } from '../../types/ElementDataType';
@@ -102,6 +120,123 @@ export function defenseStat(stats: CombatStats, damageType: DamageType): number 
     return damageType === 'physical' ? stats.physicalDefense : stats.magicalDefense;
 }
 
+/**
+ * The hour-of-the-day multiplier an action gets.
+ *
+ * A `solar` skill is worth x1.5 by day and x0.5 at night; a `nocturnal` one
+ * is the mirror. A skill with neither is worth the same at every hour.
+ */
+export function phaseDamageMultiplier(
+    action: Pick<CombatAction, 'solar' | 'nocturnal'>,
+    timePhase: CombatTimePhase,
+): number {
+    const night = timePhase === 'night';
+    let multiplier = 1;
+
+    if (action.solar) multiplier *= night ? SOLAR_NIGHT_MULTIPLIER : SOLAR_DAY_MULTIPLIER;
+    if (action.nocturnal) multiplier *= night ? SOLAR_DAY_MULTIPLIER : SOLAR_NIGHT_MULTIPLIER;
+
+    return multiplier;
+}
+
+/**
+ * The chance of a hit, in percent.
+ *
+ * The authored chance of the action, plus the attacker's `accuracy` modifier,
+ * minus the defender's `evasion` modifier. The defender's *accuracy* is
+ * irrelevant here: it governs the defender's own attacks, not how well it is
+ * hit.
+ *
+ * An action that ignores accuracy always lands.
+ */
+export function effectiveAccuracy(
+    action: Pick<CombatAction, 'accuracy' | 'ignoreAccuracy'>,
+    attackerStats: CombatStats,
+    defenderStats: CombatStats,
+): number {
+    if (action.ignoreAccuracy) return 100;
+
+    const authored = normalizeAccuracy(action.accuracy);
+    const value = authored + (attackerStats.accuracy ?? 0) - (defenderStats.evasion ?? 0);
+
+    return clamp(value, MIN_EFFECTIVE_ACCURACY, 100);
+}
+
+/**
+ * The chance of a critical hit, in percent.
+ *
+ * The skill's own `crit_chance` plus the attacker's `crit_chance` stat. A
+ * skill that guarantees a critical against a status crits every time it hits
+ * a target carrying that status.
+ */
+export function critChanceFor(
+    action: Pick<CombatAction, 'critChance' | 'guaranteedCritVsStatus'>,
+    attackerStats: CombatStats,
+    defender?: CombatUnit | null,
+): number {
+    if (action.guaranteedCritVsStatus && defender && hasStatusEffect(defender, action.guaranteedCritVsStatus)) {
+        return 100;
+    }
+
+    return clamp((action.critChance ?? 0) + (attackerStats.critChance ?? 0), 0, 100);
+}
+
+/**
+ * The extra multiplier an action gets against a defender's elements.
+ *
+ * The strongest bonus declared for one of the defender's elements wins — a
+ * skill that says "x1.5 against umbra" does not stack with itself.
+ */
+export function bonusVsElementsMultiplier(
+    action: Pick<CombatAction, 'bonusVsElements'>,
+    defenderElementIds: readonly string[],
+): number {
+    const bonuses = action.bonusVsElements;
+    if (!bonuses) return 1;
+
+    let best = 1;
+    for (const elementId of defenderElementIds) {
+        const value = bonuses[elementId];
+        if (typeof value === 'number' && Number.isFinite(value) && value > best) best = value;
+    }
+
+    return best;
+}
+
+/**
+ * The extra multiplier an action gets against a wounded target.
+ *
+ * `bonus_vs_hp_below: { threshold: 0.5, multiplier: 1.25 }` bites only while
+ * the defender is under half its health.
+ */
+export function bonusVsHpBelowMultiplier(
+    action: Pick<CombatAction, 'bonusVsHpBelow'>,
+    defenderHpFraction: number,
+): number {
+    const spec = action.bonusVsHpBelow;
+    if (!spec) return 1;
+
+    const threshold = spec.threshold;
+    const multiplier = spec.multiplier;
+    if (!Number.isFinite(threshold) || threshold <= 0) return 1;
+    if (!Number.isFinite(multiplier) || multiplier <= 0) return 1;
+
+    return defenderHpFraction < threshold ? multiplier : 1;
+}
+
+/** The defence the hit actually faces, after the pierce takes its share. */
+export function piercedDefense(defenseValue: number, pierce: number): number {
+    const fraction = clamp(pierce ?? 0, 0, 1);
+    return defenseValue * (1 - fraction);
+}
+
+/** Whether a unit carries a status, by id or by label. */
+function hasStatusEffect(unit: CombatUnit, statusId: string): boolean {
+    return unit.effects.some(
+        (effect) => effect.effectId === statusId || effect.statusEffect === statusId,
+    );
+}
+
 /** Damage before the lane, bracing and variance steps. */
 interface BaseDamageParams {
     attackValue: number;
@@ -122,6 +257,13 @@ interface BaseDamageParams {
      * fragile target takes far more and an armoured one far less.
      */
     atkDefRatio?: boolean;
+    /**
+     * The skill's traits, folded into one multiplier.
+     *
+     * The hour of the day, the bonus against the defender's elements, the
+     * bonus against a wounded target and the critical hit all land here.
+     */
+    traits?: number;
 }
 
 /** The intermediate values of one hit, kept so the log can show the chain. */
@@ -137,8 +279,8 @@ interface DamageBreakdown {
 }
 
 /**
- * The damage chain: `(ATK / RES) x EFFECT x (PWR / POWER_DIVISOR)`, then lane, bracing and
- * variance, then rounded.
+ * The damage chain: `(ATK / RES) x EFFECT x (PWR / POWER_DIVISOR)`, then the
+ * skill's traits, the lane and the bracing, then the variance, then rounded.
  *
  * Defence is a divisor, so it can never drop below {@link MINIMUM_DEFENSE}. A hit
  * that lands always deals at least {@link MINIMUM_DAMAGE} — except against an
@@ -151,7 +293,7 @@ function calculateDamage(params: BaseDamageParams): DamageBreakdown {
     const defense = Math.max(MINIMUM_DEFENSE, defenseValue);
     const base = (attackValue / defense) * effect * (power / POWER_DIVISOR);
     const reduction = 1 - clamp(params.defenseReduction, 0, 0.9);
-    const positioned = base * params.positionModifier * reduction;
+    const positioned = base * (params.traits ?? 1) * params.positionModifier * reduction;
     // A `royal` weapon (John II) scales the hit by the same ATK/RES ratio again.
     const ratio = params.atkDefRatio ? attackValue / defense : 1;
     const varied = positioned * params.variance * params.attackMultiplier * ratio;
@@ -166,6 +308,13 @@ export interface DamageRequest {
     defenderStats: CombatStats;
     /** Elements of the unit being hit; drives the efficacy multiplier. */
     defenderElementIds: readonly string[];
+    /**
+     * The unit being hit.
+     *
+     * Read for the statuses it carries, which decide whether a critical is
+     * guaranteed. Optional: a preview may only have the numbers.
+     */
+    defender?: CombatUnit | null;
     elementIndex: CombatElementIndex;
     attackerLine: CombatLine;
     defenderLine: CombatLine;
@@ -182,6 +331,19 @@ export interface DamageRequest {
      */
     modifier: AttackModifier;
     random: CombatRandom;
+    /**
+     * The hour of the day the fight happens at.
+     *
+     * It decides what a `solar` or `nocturnal` action is worth, so it has to
+     * be part of the chain — not folded in by the caller.
+     */
+    timePhase: CombatTimePhase;
+    /**
+     * The defender's remaining health, as a fraction of its maximum.
+     *
+     * Read by `bonus_vs_hp_below`. Defaults to `1` (a healthy target).
+     */
+    defenderHpFraction?: number;
     /**
      * `true` (the default) rolls accuracy and variance, producing the numbers a
      * real hit would use. `false` returns the deterministic expectation of a
@@ -220,6 +382,12 @@ export interface DamageResult {
     baseDamage: number;
     /** Rounded damage applied across every hit. */
     finalDamage: number;
+    /** Chance of a critical hit, in percent. */
+    critChance: number;
+    /** `true` when at least one of the hits was critical. */
+    isCrit: boolean;
+    /** Chance of a hit landing, in percent. */
+    hitChance: number;
 }
 
 /**
@@ -233,7 +401,11 @@ export function resolveDamage(request: DamageRequest): DamageResult {
     const rolling = request.roll ?? true;
 
     const attackValue = attackStat(request.attackerStats, action.damageType);
-    const defenseValue = defenseStat(request.defenderStats, action.damageType);
+    const rawDefense = defenseStat(request.defenderStats, action.damageType);
+    // A pierce takes its share of the defence before the division, so the hit
+    // faces a smaller number from the start. The reported defence stays the
+    // target's own, so the log does not claim it was weaker than it is.
+    const pierced = piercedDefense(rawDefense, action.defensePierce ?? 0);
     const effect = elementMultiplier(elementIndex, action.elementId, request.defenderElementIds);
     const positionModifier = positionDamageModifier(
         request.attackerLine,
@@ -247,18 +419,31 @@ export function resolveDamage(request: DamageRequest): DamageResult {
     // so a shot at the back line is judged by the `rear` value and a swing at the
     // front line by `front`.
     const byRange = action.weapon?.accuracyByRange;
-    const accuracy = byRange
+    const authoredAccuracy = byRange
         ? (request.defenderLine === 'front' ? byRange.front : byRange.rear)
         : action.accuracy;
+    const accuracy = effectiveAccuracy(
+        { accuracy: authoredAccuracy, ignoreAccuracy: action.ignoreAccuracy },
+        request.attackerStats,
+        request.defenderStats,
+    );
+    const critChance = critChanceFor(action, request.attackerStats, request.defender ?? null);
     const atkDefRatio = action.weapon?.damageModifiers?.atk_def_ratio === true;
     // Bazar goods (`randomize_power`) wager the authored power on every swing.
     const randomizePower = action.weapon?.randomizePower === true;
     const [powerMin, powerMax] = RANDOMIZE_POWER_RANGE;
 
+    // The skill's traits, folded once so every hit of the same action reads
+    // the same numbers.
+    const traitMultiplier = phaseDamageMultiplier(action, request.timePhase)
+        * bonusVsElementsMultiplier(action, request.defenderElementIds)
+        * bonusVsHpBelowMultiplier(action, request.defenderHpFraction ?? 1);
+
     const attempts = rolling ? Math.max(1, action.hitCount) : 1;
     let baseDamage = 0;
     let finalDamage = 0;
     let hits = 0;
+    let isCrit = false;
 
     for (let hit = 0; hit < attempts; hit += 1) {
         if (rolling && !rollHit(random, accuracy)) continue;
@@ -267,9 +452,14 @@ export function resolveDamage(request: DamageRequest): DamageResult {
             ? action.power * (powerMin + random() * (powerMax - powerMin))
             : action.power;
 
+        // A critical hit is rolled per hit: a skill that hits four times can
+        // crit once and miss the rest.
+        const critical = rolling && critChance > 0 && random() * 100 < critChance;
+        if (critical) isCrit = true;
+
         const breakdown = calculateDamage({
             attackValue,
-            defenseValue,
+            defenseValue: pierced,
             power: hitPower,
             elementMultiplier: effect,
             positionModifier,
@@ -278,6 +468,7 @@ export function resolveDamage(request: DamageRequest): DamageResult {
             attackMultiplier: request.modifier.multiplier,
             immune: request.modifier.immune,
             atkDefRatio,
+            traits: traitMultiplier * (critical ? CRIT_MULTIPLIER : 1),
         });
 
         baseDamage = breakdown.base;
@@ -289,7 +480,7 @@ export function resolveDamage(request: DamageRequest): DamageResult {
         isHit: hits > 0,
         hits,
         attackValue,
-        defenseValue,
+        defenseValue: rawDefense,
         power: action.power,
         damageType: action.damageType,
         elementMultiplier: effect,
@@ -300,6 +491,9 @@ export function resolveDamage(request: DamageRequest): DamageResult {
         immune: request.modifier.immune,
         baseDamage,
         finalDamage,
+        critChance,
+        isCrit,
+        hitChance: accuracy,
     };
 }
 

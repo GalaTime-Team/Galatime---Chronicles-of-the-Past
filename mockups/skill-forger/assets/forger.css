@@ -281,6 +281,16 @@ textarea.control { min-height: 58px; padding: 9px 10px; resize: vertical; line-h
 .confirm-card .eyebrow { color: var(--accent); }
 .confirm-card h2 { margin: 7px 0 0; color: var(--text-strong); font: 700 16px/1.25 var(--display); letter-spacing: -.01em; }
 .confirm-card p { margin: 11px 0 0; color: var(--muted); font-size: 12px; line-height: 1.6; white-space: pre-line; }
+.import-error-card { width: min(720px, 100%); max-height: 80vh; padding: 20px; border: 1px solid var(--border); border-radius: 11px; background: var(--panel-raised); box-shadow: 0 24px 60px rgba(0, 0, 0, .5); display: flex; flex-direction: column; gap: 12px; }
+.import-error-card h2 { margin: 7px 0 0; color: var(--text-strong); font: 700 16px/1.25 var(--display); letter-spacing: -.01em; }
+.import-error-body { overflow: auto; display: flex; flex-direction: column; gap: 14px; padding-right: 4px; }
+.import-error-issue { border: 1px solid #4a3b2f; border-radius: 8px; padding: 10px 12px; background: #2b251e; }
+.import-error-issue .issue-file { font-size: 11px; color: #debd8e; font-weight: 600; margin-bottom: 4px; }
+.import-error-issue .issue-loc { font-size: 11px; color: var(--muted); margin-bottom: 6px; }
+.import-error-issue .issue-message { font-size: 12px; color: #f0e6d2; line-height: 1.5; margin: 0 0 6px; }
+.import-error-issue .issue-path { font-size: 11px; color: var(--muted); font-family: var(--mono, monospace); }
+.import-error-issue pre { margin: 6px 0; padding: 8px; background: #1a1f1c; border: 1px solid #3a463f; border-radius: 6px; font-size: 11px; line-height: 1.45; overflow: auto; white-space: pre; color: #cfddd3; }
+.import-error-issue .issue-caret { color: #e07060; }
 .confirm-actions { display: flex; justify-content: flex-end; gap: 9px; margin-top: 19px; }
 
 @media (max-width: 1200px) {
@@ -409,4 +419,103 @@ textarea.control { min-height: 58px; padding: 9px 10px; resize: vertical; line-h
     .combat-step, .effect-scope-section { padding: 12px; }
     .scope-heading { gap: 7px; }
     .scope-heading h3 { font-size: 10px; }
+}
+
+/* --------------------------------------------------------------------------
+   Ajuda inline: o "i" que explica cada campo.
+   -------------------------------------------------------------------------- */
+.info-tip { position: relative; display: inline-grid; place-items: center; width: 13px; height: 13px; margin-left: 6px; border: 1px solid #414a53; border-radius: 50%; color: #98a1a9; font: 600 8px/1 var(--mono); font-style: normal; cursor: help; vertical-align: middle; }
+.info-tip:hover, .info-tip:focus { border-color: var(--accent); color: var(--accent-bright); outline: none; }
+.info-tip::after { position: absolute; z-index: 80; bottom: calc(100% + 9px); left: 50%; width: 250px; padding: 10px 12px; border: 1px solid var(--border); border-radius: 9px; color: #d3d7da; background: #12161b; box-shadow: 0 14px 36px rgba(0, 0, 0, .5); content: attr(data-tip); font: 400 10px/1.6 var(--sans); text-align: left; text-transform: none; letter-spacing: 0; white-space: normal; opacity: 0; pointer-events: none; transform: translateX(-50%) translateY(4px); transition: opacity .14s, transform .14s; }
+.info-tip:hover::after, .info-tip:focus::after { opacity: 1; transform: translateX(-50%) translateY(0); }
+.info-tip::before { position: absolute; z-index: 81; bottom: calc(100% + 4px); left: 50%; width: 0; height: 0; border: 5px solid transparent; border-top-color: #12161b; content: ''; opacity: 0; transform: translateX(-50%); transition: opacity .14s; }
+.info-tip:hover::before, .info-tip:focus::before { opacity: 1; }
+
+/* Resumo da skill em tiras. */
+.skill-summary { display: flex; flex-wrap: wrap; gap: 6px; padding: 14px 0 3px; }
+.skill-summary:empty { display: none; }
+.summary-chip { display: inline-flex; align-items: baseline; gap: 6px; padding: 5px 9px; border: 1px solid var(--border-soft); border-radius: 7px; background: var(--panel-dark); }
+.summary-chip span { color: var(--muted-dark); font: 500 8px var(--mono); letter-spacing: .08em; text-transform: uppercase; }
+.summary-chip strong { color: #cfd3d6; font-size: 10px; font-weight: 600; }
+
+/* Criação rápida. */
+.quick-create { width: min(520px, 100%); display: flex; gap: 8px; margin-top: 4px; }
+.quick-create .control { flex: 1; min-width: 0; }
+.quick-create-foot { margin-top: 13px; }
+.field-foot { display: flex; align-items: center; gap: 10px; margin-top: 7px; }
+
+/* Traços (solar + bónus contra elementos). */
+.traits-section { padding-top: 23px; }
+.trait-toggle { margin-bottom: 14px; }
+.trait-block { margin-top: 13px; padding: 13px 15px; border: 1px solid var(--border-soft); border-radius: 10px; background: var(--panel-dark); }
+.trait-head { display: flex; align-items: center; justify-content: space-between; gap: 10px; margin-bottom: 9px; }
+.trait-head-label { display: block; margin-bottom: 10px; color: var(--muted-dark); font: 500 9px/1.3 var(--mono); letter-spacing: .09em; }
+.trait-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 13px 14px; }
+.trait-grid .field > span { display: flex; align-items: center; }
+.trait-grid small { color: var(--muted-dark); font-size: 8px; }
+.bonus-rows { display: flex; flex-direction: column; gap: 6px; }
+.bonus-rows:empty { margin-bottom: 2px; }
+.bonus-row { display: grid; grid-template-columns: minmax(0, 1fr) 96px 30px; align-items: center; gap: 7px; }
+.bonus-value .control { padding-right: 24px; }
+.bonus-value > span { right: 8px; }
+
+/* Linhas de atributo dentro de um efeito. */
+.stat-rows { display: flex; flex-direction: column; gap: 6px; margin-bottom: 7px; }
+.stat-row { display: grid; grid-template-columns: minmax(0, 1fr) 84px 30px; align-items: center; gap: 7px; }
+.effect-advanced { margin-top: 11px; padding-top: 10px; border-top: 1px solid var(--border-soft); }
+.effect-advanced > summary { color: var(--muted); font-size: 9px; cursor: pointer; list-style: none; }
+.effect-advanced > summary::-webkit-details-marker { display: none; }
+.effect-advanced > summary::before { margin-right: 6px; content: '▸'; }
+.effect-advanced[open] > summary::before { content: '▾'; }
+.effect-advanced-group { margin-top: 12px; }
+.effect-group-title { display: block; margin-bottom: 8px; color: var(--muted-dark); font: 500 8px/1.3 var(--mono); letter-spacing: .09em; text-transform: uppercase; }
+
+/* --------------------------------------------------------------------------
+   Simulador
+   -------------------------------------------------------------------------- */
+.simulator-workspace { display: grid; grid-template-columns: minmax(300px, 380px) minmax(0, 1fr); gap: 1px; min-height: calc(100vh - 75px); background: var(--border); }
+.simulator-controls { min-height: calc(100vh - 75px); overflow: auto; padding: 24px 19px 40px; }
+.simulator-controls h1 { margin: 3px 0 0; color: var(--text-strong); font: 700 18px/1.3 var(--display); letter-spacing: -.025em; }
+.simulator-intro { margin: 14px 0 18px; color: var(--muted); font-size: 10px; line-height: 1.6; }
+.simulator-intro code { color: var(--accent-bright); font-size: 9px; }
+.simulator-intro strong { color: #c9ced2; font-weight: 600; }
+.sim-skill-field { margin-bottom: 20px; }
+.sim-group { margin-bottom: 22px; padding-top: 16px; border-top: 1px solid var(--border-soft); }
+.sim-group h3 { margin: 0 0 11px; color: #c3c8cc; font: 600 10px var(--display); letter-spacing: .04em; text-transform: uppercase; }
+.sim-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 11px 12px; }
+.sim-toggle { margin-top: 12px; }
+.sim-elements-field { margin-top: 15px; }
+.sim-elements { display: flex; flex-wrap: wrap; gap: 5px; margin-top: 8px; }
+.sim-element { display: inline-flex; align-items: center; gap: 5px; padding: 4px 8px; border: 1px solid var(--border); border-radius: 14px; color: #b9bfc4; background: var(--panel-dark); font: 9px var(--mono); cursor: pointer; }
+.sim-element input { width: 11px; height: 11px; margin: 0; accent-color: var(--accent); }
+.sim-element:has(input:checked) { border-color: rgba(197, 168, 115, .5); color: var(--accent-bright); background: var(--accent-wash); }
+.simulator-results { min-height: calc(100vh - 75px); overflow: auto; padding: 26px clamp(20px, 3vw, 42px) 44px; }
+.sim-head h2 { margin: 5px 0 0; color: var(--text-strong); font: 700 20px var(--display); letter-spacing: -.02em; }
+.sim-head p { margin: 5px 0 0; color: var(--muted); font-size: 10px; }
+.sim-headline { display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: 9px; margin: 22px 0 18px; }
+.sim-figure { padding: 13px 14px; border: 1px solid var(--border-soft); border-radius: 10px; background: var(--panel-dark); }
+.sim-figure span { display: block; color: var(--muted-dark); font: 500 8px var(--mono); letter-spacing: .08em; text-transform: uppercase; }
+.sim-figure strong { display: block; margin-top: 6px; color: var(--text-strong); font: 700 22px/1 var(--display); }
+.sim-figure-main { border-color: rgba(197, 168, 115, .35); background: var(--accent-wash); }
+.sim-figure-main strong { color: var(--accent-bright); font-size: 30px; }
+.sim-chain { border: 1px solid var(--border-soft); border-radius: 10px; overflow: hidden; }
+.sim-chain-row { display: flex; align-items: center; justify-content: space-between; gap: 14px; padding: 9px 14px; border-top: 1px solid var(--border-soft); font-size: 10px; }
+.sim-chain-row:first-child { border-top: 0; }
+.sim-chain-row span { color: var(--muted); }
+.sim-chain-row strong { color: #d7dbde; font: 500 11px var(--mono); }
+.sim-chain-row.is-total { background: var(--panel-raised); }
+.sim-chain-row.is-total span { color: #c6cbcf; font-weight: 600; }
+.sim-chain-row.is-total strong { color: var(--accent-bright); font-size: 13px; }
+.sim-meta { display: grid; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); gap: 11px; margin-top: 16px; }
+.sim-meta > div { padding: 10px 12px; border: 1px solid var(--border-soft); border-radius: 9px; background: var(--panel-dark); }
+.sim-meta span { display: block; color: var(--muted-dark); font: 500 8px var(--mono); letter-spacing: .07em; text-transform: uppercase; }
+.sim-meta strong { display: block; margin-top: 5px; color: #ccd1d5; font: 500 11px var(--mono); }
+.sim-note { margin: 16px 0 0; color: var(--muted-dark); font-size: 9px; line-height: 1.6; }
+.sim-empty { display: flex; min-height: 50vh; flex-direction: column; align-items: center; justify-content: center; text-align: center; }
+.sim-empty h2 { margin: 0 0 8px; color: var(--text-strong); font: 600 16px var(--display); }
+.sim-empty p { max-width: 420px; margin: 0; color: var(--muted); font-size: 11px; line-height: 1.6; }
+
+@media (max-width: 1000px) {
+    .simulator-workspace { grid-template-columns: minmax(0, 1fr); }
+    .simulator-controls { min-height: auto; }
 }

@@ -183,6 +183,27 @@ export const DIALOGUE_CHARACTER_DIM_CLASS = 'brightness-[0.45] saturate-[0.55]';
 export const DIALOGUE_CHARACTER_ACTIVE_CLASS = 'brightness-100 saturate-100';
 
 /**
+ * How much smaller a sitting character is drawn.
+ *
+ * The game has one sprite per emotion and none of them is sitting, so "sitting"
+ * is drawn rather than shown: the figure is shorter and sits lower in its slot.
+ * The scale is about the feet, so the character keeps its place on the ground
+ * instead of floating.
+ */
+export const DIALOGUE_SIT_SPRITE_SCALE = 0.82;
+
+/**
+ * How far lower a sitting character is drawn, as a percentage of its own height.
+ *
+ * A little, because a shorter figure already reads as lower; the rest of the
+ * difference is the scale.
+ */
+export const DIALOGUE_SIT_SPRITE_OFFSET_PERCENT = 4;
+
+/** How long the change of pose takes to settle. */
+export const DIALOGUE_POSE_TRANSITION_MS = 320;
+
+/**
  * The sprite's box: the artwork's own 5:6 ratio, never taller than the stage.
  *
  * The `tsp` art is 250x300, so the ratio lets the sprite fill the box exactly

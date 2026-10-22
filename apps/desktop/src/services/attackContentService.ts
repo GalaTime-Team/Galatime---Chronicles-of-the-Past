@@ -18,8 +18,6 @@ import {
 } from './contentGraphService';
 import { applySkillLevel, parseSkillLevelId } from './combat/skillLevels';
 
-const SKILLS_GLOB_PREFIX = '../data/combat/skills/';
-
 function cloneContent<T>(value: T): T {
     return JSON.parse(JSON.stringify(value)) as T;
 }
@@ -40,31 +38,39 @@ function parseYaml<T>(text: string): T {
     return yaml.load(text) as T;
 }
 
-/** Loads the game catalogue, containing gameplay content only. */
+/**
+ * Loads the game catalogue, containing gameplay content only.
+ *
+ * The catalogue is spread over as many files as the content needs — the
+ * skill forger exports one file per group of elements — so every YAML in the
+ * folder is read and their skills are merged into a single catalogue. A file
+ * that is not a skill catalogue is skipped rather than breaking the load.
+ */
 async function loadSkillCatalog(): Promise<SkillCatalog> {
     if (catalogCache) return catalogCache;
     await initializeGlobs();
 
-    const catalogPath = `${SKILLS_GLOB_PREFIX}skills.yaml`;
-    const loader = skillsGlob?.[catalogPath];
-    if (!loader) {
-        catalogCache = { skills: [] };
-        return catalogCache;
+    const paths = Object.keys(skillsGlob ?? {}).sort();
+    const skills: AttackSkill[] = [];
+
+    for (const path of paths) {
+        const loader = skillsGlob?.[path];
+        if (!loader) continue;
+
+        try {
+            const module = await loader();
+            const parsed = parseYaml<SkillCatalog | AttackSkill[]>(module.default);
+            const fileSkills = Array.isArray(parsed) ? parsed : parsed?.skills;
+            if (!Array.isArray(fileSkills)) continue;
+            skills.push(...fileSkills);
+        } catch (error) {
+            console.error(`Failed to load skill catalogue "${path}":`, error);
+        }
     }
 
-    try {
-        const module = await loader();
-        const parsed = parseYaml<SkillCatalog | AttackSkill[]>(module.default);
-        const catalog: SkillCatalog = Array.isArray(parsed) ? { skills: parsed } : parsed;
-        const skills = selectGameSkills(Array.isArray(catalog?.skills) ? catalog.skills : []);
-
-        catalogCache = {
-            skills,
-        };
-    } catch (error) {
-        console.error('Failed to load skills catalogue:', error);
-        catalogCache = { skills: [] };
-    }
+    catalogCache = {
+        skills: selectGameSkills(skills),
+    };
 
     return catalogCache;
 }

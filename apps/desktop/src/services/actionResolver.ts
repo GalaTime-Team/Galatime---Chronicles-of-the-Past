@@ -15,6 +15,7 @@
  */
 
 import {
+    COUNTER_REFLECT_FRACTION,
     FLEE_CHANCE,
     REST_MANA_RESTORE_FRACTION,
     REST_STAMINA_RESTORE_FRACTION,
@@ -29,19 +30,27 @@ import type {
     CombatState,
     CombatUnit,
 } from '../types/CombatType';
-import { readString } from '../utils/combatUtils';
+import { asRecord, readNumber, readString } from '../utils/combatUtils';
 import type { AbilityTriggerContext } from './combat/abilityContext';
 import { foldAttackModifiers } from './combat/abilityModifiers';
 import { resolveAbilityEvent } from './combat/abilityTriggers';
 import { resolveDamage } from './combat/damageCalculator';
-import { reapDefeated } from './combat/defeatResolver';
+import { reapDefeated, promoteRearLines } from './combat/defeatResolver';
 import {
     applyEffectResources,
     applyEffectToUnit,
     changeResource,
     effectiveStats,
+    hasCounter,
+    isHealBlocked,
     resolveEffectTargets,
 } from './combat/effectResolver';
+import {
+    applyCleanse,
+    applyDispel,
+    applyMove,
+    applyRewind,
+} from './combat/effectMechanics';
 import { reachableTargets } from './combat/targetResolver';
 import { weaponStackMultiplier, effectPowerMultiplier } from './combat/weaponEffects';
 import { applyWeaponActionHooks } from './combat/weaponActionHooks';
@@ -220,11 +229,16 @@ function buildResolution(
         attackerStats: effectiveStats(actor),
         defenderStats: effectiveStats(target),
         defenderElementIds: target.elementIds,
+        defender: target,
         elementIndex,
         attackerLine: actor.line,
         defenderLine: target.line,
         sameSide: actor.side === target.side,
         defenderDefending: target.defending,
+        // The hour of the day decides what a solar or nocturnal action is worth.
+        timePhase: state.timePhase,
+        // The wounded-target bonus reads how much of its health is left.
+        defenderHpFraction: hpFraction(target),
         modifier: foldAttackModifiers(
             target,
             { damageType: action.damageType, elementId: action.elementId },
@@ -250,6 +264,12 @@ function buildResolution(
         targetHpAfter: target.currentHp,
         appliedEffectIds: [],
     };
+}
+
+/** How much of its maximum health a unit still has, as a fraction. */
+function hpFraction(unit: CombatUnit): number {
+    const max = effectiveStats(unit).maxHp;
+    return max > 0 ? unit.currentHp / max : 0;
 }
 
 function resolveAttack(context: ActionResolutionContext): CombatEvent[] {
@@ -281,22 +301,50 @@ function resolveAttack(context: ActionResolutionContext): CombatEvent[] {
             const applied = applyEffectToUnit(scopeTarget, effect, action.id, action.elementId, random, effectPowerMultiplier(actor));
             if (applied) {
                 events.push(applied);
-                const list = appliedByUnit.get(scopeTarget.id) ?? [];
-                list.push(applied.effectId);
-                appliedByUnit.set(scopeTarget.id, list);
+                if (applied.type === 'effect_applied') {
+                    const list = appliedByUnit.get(scopeTarget.id) ?? [];
+                    list.push(applied.effectId);
+                    appliedByUnit.set(scopeTarget.id, list);
 
-                events.push(...resolveAbilityEvent(state, scopeTarget, 'on_status_applied', {
-                    source: actor,
-                    target: scopeTarget,
-                    damageType: action.damageType,
-                    elementId: action.elementId,
-                    damage: 0,
-                    units: state.units,
-                    random,
-                }));
+                    events.push(...resolveAbilityEvent(state, scopeTarget, 'on_status_applied', {
+                        source: actor,
+                        target: scopeTarget,
+                        damageType: action.damageType,
+                        elementId: action.elementId,
+                        damage: 0,
+                        units: state.units,
+                        random,
+                    }));
+                }
             }
 
-            events.push(...applyEffectResources(scopeTarget, effect, random, effectPowerMultiplier(actor)));
+            // A `heal_block` holder cannot be healed by anybody else; its own
+            // healing still works.
+            const healBlocked = isHealBlocked(scopeTarget) && scopeTarget.id !== actor.id;
+
+            events.push(...applyEffectResources(
+                scopeTarget,
+                effect,
+                random,
+                effectPowerMultiplier(actor),
+                { healBlocked, drainRecipient: actor },
+            ));
+
+            // The effects that change the battlefield rather than a number.
+            events.push(...applyCleanse(scopeTarget, effect));
+            events.push(...applyDispel(scopeTarget, effect));
+            events.push(...applyMove(state, actor, scopeTarget, effect));
+            events.push(...applyRewind(scopeTarget, effect));
+
+            // A cooldown tick takes turns off the target's waiting actions.
+            const cooldownTick = readNumber(asRecord(effect)?.cooldown_tick, 0);
+            if (cooldownTick > 0) {
+                for (const actionId of Object.keys(scopeTarget.cooldowns)) {
+                    const remaining = scopeTarget.cooldowns[actionId] - Math.round(cooldownTick);
+                    if (remaining <= 0) delete scopeTarget.cooldowns[actionId];
+                    else scopeTarget.cooldowns[actionId] = remaining;
+                }
+            }
         }
     }
 
@@ -323,8 +371,59 @@ function resolveAttack(context: ActionResolutionContext): CombatEvent[] {
             units: state.units,
             random,
         }));
+
+        // A `counter` status throws the next hit back at the attacker. The
+        // status survives the throw — it simply has nothing left to reflect.
+        if (hasCounter(target) && resolution.finalDamage > 0) {
+            events.push(...reflectCounter(actor, target, resolution.finalDamage));
+        }
+    }
+
+    // A skill that says "the target panics below this much health" takes it
+    // out of the fight when the hit leaves it that low.
+    const fleeBelowHp = action.fleeBelowHp;
+    if (fleeBelowHp !== null && fleeBelowHp > 0) {
+        for (const target of actionTargets) {
+            const resolution = resolutions.get(target.id);
+            if (!resolution || !resolution.isHit || target.status !== 'alive') continue;
+            if (hpFraction(target) > fleeBelowHp) continue;
+
+            target.status = 'defeated';
+            events.push({ type: 'flee_attempted', unitId: target.id, escaped: true });
+            events.push({ type: 'unit_defeated', unitId: target.id });
+            promoteRearLines(state, events);
+        }
     }
 
     reapDefeated(state, events, random);
     return events;
+}
+
+/**
+ * Throws part of a landed hit back at the attacker.
+ *
+ * The counter is spent by the throw: the status stays on the unit, but it no
+ * longer reflects anything.
+ */
+function reflectCounter(
+    attacker: CombatUnit,
+    reflector: CombatUnit,
+    damage: number,
+): CombatEvent[] {
+    const amount = Math.max(1, Math.round(damage * COUNTER_REFLECT_FRACTION));
+    const counter = reflector.effects.find((effect) => effect.counter);
+    if (counter) counter.counter = false;
+
+    attacker.currentHp = Math.max(0, attacker.currentHp - amount);
+
+    return [{
+        type: 'damage_reflected',
+        sourceId: reflector.id,
+        targetId: attacker.id,
+        abilityId: counter?.effectId ?? `${reflector.id}_counter`,
+        abilityName: counter?.statusEffect ?? 'Counter',
+        isHit: true,
+        amount,
+        targetHpAfter: attacker.currentHp,
+    }];
 }

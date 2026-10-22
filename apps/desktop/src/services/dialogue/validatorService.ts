@@ -9,7 +9,11 @@ import type {
     DialogueSegment,
     DialogueValidationReport,
 } from '../../types/DialogueType';
-import { DIALOGUE_DEFAULT_RELATIONSHIP_KIND } from '../../constants/DialogueVocabulary';
+import {
+    DIALOGUE_CHARACTER_DEPTHS,
+    DIALOGUE_CHARACTER_POSES,
+    DIALOGUE_DEFAULT_RELATIONSHIP_KIND,
+} from '../../constants/DialogueVocabulary';
 import { createDialogueIssue, normalizeSegments } from '../../utils/dialogueUtils';
 import {
     isRelationshipPathMissingKind,
@@ -19,7 +23,8 @@ import {
 } from '../state/worldStateService';
 import { isComparisonOperator, isConditionLeaf } from './conditionService';
 import { describeEffectProblem } from './effectService';
-import { collectEffects, collectOutgoingNodeIds } from './dialogueTraversal';
+import { variableNameOf } from './variableService';
+import { collectEffects, collectInputVariables, collectOutgoingNodeIds } from './dialogueTraversal';
 
 /**
  * Validates a dialogue file before anyone tries to play it.
@@ -34,7 +39,9 @@ import { collectEffects, collectOutgoingNodeIds } from './dialogueTraversal';
 export const DIALOGUE_NODE_TYPES: readonly DialogueNodeType[] = [
     'line',
     'choice',
+    'player_input',
     'character_enter',
+    'character_action',
     'character_exit',
     'conditional',
     'end',
@@ -58,6 +65,14 @@ function isRemovedNodeType(value: unknown): boolean {
 
 /** Everything validation needs that is not in the file itself. */
 export interface ValidationContext {
+    /**
+     * The id of the dialogue, which is the name of the file it came from.
+     *
+     * The file name is the identity every other dialogue references, so it is
+     * what the report names — whether or not the file declares an id of its
+     * own.
+     */
+    dialogueId: string;
     /** Catalogue check for character ids. */
     isKnownCharacter: (characterId: string) => boolean;
     /** Whether a referenced dialogue file exists. */
@@ -87,10 +102,23 @@ export function validateDialogue(
         return { dialogue_id: '', errors: collector.errors, warnings: collector.warnings };
     }
 
-    const dialogueId = typeof definition.dialogue_id === 'string' ? definition.dialogue_id : '';
+    const dialogueId = context.dialogueId
+        || (typeof definition.dialogue_id === 'string' ? definition.dialogue_id : '');
 
-    if (!dialogueId) {
-        addError(collector, 'missing_dialogue_id', 'Dialogue is missing "dialogue_id".', 'dialogue_id');
+    // The file name is the identity, so a file that declares no id of its own
+    // is perfectly valid. One that declares a *different* id is worth a word:
+    // `unlock_dialogue` looks the file up by name, and the two would not match.
+    if (typeof definition.dialogue_id === 'string'
+        && definition.dialogue_id !== ''
+        && context.dialogueId !== ''
+        && definition.dialogue_id !== context.dialogueId) {
+        addWarning(
+            collector,
+            'dialogue_id_mismatch',
+            `File "${context.dialogueId}.yaml" declares dialogue_id "${definition.dialogue_id}"; `
+            + 'the file name is what other dialogues reference.',
+            'dialogue_id',
+        );
     }
 
     const nodes: Record<string, DialogueNode> =
@@ -132,6 +160,8 @@ export function validateDialogue(
     for (const [nodeId, node] of Object.entries(nodes)) {
         validateNode(nodeId, node, nodes, context, collector);
     }
+
+    validateVariableReferences(definition, collector);
 
     if (definition.start_node && nodes[definition.start_node]) {
         validateReachability(definition, nodes, collector);
@@ -189,7 +219,16 @@ function validateNode(
             validateChoiceNode(nodeId, node, nodes, context, collector);
             break;
 
+        case 'player_input':
+            validatePlayerInputNode(nodeId, node, collector);
+            break;
+
         case 'character_enter':
+        case 'character_action':
+            validateCharacterNode(nodeId, node, context, collector);
+            validateStaging(nodeId, node, context, collector);
+            break;
+
         case 'character_exit':
             validateCharacterNode(nodeId, node, context, collector);
             break;
@@ -253,6 +292,24 @@ function validateLineNode(
     if (!Array.isArray(node.text) || node.text.length === 0) {
         addError(collector, 'missing_text', `Line "${nodeId}" declares no text.`, `${path}.text`);
         return;
+    }
+
+    // The delivery decides how the line is drawn, so a word the format does
+    // not know is reported: it would be read as an ordinary spoken line.
+    const delivery: unknown = node.delivery;
+
+    if (delivery !== undefined
+        && delivery !== 'spoken'
+        && delivery !== 'thought'
+        && delivery !== 'whisper'
+        && delivery !== 'shout') {
+        addWarning(
+            collector,
+            'unknown_delivery',
+            `Line "${nodeId}" is delivered as "${String(delivery)}", which the box does not know. `
+            + 'Use one of: spoken, thought, whisper, shout.',
+            `${path}.delivery`,
+        );
     }
 
     validateSegments(nodeId, node.text, nodes, collector);
@@ -348,14 +405,14 @@ function validateChoiceNode(
 }
 
 /**
- * Enter/exit nodes need a character the catalogue knows about.
+ * Enter/action/exit nodes need a character the catalogue knows about.
  *
  * An unknown id is a warning, not an error: the engine tolerates it, and the
  * sprite simply falls back to the placeholder.
  */
 function validateCharacterNode(
     nodeId: string,
-    node: Extract<DialogueNode, { type: 'character_enter' | 'character_exit' }>,
+    node: Extract<DialogueNode, { type: 'character_enter' | 'character_action' | 'character_exit' }>,
     context: ValidationContext,
     collector: IssueCollector,
 ): void {
@@ -371,6 +428,101 @@ function validateCharacterNode(
             `Node "${nodeId}" references unknown character "${node.character_id}".`,
             `nodes.${nodeId}.character_id`,
         );
+    }
+}
+
+/**
+ * Checks the staging a node asks for: the pose, the depth and who the depth is
+ * relative to.
+ *
+ * A word the format does not know is a warning rather than an error: the stage
+ * falls back to the default, and a conversation must not fail to play over a
+ * spelling.
+ */
+function validateStaging(
+    nodeId: string,
+    node: Extract<DialogueNode, { type: 'character_enter' | 'character_action' }>,
+    context: ValidationContext,
+    collector: IssueCollector,
+): void {
+    const path = `nodes.${nodeId}`;
+
+    if (node.pose && !DIALOGUE_CHARACTER_POSES.includes(node.pose as never)) {
+        addWarning(
+            collector,
+            'unknown_pose',
+            `Node "${nodeId}" uses pose "${node.pose}", which the stage does not know. `
+            + `Use one of: ${DIALOGUE_CHARACTER_POSES.join(', ')}.`,
+            `${path}.pose`,
+        );
+    }
+
+    if (node.depth && !DIALOGUE_CHARACTER_DEPTHS.includes(node.depth as never)) {
+        addWarning(
+            collector,
+            'unknown_depth',
+            `Node "${nodeId}" uses depth "${node.depth}", which the stage does not know. `
+            + `Use one of: ${DIALOGUE_CHARACTER_DEPTHS.join(', ')}.`,
+            `${path}.depth`,
+        );
+    }
+
+    if (node.depth_of) {
+        if (!context.isKnownCharacter(node.depth_of)) {
+            addWarning(
+                collector,
+                'unknown_character',
+                `Node "${nodeId}" places its character relative to unknown character "${node.depth_of}".`,
+                `${path}.depth_of`,
+            );
+        }
+
+        if (node.depth_of === node.character_id) {
+            addWarning(
+                collector,
+                'self_referencing_depth',
+                `Node "${nodeId}" places "${node.character_id}" relative to themselves.`,
+                `${path}.depth_of`,
+            );
+        }
+    }
+}
+
+/**
+ * A question the player is asked needs a variable to hold the answer.
+ *
+ * A choice of options needs the options themselves: a question with an empty
+ * list cannot be answered, so it is an error rather than a warning.
+ */
+function validatePlayerInputNode(
+    nodeId: string,
+    node: Extract<DialogueNode, { type: 'player_input' }>,
+    collector: IssueCollector,
+): void {
+    const path = `nodes.${nodeId}`;
+
+    if (!node.question) {
+        addError(collector, 'missing_question', `Node "${nodeId}" asks the player nothing.`, `${path}.question`);
+    }
+
+    if (!node.variable) {
+        addError(
+            collector,
+            'missing_input_variable',
+            `Node "${nodeId}" does not say which variable holds the answer.`,
+            `${path}.variable`,
+        );
+    }
+
+    if (node.input_type === 'choice') {
+        if (!Array.isArray(node.options) || node.options.length === 0) {
+            addError(
+                collector,
+                'missing_input_options',
+                `Node "${nodeId}" asks the player to pick from a list but offers no options.`,
+                `${path}.options`,
+            );
+        }
     }
 }
 
@@ -548,10 +700,27 @@ function validateSegments(
         switch (segment.type) {
             case 'text':
             case 'styled_text':
+            case 'thought':
+            case 'whisper':
+            case 'shout':
                 if (typeof segment.value !== 'string') {
                     addError(collector, 'invalid_segment', `Segment ${index} of "${nodeId}" has no "value".`, path);
                 }
                 break;
+
+            case 'variable': {
+                // A variable reference names a value, not a piece of text: the
+                // engine looks it up when the line is shown.
+                if (typeof segment.value !== 'string' || segment.value.trim() === '') {
+                    addError(
+                        collector,
+                        'invalid_segment',
+                        `Segment ${index} of "${nodeId}" names no variable.`,
+                        path,
+                    );
+                }
+                break;
+            }
 
             case 'pause':
                 if (typeof segment.duration_ms !== 'number' || segment.duration_ms < 0) {
@@ -878,6 +1047,53 @@ function isComparableLiteral(value: unknown): boolean {
         || typeof value === 'boolean'
         || typeof value === 'string'
         || typeof value === 'number';
+}
+
+/**
+ * Warns about a line that speaks back a variable nobody asks for.
+ *
+ * The reference is not wrong — the game may hold the value from somewhere else
+ * — but in a dialogue that collects its own answers it means the author wrote
+ * a name no question fills, and the line would be spoken with a gap in it.
+ */
+function validateVariableReferences(
+    definition: DialogueDefinition,
+    collector: IssueCollector,
+): void {
+    const collected = new Set(collectInputVariables(definition));
+
+    for (const [nodeId, node] of Object.entries(definition.nodes ?? {})) {
+        if (node.type !== 'line' && node.type !== 'choice') {
+            continue;
+        }
+
+        const segments = node.type === 'line'
+            ? node.text
+            : (node.prompt?.text ?? []);
+
+        if (!Array.isArray(segments)) {
+            continue;
+        }
+
+        segments.forEach((segment, index) => {
+            if (!segment || segment.type !== 'variable') {
+                return;
+            }
+
+            const name = variableNameOf(segment.value);
+
+            if (name === '' || collected.has(name)) {
+                return;
+            }
+
+            addWarning(
+                collector,
+                'unknown_input_variable',
+                `Node "${nodeId}" speaks back "${segment.value}", but no question in this dialogue asks for it.`,
+                `nodes.${nodeId}.text[${index}]`,
+            );
+        });
+    }
 }
 
 function addError(collector: IssueCollector, code: string, message: string, path?: string): void {

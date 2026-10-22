@@ -213,6 +213,28 @@ function attackType(action: CombatAction): Attack['type'] {
     return action.damageType === 'physical' ? 'physical' : 'magical';
 }
 
+/**
+ * The short labels of the traits an action carries.
+ *
+ * A solar skill, a guaranteed critical or a pierce are invisible in the
+ * numbers on the card, so the card names them: the player can then read a
+ * ×0.5 at night as the hour of the day rather than as a bug.
+ */
+function toTraitLabels(action: CombatAction): string[] {
+    const labels: string[] = [];
+
+    if (action.solar) labels.push('Solar');
+    if (action.nocturnal) labels.push('Nocturnal');
+    if (action.ignoreAccuracy) labels.push('Always hits');
+    if (action.critChance > 0) labels.push(`Crit ${Math.round(action.critChance)}%`);
+    if (action.defensePierce > 0) labels.push(`Pierce ${Math.round(action.defensePierce * 100)}%`);
+    if (action.bonusVsHpBelow) {
+        labels.push(`Exec ${Math.round(action.bonusVsHpBelow.threshold * 100)}%`);
+    }
+
+    return labels;
+}
+
 /** One backend action as an attack card. */
 export function toAttackCard(action: CombatAction, actor?: CombatUnit | null): Attack {
     const costs = actor ? effectiveActionCost(actor, action) : action.costs;
@@ -225,6 +247,7 @@ export function toAttackCard(action: CombatAction, actor?: CombatUnit | null): A
         accuracy: action.accuracy,
         mana_cost: costs.mana,
         stamina_cost: costs.stamina,
+        traits: toTraitLabels(action),
     };
 }
 

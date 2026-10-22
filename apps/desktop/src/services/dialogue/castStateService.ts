@@ -3,6 +3,7 @@ import type {
     DialogueCastMemberView,
     DialogueCastView,
 } from '../../types/DialogueType';
+import { resolveAnimationSfx } from '../../constants/DialogueVocabulary';
 
 /**
  * Who is in the conversation, and what each of them looks like.
@@ -28,6 +29,12 @@ export interface CastMember {
     position: string;
     emotion: string | null;
     layer: number;
+    /** What the body does while standing there: `stand` or `sit`. */
+    pose: string | null;
+    /** Which side of the cast the character is drawn on: `back` or `front`. */
+    depth: string | null;
+    /** The character the depth is relative to, when it names one. */
+    depth_of: string | null;
 }
 
 /** The cast of a running conversation. */
@@ -65,6 +72,9 @@ export function enterCharacter(
     placement: {
         character_id: string;
         position?: string;
+        pose?: string;
+        depth?: string;
+        depth_of?: string;
         emotion?: string;
         animation_id?: string;
     },
@@ -77,6 +87,9 @@ export function enterCharacter(
         emotion: placement.emotion ?? existing?.emotion ?? null,
         // Defaults to the end of the queue, so whoever arrives later stands in front.
         layer: existing?.layer ?? state.members.size,
+        pose: placement.pose || existing?.pose || null,
+        depth: placement.depth || existing?.depth || null,
+        depth_of: placement.depth_of || existing?.depth_of || null,
     };
 
     state.members.set(member.character_id, member);
@@ -86,6 +99,71 @@ export function enterCharacter(
         character_id: member.character_id,
         position: member.position,
         animation_id: placement.animation_id ?? null,
+        pose: member.pose,
+        depth: member.depth,
+        depth_of: member.depth_of,
+        sfx_id: resolveAnimationSfx(placement.animation_id),
+    };
+}
+
+/**
+ * Changes someone who is already in the conversation.
+ *
+ * Only what the node states changes; anything left out keeps what the
+ * character already had. There is no entrance animation here — the character
+ * never left the stage — so the movement belongs to the pose: standing up
+ * while sitting down is what the node says.
+ *
+ * A character who is not on stage cannot be changed. The node is still
+ * reported, so the stage knows the author asked for a move that could not
+ * happen, but the cast itself is left alone.
+ */
+export function changeCharacter(
+    state: CastState,
+    placement: {
+        character_id: string;
+        position?: string;
+        pose?: string;
+        depth?: string;
+        depth_of?: string;
+        emotion?: string;
+        animation_id?: string;
+    },
+): DialogueCastEvent | null {
+    const member = state.members.get(placement.character_id);
+
+    if (!member) {
+        return null;
+    }
+
+    if (placement.position) {
+        member.position = placement.position;
+    }
+
+    if (placement.pose) {
+        member.pose = placement.pose;
+    }
+
+    // A new depth redefines the pair: naming a depth without naming who it is
+    // relative to puts the character in front of, or behind, the whole cast.
+    if (placement.depth) {
+        member.depth = placement.depth;
+        member.depth_of = placement.depth_of || '';
+    }
+
+    if (placement.emotion) {
+        member.emotion = placement.emotion;
+    }
+
+    return {
+        kind: 'action',
+        character_id: member.character_id,
+        position: member.position,
+        animation_id: placement.animation_id ?? null,
+        pose: member.pose,
+        depth: member.depth,
+        depth_of: member.depth_of,
+        sfx_id: resolveAnimationSfx(placement.animation_id),
     };
 }
 
@@ -96,8 +174,8 @@ export function enterCharacter(
  * character wears from then on, until another line or another entrance says
  * otherwise. Keeping it on the member — instead of leaving it to the
  * presentation layer to remember — is what stops a character snapping back to
- * the emotion they entered with the moment somebody else starts talking, and it
- * is what lets the stage be a pure function of the cast it is handed.
+ * the emotion they entered with the moment somebody else starts talking, and
+ * it is what lets the stage be a pure function of the cast it is handed.
  *
  * Returns whether anything changed. A character who is not on stage is left
  * alone: a line cannot dress somebody who was never brought in.
@@ -143,6 +221,7 @@ export function exitCharacter(
         character_id: characterId,
         animation_id: options.animation_id ?? null,
         direction: options.direction ?? null,
+        sfx_id: resolveAnimationSfx(options.animation_id),
     };
 }
 

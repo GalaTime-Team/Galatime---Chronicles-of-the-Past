@@ -149,12 +149,61 @@ export interface DialogueInteractiveTextSegment {
     };
 }
 
+/**
+ * Text the character thinks rather than says.
+ *
+ * A thought is not spoken, so the box draws it differently: it is the same
+ * wording in the same place, but the player is told it was only thought.
+ */
+export interface DialogueThoughtSegment {
+    type: 'thought';
+    value: string;
+}
+
+/** Text spoken quietly, in a whisper. */
+export interface DialogueWhisperSegment {
+    type: 'whisper';
+    value: string;
+}
+
+/** Text shouted. */
+export interface DialogueShoutSegment {
+    type: 'shout';
+    value: string;
+}
+
+/**
+ * A reference to a value the player gave the game.
+ *
+ * `value` is the *name* of the variable, not the text it holds: `input.name`,
+ * `name` or `elements`. The engine resolves it against the world's `input`
+ * slice when the line is shown, so the same line can be spoken back with
+ * whatever the player typed.
+ */
+export interface DialogueVariableSegment {
+    type: 'variable';
+    value: string;
+}
+
 /** One piece of a spoken line. */
 export type DialogueSegment =
     | DialogueTextSegment
     | DialogueStyledTextSegment
     | DialoguePauseSegment
-    | DialogueInteractiveTextSegment;
+    | DialogueInteractiveTextSegment
+    | DialogueThoughtSegment
+    | DialogueWhisperSegment
+    | DialogueShoutSegment
+    | DialogueVariableSegment;
+
+/**
+ * How a line reaches the player.
+ *
+ * `spoken` is the default and writes nothing in the file. The other three are
+ * the way a line is delivered, and the box draws each of them differently:
+ * a thought is not said out loud, a whisper is quiet and a shout is loud.
+ */
+export type DialogueDelivery = 'spoken' | 'thought' | 'whisper' | 'shout';
 
 // ---------------------------------------------------------------------------
 // Effects
@@ -292,7 +341,9 @@ export interface MusicRequest {
 export type DialogueNodeType =
     | 'line'
     | 'choice'
+    | 'player_input'
     | 'character_enter'
+    | 'character_action'
     | 'character_exit'
     | 'conditional'
     | 'end';
@@ -314,6 +365,15 @@ export interface LineNode {
      * through. The hold keeps the line readable; it is not an instant skip.
      */
     auto_advance?: boolean;
+    /**
+     * How the line is delivered.
+     *
+     * Absent (or `spoken`) is the ordinary case: the character says the line
+     * out loud. `thought` says it inwardly instead, and the whole line is
+     * drawn as a thought — a line may also mix the two, by using a `thought`
+     * segment for the part that is only thought.
+     */
+    delivery?: DialogueDelivery;
     text: DialogueSegment[];
     next?: string;
     /** Applied when the line is finished (on `continue`). */
@@ -370,8 +430,34 @@ export interface CharacterEnterNode {
     type: 'character_enter';
     character_id: string;
     position?: string;
+    /** What the body does while standing there: `stand` or `sit`. */
+    pose?: string;
+    /** Which side of the cast the character is drawn on: `back` or `front`. */
+    depth?: string;
+    /** Optional: "behind this character". Without it, the depth is the whole cast. */
+    depth_of?: string;
     animation_id?: string;
     emotion?: string;
+    next?: string;
+    effects_after?: DialogueEffect[];
+}
+
+/**
+ * Change someone who is already in the conversation.
+ *
+ * Only what changed is declared: a field left out keeps whatever the
+ * character already had. There is no entrance animation here — the character
+ * never left — so the node is about the pose, the place and the depth.
+ */
+export interface CharacterActionNode {
+    type: 'character_action';
+    character_id: string;
+    position?: string;
+    pose?: string;
+    depth?: string;
+    depth_of?: string;
+    emotion?: string;
+    animation_id?: string;
     next?: string;
     effects_after?: DialogueEffect[];
 }
@@ -394,6 +480,40 @@ export interface ConditionalBranch {
     next: string;
 }
 
+/**
+ * A question the game asks the player.
+ *
+ * The conversation stops here and waits for an answer: free text (the
+ * player's name, a nickname) or a pick from a short list (an element, a
+ * stance). Either way the answer lands in `input.<variable>` and stays there,
+ * so a later line can speak it back (`{input.<variable>}`) and a condition can
+ * compare against it.
+ */
+export interface PlayerInputNode {
+    type: 'player_input';
+    /** What the player is asked. Shown above the answer field. */
+    question: string;
+    /** The name the answer is stored under: `input.<variable>`. */
+    variable: string;
+    /** `text` for free typing, `choice` for a pick from `options`. */
+    input_type?: 'text' | 'choice';
+    /** The hint shown in an empty text field. */
+    placeholder?: string;
+    /** The labels the player may pick from, when `input_type` is `choice`. */
+    options?: string[];
+    next?: string;
+    effects_after?: DialogueEffect[];
+}
+
+/** What the player is being asked, as the presentation layer draws it. */
+export interface DialogueInputRequest {
+    question: string;
+    variable: string;
+    input_type: 'text' | 'choice';
+    placeholder: string;
+    options: string[];
+}
+
 /** An automatic branch resolved without player input. */
 export interface ConditionalNode {
     type: 'conditional';
@@ -412,7 +532,9 @@ export interface EndNode {
 export type DialogueNode =
     | LineNode
     | ChoiceNode
+    | PlayerInputNode
     | CharacterEnterNode
+    | CharacterActionNode
     | CharacterExitNode
     | ConditionalNode
     | EndNode;
@@ -423,7 +545,14 @@ export type DialogueNode =
 
 /** A parsed dialogue file. */
 export interface DialogueDefinition {
-    dialogue_id: string;
+    /**
+     * The id the file declares, when it declares one.
+     *
+     * The **file name** is the dialogue's identity — that is what other
+     * dialogues reference — so the field is optional and only kept to warn
+     * about a file whose own id disagrees with its name.
+     */
+    dialogue_id?: string;
     start_node: string;
     /** Gate checked before the conversation is allowed to start. */
     entry_conditions?: ConditionNode;
@@ -441,7 +570,7 @@ export interface DialogueDefinition {
  * clicking a segment is an alternative route, not a replacement for advancing.
  * The presentation layer discovers interactive segments by inspecting `text`.
  */
-export type DialogueNextAction = 'continue' | 'choose' | 'end';
+export type DialogueNextAction = 'continue' | 'choose' | 'input' | 'end';
 
 /** A choice as the presentation layer should render it. */
 export interface DialogueChoiceView {
@@ -458,12 +587,20 @@ export interface DialogueChoiceView {
  * `emotion` is what the sprite matcher reads. `layer` is the order they were
  * brought in, so someone who arrives later stands in front of someone who was
  * already there.
+ *
+ * `pose`, `depth` and `depth_of` are the staging the dialogue asked for:
+ * what the body does while standing there, and which side of the cast the
+ * character is drawn on. `depth_of` names the character the depth is relative
+ * to; without it the depth holds against the whole cast.
  */
 export interface DialogueCastMemberView {
     character_id: string;
     position: string;
     emotion: string | null;
     layer: number;
+    pose: string | null;
+    depth: string | null;
+    depth_of: string | null;
 }
 
 /**
@@ -479,7 +616,7 @@ export interface DialogueCastView {
 }
 
 /** Kind of cast change, so the stage can animate the right thing. */
-export type DialogueCastEventKind = 'enter' | 'exit';
+export type DialogueCastEventKind = 'enter' | 'action' | 'exit';
 
 /** A cast change produced while resolving nodes. */
 export interface DialogueCastEvent {
@@ -489,6 +626,20 @@ export interface DialogueCastEvent {
     animation_id?: string | null;
     /** Direction a character leaves in. */
     direction?: string | null;
+    /** The pose the character is in after the change. */
+    pose?: string | null;
+    /** The side of the cast the character is drawn on after the change. */
+    depth?: string | null;
+    /** The character the depth is relative to, when it names one. */
+    depth_of?: string | null;
+    /**
+     * The sound the movement makes, resolved from the animation.
+     *
+     * `walk`, `run`, `get_up` or `get_down`. The engine resolves it here so the
+     * stage only has to play what it is told, and the sound a movement makes
+     * is decided in one place instead of in every animation.
+     */
+    sfx_id?: string | null;
 }
 
 /** The node the presentation layer should show right now. */
@@ -508,6 +659,14 @@ export interface DialogueNodeView {
      * presentation layer can treat it as "this node does not need input".
      */
     auto_advance: boolean;
+    /** How the line is delivered. Absent means spoken out loud. */
+    delivery: DialogueDelivery;
+    /**
+     * The question the player is being asked, on a `player_input` node.
+     *
+     * `null` on every other kind of node.
+     */
+    input_request: DialogueInputRequest | null;
 }
 
 /** Lifecycle of a dialogue session. */
@@ -580,6 +739,8 @@ export type DialogueErrorCode =
     | 'choice_not_found'
     | 'choice_unavailable'
     | 'interaction_not_found'
+    | 'input_not_found'
+    | 'input_invalid'
     | 'unknown_character'
     | 'invalid_effect'
     | 'insufficient_item'

@@ -14,6 +14,7 @@ import { DIALOGUE_AUTO_CLOSE_HOLD_MS } from '../../../constants/DialogueConstant
 import GameDialogue, { type GameDialogueHandle } from './GameDialogue';
 import { DialogueChoiceList } from './DialogueChoiceList';
 import { DialogueCastStage } from './DialogueCastStage';
+import { DialoguePlayerInput } from './DialoguePlayerInput';
 import {
     DialogueErrorPanel,
     DialogueLoadingPanel,
@@ -117,12 +118,19 @@ export function DialogueView({
         advance,
         choose,
         interact,
+        submit,
         reportTyping,
         finish,
     } = session;
 
     const node = response?.current_node ?? null;
-    const showBox = node !== null;
+
+    /**
+     * A question the game asks has no line to type, so it takes the place of
+     * the box rather than sitting under it.
+     */
+    const inputRequest = node?.type === 'player_input' ? node.input_request : null;
+    const showBox = node !== null && inputRequest === null;
 
     const worldStateRef = useRef(worldState);
     worldStateRef.current = worldState;
@@ -220,6 +228,11 @@ export function DialogueView({
 
                 case 'waiting_for_input':
                     advance();
+                    return;
+
+                case 'awaiting_answer':
+                    // The game is asking something: the answer comes from the
+                    // question panel, not from the advance control.
                     return;
 
                 case 'showing_choices': {
@@ -338,6 +351,15 @@ export function DialogueView({
 
             {/* The box, and the panels that replace it. */}
             <div className="relative z-10 flex shrink-0 flex-col items-end px-4 pb-4">
+                {inputRequest && (
+                    <DialoguePlayerInput
+                        request={inputRequest}
+                        onSubmit={submit}
+                        disabled={status === 'processing_action'}
+                        className="w-full"
+                    />
+                )}
+
                 {showBox && (
                     <GameDialogue
                         ref={dialogueRef}

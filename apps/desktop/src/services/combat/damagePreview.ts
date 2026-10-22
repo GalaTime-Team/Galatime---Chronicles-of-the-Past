@@ -16,6 +16,7 @@ import type {
     CombatActionImpact,
     CombatElementIndex,
     CombatRandom,
+    CombatTimePhase,
     CombatUnit,
 } from '../../types/CombatType';
 import { foldAttackModifiers } from './abilityModifiers';
@@ -57,6 +58,10 @@ export interface PreviewImpactParams {
     units: readonly CombatUnit[];
     elementIndex: CombatElementIndex;
     random: CombatRandom;
+    /** The hour of the day the fight happens at. */
+    timePhase: CombatTimePhase;
+    /** The defender's remaining health, as a fraction of its maximum. */
+    defenderHpFraction?: number;
 }
 
 /**
@@ -67,7 +72,7 @@ export interface PreviewImpactParams {
  * braces or buffs moves no health, so its `hpDelta` is `0`.
  */
 export function previewImpact(params: PreviewImpactParams): CombatActionImpact {
-    const { actor, action, target, units, elementIndex, random } = params;
+    const { actor, action, target, units, elementIndex, random, timePhase } = params;
 
     // One damage calculation for the whole game: the preview reads the same
     // inputs a real hit would use, minus the dice (`roll: false`). The ability
@@ -78,11 +83,14 @@ export function previewImpact(params: PreviewImpactParams): CombatActionImpact {
         attackerStats: effectiveStats(actor),
         defenderStats: effectiveStats(target),
         defenderElementIds: target.elementIds,
+        defender: target,
         elementIndex,
         attackerLine: actor.line,
         defenderLine: target.line,
         sameSide: actor.side === target.side,
         defenderDefending: target.defending,
+        timePhase,
+        defenderHpFraction: params.defenderHpFraction,
         modifier: foldAttackModifiers(
             target,
             { damageType: action.damageType, elementId: action.elementId },

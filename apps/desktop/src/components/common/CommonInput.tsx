@@ -46,6 +46,13 @@ interface CommonInputProps {
     descriptionClassName?: string;
     /** Counter classes */
     counterClassName?: string;
+    /**
+     * The field itself, for a caller that needs to focus it.
+     *
+     * A question the game asks should have the caret in it from the start, so
+     * the player can answer without reaching for the mouse.
+     */
+    inputRef?: React.Ref<HTMLInputElement>;
 }
 
 const segmenter =
@@ -78,6 +85,7 @@ const CommonInput: React.FC<CommonInputProps> = ({
     inputClassName = '',
     descriptionClassName = '',
     counterClassName = '',
+    inputRef,
 }) => {
     const isTitleLeft = variant === 'title-left';
     const isBare = variant === 'bare';
@@ -137,6 +145,7 @@ const CommonInput: React.FC<CommonInputProps> = ({
                 >
                     <div className={`flex flex-col items-center justify-center ${stretchClassName}`}>
                         <input
+                            ref={inputRef}
                             type={type}
                             value={value}
                             onChange={handleChange}

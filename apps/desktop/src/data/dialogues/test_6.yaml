@@ -1258,21 +1258,21 @@ nodes:
   ramificacao_2:
     type: conditional
     branches:
-      - branch_id: ramo
+      - branch_id: ramo_1
         if:
           all:
             - condition: equals
               left: flags.curious_stab
               right: false
         next: fim_good
-      - branch_id: ""
+      - branch_id: ramo_2
         if:
           all:
             - condition: equals
               left: flags.curious_stab
               right: true
         next: acao_4
-      - branch_id: ramo
+      - branch_id: ramo_3
         next: fim_error
 
   acao_4:

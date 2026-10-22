@@ -18,6 +18,13 @@ export interface Attack {
     accuracy: number;
     mana_cost: number;
     stamina_cost: number;
+    /**
+     * The short labels of the action's traits (`Solar`, `Crit 30%`).
+     *
+     * The traits change what the numbers on the card are worth, so they are
+     * named on the card itself rather than hidden in a tooltip.
+     */
+    traits?: string[];
     /** The backend refuses this action right now, so the card is drawn out of reach. */
     disabled?: boolean;
     /** Why it is refused, in the player's words (`Not enough mana.`). */
@@ -53,7 +60,7 @@ const AttackCard: React.FC<AttackCardProps> = ({
     disabledReason,
     className = "",
 }) => {
-    const { title, elementId, type, power, accuracy, mana_cost, stamina_cost } = attack;
+    const { title, elementId, type, power, accuracy, mana_cost, stamina_cost, traits } = attack;
     const [isElementTooltipVisible, setIsElementTooltipVisible] = useState(false);
     const [isAttackTypeTooltipVisible, setIsAttackTypeTooltipVisible] = useState(false);
 
@@ -165,6 +172,17 @@ const AttackCard: React.FC<AttackCardProps> = ({
                             <span className="text-white">{stamina_cost}</span>
                         </div>
                     </div>
+
+                    {/* The action's traits, named so the numbers can be read. */}
+                    {traits && traits.length > 0 && (
+                        <div className="flex flex-wrap items-center gap-1 pl-14 text-[10px] uppercase tracking-[0.12em] text-white/50">
+                            {traits.map((trait) => (
+                                <span key={trait} className="border border-white/25 px-1 leading-4">
+                                    {trait}
+                                </span>
+                            ))}
+                        </div>
+                    )}
 
                     {/* Bottom Right: Type image */}
                     <div

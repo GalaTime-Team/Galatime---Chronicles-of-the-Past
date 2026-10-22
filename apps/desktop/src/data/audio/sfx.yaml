@@ -7,3 +7,15 @@
 - id: denied
   src: ../assets/sounds/denied.ogg
   loop: false
+- id: walk
+  src: ../assets/sounds/walk.ogg
+  loop: false
+- id: run
+  src: ../assets/sounds/run.ogg
+  loop: false
+- id: get_down
+  src: ../assets/sounds/get_down.ogg
+  loop: false
+- id: get_up
+  src: ../assets/sounds/get_up.ogg
+  loop: false

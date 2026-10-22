@@ -1,0 +1,613 @@
+# Gerado pelo Dialogue Forger. Comentários do ficheiro original não são preservados.
+
+start_node: entra
+nodes:
+  entra:
+    type: character_enter
+    character_id: neven
+    position: center
+    animation_id: step_in_from_left
+    emotion: neutral
+    next: entra_2
+
+  entra_2:
+    type: character_enter
+    character_id: pacci
+    position: center_left
+    animation_id: step_in_from_left
+    emotion: neutral
+    next: entra_3
+
+  entra_3:
+    type: character_enter
+    character_id: noelia
+    position: left
+    animation_id: step_in_from_left
+    emotion: neutral
+    next: fala
+
+  fala:
+    type: line
+    speaker_id: noelia
+    emotion: suspicious
+    animation_id: idle
+    text:
+      - type: text
+        value: Why does that bird face live in the woods?
+    next: fala_2
+
+  fala_2:
+    type: line
+    speaker_id: pacci
+    emotion: neutral
+    animation_id: idle
+    text:
+      - type: text
+        value: I asked him that same question once. Apparently it's because that way, he doesn't have to go far in order to gather ingredients.
+    next: fala_3
+
+  fala_3:
+    type: line
+    speaker_id: noelia
+    emotion: annoyed
+    animation_id: idle
+    text:
+      - type: text
+        value: "I call bull on that! The city is not "
+      - type: styled_text
+        value: that
+        style:
+          bold: true
+      - type: text
+        value: " far from the forest!"
+    next: fala_4
+
+  fala_4:
+    type: line
+    speaker_id: neven
+    emotion: like
+    animation_id: idle
+    text:
+      - type: text
+        value: .
+    next: fala_5
+
+  fala_5:
+    type: line
+    speaker_id: pacci
+    emotion: neutral
+    animation_id: idle
+    text:
+      - type: text
+        value: Who knows? Maybe he also likes nature.
+    next: fala_6
+
+  fala_6:
+    type: line
+    speaker_id: noelia
+    emotion: unsure
+    animation_id: idle
+    text:
+      - type: text
+        value: I don't know. That nerd has to have a secret reason.
+    next: fala_7
+
+  fala_7:
+    type: line
+    speaker_id: neven
+    emotion: concerned
+    animation_id: idle
+    text:
+      - type: text
+        value: ...
+    next: fala_8
+
+  fala_8:
+    type: line
+    speaker_id: pacci
+    emotion: concerned
+    animation_id: idle
+    text:
+      - type: text
+        value: Hey, Noelia. Why do you keep insulting Raphael?
+    next: fala_9
+
+  fala_9:
+    type: line
+    speaker_id: noelia
+    emotion: annoyed
+    animation_id: idle
+    text:
+      - type: text
+        value: "Because he is annoying, as heck. "
+    next: fala_10
+
+  fala_10:
+    type: line
+    speaker_id: noelia
+    emotion: neutral
+    animation_id: idle
+    text:
+      - type: text
+        value: I mean, don't get me wrong. I'm grateful that he took care of you, truly.
+    next: fala_11
+
+  fala_11:
+    type: line
+    speaker_id: noelia
+    emotion: suspicious
+    animation_id: idle
+    text:
+      - type: text
+        value: But he's just so... weird and annoying.
+    next: fala_12
+
+  fala_12:
+    type: line
+    speaker_id: pacci
+    emotion: unsure
+    animation_id: idle
+    text:
+      - type: text
+        value: Why?
+    next: fala_13
+
+  fala_13:
+    type: line
+    speaker_id: noelia
+    emotion: annoyed
+    animation_id: idle
+    text:
+      - type: text
+        value: Well for one, his jokes aren't funny... At all!
+    next: fala_14
+
+  fala_14:
+    type: line
+    speaker_id: neven
+    emotion: nervous
+    animation_id: idle
+    text:
+      - type: text
+        value: ...
+    next: fala_15
+
+  fala_15:
+    type: line
+    speaker_id: noelia
+    emotion: annoyed
+    animation_id: idle
+    text:
+      - type: text
+        value: He is somehow strong and weak at the same time.
+    next: fala_16
+
+  fala_16:
+    type: line
+    speaker_id: pacci
+    emotion: unsure
+    animation_id: idle
+    delivery: thought
+    text:
+      - type: text
+        value: "It "
+      - type: styled_text
+        value: is
+        style:
+          bold: true
+      - type: text
+        value: " weird how he is strong enough to punch a door open but doesn't hurt much with a weapon..."
+    next: fala_17
+
+  fala_17:
+    type: line
+    speaker_id: noelia
+    emotion: surprised
+    animation_id: idle
+    text:
+      - type: text
+        value: He's always wearing a doctors outfit, even though he isn't a doctor.
+    next: fala_18
+
+  fala_18:
+    type: line
+    speaker_id: pacci
+    emotion: thinking
+    animation_id: idle
+    text:
+      - type: text
+        value: Come to think about it... Neven, have you ever seen Raphael wearing anything else?
+    next: fala_19
+
+  fala_19:
+    type: line
+    speaker_id: neven
+    emotion: nervous
+    animation_id: idle
+    text:
+      - type: text
+        value: "*Shakes head*"
+    next: fala_20
+
+  fala_20:
+    type: line
+    speaker_id: noelia
+    emotion: suspicious
+    animation_id: idle
+    text:
+      - type: text
+        value: See? Isn't that weird?
+    next: fala_21
+
+  fala_21:
+    type: line
+    speaker_id: noelia
+    emotion: annoyed
+    animation_id: idle
+    text:
+      - type: text
+        value: But the weirdest thing of all, is the fact that he speaks like he talks like someone is watching us!
+    next: fala_22
+
+  fala_22:
+    type: line
+    speaker_id: pacci
+    emotion: suspicious
+    animation_id: idle
+    delivery: thought
+    text:
+      - type: text
+        value: She's right. Why does he do that?
+    next: fala_23
+
+  fala_23:
+    type: line
+    speaker_id: neven
+    emotion: concerned
+    animation_id: idle
+    text:
+      - type: text
+        value: ...
+    next: fala_24
+
+  fala_24:
+    type: line
+    speaker_id: noelia
+    emotion: neutral
+    animation_id: idle
+    text:
+      - type: text
+        value: Anyway. I could go on and on, but you get my point. I just can't feel at ease with someone so... bizarre.
+    next: fala_25
+
+  fala_25:
+    type: line
+    speaker_id: pacci
+    emotion: neutral
+    animation_id: idle
+    text:
+      - type: text
+        value: Yeah. He's a tad odd. They say most alchemists have some... odd traits with them.
+    next: fala_26
+
+  fala_26:
+    type: line
+    speaker_id: pacci
+    emotion: happy
+    animation_id: idle
+    text:
+      - type: text
+        value: But trust me, he's a good guy. It's just a matter of getting used to his... quirks.
+    next: fala_27
+
+  fala_27:
+    type: line
+    speaker_id: neven
+    emotion: like
+    animation_id: idle
+    text:
+      - type: text
+        value: .
+    next: fala_28
+
+  fala_28:
+    type: line
+    speaker_id: noelia
+    emotion: unsure
+    animation_id: idle
+    text:
+      - type: text
+        value: If you say so...
+    next: fala_29
+
+  fala_29:
+    type: line
+    speaker_id: neven
+    emotion: neutral
+    animation_id: idle
+    text:
+      - type: text
+        value: ...
+    next: fala_30
+
+  fala_30:
+    type: line
+    speaker_id: pacci
+    emotion: neutral
+    animation_id: idle
+    text:
+      - type: text
+        value: ...
+    next: fala_31
+
+  fala_31:
+    type: line
+    speaker_id: noelia
+    emotion: neutral
+    animation_id: idle
+    text:
+      - type: text
+        value: ...
+    next: fala_32
+
+  fala_32:
+    type: line
+    speaker_id: noelia
+    emotion: neutral
+    animation_id: idle
+    text:
+      - type: text
+        value: Hey guys, I have a question.
+    next: fala_33
+
+  fala_33:
+    type: line
+    speaker_id: pacci
+    emotion: neutral
+    animation_id: idle
+    text:
+      - type: text
+        value: What is it?
+    next: fala_34
+
+  fala_34:
+    type: line
+    speaker_id: noelia
+    emotion: neutral
+    animation_id: idle
+    text:
+      - type: text
+        value: "Does he also tease you guys with the whole:"
+    next: fala_35
+
+  fala_35:
+    type: line
+    speaker_id: noelia
+    emotion: happy
+    animation_id: idle
+    text:
+      - type: styled_text
+        value: "\"So, have you a girlfriend yet?\""
+        style:
+          wave: normal
+          wave_speed: 0.8
+    next: fala_36
+
+  fala_36:
+    type: line
+    speaker_id: neven
+    emotion: annoyed
+    animation_id: idle
+    text:
+      - type: text
+        value: "*nods*"
+    next: fala_37
+
+  fala_37:
+    type: line
+    speaker_id: pacci
+    emotion: annoyed
+    animation_id: idle
+    text:
+      - type: text
+        value: "Oh my gods, yes! Sometimes he goes up to me and says:"
+    next: fala_38
+
+  fala_38:
+    type: line
+    speaker_id: pacci
+    emotion: happy
+    animation_id: idle
+    text:
+      - type: styled_text
+        value: "\"So, has the love bird written a letter to his girlfriend yet?\""
+        style:
+          wave: normal
+          wave_speed: 0.8
+    next: fala_39
+
+  fala_39:
+    type: line
+    speaker_id: pacci
+    emotion: annoyed
+    animation_id: idle
+    text:
+      - type: text
+        value: "It's not like I'm dating Ana or anything, we're just friends! "
+      - type: thought
+        value: Wish I was though.
+    next: fala_40
+
+  fala_40:
+    type: line
+    speaker_id: neven
+    emotion: concerned
+    animation_id: idle
+    text:
+      - type: text
+        value: ...
+    next: fala_41
+
+  fala_41:
+    type: line
+    speaker_id: noelia
+    emotion: thinking
+    animation_id: idle
+    text:
+      - type: text
+        value: ...
+    next: fala_42
+
+  fala_42:
+    type: line
+    speaker_id: noelia
+    emotion: happy
+    animation_id: idle
+    text:
+      - type: text
+        value: I've got an idea. Why don't we tease him too?
+    next: fala_43
+
+  fala_43:
+    type: line
+    speaker_id: pacci
+    emotion: suspicious
+    animation_id: idle
+    text:
+      - type: text
+        value: How so?
+    next: fala_44
+
+  fala_44:
+    type: line
+    speaker_id: noelia
+    emotion: happy
+    animation_id: idle
+    text:
+      - type: text
+        value: You know, I've noticed that Kelly has been spending a lot of time with Raphael...
+    next: fala_45
+
+  fala_45:
+    type: line
+    speaker_id: neven
+    emotion: concerned
+    animation_id: idle
+    text:
+      - type: text
+        value: ...
+    next: fala_46
+
+  fala_46:
+    type: line
+    speaker_id: pacci
+    emotion: thinking
+    animation_id: idle
+    text:
+      - type: text
+        value: ... Now that you mention it.
+    next: fala_47
+
+  fala_47:
+    type: line
+    speaker_id: pacci
+    emotion: concerned
+    animation_id: idle
+    text:
+      - type: text
+        value: She has spent a lot of time with him.
+    next: fala_48
+
+  fala_48:
+    type: line
+    speaker_id: noelia
+    emotion: happy
+    animation_id: idle
+    text:
+      - type: text
+        value: See!? It's suspicious!
+    next: fala_49
+
+  fala_49:
+    type: line
+    speaker_id: noelia
+    emotion: happy
+    animation_id: idle
+    text:
+      - type: text
+        value: So my idea is, why don't we tease him the same way he does to you?
+    next: fala_50
+
+  fala_50:
+    type: line
+    speaker_id: neven
+    emotion: neutral
+    animation_id: idle
+    text:
+      - type: text
+        value: ...
+    next: fala_51
+
+  fala_51:
+    type: line
+    speaker_id: pacci
+    emotion: unsure
+    animation_id: idle
+    text:
+      - type: text
+        value: I don't know...
+    next: fala_52
+
+  fala_52:
+    type: line
+    speaker_id: noelia
+    emotion: neutral
+    animation_id: idle
+    text:
+      - type: text
+        value: Come on! It will be fun!
+    next: fala_53
+
+  fala_53:
+    type: line
+    speaker_id: pacci
+    emotion: neutral
+    animation_id: idle
+    text:
+      - type: text
+        value: ...
+    next: fala_54
+
+  fala_54:
+    type: line
+    speaker_id: pacci
+    emotion: happy
+    animation_id: idle
+    text:
+      - type: text
+        value: Oh ok. We'll do it.
+    next: fala_55
+
+  fala_55:
+    type: line
+    speaker_id: neven
+    emotion: like
+    animation_id: idle
+    text:
+      - type: text
+        value: .
+    next: fala_56
+
+  fala_56:
+    type: line
+    speaker_id: noelia
+    emotion: happy
+    animation_id: idle
+    text:
+      - type: text
+        value: Wonderful. And his house is just over there. Just follow my lead.
+    next: fim
+
+  fim:
+    type: end
+    result: comical

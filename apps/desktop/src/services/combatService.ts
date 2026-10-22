@@ -46,10 +46,14 @@ import { previewImpact } from './combat/damagePreview';
 import { reapDefeated } from './combat/defeatResolver';
 import {
     changeResource,
+    areSkillsPrevented,
+    effectiveStats,
     isActionPrevented,
     preventedActionKinds,
     tickUnitEffects,
 } from './combat/effectResolver';
+import { recordTimelineSnapshot } from './combat/rewind';
+import { resolveFightHour, timePhaseForHour } from './state/worldClock';
 import { tickResourceRegen } from './combat/resourceRegen';
 import { getEncounter, getAllEncounters } from './combat/encounterLoader';
 import { lootChanceMultiplier, rollCombatLoot } from './combat/lootService';
@@ -175,6 +179,12 @@ function currentUnit(state: CombatState): CombatUnit | null {
     return state.units.find((unit) => unit.id === state.order[state.turnIndex]) ?? null;
 }
 
+/** How much of its maximum health a unit still has, as a fraction. */
+function hpFraction(unit: CombatUnit): number {
+    const stats = effectiveStats(unit);
+    return stats.maxHp > 0 ? unit.currentHp / stats.maxHp : 0;
+}
+
 function findUnit(state: CombatState, unitId: string): CombatUnit | null {
     return state.units.find((unit) => unit.id === unitId) ?? null;
 }
@@ -190,6 +200,8 @@ function actionAvailability(state: CombatState, actor: CombatUnit, action: Comba
     // A `silenced`-style status forbids the action outright; the reference schema
     // uses `attack` as the umbrella for the offensive kinds.
     if (isActionPrevented(action, preventedActionKinds(actor))) return 'action_unavailable';
+    // A sealed unit may not use its skills, though it may still brace or rest.
+    if (action.kind === 'skill' && areSkillsPrevented(actor)) return 'action_unavailable';
     if ((actor.cooldowns[action.id] ?? 0) > 0) return 'action_on_cooldown';
 
     // A ranged weapon with no rounds left cannot be fired (Fairy Bow).
@@ -203,6 +215,9 @@ function actionAvailability(state: CombatState, actor: CombatUnit, action: Comba
     const costs = effectiveActionCost(actor, action);
     if (actor.currentMana < costs.mana) return 'insufficient_mana';
     if (actor.currentStamina < costs.stamina) return 'insufficient_stamina';
+    // A skill that costs blood cannot be paid for with more blood than there is:
+    // the price would kill its own user.
+    if (costs.hp > 0 && costs.hp >= actor.currentHp) return 'action_unavailable';
     if (!isRangeAllowedFromLine(action.range, actor.line)) return 'out_of_range';
 
     if (action.kind === 'switch_line') {
@@ -235,6 +250,9 @@ function payCosts(actor: CombatUnit, action: CombatAction): CombatEvent[] {
         ...changeResource(actor, 'stamina', -costs.stamina),
     ];
 
+    // A skill that costs health takes it from its own user.
+    if (costs.hp > 0) events.push(...changeResource(actor, 'hp', -costs.hp));
+
     if (costs.cooldown > 0) actor.cooldowns[action.id] = costs.cooldown;
     return events;
 }
@@ -248,6 +266,10 @@ function payCosts(actor: CombatUnit, action: CombatAction): CombatEvent[] {
  */
 function beginUnitTurn(state: CombatState, unit: CombatUnit, random: CombatRandom): CombatEvent[] {
     unit.defending = false;
+
+    // The unit's own past is recorded before anything changes, so a rewind can
+    // put it back here.
+    recordTimelineSnapshot(unit);
 
     // Idle regen pays FIRST: a status that drains mana this same turn must not
     // also erase the streak the regen was just paid from.
@@ -488,6 +510,12 @@ export async function startCombat(
     const sessionId = `combat_${sessionCounter}`;
     const random = options.random ?? Math.random;
 
+    // The hour of the day the fight happens at: the world clock's hour, unless
+    // the fight (or the caller) says otherwise. The sun does not move while two
+    // people are hitting each other, so the fight keeps this hour.
+    const hour = resolveFightHour(options.hour);
+    const timePhase = options.timePhase ?? encounter.timePhase ?? timePhaseForHour(hour);
+
     const state: CombatState = {
         sessionId,
         encounterId: encounter.id,
@@ -497,6 +525,8 @@ export async function startCombat(
         order: [],
         turnGauges: {},
         units,
+        hour,
+        timePhase,
         phase: 'active',
         outcome: null,
         log: [],
@@ -853,6 +883,8 @@ export function previewCombatDamage(
         units: state.units,
         elementIndex,
         random,
+        timePhase: state.timePhase,
+        defenderHpFraction: hpFraction(target),
     }));
 }
 

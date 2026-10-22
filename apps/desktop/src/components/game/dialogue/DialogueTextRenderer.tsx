@@ -43,8 +43,19 @@ import {
  * interaction, so a player who wants to find the branches themselves can.
  */
 
-export interface DialogueTextRendererProps {
-    segments: DialogueSegment[];
+/**
+ * How each way of speaking is drawn.
+ *
+ * A thought is dimmer and slanted, a whisper is slanted but not dim, and a
+ * shout is bold and bright. The wording never changes — only how it reads.
+ */
+const DELIVERY_CLASSES: Record<'thought' | 'whisper' | 'shout', string> = {
+    thought: 'italic text-white/55',
+    whisper: 'italic text-white/80',
+    shout: 'font-bold text-white',
+};
+
+export interface DialogueTextRendererProps {    segments: DialogueSegment[];
     /**
      * When false the clickable spans are shown as text but do nothing.
      *
@@ -348,6 +359,50 @@ export function DialogueTextRenderer({
                             ))}
                         </Fragment>
                     );
+                }
+
+                /**
+                 * A line that is not simply spoken.
+                 *
+                 * A thought is not said out loud, a whisper is quiet and a shout
+                 * is loud: the same words, told apart by how they are drawn. The
+                 * wording and the measuring are the same as plain prose — only the
+                 * look changes — so the paginator counts these exactly as it
+                 * counts the words around them.
+                 */
+                if (segment.type === 'thought'
+                    || segment.type === 'whisper'
+                    || segment.type === 'shout') {
+                    const deliveryClass = DELIVERY_CLASSES[segment.type];
+
+                    if (!measureTokens) {
+                        return (
+                            <span key={index} className={deliveryClass}>
+                                {segment.value}
+                            </span>
+                        );
+                    }
+
+                    return (
+                        <Fragment key={index}>
+                            {splitSegmentWords(segment.value).map((range) => (
+                                <span
+                                    key={range.start}
+                                    data-dialogue-token={nextToken()}
+                                    className={deliveryClass}
+                                >
+                                    {segment.value.slice(range.start, range.end)}
+                                </span>
+                            ))}
+                        </Fragment>
+                    );
+                }
+
+                if (segment.type === 'variable') {
+                    // The engine resolves a variable into the value it holds
+                    // before the line reaches the box, so this is a fallback: the
+                    // reference is shown as it was written rather than dropped.
+                    return <Fragment key={index}>{`{${segment.value}}`}</Fragment>;
                 }
 
                 const css = toCss(segment.style);

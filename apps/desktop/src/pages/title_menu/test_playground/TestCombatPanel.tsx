@@ -10,6 +10,7 @@ import type {
     CombatUnit,
 } from '../../../types/CombatType';
 import { TestCombatLog } from './components/TestCombatLog';
+import { getWorldHour, setWorldHour } from '../../../services/state/worldClock';
 import {
     buildEncounter,
     catalogueKey,
@@ -41,6 +42,13 @@ export function TestCombatPanel() {
     const [encounter, setEncounter] = useState<CombatEncounterData | null>(null);
     const [logEvents, setLogEvents] = useState<CombatEvent[]>([]);
     const [logUnits, setLogUnits] = useState<CombatUnit[]>([]);
+    /**
+     * The hour of the day the next fight happens at.
+     *
+     * The fight takes the world clock's hour, so moving it here moves the
+     * world's clock — which is how a solar or nocturnal skill is tried out.
+     */
+    const [hour, setHour] = useState(getWorldHour());
 
     useEffect(() => {
         let cancelled = false;
@@ -126,6 +134,11 @@ export function TestCombatPanel() {
         <TestCombatSetup
             setup={setup}
             entities={entities}
+            hour={hour}
+            onHourChange={(next) => {
+                setHour(next);
+                setWorldHour(next);
+            }}
             onFill={(side, line, index, entity) => setSetup((current) => fillSlot(current, side, line, index, entity))}
             onClear={(side, line, index) => setSetup((current) => clearSlot(current, side, line, index))}
             onToggleControl={(side, line, index) => setSetup((current) => toggleControlled(current, side, line, index))}

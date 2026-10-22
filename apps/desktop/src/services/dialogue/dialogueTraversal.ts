@@ -29,7 +29,9 @@ export function collectAllNodeIds(definition: DialogueDefinition): string[] {
 export function collectOutgoingNodeIds(node: DialogueNode): string[] {
     switch (node.type) {
         case 'character_enter':
-        case 'character_exit': {
+        case 'character_action':
+        case 'character_exit':
+        case 'player_input': {
             return node.next ? [node.next] : [];
         }
 
@@ -125,7 +127,17 @@ export function collectReferencedCharacterIds(definition: DialogueDefinition): s
             ids.add(node.prompt.speaker_id);
         }
 
-        if (node.type === 'character_enter' || node.type === 'character_exit') {
+        if (node.type === 'character_enter' || node.type === 'character_action') {
+            ids.add(node.character_id);
+
+            // A depth may be relative to somebody, so that somebody is a
+            // character the dialogue mentions too.
+            if (node.depth_of) {
+                ids.add(node.depth_of);
+            }
+        }
+
+        if (node.type === 'character_exit') {
             ids.add(node.character_id);
         }
     }
@@ -152,4 +164,23 @@ export function collectReferencedDialogueIds(definition: DialogueDefinition): st
 
     ids.delete('');
     return [...ids];
+}
+
+/**
+ * The variables the dialogue collects.
+ *
+ * A "call to action" node asks the player something and names the variable the
+ * answer lands in. A line that speaks a variable back can only do so if some
+ * node asks for it, which is what the validator checks.
+ */
+export function collectInputVariables(definition: DialogueDefinition): string[] {
+    const names = new Set<string>();
+
+    for (const node of Object.values(definition.nodes ?? {})) {
+        if (node.type === 'player_input' && node.variable) {
+            names.add(node.variable);
+        }
+    }
+
+    return [...names];
 }

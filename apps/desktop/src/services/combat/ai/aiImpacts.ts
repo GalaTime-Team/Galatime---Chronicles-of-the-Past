@@ -9,7 +9,8 @@
 
 import type { AiDecisionContext } from '../../../types/AiType';
 import type { CombatAction, CombatActionImpact, CombatUnit } from '../../../types/CombatType';
-import { normalizeAccuracy } from '../damageCalculator';
+import { effectiveAccuracy, normalizeAccuracy } from '../damageCalculator';
+import { effectiveStats } from '../effectResolver';
 import { previewImpact } from '../damagePreview';
 
 const impactCache = new WeakMap<AiDecisionContext, Map<string, CombatActionImpact>>();
@@ -37,6 +38,9 @@ export function impactFor(
         units: context.state.units,
         elementIndex: context.elementIndex,
         random: context.random,
+        // The AI reads the same hour of the day the fight does, so it stops
+        // reaching for a solar skill at night on its own.
+        timePhase: context.state.timePhase,
     });
     byPair.set(key, impact);
     return impact;
@@ -60,5 +64,9 @@ export function expectedDamageFor(
     if (impact.immune) return 0;
 
     const hits = Math.max(1, action.hitCount);
-    return impact.finalDamage * hits * (normalizeAccuracy(action.accuracy) / 100);
+    // The attacker's aim modifier counts: a buffed attacker lands more of what
+    // it aims, and the AI has to see that. The live stats are read, so a buff
+    // or a debuff is worth what it is worth.
+    const accuracy = effectiveAccuracy(action, effectiveStats(context.actor), effectiveStats(target));
+    return impact.finalDamage * hits * (normalizeAccuracy(accuracy) / 100);
 }

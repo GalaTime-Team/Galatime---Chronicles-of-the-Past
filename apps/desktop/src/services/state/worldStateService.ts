@@ -30,6 +30,7 @@ export const STATE_PATH_ROOTS = [
     'time',
     'dialogues',
     'paths',
+    'input',
 ] as const;
 
 /** A root segment of a state path. */
@@ -116,6 +117,8 @@ function changeKindForPath(parts: StatePathParts): StateChangeKind {
             return 'objective_changed';
         case 'paths':
             return 'path_unlocked';
+        case 'input':
+            return 'input_set';
         default:
             return 'stat_changed';
     }
@@ -154,6 +157,7 @@ export function createWorldState(input: WorldStateInput = {}): WorldState {
             unlocked: [...(input.dialogues?.unlocked ?? [])],
         },
         paths: { unlocked: [...(input.paths?.unlocked ?? [])] },
+        input: { ...(input.input ?? {}) },
         entityInventories: input.entityInventories
             ? Object.fromEntries(
                 Object.entries(input.entityInventories).map(([k, v]) => [k, { ...v }]),
@@ -277,6 +281,10 @@ export function readStatePath(state: WorldState, path: string): StatePathValue {
             return null;
         case 'paths':
             return parts.key === 'unlocked' ? [...state.paths.unlocked] : null;
+        case 'input':
+            // An answer the player gave during the conversation. Absent until
+            // the question that collects it is answered.
+            return state.input[parts.key] ?? null;
         default:
             return null;
     }

@@ -68,6 +68,81 @@ export function orderForStage(
 }
 
 /**
+ * The three bands a character can be drawn in.
+ *
+ * `back` is behind everybody, `front` is in front of everybody and a character
+ * with no depth at all sits in the middle, which is where the order they
+ * arrived in decides.
+ */
+const DEPTH_BANDS = { back: 0, middle: 1, front: 2 } as const;
+
+/**
+ * Sorts a cast by who is drawn in front of whom.
+ *
+ * **Depth comes first, and the order they arrived in breaks the tie.** A
+ * character marked `back` is behind everybody; one marked `front` is in front
+ * of everybody; one that names somebody (`depth_of`) is one band in front of
+ * that character, or one band behind.
+ *
+ * The bands are what make the relative case work: "behind Pacci" is a single
+ * step, so a character can stand between Pacci and the middle of the cast.
+ * A pair of characters that name each other would be a circle, and a circle
+ * has no answer — so the second one to be read stays in the middle instead of
+ * the walk going on forever.
+ */
+export function orderByDepth(
+    characters: DialogueCastMemberView[],
+): DialogueCastMemberView[] {
+    const byId = new Map(characters.map((character) => [character.character_id, character]));
+    const bands = new Map<string, number>();
+    const resolving = new Set<string>();
+
+    const bandOf = (characterId: string): number => {
+        const known = bands.get(characterId);
+
+        if (known !== undefined) {
+            return known;
+        }
+
+        const member = byId.get(characterId);
+
+        if (!member) {
+            return DEPTH_BANDS.middle;
+        }
+
+        // A circle has no answer; stop the walk and keep the default.
+        if (resolving.has(characterId)) {
+            return DEPTH_BANDS.middle;
+        }
+
+        resolving.add(characterId);
+
+        let band: number;
+
+        if (!member.depth) {
+            band = DEPTH_BANDS.middle;
+        } else if (member.depth_of && byId.has(member.depth_of)) {
+            const reference = bandOf(member.depth_of);
+            const step = member.depth === 'front' ? 1 : -1;
+
+            band = Math.min(DEPTH_BANDS.front, Math.max(DEPTH_BANDS.back, reference + step));
+        } else {
+            band = member.depth === 'front' ? DEPTH_BANDS.front : DEPTH_BANDS.back;
+        }
+
+        resolving.delete(characterId);
+        bands.set(characterId, band);
+
+        return band;
+    };
+
+    return characters.slice().sort((a, b) =>
+        bandOf(a.character_id) - bandOf(b.character_id)
+        || a.layer - b.layer,
+    );
+}
+
+/**
  * How many characters the stage draws at the size it was given.
  *
  * The count exists to protect the sprite's **height**. A character is sized by

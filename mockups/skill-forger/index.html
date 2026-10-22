@@ -7,6 +7,7 @@
     <link rel="stylesheet" href="assets/forger.css">
     <script src="https://cdn.jsdelivr.net/npm/js-yaml@4.1.0/dist/js-yaml.min.js" defer></script>
     <script src="scripts/model.js" defer></script>
+    <script src="scripts/engine.js" defer></script>
     <script src="scripts/app.js" defer></script>
 </head>
 <body>
@@ -16,6 +17,7 @@
             <nav class="view-switch" aria-label="Área de trabalho">
                 <button class="view-tab is-active" data-view="skills" type="button">Skills <span id="skill-count">0</span></button>
                 <button class="view-tab" data-view="trees" type="button">Skill-trees <span id="tree-count">0</span></button>
+                <button class="view-tab" data-view="simulator" type="button">Simulador</button>
             </nav>
             <div class="top-actions">
                 <span id="save-state" class="save-state"><i></i> Guardado neste dispositivo</span>
@@ -49,26 +51,33 @@
                         <button id="btn-delete-skill" class="button button-danger-quiet" type="button">Apagar</button>
                     </div>
                 </div>
+                <div id="skill-summary" class="skill-summary"></div>
                 <div id="empty-editor" class="empty-state" hidden>
-                    <h2>Começa uma nova skill</h2><p>O ID é criado a partir do nome e mantém-se estável depois da criação.</p>
-                    <button id="btn-empty-new" class="button button-primary" type="button">Criar skill</button>
+                    <h2>Começa uma nova skill</h2>
+                    <p>Escreve um nome e escolhe o elemento. O Forger cria a skill com valores por omissão, deriva o ID do nome e escreve a descrição por ti — depois é só afinar.</p>
+                    <form id="quick-create" class="quick-create" autocomplete="off">
+                        <input id="quick-name" class="control" placeholder="Nome da skill" aria-label="Nome da skill">
+                        <select id="quick-element" class="control" aria-label="Elemento da skill"></select>
+                        <button class="button button-primary" type="submit">Criar skill</button>
+                    </form>
+                    <div class="quick-create-foot"><button id="btn-empty-new" class="button button-quiet" type="button">Ou abre o editor completo</button></div>
                 </div>
                 <form id="skill-editor" autocomplete="off">
                     <section class="form-section basics-section">
-                        <div class="section-heading"><div><span class="step-number">01</span><div><h2>Identidade</h2><p>O elemento decide em que árvore a skill aparece.</p></div></div></div>
+                        <div class="section-heading"><div><span class="step-number">01</span><div><h2>Identidade</h2><p>Nome e elemento: o resto tem valores por omissão que podes mudar a qualquer momento.</p></div></div></div>
                         <div class="form-grid identity-grid">
-                            <label class="field field-wide"><span>Nome da skill <b>*</b></span><input class="control" name="name" placeholder="Ex.: Lança de Aqua" required></label>
-                            <label class="field"><span>Elemento <b>*</b></span><select class="control" name="element_id" required></select></label>
-                            <label class="field field-wide"><span>Descrição</span><textarea class="control" name="description" rows="2" placeholder="O que faz esta skill?"></textarea></label>
+                            <label class="field field-wide"><span>Nome da skill <b>*</b><span class="info-tip" tabindex="0" role="note" data-tip="O nome é a única coisa obrigatória. O ID (ex.: sunray) é derivado do nome quando a skill é criada e nunca mais muda — mudar o nome não muda o ID, para não quebrar as árvores.">i</span></span><input class="control" name="name" placeholder="Ex.: Lança de Aqua" required></label>
+                            <label class="field"><span>Elemento <b>*</b><span class="info-tip" tabindex="0" role="note" data-tip="O elemento decide a que árvore a skill pertence e qual é o multiplicador de dano contra cada elemento. Ex.: Lux é ×2 contra Umbra e ×0.5 contra Ignis.">i</span></span><select class="control" name="element_id" required></select></label>
+                            <label class="field field-wide"><span>Descrição<span class="info-tip" tabindex="0" role="note" data-tip="O que o jogador lê na ficha da skill. O botão “Gerar descrição” escreve uma frase a partir do que escolheste — reescreve o que quiseres.">i</span></span><textarea class="control" name="description" rows="2" placeholder="O que faz esta skill?"></textarea><div class="field-foot"><button id="btn-describe-skill" class="button button-small button-quiet" type="button">Gerar descrição</button><span id="description-counter" class="muted-label">0 caracteres</span></div></label>
                         </div>
                     </section>
 
                     <section class="form-section">
-                        <div class="section-heading"><div><span class="step-number">02</span><div><h2>Aprendizagem</h2><p>Os pré-requisitos podem vir de qualquer elemento.</p></div></div><div id="direct-cost" class="cost-pill">0 XP</div></div>
+                        <div class="section-heading"><div><span class="step-number">02</span><div><h2>Aprendizagem</h2><p>Onde a skill aparece na árvore e o que custa desbloqueá-la.</p></div></div><div id="direct-cost" class="cost-pill">0 XP</div></div>
                         <div class="form-grid learn-grid">
-                            <label class="field"><span>Custo para aprender</span><div class="input-suffix"><input class="control" name="xp_cost" type="number" min="0" step="1" value="1"><span>XP</span></div></label>
+                            <label class="field"><span>Custo para aprender<span class="info-tip" tabindex="0" role="note" data-tip="Pontos de experiência para desbloquear a skill. O painel da direita mostra o custo acumulado de todo o caminho até ela.">i</span></span><div class="input-suffix"><input class="control" name="xp_cost" type="number" min="0" step="1" value="1"><span>XP</span></div></label>
                         </div>
-                        <div class="prerequisite-header"><label class="field-label" for="prerequisite-search">SKILLS NECESSÁRIAS</label><span id="prerequisite-count" class="muted-label">Nenhuma selecionada</span></div>
+                        <div class="prerequisite-header"><label class="field-label" for="prerequisite-search">SKILLS NECESSÁRIAS<span class="info-tip" tabindex="0" role="note" data-tip="Cada pré-requisito vira uma dependência na árvore. Pode ser de outro elemento: a dependência aparece como ligação externa, mas a skill continua a pertencer à árvore do seu elemento.">i</span></label><span id="prerequisite-count" class="muted-label">Nenhuma selecionada</span></div>
                         <input id="prerequisite-search" class="control prerequisite-search" type="search" placeholder="Procurar skill por nome, ID ou elemento…">
                         <div id="prerequisite-selected" class="prerequisite-selected"></div>
                         <div id="prerequisite-list" class="prerequisite-list"></div>
@@ -79,7 +88,7 @@
 
                         <div class="combat-step target-step">
                             <div class="step-copy"><span class="mini-step">1</span><div><h3>Quem é o alvo?</h3><p>A skill aplica o resultado direto a esta seleção.</p></div></div>
-                            <label class="field target-field"><span>Alvo principal</span><select class="control" name="targeting">
+                            <label class="field target-field"><span>Alvo principal<span class="info-tip" tabindex="0" role="note" data-tip="A seleção principal da skill. Os efeitos podem ir além dela: nas secções 4 e 5 escolhes a quem mais é afetado, sem repetir a pergunta.">i</span></span><select class="control" name="targeting">
                                 <option value="enemy_one">Um inimigo</option>
                                 <option value="enemies_all">Todos os inimigos</option>
                                 <option value="ally_one">Um aliado</option>
@@ -93,11 +102,11 @@
                             <div class="step-copy"><span class="mini-step">2</span><div><h3>O que acontece no impacto?</h3><p>Se a skill só aplicar efeitos, escolhe “Sem dano direto”.</p></div></div>
                             <div class="form-grid direct-grid">
                                 <label class="field"><span>Resultado direto</span><select class="control" name="direct_action"><option value="damage">Causar dano</option><option value="none">Sem dano direto</option></select></label>
-                                <div class="field damage-type-field" data-direct-damage><span>Tipo de dano</span><select class="control" name="damage_type"><option value="magical">Mágico</option><option value="physical">Físico</option></select></div>
-                                <label class="field damage-field" data-direct-damage><span>Força</span><select class="control" name="power_kind"><option value="fixed">Fixa</option><option value="random">Variável</option><option value="attribute">Escala por atributo</option></select></label>
+                                <div class="field damage-type-field" data-direct-damage><span>Tipo de dano<span class="info-tip" tabindex="0" role="note" data-tip="Físico lê o ataque e a defesa físicos; mágico lê os mágicos. O canal decide quais os atributos do atacante e do defensor que entram na fórmula.">i</span></span><select class="control" name="damage_type"><option value="magical">Mágico</option><option value="physical">Físico</option></select></div>
+                                <label class="field damage-field" data-direct-damage><span>Força<span class="info-tip" tabindex="0" role="note" data-tip="Como o poder é calculado. “Fixa” é um número; “Variável” sorteia entre dois números; “Escala por atributo” multiplica um atributo do atacante (o motor ainda não lê este modo — o Forger avisa).">i</span></span><select class="control" name="power_kind"><option value="fixed">Fixa</option><option value="random">Variável</option><option value="attribute">Escala por atributo</option></select></label>
                                 <label class="field damage-field" data-direct-damage><span id="power-label">Poder</span><input class="control" name="power_value" type="number" min="0" step="1" value="20"></label>
-                                <label class="field damage-field" data-direct-damage><span>Precisão</span><div class="input-suffix"><input class="control" name="accuracy" type="number" min="0" max="100" step="1" value="100"><span>%</span></div></label>
-                                <label class="field damage-field" data-direct-damage><span>Número de golpes</span><input class="control" name="hit_count" type="number" min="1" step="1" value="1"></label>
+                                <label class="field damage-field" data-direct-damage><span>Precisão<span class="info-tip" tabindex="0" role="note" data-tip="Chance de acertar, em percentagem. O stat “accuracy” do atacante soma-se a este valor: um ataque de 60% com +20 de accuracy acerta 80% das vezes. A “evasion” do alvo subtrai-se do mesmo lado.">i</span></span><div class="input-suffix"><input class="control" name="accuracy" type="number" min="0" max="100" step="1" value="100"><span>%</span></div></label>
+                                <label class="field damage-field" data-direct-damage><span>Número de golpes<span class="info-tip" tabindex="0" role="note" data-tip="Cada golpe tem a sua própria tirada de precisão. Com 3 golpes a 80%, o esperado é 2.4 acertos — o simulador mostra exatamente isso.">i</span></span><input class="control" name="hit_count" type="number" min="1" step="1" value="1"></label>
                             </div>
                             <div id="power-extra" class="form-grid power-extra" hidden></div>
                         </div>
@@ -107,7 +116,8 @@
                             <div class="form-grid cost-grid">
                                 <label class="field"><span>Mana</span><div class="input-suffix"><input class="control" name="mana_cost" type="number" min="0" step="1" value="0"><span>MP</span></div></label>
                                 <label class="field"><span>Stamina</span><div class="input-suffix"><input class="control" name="stamina_cost" type="number" min="0" step="1" value="0"><span>ST</span></div></label>
-                                <label class="field"><span>Cooldown</span><div class="input-suffix"><input class="control" name="cooldown" type="number" min="0" step="1" value="0"><span>turnos</span></div></label>
+                                <label class="field"><span>Vida<span class="info-tip" tabindex="0" role="note" data-tip="Some da vida de quem usa a skill. Se não tiver vida suficiente, a skill não é usada — nunca se mata o próprio utilizador.">i</span></span><div class="input-suffix"><input class="control" name="hp_cost" type="number" min="0" step="1" value="0"><span>HP</span></div></label>
+                                <label class="field"><span>Cooldown<span class="info-tip" tabindex="0" role="note" data-tip="Turnos que a skill precisa de esperar antes de voltar a ser usada. A escada de níveis acrescenta turnos de cooldown a partir do nível III.">i</span></span><div class="input-suffix"><input class="control" name="cooldown" type="number" min="0" step="1" value="0"><span>turnos</span></div></label>
                             </div>
                         </div>
 
@@ -144,6 +154,40 @@
                             </div>
                         </details>
                     </section>
+
+                    <section class="form-section traits-section">
+                        <div class="section-heading"><div><span class="step-number">07</span><div><h2>Traços</h2><p>As regras que dependem do elemento, da hora do dia e do estado do alvo.</p></div></div></div>
+
+                        <div class="trait-block">
+                            <span class="trait-head-label">HORA DO DIA</span>
+                            <label class="toggle-row trait-toggle"><input type="checkbox" name="solar"><span class="toggle-track"></span><span>Skill solar<span class="info-tip" tabindex="0" role="note" data-tip="Faz ×1.5 de dano de dia e ×0.5 de noite. A hora do dia vem do encontro (time_phase), não da skill.">i</span></span></label>
+                            <label class="toggle-row trait-toggle"><input type="checkbox" name="nocturnal"><span class="toggle-track"></span><span>Skill noturna<span class="info-tip" tabindex="0" role="note" data-tip="O inverso da solar: ×1.5 de noite e ×0.5 de dia. As duas leem a mesma hora do encontro.">i</span></span></label>
+                        </div>
+
+                        <div class="trait-block">
+                            <span class="trait-head-label">GOLPE</span>
+                            <div class="form-grid trait-grid">
+                                <label class="field"><span>Chance de crítico<span class="info-tip" tabindex="0" role="note" data-tip="Percentagem de acertos que causam dano crítico (×1.75). É um traço do atacante: o stat crit_chance soma-se a este valor.">i</span></span><div class="input-suffix"><input class="control" name="crit_chance" type="number" min="0" max="100" step="1" placeholder="0"><span>%</span></div></label>
+                                <label class="field"><span>Ignora a precisão<span class="info-tip" tabindex="0" role="note" data-tip="O golpe acerta sempre: a tirada de precisão é saltada. Contrapartida: a esquiva do alvo deixa de contar.">i</span></span><label class="toggle-row"><input type="checkbox" name="ignore_accuracy"><span class="toggle-track"></span><span>Não falha</span></label></label>
+                                <label class="field"><span>Crítico garantido contra<span class="info-tip" tabindex="0" role="note" data-tip="ID do status que garante o crítico: se o alvo tiver esse estado, o golpe é sempre crítico.">i</span></span><input class="control" name="guaranteed_crit_vs_status" placeholder="marked"></label>
+                                <label class="field"><span>Ignora parte da defesa<span class="info-tip" tabindex="0" role="note" data-tip="Fração da defesa do alvo que o golpe ignora (0.5 = metade da defesa).">i</span></span><div class="input-suffix"><input class="control" name="defense_pierce" type="number" min="0" max="1" step="0.05" placeholder="0"><span>fração</span></div></label>
+                            </div>
+                        </div>
+
+                        <div class="trait-block">
+                            <div class="trait-head"><span class="field-label">BÓNUS CONTRA ELEMENTOS<span class="info-tip" tabindex="0" role="note" data-tip="Multiplicador extra aplicado quando o defensor tem aquele elemento. Ex.: smite com umbra: 1.5 dá ×3 contra Umbra (×2 da tabela × 1.5 da skill).">i</span></span><button id="btn-add-bonus-vs" class="button button-small button-quiet" type="button">+ Elemento</button></div>
+                            <div id="bonus-vs-rows" class="bonus-rows"></div>
+                        </div>
+
+                        <div class="trait-block">
+                            <span class="trait-head-label">ESTADO DO ALVO</span>
+                            <div class="form-grid trait-grid">
+                                <label class="field"><span>Bónus abaixo de X% de vida<span class="info-tip" tabindex="0" role="note" data-tip="Multiplicador extra quando o defensor está abaixo do limiar. Deixa os dois campos vazios se não usares esta regra.">i</span></span><div class="range-pair"><input class="control" name="bonus_vs_hp_below_threshold" type="number" min="0" max="1" step="0.05" placeholder="0.5"><input class="control" name="bonus_vs_hp_below_multiplier" type="number" min="0" step="0.05" placeholder="1.25"></div><small>limiar · multiplicador</small></label>
+                                <label class="field"><span>Alvo foge abaixo de X% de vida<span class="info-tip" tabindex="0" role="note" data-tip="Fração de vida abaixo da qual o alvo deixa a batalha em pânico (não é derrotado — foge).">i</span></span><div class="input-suffix"><input class="control" name="flee_below_hp" type="number" min="0" max="1" step="0.05" placeholder="0.4"><span>fração</span></div></label>
+                            </div>
+                        </div>
+                    </section>
+
                     <div id="editor-message" class="editor-message" role="status"></div>
                 </form>
             </section>
@@ -156,6 +200,7 @@
                 <div class="panel-heading compact-heading"><div><span class="eyebrow">PRÉ-REQUISITOS</span><h2>Caminho até à skill</h2></div></div>
                 <div id="path-preview" class="path-preview"></div>
                 <div class="inspector-divider"></div>
+                <button id="btn-simulate-skill" class="button button-primary button-full" type="button">Simular esta skill ↓</button>
             </aside>
         </main>
 
@@ -173,6 +218,56 @@
             </section>
         </main>
 
+        <main id="simulator-view" class="simulator-workspace" hidden>
+            <aside class="simulator-controls panel">
+                <div class="panel-heading">
+                    <div><span class="eyebrow">SIMULAÇÃO</span><h1>Quanto dano causa?</h1></div>
+                </div>
+                <p class="simulator-intro">A mesma cadeia do motor: <code>(ATK / RES) × elemento × poder</code>, com linha, fase do dia e bónus do elemento. <strong>Sem críticos e sem a variância aleatória</strong> — o número é o valor esperado de um acerto.</p>
+
+                <label class="field sim-skill-field"><span>Skill a simular</span><select id="sim-skill" class="control"></select></label>
+
+                <div class="sim-group">
+                    <h3>Atacante</h3>
+                    <div class="form-grid sim-grid">
+                        <label class="field"><span>Ataque físico</span><input class="control" id="sim-attack-physical" type="number" min="0" step="1" value="30"></label>
+                        <label class="field"><span>Ataque mágico</span><input class="control" id="sim-attack-magical" type="number" min="0" step="1" value="30"></label>
+                        <label class="field"><span>Stat accuracy<span class="info-tip" tabindex="0" role="note" data-tip="Modificador de precisão do atacante: soma-se à precisão autorada da skill. Só afeta os ataques do próprio atacante.">i</span></span><input class="control" id="sim-attacker-accuracy" type="number" step="1" value="0"></label>
+                        <label class="field"><span>Stat crit_chance<span class="info-tip" tabindex="0" role="note" data-tip="Chance de crítico do atacante (percentagem). Soma-se à chance crítica da própria skill.">i</span></span><input class="control" id="sim-attacker-crit" type="number" step="1" value="0"></label>
+                        <label class="field"><span>Linha</span><select class="control" id="sim-attacker-line"><option value="front">Frente</option><option value="rear">Trás</option></select></label>
+                    </div>
+                </div>
+
+                <div class="sim-group">
+                    <h3>Defensor</h3>
+                    <div class="form-grid sim-grid">
+                        <label class="field"><span>Defesa física</span><input class="control" id="sim-defense-physical" type="number" min="0" step="1" value="20"></label>
+                        <label class="field"><span>Defesa mágica</span><input class="control" id="sim-defense-magical" type="number" min="0" step="1" value="20"></label>
+                        <label class="field"><span>Esquiva<span class="info-tip" tabindex="0" role="note" data-tip="Stat do defensor: tira pontos à chance de acerto do atacante. É o inverso da precisão.">i</span></span><input class="control" id="sim-defender-evasion" type="number" step="1" value="0"></label>
+                        <label class="field"><span>Vida restante<span class="info-tip" tabindex="0" role="note" data-tip="Percentagem de vida que o defensor ainda tem. Serve para os bónus que só valem contra alvos enfraquecidos.">i</span></span><div class="input-suffix"><input class="control" id="sim-target-hp" type="number" min="0" max="100" step="5" value="100"><span>%</span></div></label>
+                        <label class="field"><span>Linha</span><select class="control" id="sim-defender-line"><option value="front">Frente</option><option value="rear">Trás</option></select></label>
+                    </div>
+                    <label class="toggle-row sim-toggle"><input type="checkbox" id="sim-defending"><span class="toggle-track"></span><span>A defender (dano a halved)</span></label>
+                    <div class="field sim-elements-field"><span class="field-label">ELEMENTOS DO DEFENSOR<span class="info-tip" tabindex="0" role="note" data-tip="As pontuações dos vários elementos somam-se antes de virar multiplicador. Ex.: Lux fraco contra Aqua (+1) e immune a Caeli (−3) dão −2 no total → ×0.25.">i</span></span>
+                        <div id="sim-elements" class="sim-elements"></div>
+                    </div>
+                </div>
+
+                <div class="sim-group">
+                    <h3>Cenário</h3>
+                    <div class="form-grid sim-grid">
+                        <label class="field"><span>Hora do dia<span class="info-tip" tabindex="0" role="note" data-tip="Vem do encontro (time_phase: day | night). Só afeta skills solares: ×1.5 de dia, ×0.5 de noite.">i</span></span><select class="control" id="sim-phase"><option value="day">Dia</option><option value="night">Noite</option></select></label>
+                        <label class="field"><span>Nível da skill<span class="info-tip" tabindex="0" role="note" data-tip="A escada I–V é derivada: o poder cresce 15% por nível e o custo 5%. Só se escreve a skill base no YAML.">i</span></span><select class="control" id="sim-level"><option value="1">I</option><option value="2">II</option><option value="3">III</option><option value="4">IV</option><option value="5">V</option></select></label>
+                    </div>
+                </div>
+                <button id="btn-sim-reset" class="button button-quiet button-full" type="button">Repor valores</button>
+            </aside>
+
+            <section class="simulator-results panel">
+                <div id="sim-result" class="sim-result"></div>
+            </section>
+        </main>
+
         <div id="confirm-backdrop" class="confirm-backdrop" hidden>
             <div class="confirm-card" role="alertdialog" aria-modal="true" aria-labelledby="confirm-title" aria-describedby="confirm-message">
                 <span class="eyebrow" id="confirm-eyebrow">CONFIRMAR</span>
@@ -186,6 +281,14 @@
         </div>
 
         <div id="toast" class="toast" role="status" aria-live="polite"></div>
+    </div>
+    <div id="import-error-backdrop" class="confirm-backdrop" hidden>
+        <div class="import-error-card" role="alertdialog" aria-modal="true" aria-labelledby="import-error-title">
+            <span class="eyebrow">ERRO DE IMPORTAÇÃO</span>
+            <h2 id="import-error-title">Importação cancelada</h2>
+            <div id="import-error-body" class="import-error-body"></div>
+            <div class="confirm-actions"><button id="btn-import-error-ok" class="button button-primary" type="button">Fechar</button></div>
+        </div>
     </div>
 </body>
 </html>

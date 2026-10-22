@@ -11,9 +11,12 @@ import type { AttackEffect } from '../../types/AttackDataType';
 import type {
     CombatAction,
     CombatEffectInstance,
+    CombatEffectPolarity,
     CombatEvent,
+    CombatMoveSpec,
     CombatRandom,
     CombatResourceId,
+    CombatRewindSpec,
     CombatStatDelta,
     CombatStats,
     CombatUnit,
@@ -48,10 +51,22 @@ const STAT_FIELDS: Record<string, Array<keyof CombatStats>> = {
     magical_defense: ['magicalDefense'],
     defense: ['physicalDefense', 'magicalDefense'],
     speed: ['speed'],
+    /** Outgoing accuracy: how well the holder's own attacks land. */
+    accuracy: ['accuracy'],
+    /** Incoming evasion: how hard the holder is to hit. */
+    evasion: ['evasion'],
+    /** Outgoing critical chance. */
+    crit_chance: ['critChance'],
 };
 
 /** The `effect_applied` member of {@link CombatEvent}. */
 export type EffectAppliedEvent = Extract<CombatEvent, { type: 'effect_applied' }>;
+
+/** The `effect_resisted` member of {@link CombatEvent}. */
+export type EffectResistedEvent = Extract<CombatEvent, { type: 'effect_resisted' }>;
+
+/** What applying one effect to one unit reports back. */
+export type EffectOutcomeEvent = EffectAppliedEvent | EffectResistedEvent;
 
 /** Adds a stat delta to a block, keeping every stat at or above zero. */
 export function applyStatDelta(
@@ -208,6 +223,72 @@ export function scaleStatDelta(
     return scaled as CombatStatDelta;
 }
 
+/**
+ * Reads a `move` effect's instruction.
+ *
+ * `who` says whether the caster or the target steps across, and `to_line`
+ * where they land (`other` means "the line they are not in").
+ */
+export function readMoveSpec(effect: AttackEffect): CombatMoveSpec | null {
+    const spec = asRecord(asRecord(effect)?.move);
+    if (!spec) return null;
+
+    const who = readString(spec.who, 'target');
+    const toLine = readString(spec.to_line, 'other');
+
+    return {
+        who: who === 'self' ? 'self' : 'target',
+        toLine: toLine === 'front' || toLine === 'rear' ? toLine : 'other',
+        swapWithCaster: readBoolean(spec.swap_with_caster, false),
+    };
+}
+
+/**
+ * Reads a `rewind` effect's instruction.
+ *
+ * `turns` says how far back to go; left out, the rewind goes all the way to
+ * the start of the fight. `resources` says which pools go back; left out,
+ * every pool does.
+ */
+export function readRewindSpec(effect: AttackEffect): CombatRewindSpec | null {
+    const spec = asRecord(asRecord(effect)?.rewind);
+    if (!spec) return null;
+
+    const turns = readNumber(spec.turns, Number.NaN);
+    const resources = Array.isArray(spec.resources)
+        ? spec.resources.filter((entry): entry is 'hp' | 'mana' | 'stamina' =>
+            entry === 'hp' || entry === 'mana' || entry === 'stamina')
+        : [];
+
+    return {
+        // `0` — like an absent field — means "all the way back".
+        turns: Number.isFinite(turns) ? (turns <= 0 ? null : Math.round(turns)) : null,
+        resources,
+        cleanse: readBoolean(spec.cleanse, true),
+    };
+}
+
+/**
+ * How an effect reads to a cleanse or a dispel.
+ *
+ * The authored `polarity` wins; otherwise a debuff or a damage-over-time is a
+ * curse, a buff is a gift, and a pure control status is neither.
+ */
+export function readPolarity(effect: AttackEffect, instance: {
+    buff: CombatStatDelta | null;
+    debuff: CombatStatDelta | null;
+    damagePerTurn: number;
+}): CombatEffectPolarity {
+    const authored = readString(asRecord(effect)?.polarity, '');
+    if (authored === 'positive' || authored === 'negative' || authored === 'neutral') {
+        return authored;
+    }
+
+    if (instance.debuff || instance.damagePerTurn > 0) return 'negative';
+    if (instance.buff) return 'positive';
+    return 'neutral';
+}
+
 /** Builds the runtime instance of an authored effect. */
 export function createEffectInstance(
     effect: AttackEffect,
@@ -215,21 +296,57 @@ export function createEffectInstance(
     elementId: string | null,
     outputMultiplier = 1,
 ): CombatEffectInstance {
-    return {
+    const record = asRecord(effect) ?? {};
+    const buff = scaleStatDelta(readStatDelta(effect.buff), outputMultiplier);
+    const debuff = scaleStatDelta(readStatDelta(effect.debuff), outputMultiplier);
+    const damagePerTurn = Math.max(0, readNumber(record.damage_per_turn, 0));
+
+    // `lower_accuracy` is the older spelling of a debuff on the attacker's own
+    // aim; it is folded into the same stat so there is one place a modifier
+    // lives.
+    const lowerAccuracy = readNumber(record.lower_accuracy, 0);
+    const mergedDebuff = lowerAccuracy > 0
+        ? { ...(debuff ?? {}), accuracy: (debuff?.accuracy ?? 0) + lowerAccuracy }
+        : debuff;
+
+    const immunities = Array.isArray(record.status_immunities)
+        ? record.status_immunities
+            .filter((entry): entry is string => typeof entry === 'string')
+            .map((entry) => entry.trim())
+            .filter((entry) => entry !== '')
+        : [];
+
+    const instance: CombatEffectInstance = {
         effectId: readString(effect.effect_id, `${sourceId}_effect`),
         sourceId,
         statusEffect: readString(effect.status_effect, '') || null,
         elementId: readString(effect.element_id, '') || elementId,
         turns: resolveTurns(effect.turns),
         applyTo: readString(effect.apply_to, '') || null,
-        buff: scaleStatDelta(readStatDelta(effect.buff), outputMultiplier),
-        debuff: scaleStatDelta(readStatDelta(effect.debuff), outputMultiplier),
+        buff,
+        debuff: mergedDebuff,
         statMultipliers: null,
+        polarity: 'neutral',
+        regenPerTurn: readStatDelta(record.regen_per_turn) as CombatStatDelta | null,
+        selfUpkeep: readStatDelta(record.self_upkeep) as CombatStatDelta | null,
+        deferredCost: readStatDelta(record.deferred_cost) as CombatStatDelta | null,
+        immunities: immunities.length > 0 ? immunities : null,
         preventActions: readPreventActions(effect),
-        damagePerTurn: Math.max(0, readNumber(asRecord(effect)?.damage_per_turn, 0)),
+        preventSkills: readBoolean(record.prevent_skills, false),
+        untargetable: readBoolean(record.untargetable, false),
+        healBlock: readBoolean(record.heal_block, false),
+        counter: readBoolean(record.counter, false),
+        turnOffset: Math.round(readNumber(record.turn_offset, 0)),
+        cooldownTick: Math.max(0, Math.round(readNumber(record.cooldown_tick, 0))),
+        move: readMoveSpec(effect),
+        rewind: readRewindSpec(effect),
+        damagePerTurn,
         stacks: 1,
         canStack: readBoolean(effect.can_stack, false),
     };
+
+    instance.polarity = readPolarity(effect, instance);
+    return instance;
 }
 
 /**
@@ -261,7 +378,22 @@ export function resolveEffectTargets(
     }
 }
 
-/** Applies one effect instance to a unit, returning the feedback event. */
+/** Whether a unit is immune to a status, by id or by label. */
+export function isImmuneToStatus(unit: CombatUnit, statusId: string): boolean {
+    const wanted = statusId.trim().toLowerCase();
+    if (wanted === '') return false;
+
+    return unit.effects.some((effect) => (
+        effect.immunities?.some((immune) => immune.trim().toLowerCase() === wanted) ?? false
+    ));
+}
+
+/**
+ * Applies one effect instance to a unit, returning the feedback event.
+ *
+ * A unit that is immune to the status does not take it: the effect is skipped
+ * and the refusal is reported, so the log can say "resisted".
+ */
 export function applyEffectToUnit(
     unit: CombatUnit,
     effect: AttackEffect,
@@ -269,11 +401,33 @@ export function applyEffectToUnit(
     elementId: string | null,
     random: CombatRandom,
     outputMultiplier = 1,
-): EffectAppliedEvent | null {
+): EffectOutcomeEvent | null {
     const chance = effectChance(effect);
     if (chance < 1 && random() >= chance) return null;
 
     const instance = createEffectInstance(effect, sourceId, elementId, outputMultiplier);
+
+    // The immunity bites on the status the effect carries, by id or by label.
+    const statusKey = instance.statusEffect ?? instance.effectId;
+    if (statusKey && isImmuneToStatus(unit, statusKey)) {
+        return {
+            type: 'effect_resisted',
+            unitId: unit.id,
+            effectId: instance.effectId,
+            statusEffect: instance.statusEffect,
+        };
+    }
+
+    // The id counts too: an immunity may name the effect rather than its label.
+    if (isImmuneToStatus(unit, instance.effectId)) {
+        return {
+            type: 'effect_resisted',
+            unitId: unit.id,
+            effectId: instance.effectId,
+            statusEffect: instance.statusEffect,
+        };
+    }
+
     const existingIndex = unit.effects.findIndex((active) => active.effectId === instance.effectId);
 
     if (existingIndex >= 0 && !instance.canStack) {
@@ -296,6 +450,10 @@ export function applyEffectToUnit(
  *
  * A damaging status (`damage_per_turn`) pays out first, so a poison that kills
  * its host on the turn it ticks is recorded before the effect is reaped.
+ *
+ * The same tick pays what the effect owes its holder: `regen_per_turn` gives
+ * the resources back, `self_upkeep` takes them, and `deferred_cost` is paid
+ * once, on the turn after the effect landed.
  */
 export function tickUnitEffects(unit: CombatUnit): CombatEvent[] {
     const events: CombatEvent[] = [];
@@ -307,8 +465,27 @@ export function tickUnitEffects(unit: CombatUnit): CombatEvent[] {
             events.push(...changeResource(unit, 'hp', -amount));
         }
 
-        if (effect.turns === null) {
+        if (effect.regenPerTurn) {
+            events.push(...payResourceDelta(unit, effect.regenPerTurn, 1));
+        }
+
+        if (effect.selfUpkeep) {
+            events.push(...payResourceDelta(unit, effect.selfUpkeep, -1));
+        }
+
+        if (effect.deferredCost) {
+            events.push(...payResourceDelta(unit, effect.deferredCost, -1));
+            // The debt is paid once; the effect keeps living without it.
+            remaining.push({ ...effect, deferredCost: null });
+        } else {
             remaining.push(effect);
+        }
+    }
+
+    const expiring: CombatEffectInstance[] = [];
+    for (const effect of remaining) {
+        if (effect.turns === null) {
+            expiring.push(effect);
             continue;
         }
 
@@ -318,10 +495,33 @@ export function tickUnitEffects(unit: CombatUnit): CombatEvent[] {
             continue;
         }
 
-        remaining.push({ ...effect, turns });
+        expiring.push({ ...effect, turns });
     }
 
-    unit.effects = remaining;
+    unit.effects = expiring;
+    return events;
+}
+
+/**
+ * Pays a resource delta on a unit's pools.
+ *
+ * `sign` is `1` for a payout (regeneration) and `-1` for a payment (an upkeep
+ * or a deferred cost). The pools are read from the same `hp`/`mana`/`stamina`
+ * keys the catalogue uses.
+ */
+function payResourceDelta(
+    unit: CombatUnit,
+    delta: CombatStatDelta,
+    sign: number,
+): CombatEvent[] {
+    const events: CombatEvent[] = [];
+
+    for (const resource of ['hp', 'mana', 'stamina'] as const) {
+        const amount = delta[resource];
+        if (typeof amount !== 'number' || !Number.isFinite(amount) || amount === 0) continue;
+        events.push(...changeResource(unit, resource, Math.round(amount * sign)));
+    }
+
     return events;
 }
 
@@ -364,12 +564,20 @@ export function changeResource(
  *
  * Stat changes are handled by {@link effectiveStats}, so this only touches the
  * current HP/mana/stamina pools and emits the deltas.
+ *
+ * `healBlocked` refuses the healing half (a `heal_block` status: the holder
+ * cannot be healed by anybody else). `drainRecipient` is where a drained
+ * resource goes when the effect says `drain_to: caster`.
  */
 export function applyEffectResources(
     unit: CombatUnit,
     effect: AttackEffect,
     random: CombatRandom,
     outputMultiplier = 1,
+    options: {
+        healBlocked?: boolean;
+        drainRecipient?: CombatUnit | null;
+    } = {},
 ): CombatEvent[] {
     const events: CombatEvent[] = [];
     const record = asRecord(effect) ?? {};
@@ -384,20 +592,33 @@ export function applyEffectResources(
     // Healing and regen are the holder's *own* output, so a weapon like the
     // Asclepius Wand boosts them; damage and drain are not touched.
     const heal = readNumber(record.heal, 0);
-    if (heal > 0) events.push(...changeResource(unit, 'hp', Math.round(heal * outputMultiplier)));
+    if (heal > 0 && !options.healBlocked) {
+        events.push(...changeResource(unit, 'hp', Math.round(heal * outputMultiplier)));
+    }
 
     if (effect.resource_regen) {
         for (const [resource, value] of Object.entries(effect.resource_regen)) {
             const amount = readNumber(value, 0);
+            const blocked = resource === 'hp' && options.healBlocked;
+            if (blocked) continue;
             if (amount > 0) events.push(...changeResource(unit, resource as CombatResourceId, Math.round(amount * outputMultiplier)));
             else if (amount !== 0) events.push(...changeResource(unit, resource as CombatResourceId, amount));
         }
     }
 
     if (effect.resource_drain) {
+        const toCaster = readString(record.drain_to, '') === 'caster';
+        const recipient = toCaster ? options.drainRecipient ?? null : null;
+
         for (const [resource, value] of Object.entries(effect.resource_drain)) {
             const amount = readNumber(value, 0);
-            if (amount !== 0) events.push(...changeResource(unit, resource as CombatResourceId, -amount));
+            if (amount === 0) continue;
+
+            events.push(...changeResource(unit, resource as CombatResourceId, -amount));
+
+            if (recipient && amount > 0) {
+                events.push(...changeResource(recipient, resource as CombatResourceId, amount));
+            }
         }
     }
 
@@ -444,4 +665,90 @@ export function clearUnitEffects(unit: CombatUnit): CombatEvent[] {
 
     unit.effects = [];
     return events;
+}
+
+/**
+ * Removes the negative statuses of a unit — the curses, not the gifts.
+ *
+ * `count` removes at most that many, oldest first; `all` removes every one of
+ * them. A `neutral` control status is never touched: a cleanse must not
+ * silently delete a stun its own caster is subject to.
+ */
+export function cleanseEffects(
+    unit: CombatUnit,
+    options: { count?: number; all?: boolean } = {},
+): CombatEvent[] {
+    const removable = unit.effects.filter((effect) => effect.polarity === 'negative');
+    const chosen = options.all
+        ? removable
+        : removable.slice(0, Math.max(0, Math.floor(options.count ?? 0)));
+
+    if (chosen.length === 0) return [];
+
+    const chosenIds = new Set(chosen.map((effect) => effect.effectId));
+    unit.effects = unit.effects.filter((effect) => !chosenIds.has(effect.effectId));
+
+    return chosen.map((effect) => ({
+        type: 'effect_expired',
+        unitId: unit.id,
+        effectId: effect.effectId,
+    }));
+}
+
+/**
+ * Removes the positive statuses of a unit — the gifts, not the curses.
+ *
+ * `count` removes at most that many, oldest first; `all` removes every one of
+ * them. `statusId` is the surgical option: it removes that one status, whatever
+ * its polarity, and ignores the counts.
+ */
+export function dispelEffects(
+    unit: CombatUnit,
+    options: { count?: number; all?: boolean; statusId?: string } = {},
+): CombatEvent[] {
+    if (options.statusId) {
+        const target = unit.effects.find(
+            (effect) => effect.effectId === options.statusId || effect.statusEffect === options.statusId,
+        );
+        if (!target) return [];
+
+        unit.effects = unit.effects.filter((effect) => effect !== target);
+        return [{ type: 'effect_expired', unitId: unit.id, effectId: target.effectId }];
+    }
+
+    const removable = unit.effects.filter((effect) => effect.polarity === 'positive');
+    const chosen = options.all
+        ? removable
+        : removable.slice(0, Math.max(0, Math.floor(options.count ?? 0)));
+
+    if (chosen.length === 0) return [];
+
+    const chosenIds = new Set(chosen.map((effect) => effect.effectId));
+    unit.effects = unit.effects.filter((effect) => !chosenIds.has(effect.effectId));
+
+    return chosen.map((effect) => ({
+        type: 'effect_expired',
+        unitId: unit.id,
+        effectId: effect.effectId,
+    }));
+}
+
+/** Whether a unit is blocked from being healed by anybody else. */
+export function isHealBlocked(unit: CombatUnit): boolean {
+    return unit.effects.some((effect) => effect.healBlock);
+}
+
+/** Whether a unit may not use skills. */
+export function areSkillsPrevented(unit: CombatUnit): boolean {
+    return unit.effects.some((effect) => effect.preventSkills);
+}
+
+/** Whether a unit cannot be chosen as a target. */
+export function isUntargetable(unit: CombatUnit): boolean {
+    return unit.effects.some((effect) => effect.untargetable);
+}
+
+/** Whether a unit reflects the next hit it takes. */
+export function hasCounter(unit: CombatUnit): boolean {
+    return unit.effects.some((effect) => effect.counter);
 }

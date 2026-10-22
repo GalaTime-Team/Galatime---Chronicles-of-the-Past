@@ -1,0 +1,2346 @@
+skills:
+  - id: night
+    name: Night
+    description: The most basic manipulation of night the cooling air and the slow turn of the dark
+    element_id: umbra
+    learning_cost:
+      experience_points: 1
+    learning_requirements:
+      required_attack_ids: []
+    targeting: self
+    costs:
+      mana: 2
+      stamina: 0
+      cooldown: 0
+    effects:
+      - effect_id: night_effect
+        status_effect: Night
+        apply_to: self
+        turns: 2
+        buff:
+          evasion: 6
+        polarity: positive
+  - id: shadow_strike
+    name: Shadow Strike
+    description: A strike out of the dark that lands hardest when the sun is down
+    element_id: umbra
+    learning_cost:
+      experience_points: 1
+    learning_requirements:
+      required_attack_ids:
+        - night
+    targeting: enemy_one
+    damage:
+      kind: magical
+      damage_type: magical
+      power:
+        kind: fixed
+        value: 18
+    accuracy: 100
+    hit_count: 1
+    costs:
+      mana: 6
+      stamina: 0
+      cooldown: 0
+    nocturnal: true
+    crit_chance: 30
+  - id: night_blade
+    name: Night Blade
+    description: A fast dark blade twice over each hit is weak but each may kill
+    element_id: umbra
+    learning_cost:
+      experience_points: 2
+    learning_requirements:
+      required_attack_ids:
+        - shadow_strike
+    targeting: enemy_one
+    damage:
+      kind: magical
+      damage_type: magical
+      power:
+        kind: fixed
+        value: 8
+    accuracy: 95
+    hit_count: 2
+    costs:
+      mana: 9
+      stamina: 0
+      cooldown: 0
+    nocturnal: true
+    crit_chance: 35
+  - id: dusk_fang
+    name: Dusk Fang
+    description: A heavy fang of dusk that takes the target guard with it
+    element_id: umbra
+    learning_cost:
+      experience_points: 3
+    learning_requirements:
+      required_attack_ids:
+        - shadow_strike
+    targeting: enemy_one
+    damage:
+      kind: magical
+      damage_type: magical
+      power:
+        kind: fixed
+        value: 27
+    accuracy: 95
+    hit_count: 1
+    costs:
+      mana: 12
+      stamina: 0
+      cooldown: 0
+    nocturnal: true
+    crit_chance: 25
+    effects:
+      - effect_id: dusk_fang_effect
+        status_effect: Dusk Fang
+        apply_to: target
+        turns: 2
+        debuff:
+          magical_defense: 8
+        polarity: negative
+  - id: gloom_flurry
+    name: Gloom Flurry
+    description: A flurry of gloom that rakes the whole enemy line
+    element_id: umbra
+    learning_cost:
+      experience_points: 3
+    learning_requirements:
+      required_attack_ids:
+        - shadow_strike
+    targeting: enemies_all
+    damage:
+      kind: magical
+      damage_type: magical
+      power:
+        kind: fixed
+        value: 9
+    accuracy: 95
+    hit_count: 3
+    costs:
+      mana: 14
+      stamina: 0
+      cooldown: 0
+    nocturnal: true
+    crit_chance: 30
+  - id: shadowfall
+    name: Shadowfall
+    description: The dark falls on one target all at once
+    element_id: umbra
+    learning_cost:
+      experience_points: 6
+    learning_requirements:
+      required_attack_ids:
+        - night_blade
+        - dusk_fang
+    targeting: enemy_one
+    damage:
+      kind: magical
+      damage_type: magical
+      power:
+        kind: fixed
+        value: 36
+    accuracy: 95
+    hit_count: 1
+    costs:
+      mana: 17
+      stamina: 0
+      cooldown: 0
+    nocturnal: true
+    crit_chance: 40
+    effects:
+      - effect_id: shadowfall_effect
+        status_effect: Shadowfall
+        apply_to: target
+        turns: 2
+        debuff:
+          physical_defense: 10
+        polarity: negative
+  - id: moonstorm
+    name: Moonstorm
+    description: A storm of moonlight dark rolls over the field
+    element_id: umbra
+    learning_cost:
+      experience_points: 6
+    learning_requirements:
+      required_attack_ids:
+        - dusk_fang
+        - gloom_flurry
+    targeting: enemies_all
+    damage:
+      kind: magical
+      damage_type: magical
+      power:
+        kind: fixed
+        value: 20
+    accuracy: 90
+    hit_count: 1
+    costs:
+      mana: 21
+      stamina: 0
+      cooldown: 0
+    nocturnal: true
+    crit_chance: 30
+    effects:
+      - effect_id: moonstorm_effect
+        status_effect: Moonstorm
+        apply_to: enemies_all
+        turns: 2
+        debuff:
+          accuracy: 8
+        polarity: negative
+  - id: shadow_step
+    name: Shadow Step
+    description: Step through the dark to the targets blind side
+    element_id: umbra
+    learning_cost:
+      experience_points: 1
+    learning_requirements:
+      required_attack_ids:
+        - night
+    targeting: enemy_one
+    costs:
+      mana: 8
+      stamina: 0
+      cooldown: 0
+    effects:
+      - effect_id: shadow_step_effect
+        status_effect: Shadow Step
+        apply_to: self
+        turns: 3
+        buff:
+          evasion: 12
+        polarity: positive
+  - id: veil_walk
+    name: Veil Walk
+    description: Walk unseen so a blade that cannot be seen lands truer
+    element_id: umbra
+    learning_cost:
+      experience_points: 3
+    learning_requirements:
+      required_attack_ids:
+        - shadow_step
+    targeting: self
+    costs:
+      mana: 11
+      stamina: 0
+      cooldown: 0
+    effects:
+      - effect_id: veil_walk_effect
+        status_effect: Veil Walk
+        apply_to: self
+        turns: 3
+        buff:
+          evasion: 8
+          accuracy: 20
+        polarity: positive
+  - id: darkness_shroud
+    name: Darkness Shroud
+    description: Draw a shroud around the bearer and over the targets eyes
+    element_id: umbra
+    learning_cost:
+      experience_points: 1
+    learning_requirements:
+      required_attack_ids:
+        - night
+    targeting: enemy_one
+    costs:
+      mana: 9
+      stamina: 0
+      cooldown: 0
+    effects:
+      - effect_id: darkness_shroud_effect
+        status_effect: Darkness Shroud
+        apply_to: self
+        turns: 3
+        buff:
+          evasion: 12
+        polarity: positive
+      - effect_id: darkness_shroud_effect_2
+        status_effect: Darkness Shroud
+        apply_to: target
+        turns: 2
+        debuff:
+          accuracy: 10
+        polarity: negative
+  - id: night_veil
+    name: Night Veil
+    description: The shroud widens over the whole enemy line
+    element_id: umbra
+    learning_cost:
+      experience_points: 4
+    learning_requirements:
+      required_attack_ids:
+        - darkness_shroud
+    targeting: enemies_all
+    costs:
+      mana: 15
+      stamina: 0
+      cooldown: 0
+    effects:
+      - effect_id: night_veil_effect
+        status_effect: Night Veil
+        apply_to: self
+        turns: 3
+        buff:
+          evasion: 12
+        polarity: positive
+      - effect_id: night_veil_effect_2
+        status_effect: Night Veil
+        apply_to: enemies_all
+        turns: 2
+        debuff:
+          accuracy: 10
+        polarity: negative
+  - id: unseen
+    name: Unseen
+    description: Nothing finds the bearer
+    element_id: umbra
+    learning_cost:
+      experience_points: 6
+    learning_requirements:
+      required_attack_ids:
+        - veil_walk
+        - night_veil
+    targeting: self
+    costs:
+      mana: 20
+      stamina: 0
+      cooldown: 0
+    effects:
+      - effect_id: unseen_effect
+        status_effect: Unseen
+        apply_to: self
+        turns: 3
+        buff:
+          evasion: 25
+          accuracy: 20
+        polarity: positive
+  - id: fear
+    name: Fear
+    description: Panic the target so it flees below thirty percent health
+    element_id: umbra
+    learning_cost:
+      experience_points: 1
+    learning_requirements:
+      required_attack_ids:
+        - night
+    targeting: enemy_one
+    costs:
+      mana: 10
+      stamina: 0
+      cooldown: 0
+    flee_below_hp: 0.3
+    effects:
+      - effect_id: fear_effect
+        status_effect: Panicked
+        apply_to: target
+        turns: 3
+        debuff:
+          speed: 12
+          accuracy: 12
+        polarity: negative
+  - id: dread
+    name: Dread
+    description: Panic every enemy
+    element_id: umbra
+    learning_cost:
+      experience_points: 3
+    learning_requirements:
+      required_attack_ids:
+        - fear
+    targeting: enemies_all
+    costs:
+      mana: 15
+      stamina: 0
+      cooldown: 0
+    flee_below_hp: 0.3
+    effects:
+      - effect_id: dread_effect
+        status_effect: Panicked
+        apply_to: enemies_all
+        turns: 3
+        debuff:
+          speed: 10
+          accuracy: 10
+        polarity: negative
+  - id: wail
+    name: Wail
+    description: A keening that frays the mind
+    element_id: umbra
+    learning_cost:
+      experience_points: 3
+    learning_requirements:
+      required_attack_ids:
+        - fear
+    targeting: enemy_one
+    costs:
+      mana: 13
+      stamina: 0
+      cooldown: 0
+    flee_below_hp: 0.4
+    effects:
+      - effect_id: wail_effect
+        status_effect: Panicked
+        apply_to: target
+        turns: 3
+        debuff:
+          speed: 16
+          accuracy: 14
+        polarity: negative
+  - id: nightmare
+    name: Nightmare
+    description: The enemy sees the dark behind its eyes
+    element_id: umbra
+    learning_cost:
+      experience_points: 6
+    learning_requirements:
+      required_attack_ids:
+        - fear
+        - wail
+    targeting: enemy_one
+    costs:
+      mana: 19
+      stamina: 0
+      cooldown: 0
+    flee_below_hp: 0.5
+    effects:
+      - effect_id: nightmare_effect
+        status_effect: Panicked
+        apply_to: target
+        turns: 3
+        debuff:
+          speed: 20
+          accuracy: 18
+        polarity: negative
+  - id: mass_terror
+    name: Mass Terror
+    description: Terror rolls over the field
+    element_id: umbra
+    learning_cost:
+      experience_points: 7
+    learning_requirements:
+      required_attack_ids:
+        - dread
+        - wail
+    targeting: enemies_all
+    costs:
+      mana: 24
+      stamina: 0
+      cooldown: 0
+    flee_below_hp: 0.4
+    effects:
+      - effect_id: mass_terror_effect
+        status_effect: Panicked
+        apply_to: enemies_all
+        turns: 3
+        debuff:
+          speed: 16
+          accuracy: 14
+        polarity: negative
+  - id: moon_hunger
+    name: Moon Hunger
+    description: The hunter sharpens
+    element_id: umbra
+    learning_cost:
+      experience_points: 1
+    learning_requirements:
+      required_attack_ids:
+        - night
+    targeting: self
+    costs:
+      mana: 10
+      stamina: 0
+      cooldown: 0
+    effects:
+      - effect_id: moon_hunger_effect
+        status_effect: Moon Hunger
+        apply_to: self
+        turns: 3
+        buff:
+          magical_attack: 10
+          accuracy: 10
+          speed: 5
+        polarity: positive
+  - id: predators_focus
+    name: Predators Focus
+    description: The hunter locks onto its prey
+    element_id: umbra
+    learning_cost:
+      experience_points: 3
+    learning_requirements:
+      required_attack_ids:
+        - moon_hunger
+    targeting: self
+    costs:
+      mana: 13
+      stamina: 0
+      cooldown: 0
+    effects:
+      - effect_id: predators_focus_effect
+        status_effect: Predators Focus
+        apply_to: self
+        turns: 3
+        buff:
+          crit_chance: 20
+          magical_attack: 8
+        polarity: positive
+  - id: wolf_hunt
+    name: Wolf Hunt
+    description: The hunter executes the wounded
+    element_id: umbra
+    learning_cost:
+      experience_points: 3
+    learning_requirements:
+      required_attack_ids:
+        - moon_hunger
+    targeting: self
+    costs:
+      mana: 15
+      stamina: 0
+      cooldown: 0
+    bonus_vs_hp_below:
+      threshold: 0.5
+      multiplier: 1.25
+    effects:
+      - effect_id: wolf_hunt_effect
+        status_effect: Wolf Hunt
+        apply_to: self
+        turns: 3
+        buff:
+          crit_chance: 30
+        polarity: positive
+  - id: apex_predator
+    name: Apex Predator
+    description: The hunter becomes the apex
+    element_id: umbra
+    learning_cost:
+      experience_points: 7
+    learning_requirements:
+      required_attack_ids:
+        - predators_focus
+        - wolf_hunt
+    targeting: self
+    costs:
+      mana: 22
+      stamina: 0
+      cooldown: 0
+    bonus_vs_hp_below:
+      threshold: 0.5
+      multiplier: 1.35
+    effects:
+      - effect_id: apex_predator_effect
+        status_effect: Apex Predator
+        apply_to: self
+        turns: 3
+        buff:
+          crit_chance: 40
+          magical_attack: 12
+          accuracy: 15
+        polarity: positive
+  - id: umbral_ambush
+    name: Umbral Ambush
+    description: Strike where the enemy cannot see
+    element_id: umbra
+    learning_cost:
+      experience_points: 4
+    learning_requirements:
+      required_attack_ids:
+        - blind
+    targeting: enemy_one
+    damage:
+      kind: magical
+      damage_type: magical
+      power:
+        kind: fixed
+        value: 22
+    accuracy: 100
+    hit_count: 1
+    costs:
+      mana: 15
+      stamina: 0
+      cooldown: 0
+    nocturnal: true
+    crit_chance: 45
+    ignore_accuracy: true
+  - id: darkness
+    name: Darkness
+    description: The most basic manipulation of darkness the absence of light held in the palm
+    element_id: umbra
+    learning_cost:
+      experience_points: 1
+    learning_requirements:
+      required_attack_ids: []
+    targeting: self
+    costs:
+      mana: 2
+      stamina: 0
+      cooldown: 0
+    effects:
+      - effect_id: darkness_effect
+        status_effect: Darkness
+        apply_to: self
+        turns: 2
+        buff:
+          magical_attack: 6
+        polarity: positive
+  - id: life_drain
+    name: Life Drain
+    description: The dark first appetite drains life from the target
+    element_id: umbra
+    learning_cost:
+      experience_points: 1
+    learning_requirements:
+      required_attack_ids:
+        - darkness
+    targeting: enemy_one
+    damage:
+      kind: magical
+      damage_type: magical
+      power:
+        kind: fixed
+        value: 16
+    accuracy: 95
+    hit_count: 1
+    costs:
+      mana: 10
+      stamina: 0
+      cooldown: 0
+    effects:
+      - effect_id: life_drain_effect
+        status_effect: Life Drain
+        apply_to: target
+        turns: 1
+        resource_drain:
+          hp: 12
+        drain_to: caster
+        polarity: negative
+  - id: crimson_siphon
+    name: Crimson Siphon
+    description: Drain a large amount of life from the target
+    element_id: umbra
+    learning_cost:
+      experience_points: 3
+    learning_requirements:
+      required_attack_ids:
+        - life_drain
+    targeting: enemy_one
+    damage:
+      kind: magical
+      damage_type: magical
+      power:
+        kind: fixed
+        value: 22
+    accuracy: 95
+    hit_count: 1
+    costs:
+      mana: 15
+      stamina: 0
+      cooldown: 0
+    effects:
+      - effect_id: crimson_siphon_effect
+        status_effect: Crimson Siphon
+        apply_to: target
+        turns: 1
+        resource_drain:
+          hp: 20
+        drain_to: caster
+        polarity: negative
+  - id: blood_pact
+    name: Blood Pact
+    description: Drain life and turn it into attack power
+    element_id: umbra
+    learning_cost:
+      experience_points: 3
+    learning_requirements:
+      required_attack_ids:
+        - life_drain
+    targeting: enemy_one
+    damage:
+      kind: magical
+      damage_type: magical
+      power:
+        kind: fixed
+        value: 18
+    accuracy: 95
+    hit_count: 1
+    costs:
+      mana: 14
+      stamina: 0
+      cooldown: 0
+    effects:
+      - effect_id: blood_pact_effect
+        status_effect: Blood Pact
+        apply_to: target
+        turns: 1
+        resource_drain:
+          hp: 16
+        drain_to: caster
+        polarity: negative
+      - effect_id: blood_pact_effect_2
+        status_effect: Blood Pact
+        apply_to: self
+        turns: 3
+        buff:
+          magical_attack: 8
+        polarity: positive
+  - id: hemorrhage
+    name: Hemorrhage
+    description: The whole line bleeds
+    element_id: umbra
+    learning_cost:
+      experience_points: 3
+    learning_requirements:
+      required_attack_ids:
+        - life_drain
+    targeting: enemies_all
+    damage:
+      kind: magical
+      damage_type: magical
+      power:
+        kind: fixed
+        value: 12
+    accuracy: 95
+    hit_count: 1
+    costs:
+      mana: 18
+      stamina: 0
+      cooldown: 0
+    effects:
+      - effect_id: hemorrhage_effect
+        status_effect: Hemorrhage
+        apply_to: enemies_all
+        turns: 1
+        resource_drain:
+          hp: 10
+        drain_to: caster
+        polarity: negative
+  - id: red_hour
+    name: Red Hour
+    description: The red hour of the dark
+    element_id: umbra
+    learning_cost:
+      experience_points: 6
+    learning_requirements:
+      required_attack_ids:
+        - crimson_siphon
+        - blood_pact
+    targeting: enemy_one
+    damage:
+      kind: magical
+      damage_type: magical
+      power:
+        kind: fixed
+        value: 30
+    accuracy: 95
+    hit_count: 1
+    costs:
+      mana: 24
+      stamina: 0
+      cooldown: 0
+    effects:
+      - effect_id: red_hour_effect
+        status_effect: Red Hour
+        apply_to: target
+        turns: 1
+        resource_drain:
+          hp: 30
+        drain_to: caster
+        polarity: negative
+  - id: crimson_tide
+    name: Crimson Tide
+    description: Drain from every enemy at once
+    element_id: umbra
+    learning_cost:
+      experience_points: 6
+    learning_requirements:
+      required_attack_ids:
+        - crimson_siphon
+        - hemorrhage
+    targeting: enemies_all
+    damage:
+      kind: magical
+      damage_type: magical
+      power:
+        kind: fixed
+        value: 20
+    accuracy: 90
+    hit_count: 1
+    costs:
+      mana: 26
+      stamina: 0
+      cooldown: 0
+    effects:
+      - effect_id: crimson_tide_effect
+        status_effect: Crimson Tide
+        apply_to: enemies_all
+        turns: 1
+        resource_drain:
+          hp: 16
+        drain_to: caster
+        polarity: negative
+  - id: blind
+    name: Blind
+    description: Blind the target so it cannot aim
+    element_id: umbra
+    learning_cost:
+      experience_points: 1
+    learning_requirements:
+      required_attack_ids:
+        - darkness
+    targeting: enemy_one
+    costs:
+      mana: 12
+      stamina: 0
+      cooldown: 0
+    effects:
+      - effect_id: blind_effect
+        status_effect: Blinded
+        apply_to: target
+        turns: 3
+        debuff:
+          accuracy: 20
+        polarity: negative
+  - id: smother
+    name: Smother
+    description: Blind every enemy
+    element_id: umbra
+    learning_cost:
+      experience_points: 3
+    learning_requirements:
+      required_attack_ids:
+        - blind
+    targeting: enemies_all
+    costs:
+      mana: 18
+      stamina: 0
+      cooldown: 0
+    effects:
+      - effect_id: smother_effect
+        status_effect: Blinded
+        apply_to: enemies_all
+        turns: 3
+        debuff:
+          accuracy: 15
+        polarity: negative
+  - id: gloom
+    name: Gloom
+    description: A sustained gloom that slows the target
+    element_id: umbra
+    learning_cost:
+      experience_points: 3
+    learning_requirements:
+      required_attack_ids:
+        - blind
+    targeting: enemy_one
+    costs:
+      mana: 17
+      stamina: 0
+      cooldown: 0
+    effects:
+      - effect_id: gloom_effect
+        status_effect: Gloom
+        apply_to: target
+        turns: 3
+        debuff:
+          accuracy: 20
+          speed: 8
+        polarity: negative
+  - id: pitch_black
+    name: Pitch Black
+    description: Every enemy is blinded
+    element_id: umbra
+    learning_cost:
+      experience_points: 7
+    learning_requirements:
+      required_attack_ids:
+        - smother
+        - gloom
+    targeting: enemies_all
+    costs:
+      mana: 26
+      stamina: 0
+      cooldown: 0
+    effects:
+      - effect_id: pitch_black_effect
+        status_effect: Blinded
+        apply_to: enemies_all
+        turns: 3
+        debuff:
+          accuracy: 20
+          speed: 8
+        polarity: negative
+  - id: second_sight
+    name: Second Sight
+    description: The bearer sees in the dark and cannot be blinded
+    element_id: umbra
+    learning_cost:
+      experience_points: 4
+    learning_requirements:
+      required_attack_ids:
+        - blind
+    targeting: self
+    costs:
+      mana: 16
+      stamina: 0
+      cooldown: 0
+    effects:
+      - effect_id: second_sight_effect
+        status_effect: Second Sight
+        apply_to: self
+        turns: 3
+        buff:
+          accuracy: 15
+        status_immunities:
+          - Blinded
+        polarity: positive
+  - id: curse
+    name: Curse
+    description: Strip the targets attack and defence away
+    element_id: umbra
+    learning_cost:
+      experience_points: 1
+    learning_requirements:
+      required_attack_ids:
+        - darkness
+    targeting: enemy_one
+    costs:
+      mana: 11
+      stamina: 0
+      cooldown: 0
+    effects:
+      - effect_id: curse_effect
+        status_effect: Cursed
+        apply_to: target
+        turns: 3
+        debuff:
+          magical_attack: 10
+          physical_defense: 8
+        polarity: negative
+  - id: hex
+    name: Hex
+    description: Dig deeper into one target
+    element_id: umbra
+    learning_cost:
+      experience_points: 3
+    learning_requirements:
+      required_attack_ids:
+        - curse
+    targeting: enemy_one
+    costs:
+      mana: 16
+      stamina: 0
+      cooldown: 0
+    effects:
+      - effect_id: hex_effect
+        status_effect: Hexed
+        apply_to: target
+        turns: 3
+        debuff:
+          magical_attack: 16
+          magical_defense: 12
+        polarity: negative
+  - id: taint
+    name: Taint
+    description: Spread the weakening to the line
+    element_id: umbra
+    learning_cost:
+      experience_points: 3
+    learning_requirements:
+      required_attack_ids:
+        - curse
+    targeting: enemies_all
+    costs:
+      mana: 18
+      stamina: 0
+      cooldown: 0
+    effects:
+      - effect_id: taint_effect
+        status_effect: Tainted
+        apply_to: enemies_all
+        turns: 2
+        debuff:
+          magical_attack: 12
+          physical_defense: 8
+        polarity: negative
+  - id: rot
+    name: Rot
+    description: Rot the target over time
+    element_id: umbra
+    learning_cost:
+      experience_points: 3
+    learning_requirements:
+      required_attack_ids:
+        - curse
+    targeting: enemy_one
+    costs:
+      mana: 14
+      stamina: 0
+      cooldown: 0
+    effects:
+      - effect_id: rot_effect
+        status_effect: Rot
+        apply_to: target
+        turns: 3
+        damage_per_turn: 7
+        debuff:
+          physical_defense: 8
+        polarity: negative
+  - id: malediction
+    name: Malediction
+    description: A target both gutted and bleeding
+    element_id: umbra
+    learning_cost:
+      experience_points: 7
+    learning_requirements:
+      required_attack_ids:
+        - hex
+        - rot
+    targeting: enemy_one
+    costs:
+      mana: 24
+      stamina: 0
+      cooldown: 0
+    effects:
+      - effect_id: malediction_effect
+        status_effect: Malediction
+        apply_to: target
+        turns: 3
+        damage_per_turn: 7
+        debuff:
+          magical_attack: 20
+          magical_defense: 14
+        polarity: negative
+  - id: eclipse
+    name: Eclipse
+    description: The sun is eaten dark damage to every enemy
+    element_id: umbra
+    learning_cost:
+      experience_points: 2
+    learning_requirements:
+      required_attack_ids:
+        - darkness
+    targeting: enemies_all
+    damage:
+      kind: magical
+      damage_type: magical
+      power:
+        kind: fixed
+        value: 18
+    accuracy: 95
+    hit_count: 1
+    costs:
+      mana: 16
+      stamina: 0
+      cooldown: 0
+    effects:
+      - effect_id: eclipse_effect
+        status_effect: Eclipse
+        apply_to: enemies_all
+        turns: 2
+        debuff:
+          accuracy: 8
+        polarity: negative
+  - id: shadow_pillar
+    name: Shadow Pillar
+    description: A pillar of shadow falls on one target
+    element_id: umbra
+    learning_cost:
+      experience_points: 3
+    learning_requirements:
+      required_attack_ids:
+        - eclipse
+    targeting: enemy_one
+    damage:
+      kind: magical
+      damage_type: magical
+      power:
+        kind: fixed
+        value: 34
+    accuracy: 95
+    hit_count: 1
+    costs:
+      mana: 20
+      stamina: 0
+      cooldown: 0
+    effects:
+      - effect_id: shadow_pillar_effect
+        status_effect: Shadow Pillar
+        apply_to: target
+        turns: 2
+        debuff:
+          magical_defense: 10
+        polarity: negative
+  - id: eclipse_wave
+    name: Eclipse Wave
+    description: The eclipse rolls outward
+    element_id: umbra
+    learning_cost:
+      experience_points: 3
+    learning_requirements:
+      required_attack_ids:
+        - eclipse
+    targeting: enemies_all
+    damage:
+      kind: magical
+      damage_type: magical
+      power:
+        kind: fixed
+        value: 22
+    accuracy: 90
+    hit_count: 1
+    costs:
+      mana: 22
+      stamina: 0
+      cooldown: 0
+    effects:
+      - effect_id: eclipse_wave_effect
+        status_effect: Eclipse Wave
+        apply_to: enemies_all
+        turns: 2
+        debuff:
+          magical_attack: 8
+        polarity: negative
+  - id: total_eclipse
+    name: Total Eclipse
+    description: The field goes dark
+    element_id: umbra
+    learning_cost:
+      experience_points: 7
+    learning_requirements:
+      required_attack_ids:
+        - shadow_pillar
+        - eclipse_wave
+    targeting: enemies_all
+    damage:
+      kind: magical
+      damage_type: magical
+      power:
+        kind: fixed
+        value: 30
+    accuracy: 90
+    hit_count: 1
+    costs:
+      mana: 30
+      stamina: 0
+      cooldown: 0
+    effects:
+      - effect_id: total_eclipse_effect
+        status_effect: Total Eclipse
+        apply_to: enemies_all
+        turns: 3
+        debuff:
+          accuracy: 10
+          magical_attack: 10
+        polarity: negative
+  - id: umbral_mark
+    name: Umbral Mark
+    description: Brand the prey so it cannot be healed and every blow crits
+    element_id: umbra
+    learning_cost:
+      experience_points: 4
+    learning_requirements:
+      required_attack_ids:
+        - shadow_strike
+    targeting: enemy_one
+    costs:
+      mana: 16
+      stamina: 0
+      cooldown: 0
+    guaranteed_crit_vs_status: marked
+    effects:
+      - effect_id: umbral_mark_effect
+        status_effect: Marked
+        apply_to: target
+        turns: 3
+        heal_block: true
+        polarity: negative
+  - id: umbral_ascendant
+    name: Umbral Ascendant
+    description: Night falls and does not lift
+    element_id: umbra
+    learning_cost:
+      experience_points: 12
+    learning_requirements:
+      required_attack_ids:
+        - moonstorm
+        - total_eclipse
+    targeting: enemies_all
+    damage:
+      kind: magical
+      damage_type: magical
+      power:
+        kind: fixed
+        value: 30
+    accuracy: 90
+    hit_count: 1
+    costs:
+      mana: 32
+      stamina: 0
+      cooldown: 0
+    flee_below_hp: 0.4
+    effects:
+      - effect_id: umbral_ascendant_effect
+        status_effect: Panicked
+        apply_to: enemies_all
+        turns: 3
+        debuff:
+          speed: 14
+          accuracy: 12
+        polarity: negative
+      - effect_id: umbral_ascendant_effect_2
+        status_effect: Umbral Ascendant
+        apply_to: enemies_all
+        turns: 1
+        resource_drain:
+          hp: 14
+        drain_to: caster
+        polarity: negative
+  - id: day
+    name: Day
+    description: The most basic manipulation of day the warmth of the sun and the slow turn of the hours
+    element_id: lux
+    learning_cost:
+      experience_points: 1
+    learning_requirements:
+      required_attack_ids: []
+    targeting: self
+    costs:
+      mana: 2
+      stamina: 0
+      cooldown: 0
+    effects:
+      - effect_id: day_effect
+        status_effect: Day
+        apply_to: self
+        turns: 2
+        buff:
+          magical_attack: 6
+        polarity: positive
+  - id: sunray
+    name: Sunray
+    description: A high accuracy beam of daylight
+    element_id: lux
+    learning_cost:
+      experience_points: 1
+    learning_requirements:
+      required_attack_ids:
+        - day
+    targeting: enemy_one
+    damage:
+      kind: magical
+      damage_type: magical
+      power:
+        kind: fixed
+        value: 18
+    accuracy: 100
+    hit_count: 1
+    costs:
+      mana: 6
+      stamina: 0
+      cooldown: 0
+    solar: true
+  - id: blazing_ray
+    name: Blazing Ray
+    description: A focused shaft of white light
+    element_id: lux
+    learning_cost:
+      experience_points: 2
+    learning_requirements:
+      required_attack_ids:
+        - sunray
+    targeting: enemy_one
+    damage:
+      kind: magical
+      damage_type: magical
+      power:
+        kind: fixed
+        value: 26
+    accuracy: 100
+    hit_count: 1
+    costs:
+      mana: 9
+      stamina: 0
+      cooldown: 0
+    solar: true
+    effects:
+      - effect_id: blazing_ray_effect
+        status_effect: Blazing Ray
+        apply_to: target
+        turns: 2
+        debuff:
+          magical_defense: 8
+        polarity: negative
+  - id: solar_pierce
+    name: Solar Pierce
+    description: A lance of hard light that punches through armour
+    element_id: lux
+    learning_cost:
+      experience_points: 3
+    learning_requirements:
+      required_attack_ids:
+        - sunray
+    targeting: enemy_one
+    damage:
+      kind: magical
+      damage_type: magical
+      power:
+        kind: fixed
+        value: 20
+    accuracy: 100
+    hit_count: 1
+    costs:
+      mana: 11
+      stamina: 0
+      cooldown: 0
+    solar: true
+    effects:
+      - effect_id: solar_pierce_effect
+        status_effect: Solar Pierce
+        apply_to: target
+        turns: 2
+        debuff:
+          physical_defense: 10
+        polarity: negative
+  - id: radiance
+    name: Radiance
+    description: Radiance floods the whole enemy line with light
+    element_id: lux
+    learning_cost:
+      experience_points: 2
+    learning_requirements:
+      required_attack_ids:
+        - sunray
+    targeting: enemies_all
+    damage:
+      kind: magical
+      damage_type: magical
+      power:
+        kind: fixed
+        value: 14
+    accuracy: 95
+    hit_count: 1
+    costs:
+      mana: 12
+      stamina: 0
+      cooldown: 0
+    solar: true
+  - id: solar_corona
+    name: Solar Corona
+    description: The sun breaks over the field
+    element_id: lux
+    learning_cost:
+      experience_points: 6
+    learning_requirements:
+      required_attack_ids:
+        - blazing_ray
+        - radiance
+    targeting: enemies_all
+    damage:
+      kind: magical
+      damage_type: magical
+      power:
+        kind: fixed
+        value: 22
+    accuracy: 95
+    hit_count: 1
+    costs:
+      mana: 18
+      stamina: 0
+      cooldown: 0
+    solar: true
+    effects:
+      - effect_id: solar_corona_effect
+        status_effect: Solar Corona
+        apply_to: enemies_all
+        turns: 2
+        debuff:
+          magical_defense: 6
+        polarity: negative
+  - id: solar_verdict
+    name: Solar Verdict
+    description: The sun passes judgement on one target
+    element_id: lux
+    learning_cost:
+      experience_points: 5
+    learning_requirements:
+      required_attack_ids:
+        - blazing_ray
+        - solar_pierce
+    targeting: enemy_one
+    damage:
+      kind: magical
+      damage_type: magical
+      power:
+        kind: fixed
+        value: 34
+    accuracy: 100
+    hit_count: 1
+    costs:
+      mana: 16
+      stamina: 0
+      cooldown: 0
+    solar: true
+    effects:
+      - effect_id: solar_verdict_effect
+        status_effect: Solar Verdict
+        apply_to: target
+        turns: 2
+        debuff:
+          magical_defense: 10
+        polarity: negative
+  - id: blessing
+    name: Blessing
+    description: Raise an allies attack and defence
+    element_id: lux
+    learning_cost:
+      experience_points: 1
+    learning_requirements:
+      required_attack_ids:
+        - day
+    targeting: ally_one
+    costs:
+      mana: 5
+      stamina: 0
+      cooldown: 0
+    effects:
+      - effect_id: blessing_effect
+        status_effect: Blessed
+        apply_to: ally_one
+        turns: 3
+        buff:
+          magical_attack: 10
+          physical_defense: 8
+        polarity: positive
+  - id: morning_blessing
+    name: Morning Blessing
+    description: Raise attack and defence to all allies
+    element_id: lux
+    learning_cost:
+      experience_points: 2
+    learning_requirements:
+      required_attack_ids:
+        - blessing
+    targeting: allies_all
+    costs:
+      mana: 10
+      stamina: 0
+      cooldown: 0
+    effects:
+      - effect_id: morning_blessing_effect
+        status_effect: Morning Blessing
+        apply_to: allies_all
+        turns: 3
+        buff:
+          magical_attack: 8
+          physical_defense: 6
+        polarity: positive
+  - id: sunlit_oath
+    name: Sunlit Oath
+    description: Raise an allies accuracy
+    element_id: lux
+    learning_cost:
+      experience_points: 2
+    learning_requirements:
+      required_attack_ids:
+        - blessing
+    targeting: ally_one
+    costs:
+      mana: 9
+      stamina: 0
+      cooldown: 0
+    effects:
+      - effect_id: sunlit_oath_effect
+        status_effect: Sunlit Oath
+        apply_to: ally_one
+        turns: 3
+        buff:
+          accuracy: 15
+        polarity: positive
+  - id: consecrated_oath
+    name: Consecrated Oath
+    description: Raise accuracy and attack to all allies
+    element_id: lux
+    learning_cost:
+      experience_points: 5
+    learning_requirements:
+      required_attack_ids:
+        - morning_blessing
+        - sunlit_oath
+    targeting: allies_all
+    costs:
+      mana: 16
+      stamina: 0
+      cooldown: 0
+    effects:
+      - effect_id: consecrated_oath_effect
+        status_effect: Consecrated Oath
+        apply_to: allies_all
+        turns: 3
+        buff:
+          accuracy: 12
+          magical_attack: 10
+        polarity: positive
+  - id: hallowed_light
+    name: Hallowed Light
+    description: Raise accuracy attack and defence to all allies
+    element_id: lux
+    learning_cost:
+      experience_points: 6
+    learning_requirements:
+      required_attack_ids:
+        - consecrated_oath
+        - radiant_mend
+    targeting: allies_all
+    costs:
+      mana: 20
+      stamina: 0
+      cooldown: 0
+    effects:
+      - effect_id: hallowed_light_effect
+        status_effect: Hallowed Light
+        apply_to: allies_all
+        turns: 3
+        buff:
+          accuracy: 15
+          magical_attack: 12
+          magical_defense: 10
+        polarity: positive
+  - id: dawn_heal
+    name: Dawn Heal
+    description: Restore health to an ally
+    element_id: lux
+    learning_cost:
+      experience_points: 1
+    learning_requirements:
+      required_attack_ids:
+        - day
+    targeting: ally_one
+    costs:
+      mana: 6
+      stamina: 0
+      cooldown: 0
+    effects:
+      - effect_id: dawn_heal_effect
+        status_effect: Dawn Heal
+        apply_to: ally_one
+        turns: 1
+        heal: 26
+        polarity: positive
+  - id: restorative_dawn
+    name: Restorative Dawn
+    description: Regenerate health over time
+    element_id: lux
+    learning_cost:
+      experience_points: 2
+    learning_requirements:
+      required_attack_ids:
+        - dawn_heal
+    targeting: ally_one
+    costs:
+      mana: 9
+      stamina: 0
+      cooldown: 0
+    effects:
+      - effect_id: restorative_dawn_effect
+        status_effect: Restorative Dawn
+        apply_to: ally_one
+        turns: 4
+        resource_regen:
+          hp: 10
+        polarity: positive
+  - id: mending_light
+    name: Mending Light
+    description: Restore health and regenerate mana
+    element_id: lux
+    learning_cost:
+      experience_points: 2
+    learning_requirements:
+      required_attack_ids:
+        - dawn_heal
+    targeting: ally_one
+    costs:
+      mana: 9
+      stamina: 0
+      cooldown: 0
+    effects:
+      - effect_id: mending_light_effect
+        status_effect: Mending Light
+        apply_to: ally_one
+        turns: 3
+        heal: 22
+        resource_regen:
+          mana: 6
+        polarity: positive
+  - id: radiant_mend
+    name: Radiant Mend
+    description: Restore health to all allies
+    element_id: lux
+    learning_cost:
+      experience_points: 3
+    learning_requirements:
+      required_attack_ids:
+        - restorative_dawn
+    targeting: allies_all
+    costs:
+      mana: 15
+      stamina: 0
+      cooldown: 0
+    effects:
+      - effect_id: radiant_mend_effect
+        status_effect: Radiant Mend
+        apply_to: allies_all
+        turns: 1
+        heal: 18
+        polarity: positive
+  - id: eternal_dawn
+    name: Eternal Dawn
+    description: Regenerate health to all allies
+    element_id: lux
+    learning_cost:
+      experience_points: 7
+    learning_requirements:
+      required_attack_ids:
+        - radiant_mend
+        - restorative_dawn
+    targeting: allies_all
+    costs:
+      mana: 22
+      stamina: 0
+      cooldown: 0
+    effects:
+      - effect_id: eternal_dawn_effect
+        status_effect: Eternal Dawn
+        apply_to: allies_all
+        turns: 3
+        resource_regen:
+          hp: 12
+        polarity: positive
+  - id: daybreak_ward
+    name: Daybreak Ward
+    description: Daylight strips the dark and dulls aim
+    element_id: lux
+    learning_cost:
+      experience_points: 2
+    learning_requirements:
+      required_attack_ids:
+        - day
+    targeting: enemy_one
+    costs:
+      mana: 10
+      stamina: 0
+      cooldown: 0
+    effects:
+      - effect_id: daybreak_ward_effect
+        status_effect: Daybreak Ward
+        apply_to: target
+        turns: 2
+        dispel: 1
+        debuff:
+          accuracy: 10
+        polarity: negative
+  - id: radiant_revelation
+    name: Radiant Revelation
+    description: Light floods the field and dulls every enemy
+    element_id: lux
+    learning_cost:
+      experience_points: 4
+    learning_requirements:
+      required_attack_ids:
+        - daybreak_ward
+    targeting: enemies_all
+    costs:
+      mana: 14
+      stamina: 0
+      cooldown: 0
+    effects:
+      - effect_id: radiant_revelation_effect
+        status_effect: Radiant Revelation
+        apply_to: enemies_all
+        turns: 2
+        dispel: 1
+        debuff:
+          accuracy: 8
+        polarity: negative
+  - id: shroud_burn
+    name: Shroud Burn
+    description: Daylight eats the shroud and strikes
+    element_id: lux
+    learning_cost:
+      experience_points: 4
+    learning_requirements:
+      required_attack_ids:
+        - daybreak_ward
+    targeting: enemy_one
+    damage:
+      kind: magical
+      damage_type: magical
+      power:
+        kind: fixed
+        value: 18
+    accuracy: 100
+    hit_count: 1
+    costs:
+      mana: 13
+      stamina: 0
+      cooldown: 0
+    effects:
+      - effect_id: shroud_burn_effect
+        status_effect: Shroud Burn
+        apply_to: target
+        turns: 1
+        dispel: 1
+        polarity: negative
+  - id: solar_exorcism
+    name: Solar Exorcism
+    description: Banish every shadow
+    element_id: lux
+    learning_cost:
+      experience_points: 7
+    learning_requirements:
+      required_attack_ids:
+        - radiant_revelation
+        - shroud_burn
+    targeting: enemies_all
+    costs:
+      mana: 20
+      stamina: 0
+      cooldown: 0
+    effects:
+      - effect_id: solar_exorcism_effect
+        status_effect: Solar Exorcism
+        apply_to: enemies_all
+        turns: 3
+        dispel: 1
+        debuff:
+          magical_attack: 12
+          magical_defense: 10
+        polarity: negative
+  - id: dawnbreak
+    name: Dawnbreak
+    description: A flash of light carried into the sunrise
+    element_id: lux
+    learning_cost:
+      experience_points: 4
+    learning_requirements:
+      required_attack_ids:
+        - flash
+    targeting: enemy_one
+    damage:
+      kind: magical
+      damage_type: magical
+      power:
+        kind: fixed
+        value: 24
+    accuracy: 100
+    hit_count: 1
+    costs:
+      mana: 13
+      stamina: 0
+      cooldown: 0
+    solar: true
+    effects:
+      - effect_id: dawnbreak_effect
+        status_effect: Blinded
+        apply_to: target
+        turns: 2
+        debuff:
+          accuracy: 12
+        polarity: negative
+  - id: light
+    name: Light
+    description: The most basic manipulation of light a pale glow held in the palm
+    element_id: lux
+    learning_cost:
+      experience_points: 1
+    learning_requirements:
+      required_attack_ids: []
+    targeting: self
+    costs:
+      mana: 2
+      stamina: 0
+      cooldown: 0
+    effects:
+      - effect_id: light_effect
+        status_effect: Light
+        apply_to: self
+        turns: 2
+        buff:
+          accuracy: 6
+        polarity: positive
+  - id: smite
+    name: Smite
+    description: A single holy strike
+    element_id: lux
+    learning_cost:
+      experience_points: 1
+    learning_requirements:
+      required_attack_ids:
+        - light
+    targeting: enemy_one
+    damage:
+      kind: magical
+      damage_type: magical
+      power:
+        kind: fixed
+        value: 20
+    accuracy: 100
+    hit_count: 1
+    costs:
+      mana: 7
+      stamina: 0
+      cooldown: 0
+    bonus_vs_elements:
+      umbra: 1.5
+  - id: lance_of_light
+    name: Lance Of Light
+    description: A lance of concentrated light
+    element_id: lux
+    learning_cost:
+      experience_points: 2
+    learning_requirements:
+      required_attack_ids:
+        - smite
+    targeting: enemy_one
+    damage:
+      kind: magical
+      damage_type: magical
+      power:
+        kind: fixed
+        value: 28
+    accuracy: 100
+    hit_count: 1
+    costs:
+      mana: 11
+      stamina: 0
+      cooldown: 0
+    bonus_vs_elements:
+      umbra: 1.5
+    effects:
+      - effect_id: lance_of_light_effect
+        status_effect: Lance Of Light
+        apply_to: target
+        turns: 2
+        debuff:
+          magical_defense: 8
+        polarity: negative
+  - id: piercing_lance
+    name: Piercing Lance
+    description: A thin unbreakable ray that ignores some defence
+    element_id: lux
+    learning_cost:
+      experience_points: 3
+    learning_requirements:
+      required_attack_ids:
+        - smite
+    targeting: enemy_one
+    damage:
+      kind: magical
+      damage_type: magical
+      power:
+        kind: fixed
+        value: 22
+    accuracy: 100
+    hit_count: 1
+    costs:
+      mana: 13
+      stamina: 0
+      cooldown: 0
+    bonus_vs_elements:
+      umbra: 1.5
+    defense_pierce: 0.3
+    effects:
+      - effect_id: piercing_lance_effect
+        status_effect: Piercing Lance
+        apply_to: target
+        turns: 2
+        debuff:
+          physical_defense: 10
+        polarity: negative
+  - id: holy_nova
+    name: Holy Nova
+    description: A burst of light over the field
+    element_id: lux
+    learning_cost:
+      experience_points: 2
+    learning_requirements:
+      required_attack_ids:
+        - light
+    targeting: enemies_all
+    damage:
+      kind: magical
+      damage_type: magical
+      power:
+        kind: fixed
+        value: 16
+    accuracy: 95
+    hit_count: 1
+    costs:
+      mana: 15
+      stamina: 0
+      cooldown: 0
+    bonus_vs_elements:
+      umbra: 1.5
+    effects:
+      - effect_id: holy_nova_effect
+        status_effect: Holy Nova
+        apply_to: allies_all
+        turns: 1
+        heal: 12
+        polarity: positive
+  - id: judgment_of_light
+    name: Judgment Of Light
+    description: The light judges every enemy at once
+    element_id: lux
+    learning_cost:
+      experience_points: 6
+    learning_requirements:
+      required_attack_ids:
+        - lance_of_light
+        - holy_nova
+    targeting: enemies_all
+    damage:
+      kind: magical
+      damage_type: magical
+      power:
+        kind: fixed
+        value: 24
+    accuracy: 95
+    hit_count: 1
+    costs:
+      mana: 24
+      stamina: 0
+      cooldown: 0
+    bonus_vs_elements:
+      umbra: 1.5
+    effects:
+      - effect_id: judgment_of_light_effect
+        status_effect: Judgment Of Light
+        apply_to: enemies_all
+        turns: 2
+        debuff:
+          magical_defense: 8
+        polarity: negative
+  - id: verdict
+    name: Verdict
+    description: A single absolute word
+    element_id: lux
+    learning_cost:
+      experience_points: 5
+    learning_requirements:
+      required_attack_ids:
+        - smite
+        - piercing_lance
+    targeting: enemy_one
+    damage:
+      kind: magical
+      damage_type: magical
+      power:
+        kind: fixed
+        value: 36
+    accuracy: 100
+    hit_count: 1
+    costs:
+      mana: 20
+      stamina: 0
+      cooldown: 0
+    bonus_vs_elements:
+      umbra: 1.5
+    effects:
+      - effect_id: verdict_effect
+        status_effect: Verdict
+        apply_to: target
+        turns: 2
+        debuff:
+          magical_defense: 10
+        polarity: negative
+  - id: flash
+    name: Flash
+    description: Blind the target by taking its aim away
+    element_id: lux
+    learning_cost:
+      experience_points: 1
+    learning_requirements:
+      required_attack_ids:
+        - light
+    targeting: enemy_one
+    costs:
+      mana: 9
+      stamina: 0
+      cooldown: 0
+    effects:
+      - effect_id: flash_effect
+        status_effect: Blinded
+        apply_to: target
+        turns: 3
+        debuff:
+          accuracy: 20
+        polarity: negative
+  - id: dazzle
+    name: Dazzle
+    description: Blind every enemy
+    element_id: lux
+    learning_cost:
+      experience_points: 3
+    learning_requirements:
+      required_attack_ids:
+        - flash
+    targeting: enemies_all
+    costs:
+      mana: 14
+      stamina: 0
+      cooldown: 0
+    effects:
+      - effect_id: dazzle_effect
+        status_effect: Blinded
+        apply_to: enemies_all
+        turns: 3
+        debuff:
+          accuracy: 15
+        polarity: negative
+  - id: blinding_ray
+    name: Blinding Ray
+    description: A sustained glare that slows
+    element_id: lux
+    learning_cost:
+      experience_points: 3
+    learning_requirements:
+      required_attack_ids:
+        - flash
+    targeting: enemy_one
+    costs:
+      mana: 13
+      stamina: 0
+      cooldown: 0
+    effects:
+      - effect_id: blinding_ray_effect
+        status_effect: Blinded
+        apply_to: target
+        turns: 3
+        debuff:
+          accuracy: 20
+          speed: 8
+        polarity: negative
+  - id: oblivion
+    name: Oblivion
+    description: Every enemy is blinded
+    element_id: lux
+    learning_cost:
+      experience_points: 7
+    learning_requirements:
+      required_attack_ids:
+        - dazzle
+        - blinding_ray
+    targeting: enemies_all
+    costs:
+      mana: 24
+      stamina: 0
+      cooldown: 0
+    effects:
+      - effect_id: oblivion_effect
+        status_effect: Blinded
+        apply_to: enemies_all
+        turns: 3
+        debuff:
+          accuracy: 20
+          speed: 8
+        polarity: negative
+  - id: flawless_sight
+    name: Flawless Sight
+    description: The bearer sees through every shadow
+    element_id: lux
+    learning_cost:
+      experience_points: 4
+    learning_requirements:
+      required_attack_ids:
+        - blinding_ray
+    targeting: self
+    costs:
+      mana: 12
+      stamina: 0
+      cooldown: 0
+    effects:
+      - effect_id: flawless_sight_effect
+        status_effect: Flawless Sight
+        apply_to: self
+        turns: 3
+        buff:
+          accuracy: 15
+        status_immunities:
+          - Blinded
+        polarity: positive
+  - id: purify
+    name: Purify
+    description: Remove one negative status from an ally
+    element_id: lux
+    learning_cost:
+      experience_points: 1
+    learning_requirements:
+      required_attack_ids:
+        - light
+    targeting: ally_one
+    costs:
+      mana: 7
+      stamina: 0
+      cooldown: 0
+    effects:
+      - effect_id: purify_effect
+        status_effect: Purify
+        apply_to: ally_one
+        turns: 1
+        cleanse: 1
+        polarity: positive
+  - id: absolution
+    name: Absolution
+    description: Remove all negative statuses and restore health
+    element_id: lux
+    learning_cost:
+      experience_points: 3
+    learning_requirements:
+      required_attack_ids:
+        - purify
+    targeting: ally_one
+    costs:
+      mana: 10
+      stamina: 0
+      cooldown: 0
+    effects:
+      - effect_id: absolution_effect
+        status_effect: Absolution
+        apply_to: ally_one
+        turns: 1
+        cleanse: 99
+        heal: 20
+        polarity: positive
+  - id: veil_of_light
+    name: Veil Of Light
+    description: Cleanse every ally and shield them
+    element_id: lux
+    learning_cost:
+      experience_points: 4
+    learning_requirements:
+      required_attack_ids:
+        - purify
+    targeting: allies_all
+    costs:
+      mana: 14
+      stamina: 0
+      cooldown: 0
+    effects:
+      - effect_id: veil_of_light_effect
+        status_effect: Veil Of Light
+        apply_to: allies_all
+        turns: 2
+        cleanse: 1
+        buff:
+          magical_defense: 8
+        polarity: positive
+  - id: ward_of_light
+    name: Ward Of Light
+    description: Raise defence to all allies
+    element_id: lux
+    learning_cost:
+      experience_points: 3
+    learning_requirements:
+      required_attack_ids:
+        - absolution
+    targeting: allies_all
+    costs:
+      mana: 15
+      stamina: 0
+      cooldown: 0
+    effects:
+      - effect_id: ward_of_light_effect
+        status_effect: Ward Of Light
+        apply_to: allies_all
+        turns: 3
+        buff:
+          physical_defense: 8
+          magical_defense: 12
+        polarity: positive
+  - id: sanctuary
+    name: Sanctuary
+    description: The team is clean and whole at once
+    element_id: lux
+    learning_cost:
+      experience_points: 7
+    learning_requirements:
+      required_attack_ids:
+        - absolution
+        - veil_of_light
+    targeting: allies_all
+    costs:
+      mana: 24
+      stamina: 0
+      cooldown: 0
+    effects:
+      - effect_id: sanctuary_effect
+        status_effect: Sanctuary
+        apply_to: allies_all
+        turns: 1
+        cleanse: 99
+        heal: 24
+        polarity: positive
+  - id: sun_crown
+    name: Sun Crown
+    description: Sharpen the bearer with the sun
+    element_id: lux
+    learning_cost:
+      experience_points: 1
+    learning_requirements:
+      required_attack_ids:
+        - light
+    targeting: self
+    costs:
+      mana: 10
+      stamina: 0
+      cooldown: 0
+    effects:
+      - effect_id: sun_crown_effect
+        status_effect: Sun Crown
+        apply_to: self
+        turns: 3
+        buff:
+          accuracy: 15
+          magical_attack: 10
+        polarity: positive
+  - id: radiant_aura
+    name: Radiant Aura
+    description: Sharpen the whole team
+    element_id: lux
+    learning_cost:
+      experience_points: 3
+    learning_requirements:
+      required_attack_ids:
+        - sun_crown
+    targeting: allies_all
+    costs:
+      mana: 16
+      stamina: 0
+      cooldown: 0
+    effects:
+      - effect_id: radiant_aura_effect
+        status_effect: Radiant Aura
+        apply_to: allies_all
+        turns: 3
+        buff:
+          accuracy: 10
+          magical_attack: 8
+        polarity: positive
+  - id: beacon_of_light
+    name: Beacon Of Light
+    description: Make the team unblindable and shielded
+    element_id: lux
+    learning_cost:
+      experience_points: 3
+    learning_requirements:
+      required_attack_ids:
+        - sun_crown
+    targeting: allies_all
+    costs:
+      mana: 13
+      stamina: 0
+      cooldown: 0
+    effects:
+      - effect_id: beacon_of_light_effect
+        status_effect: Beacon Of Light
+        apply_to: allies_all
+        turns: 3
+        buff:
+          magical_defense: 6
+        status_immunities:
+          - Blinded
+        polarity: positive
+  - id: crown_of_solstice
+    name: Crown Of Solstice
+    description: The crown worn over a purified team
+    element_id: lux
+    learning_cost:
+      experience_points: 7
+    learning_requirements:
+      required_attack_ids:
+        - radiant_aura
+        - sanctuary
+    targeting: allies_all
+    costs:
+      mana: 26
+      stamina: 0
+      cooldown: 0
+    effects:
+      - effect_id: crown_of_solstice_effect
+        status_effect: Crown Of Solstice
+        apply_to: allies_all
+        turns: 3
+        buff:
+          accuracy: 15
+          magical_attack: 12
+          magical_defense: 10
+        polarity: positive
+  - id: sunfire_nova
+    name: Sunfire Nova
+    description: The suns own fire loosed in a single wave
+    element_id: lux
+    learning_cost:
+      experience_points: 4
+    learning_requirements:
+      required_attack_ids:
+        - sunray
+    targeting: enemies_all
+    damage:
+      kind: magical
+      damage_type: magical
+      power:
+        kind: fixed
+        value: 18
+    accuracy: 95
+    hit_count: 1
+    costs:
+      mana: 16
+      stamina: 0
+      cooldown: 0
+    solar: true
+    effects:
+      - effect_id: sunfire_nova_effect
+        status_effect: Sunfire Nova
+        apply_to: enemies_all
+        turns: 2
+        debuff:
+          accuracy: 8
+        polarity: negative
+  - id: solar_ascendant
+    name: Solar Ascendant
+    description: Seal every enemy and mend all allies
+    element_id: lux
+    learning_cost:
+      experience_points: 12
+    learning_requirements:
+      required_attack_ids:
+        - solar_corona
+        - judgment_of_light
+    targeting: enemies_all
+    damage:
+      kind: magical
+      damage_type: magical
+      power:
+        kind: fixed
+        value: 26
+    accuracy: 90
+    hit_count: 1
+    costs:
+      mana: 30
+      stamina: 0
+      cooldown: 0
+    effects:
+      - effect_id: solar_ascendant_effect
+        status_effect: Sealed
+        apply_to: enemies_all
+        turns: 1
+        prevent_actions: [skill]
+        polarity: negative
+      - effect_id: solar_ascendant_effect_2
+        status_effect: Solar Ascendant
+        apply_to: allies_all
+        turns: 1
+        heal: 20
+        polarity: positive

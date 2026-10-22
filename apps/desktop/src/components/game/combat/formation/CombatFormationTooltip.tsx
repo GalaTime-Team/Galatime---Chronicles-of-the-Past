@@ -38,6 +38,9 @@ const STAT_LABELS: Record<keyof CombatStats, string> = {
     physicalDefense: 'Physical Defense',
     magicalDefense: 'Magical Defense',
     speed: 'Speed',
+    accuracy: 'Accuracy',
+    evasion: 'Evasion',
+    critChance: 'Critical',
 };
 
 /** `+10`, `-12`, `+2.5` — the sign is the point, so it is always drawn. */

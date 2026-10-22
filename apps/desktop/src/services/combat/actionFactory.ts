@@ -26,7 +26,7 @@ import type {
     DamageType,
 } from '../../types/CombatType';
 import type { WeaponDefinition, WeaponRuntimeState, WeaponTypeId } from '../../types/WeaponType';
-import { asRecord, readNumber, readPower, readString, readVariance } from '../../utils/combatUtils';
+import { asRecord, clamp, readBoolean, readNumber, readPower, readString, readVariance } from '../../utils/combatUtils';
 import { effectHeals } from './effectResolver';
 
 /** Maps every authored targeting word onto the runtime rule. */
@@ -71,7 +71,58 @@ function readCosts(source: Record<string, unknown> | null, fallbackStamina: numb
     return {
         mana: readNumber(source?.mana, 0),
         stamina: readNumber(source?.stamina, fallbackStamina),
+        hp: Math.max(0, readNumber(source?.hp, 0)),
         cooldown: readNumber(source?.cooldown, 0),
+    };
+}
+
+/** Reads a record of multipliers, keeping only the usable numbers. */
+function readMultiplierRecord(source: unknown): Record<string, number> {
+    const record = asRecord(source);
+    if (!record) return {};
+
+    const result: Record<string, number> = {};
+    for (const [key, raw] of Object.entries(record)) {
+        const value = readNumber(raw, Number.NaN);
+        if (Number.isFinite(value)) result[key] = value;
+    }
+
+    return result;
+}
+
+/** Reads the extra multiplier a skill gets against a wounded target. */
+function readBonusVsHpBelow(source: unknown): { threshold: number; multiplier: number } | null {
+    const record = asRecord(source);
+    if (!record) return null;
+
+    const threshold = readNumber(record.threshold, Number.NaN);
+    const multiplier = readNumber(record.multiplier, Number.NaN);
+    if (!Number.isFinite(threshold) || !Number.isFinite(multiplier)) return null;
+
+    return { threshold, multiplier };
+}
+
+/**
+ * The traits every action carries, whatever it came from.
+ *
+ * A weapon or a universal movement has none of them: the traits belong to the
+ * skills the catalogue authors.
+ */
+function defaultTraits(): Pick<
+    CombatAction,
+    'solar' | 'nocturnal' | 'critChance' | 'ignoreAccuracy' | 'defensePierce'
+    | 'bonusVsElements' | 'bonusVsHpBelow' | 'fleeBelowHp' | 'guaranteedCritVsStatus'
+> {
+    return {
+        solar: false,
+        nocturnal: false,
+        critChance: 0,
+        ignoreAccuracy: false,
+        defensePierce: 0,
+        bonusVsElements: {},
+        bonusVsHpBelow: null,
+        fleeBelowHp: null,
+        guaranteedCritVsStatus: null,
     };
 }
 
@@ -105,6 +156,18 @@ export function createCombatActionFromSkill(skill: PublicAttack): CombatAction {
         // self-lifesteal effect (Chaoseater) is still an attack, and marking it
         // `heals` would make the AI aim it at allies.
         heals: !dealsDamage && effects.some(effectHeals),
+        // The traits the skill forger writes and the engine reads.
+        solar: readBoolean(skill.solar, false),
+        nocturnal: readBoolean(skill.nocturnal, false),
+        critChance: clamp(readNumber(skill.crit_chance, 0), 0, 100),
+        ignoreAccuracy: readBoolean(skill.ignore_accuracy, false),
+        defensePierce: clamp(readNumber(skill.defense_pierce, 0), 0, 1),
+        bonusVsElements: readMultiplierRecord(skill.bonus_vs_elements),
+        bonusVsHpBelow: readBonusVsHpBelow(skill.bonus_vs_hp_below),
+        fleeBelowHp: typeof skill.flee_below_hp === 'number' && Number.isFinite(skill.flee_below_hp)
+            ? clamp(skill.flee_below_hp, 0, 1)
+            : null,
+        guaranteedCritVsStatus: readString(skill.guaranteed_crit_vs_status, '') || null,
     };
 }
 
@@ -150,6 +213,7 @@ function buildWeaponAction(weapon: WeaponDefinition, throwing = false): CombatAc
         costs: {
             mana: 0,
             stamina: readNumber(weapon.stamina_cost, 0),
+            hp: 0,
             cooldown: Math.max(0, readNumber(weapon.cooldown, 0)),
         },
         targeting: normalizeTargeting(weapon.target),
@@ -158,6 +222,7 @@ function buildWeaponAction(weapon: WeaponDefinition, throwing = false): CombatAc
         dealsDamage,
         // See the skill factory: a weapon that also drains/heals is not a heal.
         heals: !dealsDamage && effects.some(effectHeals),
+        ...defaultTraits(),
         weapon: {
             weaponId: id,
             type,
@@ -238,12 +303,13 @@ function universalAction(
         power: 0,
         accuracy: DEFAULT_ACCURACY,
         hitCount: 1,
-        costs: { mana: 0, stamina: 0, cooldown: 0 },
+        costs: { mana: 0, stamina: 0, hp: 0, cooldown: 0 },
         targeting: 'self',
         effects: [],
         damageVariance: null,
         dealsDamage: false,
         heals: false,
+        ...defaultTraits(),
     };
 }
 

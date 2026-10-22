@@ -84,6 +84,18 @@ export interface TimeState {
 }
 
 /**
+ * Values the player gave the game during a conversation.
+ *
+ * A "call to action" node asks the player something — their name, an element
+ * they pick — and the answer lands here under the variable's own name, so a
+ * later line can speak it back (`{input.name}`) and a condition can compare
+ * against it (`input.name = "Galatime"`).
+ *
+ * The values are the player's own words, so they are always text.
+ */
+export type InputState = Record<string, string>;
+
+/**
  * Everything the dialogue engine can read from or write to.
  *
  * The state is supplied by the game when a conversation starts and handed back
@@ -105,6 +117,8 @@ export interface WorldState {
     paths: {
         unlocked: string[];
     };
+    /** Answers the player gave to the questions a conversation asked. */
+    input: InputState;
     /** Inventories of individual entities, keyed by entity id. */
     entityInventories?: Record<string, Record<string, number>>;
 }
@@ -133,6 +147,7 @@ export interface WorldStateInput {
     paths?: {
         unlocked?: string[];
     };
+    input?: InputState;
     entityInventories?: Record<string, Record<string, number>>;
 }
 
@@ -146,7 +161,8 @@ export type StateChangeKind =
     | 'objective_changed'
     | 'dialogue_unlocked'
     | 'dialogue_seen'
-    | 'path_unlocked';
+    | 'path_unlocked'
+    | 'input_set';
 
 /**
  * One recorded mutation of the world state.

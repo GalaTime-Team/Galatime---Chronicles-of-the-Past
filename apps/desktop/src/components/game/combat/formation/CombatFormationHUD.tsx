@@ -25,6 +25,8 @@ export function CombatFormationHUD({
     onEntitySelect,
     className = '',
     tooltipVisible,
+    hour,
+    timePhase,
 }: CombatFormationHUDProps) {
     const { gameState } = useGame();
     const [hoveredEntity, setHoveredEntity] = useState<FocusedEntity>(null);
@@ -123,6 +125,25 @@ export function CombatFormationHUD({
         >
             {/* Sparks and dust for the whole board, in one pair of canvases. */}
             <CombatArenaParticles sequence={sequence ?? null} boardRef={boardRef} />
+
+            {/* The hour of the day: a solar skill bites harder by day and a
+                nocturnal one at night, so the player can see which side of the
+                fight they are on. */}
+            {timePhase && (
+                <div className="pointer-events-none absolute left-2 top-2 z-10 flex items-center gap-2 border border-white/40 bg-black/50 px-2 py-1 backdrop-blur-sm">
+                    <span aria-hidden="true" className="text-sm leading-none text-white/80">
+                        {timePhase === 'day' ? '☀' : '☾'}
+                    </span>
+                    <span className="text-[11px] uppercase tracking-[0.15em] text-white/70">
+                        {timePhase === 'day' ? 'Day' : 'Night'}
+                    </span>
+                    {hour !== undefined && (
+                        <span className="text-[11px] tabular-nums tracking-[0.15em] text-white/50">
+                            {String(hour).padStart(2, '0')}:00
+                        </span>
+                    )}
+                </div>
+            )}
 
             <div className="mx-auto grid h-full min-h-56 w-full max-w-5xl grid-cols-[minmax(0,1fr)_3rem_minmax(0,1fr)] items-center sm:grid-cols-[minmax(0,1fr)_5rem_minmax(0,1fr)]">
                 <CombatFormationSide

@@ -22,6 +22,7 @@ import type {
 import { readNumber, readString } from '../../utils/combatUtils';
 import { createAbilityInstances } from './abilityFactory';
 import { createAiProfile } from './ai/aiProfileFactory';
+import { recordTimelineSnapshot } from './rewind';
 
 /** An entity as loaded from the catalogue; characters and mobs both carry a name. */
 export type CombatEntitySource = EntitiesData & { name?: string };
@@ -74,7 +75,20 @@ export function createWeaponStatEffect(weaponId: string, stats: WeaponStatDelta)
         buff: stats as CombatEffectInstance['buff'],
         debuff: null,
         statMultipliers: null,
+        polarity: 'positive',
+        regenPerTurn: null,
+        selfUpkeep: null,
+        deferredCost: null,
+        immunities: null,
         preventActions: null,
+        preventSkills: false,
+        untargetable: false,
+        healBlock: false,
+        counter: false,
+        turnOffset: 0,
+        cooldownTick: 0,
+        move: null,
+        rewind: null,
         damagePerTurn: 0,
         stacks: 1,
         canStack: false,
@@ -94,6 +108,11 @@ export function buildCombatStats(entity: CombatEntitySource): CombatStats {
         physicalDefense: readNumber(base?.physical_defense, 0),
         magicalDefense: readNumber(base?.magical_defense, 0),
         speed: readNumber(base?.speed, 0),
+        // The combat modifiers start at zero: they are offsets a buff moves,
+        // not percentages the entity is born with.
+        accuracy: 0,
+        evasion: 0,
+        critChance: 0,
     };
 }
 
@@ -136,7 +155,12 @@ export function createCombatUnit(params: CreateUnitParams): CombatUnit {
         defending: false,
         weapon: params.weapon ?? null,
         carriedWeapons: [],
+        timeline: [],
     };
+
+    // The fight opens with one snapshot of the unit, so a rewind that goes all
+    // the way back lands on the state the unit started the fight in.
+    recordTimelineSnapshot(unit);
 
     // A weapon's `stats:` become one permanent effect, so the flat deltas flow
     // through `effectiveStats` exactly like a skill's buff — the modifier chips

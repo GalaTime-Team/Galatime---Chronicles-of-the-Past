@@ -4,6 +4,7 @@ import {
     continueDialogue,
     endDialogue,
     startDialogue,
+    submitDialogueInput,
     triggerDialogueInteraction,
 } from '../controllers/dialogueController';
 import { resolveCharacter } from '../services/dialogue/characterRegistryService';
@@ -47,6 +48,8 @@ export type DialogueStatus =
     | 'waiting_for_input'
     /** The node is a choice, its line has finished appearing and the player is picking an option. */
     | 'showing_choices'
+    /** The game is asking the player a question and waiting for the answer. */
+    | 'awaiting_answer'
     /** A step is in flight; input is ignored. */
     | 'processing_action'
     /** The conversation reached an `end` node. */
@@ -88,6 +91,8 @@ export interface DialogueSessionState extends DialogueSessionSnapshot {
     choose: (choiceId: string) => void;
     /** Follows a clickable phrase inside the current line. */
     interact: (interactionId: string) => void;
+    /** Answers a question the dialogue asked. */
+    submit: (value: string) => void;
     /**
      * Reports whether a page is still typing.
      *
@@ -139,6 +144,9 @@ export function useDialogueSession(): DialogueSessionState {
      * to a question the box is still asking, so they wait for the last character.
      * A line with no text is reported as finished immediately, which is how an
      * empty node reaches its resting state in the same breath.
+     *
+     * A question the game asks has no line to type: the surface shows the
+     * question and waits for the answer, which is a state of its own.
      */
     const applyResponse = useCallback((next: DialogueResponse) => {
         setResponse(next);
@@ -146,6 +154,11 @@ export function useDialogueSession(): DialogueSessionState {
 
         if (next.status === 'completed') {
             setStatus('completed');
+            return;
+        }
+
+        if (next.current_node?.next_action === 'input') {
+            setStatus('awaiting_answer');
             return;
         }
 
@@ -218,6 +231,24 @@ export function useDialogueSession(): DialogueSessionState {
         setStatus('processing_action');
 
         const outcome = triggerDialogueInteraction(sessionId, interactionId);
+
+        if (!outcome.ok) {
+            setError(outcome.error);
+            setStatus('error');
+            return;
+        }
+
+        applyResponse(outcome.data);
+    }, [sessionId, applyResponse]);
+
+    const submit = useCallback((value: string) => {
+        if (!sessionId) {
+            return;
+        }
+
+        setStatus('processing_action');
+
+        const outcome = submitDialogueInput(sessionId, value);
 
         if (!outcome.ok) {
             setError(outcome.error);
@@ -308,6 +339,7 @@ export function useDialogueSession(): DialogueSessionState {
         advance,
         choose,
         interact,
+        submit,
         reportTyping,
         finish,
         reset,
