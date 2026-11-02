@@ -21,7 +21,7 @@ import type {
 } from '../../types/CombatType';
 import { foldAttackModifiers } from './abilityModifiers';
 import { DETERMINISTIC_PREVIEW_RANDOM, resolveDamage } from './damageCalculator';
-import { effectiveStats, resolveEffectTargets } from './effectResolver';
+import { effectiveStats, bonusVsHpBelowFromEffects, resolveEffectTargets } from './effectResolver';
 import { weaponStackMultiplier } from './weaponEffects';
 
 /**
@@ -74,6 +74,10 @@ export interface PreviewImpactParams {
 export function previewImpact(params: PreviewImpactParams): CombatActionImpact {
     const { actor, action, target, units, elementIndex, random, timePhase } = params;
 
+    const maxHp = effectiveStats(target).maxHp;
+    const defenderHpFraction = params.defenderHpFraction
+        ?? (maxHp > 0 ? target.currentHp / maxHp : 0);
+
     // One damage calculation for the whole game: the preview reads the same
     // inputs a real hit would use, minus the dice (`roll: false`). The ability
     // modifier is folded with deterministic randomness so a preview never
@@ -90,7 +94,8 @@ export function previewImpact(params: PreviewImpactParams): CombatActionImpact {
         sameSide: actor.side === target.side,
         defenderDefending: target.defending,
         timePhase,
-        defenderHpFraction: params.defenderHpFraction,
+        defenderHpFraction,
+        attackerTraits: bonusVsHpBelowFromEffects(actor, defenderHpFraction),
         modifier: foldAttackModifiers(
             target,
             { damageType: action.damageType, elementId: action.elementId },

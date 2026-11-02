@@ -224,7 +224,7 @@ function toTraitLabels(action: CombatAction): string[] {
     const labels: string[] = [];
 
     if (action.solar) labels.push('Solar');
-    if (action.nocturnal) labels.push('Nocturnal');
+    if (action.lunar) labels.push('Lunar');
     if (action.ignoreAccuracy) labels.push('Always hits');
     if (action.critChance > 0) labels.push(`Crit ${Math.round(action.critChance)}%`);
     if (action.defensePierce > 0) labels.push(`Pierce ${Math.round(action.defensePierce * 100)}%`);

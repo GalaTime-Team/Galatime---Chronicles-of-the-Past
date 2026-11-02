@@ -514,6 +514,9 @@ textarea.control { min-height: 58px; padding: 9px 10px; resize: vertical; line-h
 .sim-empty { display: flex; min-height: 50vh; flex-direction: column; align-items: center; justify-content: center; text-align: center; }
 .sim-empty h2 { margin: 0 0 8px; color: var(--text-strong); font: 600 16px var(--display); }
 .sim-empty p { max-width: 420px; margin: 0; color: var(--muted); font-size: 11px; line-height: 1.6; }
+.sim-block-note { display: inline-block; margin-top: 14px; padding: 5px 12px; border: 1px solid var(--orange); border-radius: 999px; background: rgba(215, 167, 111, .12); color: var(--orange); font: 500 10px var(--mono); }
+.sim-meta > div.is-blocked { border-color: var(--orange); }
+.sim-meta > div.is-blocked strong { color: var(--orange); }
 
 @media (max-width: 1000px) {
     .simulator-workspace { grid-template-columns: minmax(0, 1fr); }

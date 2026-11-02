@@ -15,6 +15,7 @@
 
 import { useLayoutEffect, useMemo, useRef, useState } from 'react';
 import type { CombatAction } from '../../../../types/CombatType';
+import { effectiveTimePhase } from '../../../../services/combat/phaseOverride';
 import type { CombatBattleProps } from './CombatBattle.types';
 import { CombatFormationHUD } from '../formation/CombatFormationHUD';
 import { CombatHUD } from '../hud/CombatHUD';
@@ -138,7 +139,7 @@ export function CombatBattle({
                     sequence={sequence}
                     animationsEnabled={animationsEnabled}
                     hour={state.hour}
-                    timePhase={state.timePhase}
+                    timePhase={effectiveTimePhase(state)}
                     onEntitySelect={(entity) => {
                         if (entity) onEntitySelect?.(entity.id);
                     }}

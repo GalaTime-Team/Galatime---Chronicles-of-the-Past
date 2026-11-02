@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { useFloating, autoUpdate, offset, flip, shift } from '@floating-ui/react';
 import { createPortal } from 'react-dom';
-import { ChangeIcon, DefendIcon, InventoryIcon, RestIcon, WeaponIcon, ElementIcon } from '../../../../assets/GalatimeIcon';
+import { ArrowRight, ChangeIcon, DefendIcon, InventoryIcon, RestIcon, WeaponIcon, ElementIcon } from '../../../../assets/GalatimeIcon';
 import CommonImage from '../../../common/CommonImage';
 import { useGame } from '../../../../context/GameContext';
 import type { CombatMovementWeapon } from './CombatHUD';
@@ -12,6 +12,8 @@ const ICON_MAP: Record<string, React.FC<{ className?: string }>> = {
     weapon: WeaponIcon,
     inventory: InventoryIcon,
     switch_line: ChangeIcon,
+    // No dedicated runner glyph yet; the arrow reads as "leave the fight".
+    flee: ArrowRight,
 };
 
 /** At or below this durability the weapon is about to break, and the card says so. */

@@ -1,0 +1,387 @@
+# Gerado pelo Dialogue Forger. Comentários do ficheiro original não são preservados.
+
+start_node: entra
+nodes:
+  entra:
+    type: character_enter
+    character_id: alice
+    position: center_left
+    animation_id: step_in
+    next: entra_2
+
+  entra_2:
+    type: character_enter
+    character_id: pacci
+    position: left
+    animation_id: step_in
+    next: fala
+
+  fala:
+    type: line
+    speaker_id: alice
+    emotion: neutral
+    animation_id: idle
+    text:
+      - type: text
+        value: And, before Raphael could take Kelly in, she was stabbed in the gut.
+    next: fala_2
+
+  fala_2:
+    type: line
+    speaker_id: pacci
+    emotion: surprised
+    animation_id: idle
+    text:
+      - type: text
+        value: She was stabbed!? By who?
+    next: fala_3
+
+  fala_3:
+    type: line
+    speaker_id: alice
+    emotion: suspicious
+    animation_id: idle
+    text:
+      - type: text
+        value: Raphael couldn't identify. Said that, while he was distracted with a sudden mutation of one of his catalysts, someone with incredible speed, stabbed her in the gut and then ran off. However, we suspect that it was someone who was hired by her superior.
+    next: fala_4
+
+  fala_4:
+    type: line
+    speaker_id: alice
+    emotion: neutral
+    animation_id: idle
+    text:
+      - type: text
+        value: Likely an attempt to stop any information from being leaked.
+    next: fala_5
+
+  fala_5:
+    type: line
+    speaker_id: pacci
+    emotion: thinking
+    animation_id: idle
+    text:
+      - type: text
+        value: I see... That does make sense.
+    next: fala_6
+
+  fala_6:
+    type: line
+    speaker_id: pacci
+    emotion: concerned
+    animation_id: idle
+    text:
+      - type: text
+        value: "Now what? Is she in the infirmary? "
+    next: fala_7
+
+  fala_7:
+    type: line
+    speaker_id: alice
+    emotion: neutral
+    animation_id: idle
+    text:
+      - type: text
+        value: According to Raphael's report, Kelly started bleeding heavily and collapsed on the floor. That's when the guards appeared and helped him take her to his house.
+    next: fala_8
+
+  fala_8:
+    type: line
+    speaker_id: pacci
+    emotion: suspicious
+    animation_id: idle
+    text:
+      - type: text
+        value: To his house?
+    next: fala_9
+
+  fala_9:
+    type: line
+    speaker_id: alice
+    emotion: neutral
+    animation_id: idle
+    text:
+      - type: text
+        value: Originally, the guards wanted to take her into HQ, but Raphael said that that it would be the first place the attacker would look. So he said that he would take care of her in his house.
+    next: fala_10
+
+  fala_10:
+    type: line
+    speaker_id: alice
+    emotion: concerned
+    animation_id: idle
+    text:
+      - type: text
+        value: As much as I believe that It would be for the best for her to be on HQ, Raphael has a point.
+    next: fala_11
+
+  fala_11:
+    type: line
+    speaker_id: pacci
+    emotion: concerned
+    animation_id: idle
+    text:
+      - type: text
+        value: Should we send a team of guards to Raphael's house? Maybe some of the medical staff?
+    next: fala_12
+
+  fala_12:
+    type: line
+    speaker_id: alice
+    emotion: neutral
+    animation_id: idle
+    text:
+      - type: text
+        value: Raphael is one of the most competent alchemists we have. He should be able to take care of her with no issue.
+    next: fala_13
+
+  fala_13:
+    type: line
+    speaker_id: alice
+    emotion: annoyed
+    animation_id: idle
+    text:
+      - type: text
+        value: Although, if you ask me, he's not utilizing his capabilities to his full potential. I've asked him if he wanted to raise in the ranks multiple times, but he always refuses.
+    next: fala_14
+
+  fala_14:
+    type: line
+    speaker_id: pacci
+    emotion: thinking
+    animation_id: idle
+    text:
+      - type: text
+        value: Yeah, I don't get it myself. I've heard the rumors that he has a ton of young alchemists trying to become his apprentices, but he just refuses all of them.
+    next: fala_15
+
+  fala_15:
+    type: line
+    speaker_id: alice
+    emotion: thinking
+    animation_id: idle
+    text:
+      - type: text
+        value: Do you have any idea why he does that?
+    next: fala_16
+
+  fala_16:
+    type: line
+    speaker_id: pacci
+    emotion: unsure
+    animation_id: idle
+    text:
+      - type: text
+        value: I don't know. Never asked him about it.
+    next: fala_17
+
+  fala_17:
+    type: line
+    speaker_id: alice
+    emotion: neutral
+    animation_id: idle
+    text:
+      - type: text
+        value: I see... Pacci, could you do me a small favor?
+    next: fala_18
+
+  fala_18:
+    type: line
+    speaker_id: pacci
+    emotion: happy
+    animation_id: idle
+    text:
+      - type: text
+        value: Sure, what do you need?
+    next: fala_19
+
+  fala_19:
+    type: line
+    speaker_id: alice
+    emotion: concerned
+    animation_id: idle
+    text:
+      - type: text
+        value: I'm concerned with the current state of affairs. Monster population rises as we speak. We found crystals in a temple that, by all means and purposes, should've been completely explored but wasn't. And now the mana in the air was being poisoned for of reasons we don't know.
+    next: fala_20
+
+  fala_20:
+    type: line
+    speaker_id: pacci
+    emotion: concerned
+    animation_id: idle
+    text:
+      - type: text
+        value: I agree. Things have been too hectic and dangerous lately.
+    next: fala_21
+
+  fala_21:
+    type: line
+    speaker_id: alice
+    emotion: serious
+    animation_id: idle
+    text:
+      - type: text
+        value: And because things have been like this, I want to ask you to do a couple of things for me.
+    next: fala_22
+
+  fala_22:
+    type: line
+    speaker_id: alice
+    emotion: serious
+    animation_id: idle
+    text:
+      - type: text
+        value: One, keep this incident with the city's crystals a secret. We don't want people to get panicked.
+    next: fala_23
+
+  fala_23:
+    type: line
+    speaker_id: pacci
+    emotion: serious
+    animation_id: idle
+    text:
+      - type: text
+        value: Right!
+    next: fala_24
+
+  fala_24:
+    type: line
+    speaker_id: alice
+    emotion: serious
+    animation_id: idle
+    text:
+      - type: text
+        value: Second, increase security around the tunnels and other points of importance. We don't know if there's another "attack" planned.
+    next: fala_25
+
+  fala_25:
+    type: line
+    speaker_id: pacci
+    emotion: serious
+    animation_id: idle
+    text:
+      - type: text
+        value: Right away!
+    next: fala_26
+
+  fala_26:
+    type: line
+    speaker_id: alice
+    emotion: serious
+    animation_id: idle
+    text:
+      - type: text
+        value: "And finally, I want you to investigate the temple again, "
+      - type: styled_text
+        value: alone
+        style:
+          italic: true
+      - type: text
+        value: . Make sure that there are no more hidden passages or surprises.
+    next: fala_27
+
+  fala_27:
+    type: line
+    speaker_id: pacci
+    emotion: serious
+    animation_id: idle
+    text:
+      - type: text
+        value: Sure!
+    next: fala_28
+
+  fala_28:
+    type: line
+    speaker_id: pacci
+    emotion: suspicious
+    animation_id: idle
+    text:
+      - type: text
+        value: Uhm... Why do you want me investigate the ruins again?
+    next: fala_29
+
+  fala_29:
+    type: line
+    speaker_id: alice
+    emotion: suspicious
+    animation_id: idle
+    text:
+      - type: text
+        value: Don't you think that it's weird that the temple, a place that was explored multiple times and even charted, had a secret entrance?
+    next: fala_30
+
+  fala_30:
+    type: line
+    speaker_id: pacci
+    emotion: thinking
+    animation_id: idle
+    text:
+      - type: text
+        value: ... Now that you mention it. It is odd.
+    next: fala_31
+
+  fala_31:
+    type: line
+    speaker_id: alice
+    emotion: serious
+    animation_id: idle
+    text:
+      - type: text
+        value: Exactly, so I want you to investigate it again and make sure that there are no more "surprises". Do you think you can handle all of this?
+    next: fala_32
+
+  fala_32:
+    type: line
+    speaker_id: pacci
+    emotion: serious
+    animation_id: idle
+    text:
+      - type: text
+        value: Of course.
+    next: fala_33
+
+  fala_33:
+    type: line
+    speaker_id: alice
+    emotion: happy
+    animation_id: idle
+    text:
+      - type: text
+        value: Thank you, Pacci. I knew I could count on you.
+    next: fala_34
+
+  fala_34:
+    type: line
+    speaker_id: pacci
+    emotion: neutral
+    animation_id: idle
+    text:
+      - type: text
+        value: No problem. Do you want me to visit Raphael and check the situation there too?
+    next: fala_35
+
+  fala_35:
+    type: line
+    speaker_id: alice
+    emotion: neutral
+    animation_id: idle
+    text:
+      - type: text
+        value: That's nice of you but there's no need.
+    next: fala_36
+
+  fala_36:
+    type: line
+    speaker_id: alice
+    emotion: happy
+    animation_id: idle
+    text:
+      - type: text
+        value: I have a good feeling about Raphael's situation.
+    next: fim
+
+  fim:
+    type: end
+    result: neutral

@@ -1,10 +1,7 @@
-const scoreMap: Record<string, number> = {
-	immune: -3,
-	super_strong: -2,
-	strong: -1,
-	weak: 1,
-	super_weak: 2,
-};
+import {
+	ELEMENT_DAMAGE_MULTIPLIERS,
+	ELEMENT_RELATION_SCORES,
+} from '../constants/CombatConstants';
 
 /**
  * Consolidates scores from multiple elements by summing the values.
@@ -35,38 +32,29 @@ export function consolidateScores(
 
 /**
  * Converts weakness scores to the final damage multiplier scale.
- * 
- * Mapping:
+ *
+ * The score bands live in `CombatConstants` (`ELEMENT_RELATION_SCORES`) and the
+ * multiplier each band is worth lives in `ELEMENT_DAMAGE_MULTIPLIERS`, so the
+ * whole efficacy ladder can be tuned in one place:
  * - immune (-3) -> x0
- * - super_strong (-2) -> x0.25
- * - strong (-1) -> x0.5
+ * - super_strong (-2) -> x0.65
+ * - strong (-1) -> x0.8
  * - normal (0) -> x1
- * - weak (1) -> x2
- * - super_weak (2) -> x4
- * 
+ * - weak (1) -> x1.3
+ * - super_weak (2 or more) -> x1.6
+ *
  * @param score Raw weakness score
  * @returns Final damage multiplier
  */
 export function scoreToMultiplier(score: number): number {
-	switch (score) {
-		case -3:
-			return 0; // immune
-		case -2:
-			return 0.25; // super_strong
-		case -1:
-			return 0.5; // strong
-		case 0:
-			return 1; // normal
-		case 1:
-			return 2; // weak
-		case 2:
-			return 4; // super_weak
-		default:
-			// Interpolação linear para valores fora do intervalo
-			if (score < -3) return 0;
-			if (score > 2) return 4;
-			return 1; // fallback
-	}
+	const bands = ELEMENT_RELATION_SCORES;
+
+	if (score <= bands.immune) return ELEMENT_DAMAGE_MULTIPLIERS.immune;
+	if (score <= bands.super_strong) return ELEMENT_DAMAGE_MULTIPLIERS.super_strong;
+	if (score <= bands.strong) return ELEMENT_DAMAGE_MULTIPLIERS.strong;
+	if (score >= bands.super_weak) return ELEMENT_DAMAGE_MULTIPLIERS.super_weak;
+	if (score >= bands.weak) return ELEMENT_DAMAGE_MULTIPLIERS.weak;
+	return ELEMENT_DAMAGE_MULTIPLIERS.normal;
 }
 
 /**
@@ -76,12 +64,14 @@ export function scoreToMultiplier(score: number): number {
  * @returns The relationship key that best describes the total
  */
 export function scoreToType(score: number): string {
-	if (score <= -3) return "immune";
-	if (score === -2) return "super_strong";
-	if (score === -1) return "strong";
-	if (score === 0) return "none";
-	if (score === 1) return "weak";
-	return "super_weak";
+	const bands = ELEMENT_RELATION_SCORES;
+
+	if (score <= bands.immune) return "immune";
+	if (score <= bands.super_strong) return "super_strong";
+	if (score <= bands.strong) return "strong";
+	if (score >= bands.super_weak) return "super_weak";
+	if (score >= bands.weak) return "weak";
+	return "none";
 }
 
 /**
@@ -94,7 +84,7 @@ export function mapElementWeaknessesToScores(element: any): Record<string, { typ
 	const weaknesses: Record<string, { type: string; score: number }> = {};
 	const relations = element?.relations ?? {};
 
-	for (const [prop, score] of Object.entries(scoreMap)) {
+	for (const [prop, score] of Object.entries(ELEMENT_RELATION_SCORES)) {
 		const value = relations[prop];
 		if (value && Array.isArray(value)) {
 			for (const targetElement of value) {
@@ -112,8 +102,8 @@ export function mapElementWeaknessesToScores(element: any): Record<string, { typ
 /**
  * Raw defensive score of one element against one offensive element.
  *
- * Sums `scoreMap` for every relationship array that mentions the offensive
- * element (`immune -3`, `super_strong -2`, `strong -1`, `weak +1`,
+ * Sums `ELEMENT_RELATION_SCORES` for every relationship array that mentions the
+ * offensive element (`immune -3`, `super_strong -2`, `strong -1`, `weak +1`,
  * `super_weak +2`). An element that does not mention the offensive element
  * contributes `0`.
  *
@@ -145,8 +135,8 @@ export function combineDefenseScores(elements: readonly any[], offensiveElementI
 }
 
 /**
- * Final damage multiplier (`x0` … `x4`) of one offensive element against a
- * possibly multi-element defender.
+ * Final damage multiplier of one offensive element against a possibly
+ * multi-element defender (`ELEMENT_DAMAGE_MULTIPLIERS`, currently x0 … x1.6).
  *
  * @param elements Defender's element data
  * @param offensiveElementId Offensive element ID

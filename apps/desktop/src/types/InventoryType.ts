@@ -23,9 +23,9 @@ export type ItemCategory = 'consumable' | 'key_item' | 'throwable' | 'buff' | 'd
  * Who an item effect addresses, in the catalogue's own vocabulary.
  *
  * Deliberately NOT `CombatTargetRule`: the combat rules have no single-ally or
- * dead-ally scope, and reusing them once mapped "an ally" onto `enemy_one`, which
- * turned every potion into a weapon. `one_ally`/`dead_ally` are resolved by
- * `itemTargetResolver` instead.
+ * dead-ally scope, and reusing them once mapped "an ally" onto a single-target
+ * rule, which turned every potion into a weapon. `one_ally`/`dead_ally` are
+ * resolved by `itemTargetResolver` instead.
  */
 export type ItemTargetRule =
     | 'self'

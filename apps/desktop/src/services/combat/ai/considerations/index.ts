@@ -12,6 +12,7 @@ import { defendValue } from './defendValue';
 import { effectValue } from './effectValue';
 import { elementEdge } from './elementEdge';
 import { expectedDamage } from './expectedDamage';
+import { fleeValue } from './fleeValue';
 import { healAlly } from './healAlly';
 import { healSelf } from './healSelf';
 import { itemValue } from './itemValue';
@@ -28,6 +29,7 @@ export const AI_CONSIDERATIONS: Record<AiConsiderationId, AiConsideration> = {
     element_edge: elementEdge,
     effect_value: effectValue,
     survival,
+    flee: fleeValue,
     heal_ally: healAlly,
     heal_self: healSelf,
     defend: defendValue,

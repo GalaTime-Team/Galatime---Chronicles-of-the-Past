@@ -127,7 +127,7 @@ export function CombatFormationHUD({
             <CombatArenaParticles sequence={sequence ?? null} boardRef={boardRef} />
 
             {/* The hour of the day: a solar skill bites harder by day and a
-                nocturnal one at night, so the player can see which side of the
+                lunar one at night, so the player can see which side of the
                 fight they are on. */}
             {timePhase && (
                 <div className="pointer-events-none absolute left-2 top-2 z-10 flex items-center gap-2 border border-white/40 bg-black/50 px-2 py-1 backdrop-blur-sm">

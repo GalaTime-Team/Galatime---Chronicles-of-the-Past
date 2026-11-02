@@ -13,8 +13,10 @@
 import {
     CURSED_WEAR_BONUS,
     DEFAULT_ACCURACY,
+    DEFAULT_AMMO_CONSUME_CHANCE,
     DEFAULT_SKILL_RANGE,
     DEFAULT_WEAPON_RANGE,
+    FRAGILE_WEAPON_BREAK_CHANCE,
     WEAPON_DAMAGE_TYPE,
 } from '../../constants/CombatConstants';
 import type { AttackEffect, PublicAttack } from '../../types/AttackDataType';
@@ -29,7 +31,13 @@ import type { WeaponDefinition, WeaponRuntimeState, WeaponTypeId } from '../../t
 import { asRecord, clamp, readBoolean, readNumber, readPower, readString, readVariance } from '../../utils/combatUtils';
 import { effectHeals } from './effectResolver';
 
-/** Maps every authored targeting word onto the runtime rule. */
+/**
+ * Maps every authored targeting word onto the runtime rule.
+ *
+ * The old `enemy_one`/`ally_one` split is gone: both collapse into `any_one`,
+ * which lets the frontend offer every living unit on the battlefield — the
+ * actor included — as the single target. Legacy content keeps loading unchanged.
+ */
 export function normalizeTargeting(raw: unknown): CombatTargetRule {
     const value = typeof raw === 'string' ? raw : readString(asRecord(raw)?.target, '');
 
@@ -47,12 +55,18 @@ export function normalizeTargeting(raw: unknown): CombatTargetRule {
         case 'both_teams':
         case 'all':
             return 'both_teams';
+        case 'any_one':
         case 'enemy_one':
+        case 'ally_one':
+        case 'unit_one':
         case 'individual':
         case 'single':
         case 'enemy':
+        case 'ally':
+        case 'unit':
+        case 'target':
         default:
-            return 'enemy_one';
+            return 'any_one';
     }
 }
 
@@ -110,12 +124,15 @@ function readBonusVsHpBelow(source: unknown): { threshold: number; multiplier: n
  */
 function defaultTraits(): Pick<
     CombatAction,
-    'solar' | 'nocturnal' | 'critChance' | 'ignoreAccuracy' | 'defensePierce'
+    'solar' | 'lunar' | 'onlyDuringDay' | 'onlyDuringNight' | 'critChance' | 'ignoreAccuracy' | 'defensePierce'
     | 'bonusVsElements' | 'bonusVsHpBelow' | 'fleeBelowHp' | 'guaranteedCritVsStatus'
+    | 'scatterTargets' | 'scatterHits' | 'canHitAnyEnemy' | 'ignorePositionPenalty'
 > {
     return {
         solar: false,
-        nocturnal: false,
+        lunar: false,
+        onlyDuringDay: false,
+        onlyDuringNight: false,
         critChance: 0,
         ignoreAccuracy: false,
         defensePierce: 0,
@@ -123,7 +140,18 @@ function defaultTraits(): Pick<
         bonusVsHpBelow: null,
         fleeBelowHp: null,
         guaranteedCritVsStatus: null,
+        scatterTargets: false,
+        scatterHits: null,
+        canHitAnyEnemy: false,
+        ignorePositionPenalty: false,
     };
+}
+
+/** Reads an optional scatter ray count; `null` means "use `hitCount`". */
+function readScatterHits(raw: unknown): number | null {
+    const value = readNumber(raw, Number.NaN);
+    if (!Number.isFinite(value)) return null;
+    return Math.max(1, Math.round(value));
 }
 
 /** Builds an action from one catalogue skill. */
@@ -147,6 +175,10 @@ export function createCombatActionFromSkill(skill: PublicAttack): CombatAction {
         power,
         accuracy: readNumber(skill.accuracy, DEFAULT_ACCURACY),
         hitCount: Math.max(1, Math.round(readNumber(skill.hit_count, 1))),
+        scatterTargets: readBoolean(skill.scatter_targets, false),
+        scatterHits: readScatterHits(skill.scatter_hits),
+        canHitAnyEnemy: readBoolean(skill.can_hit_any_enemy, false),
+        ignorePositionPenalty: readBoolean(skill.ignore_position_penalty, false),
         costs: readCosts(asRecord(skill.costs), 0),
         targeting: normalizeTargeting(skill.targeting),
         effects,
@@ -158,7 +190,9 @@ export function createCombatActionFromSkill(skill: PublicAttack): CombatAction {
         heals: !dealsDamage && effects.some(effectHeals),
         // The traits the skill forger writes and the engine reads.
         solar: readBoolean(skill.solar, false),
-        nocturnal: readBoolean(skill.nocturnal, false),
+        lunar: readBoolean(skill.lunar, false),
+        onlyDuringDay: readBoolean(skill.only_during_day, false),
+        onlyDuringNight: readBoolean(skill.only_during_night, false),
         critChance: clamp(readNumber(skill.crit_chance, 0), 0, 100),
         ignoreAccuracy: readBoolean(skill.ignore_accuracy, false),
         defensePierce: clamp(readNumber(skill.defense_pierce, 0), 0, 1),
@@ -266,13 +300,13 @@ export function createWeaponRuntimeState(
         wear: Math.max(0, readNumber(durability?.wear, 1)) + (cursed ? CURSED_WEAR_BONUS : 0),
         ammoItem: readString(weapon.ammo?.item, '') || null,
         ammoType: readString(weapon.ammo?.item_type, '') || null,
-        ammoConsumeChance: readNumber(weapon.ammo?.consume_chance, 1),
+        ammoConsumeChance: readNumber(weapon.ammo?.consume_chance, DEFAULT_AMMO_CONSUME_CHANCE),
         ammo: null,
         effectPower: Math.max(1, readNumber(weapon.effect_power, 1)),
         lootChanceMultiplier: Math.max(0, readNumber(weapon.loot?.chance_multiplier, 1)),
         costModifiers: weapon.cost_modifiers ?? null,
         damageModifiers: weapon.damage_modifiers ?? null,
-        breakChance: weapon.flags?.includes('fragile') ? 0.08 : 0,
+        breakChance: weapon.flags?.includes('fragile') ? FRAGILE_WEAPON_BREAK_CHANCE : 0,
         stacks: 0,
         stackTargetId: null,
         flags: Array.isArray(weapon.flags) ? weapon.flags : [],
@@ -317,8 +351,9 @@ function universalAction(
  * The movements every unit can always pick.
  *
  * Ids are stable (`defend`, `rest`, `inventory`) so the HUD can localise the
- * labels. Fleeing is deliberately not offered: it is not a movement the player
- * should be able to spend a turn on, so no unit ever carries the action.
+ * labels. Fleeing is deliberately not part of this list: only a unit that may
+ * actually run carries it — the player, or an enemy whose `ai.flee` profile
+ * authorises it (see {@link createFleeAction}).
  */
 export function createUniversalActions(): CombatAction[] {
     return [
@@ -327,4 +362,21 @@ export function createUniversalActions(): CombatAction[] {
         universalAction('inventory', 'Inventory', 'inventory', 'Spend the turn using an item from your inventory.'),
         universalAction('switch_line', 'Switch Line', 'switch_line', 'Move to the other battle line, if there is room.'),
     ];
+}
+
+/**
+ * The panic escape offered to units that may flee.
+ *
+ * It is intentionally not universal: the unit factory only appends it for
+ * player-controlled units and for enemies whose profile authors `ai.flee`. The
+ * action itself is cheap; whether it is legal and how likely it is to work live
+ * in `fleeRules`.
+ */
+export function createFleeAction(): CombatAction {
+    return universalAction(
+        'flee',
+        'Flee',
+        'flee',
+        'Try to escape the fight. Only possible when badly wounded; the closer to death, the better the odds.',
+    );
 }

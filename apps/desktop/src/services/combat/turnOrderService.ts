@@ -15,7 +15,7 @@
  * Nothing here is random — a fight replays identically from the same roster.
  */
 
-import { SPEED_PER_TURN } from '../../constants/CombatConstants';
+import { EXTRA_TURN_RATIO, SPEED_PER_TURN } from '../../constants/CombatConstants';
 import type { CombatState, CombatTurnGauges, CombatUnit } from '../../types/CombatType';
 import { effectiveStats } from './effectResolver';
 
@@ -38,10 +38,11 @@ export interface TurnOrderPlan {
 /**
  * Builds the turn queue for one round from the units still standing.
  *
- * Every living unit acts at least once, so a slow unit is never skipped; from
- * there a unit earns one extra turn per {@link SPEED_PER_TURN} points of speed.
- * Exact ties resolve towards the player (allies, front line, lower slot) so a
- * round is reproducible.
+ * Every living unit acts at least once. Extra turns are earned based on
+ * {@link SPEED_PER_TURN} and {@link EXTRA_TURN_RATIO}: with ratio `2`, a unit
+ * needs twice the base to earn a second turn; with ratio `3`, it needs three
+ * times the base, and so on. Exact ties resolve towards the player (allies,
+ * front line, lower slot) so a round is reproducible.
  */
 export function planTurnOrder(
     units: readonly CombatUnit[],
@@ -53,11 +54,49 @@ export function planTurnOrder(
 
     for (const unit of living) {
         const total = (gauges[unit.id] ?? 0) + Math.max(0, effectiveStats(unit).speed);
-        const turns = Math.max(1, Math.floor(total / SPEED_PER_TURN));
-        banked[unit.id] = Math.max(0, total - turns * SPEED_PER_TURN);
+        const base = SPEED_PER_TURN;
+        const ratio = Math.max(1, EXTRA_TURN_RATIO);
+
+        let turns = 1;
+        if (base > 0) {
+            if (ratio <= 1) {
+                turns = Math.max(1, Math.floor(total / base));
+            } else if (ratio === 2) {
+                turns = Math.max(1, Math.floor(total / base));
+            } else {
+                // ratio > 2: first turn at base, each additional turn needs base * ratio^(k)
+                // e.g. ratio 3 => turn 2 needs 60, turn 3 needs 180
+                if (total < base * ratio) {
+                    turns = 1;
+                } else {
+                    turns = 1;
+                    let threshold = base;
+                    while (true) {
+                        threshold *= ratio;
+                        if (total < threshold) break;
+                        turns += 1;
+                        if (turns > 20) break; // safety
+                    }
+                }
+            }
+        }
+
+        // Keep gauge behavior consistent: carry over remainder relative to base cost
+        if (base > 0) {
+            if (ratio === 2 || ratio <= 1) {
+                banked[unit.id] = Math.max(0, total - turns * base);
+            } else {
+                // For ratio > 2, carry over from the last threshold reached
+                let cost = base;
+                for (let i = 1; i < turns; i += 1) cost += base * ratio ** i;
+                banked[unit.id] = Math.max(0, total - cost);
+            }
+        } else {
+            banked[unit.id] = 0;
+        }
 
         for (let turn = 0; turn < turns; turn += 1) {
-            // Evenly spread turns, so three turns of a fast unit surround the
+            // Evenly spread turns, so multiple turns of a fast unit surround the
             // single turn of a slow one rather than bunching up at the start.
             queued.push({ unitId: unit.id, position: (turn + 0.5) / turns, unit });
         }

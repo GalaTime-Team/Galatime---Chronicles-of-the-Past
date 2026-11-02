@@ -3,20 +3,19 @@
  *
  * The service already validated every rule (cost, cooldown, reach, line,
  * targeting), so this only has to expand a preview into *(action × target)*
- * pairs. Two action kinds are dropped on purpose:
+ * pairs. `inventory` is dropped on purpose: it is advertised but resolves to
+ * `not_implemented`, so picking it would spend the turn on a rejection.
  *
- * - `inventory` is advertised but resolves to `not_implemented`, so picking it
- *   would spend the turn on a rejection;
- * - `flee` is never offered to a unit the player does not own.
- *
- * Either would deadlock the fight, so the AI simply never considers them.
+ * `flee` is a normal candidate when the unit carries it. The action is only
+ * attached to units that may actually run, and its preview stays unusable while
+ * the unit is above its panic gate, so most enemies never see it.
  */
 
 import type { AiCandidate, AiDecisionContext } from '../../../types/AiType';
 import type { CombatUnit } from '../../../types/CombatType';
 
 /** Actions the AI must never pick, because they cannot resolve. */
-const EXCLUDED_KINDS: ReadonlySet<string> = new Set(['inventory', 'flee']);
+const EXCLUDED_KINDS: ReadonlySet<string> = new Set(['inventory']);
 
 /**
  * Every legal move for the actor, one candidate per target of a single-target
@@ -32,7 +31,7 @@ export function buildAiCandidates(context: AiDecisionContext): AiCandidate[] {
         const { action } = preview;
         if (EXCLUDED_KINDS.has(action.kind)) continue;
 
-        if (action.targeting === 'enemy_one') {
+        if (action.targeting === 'any_one') {
             for (const targetId of preview.targetIds) {
                 candidates.push({
                     action,

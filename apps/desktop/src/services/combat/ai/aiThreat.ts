@@ -14,7 +14,7 @@ import type { CombatState, CombatUnit } from '../../../types/CombatType';
 import { normalizeAccuracy } from '../damageCalculator';
 import { effectiveStats } from '../effectResolver';
 import { legalTargetIds } from '../targetResolver';
-import { impactFor } from './aiImpacts';
+import { impactFor, expectedHitsOn } from './aiImpacts';
 
 const threatCache = new WeakMap<AiDecisionContext, Map<string, number>>();
 
@@ -46,7 +46,7 @@ export function threatFrom(
         if (impact.immune) continue;
 
         const expected = impact.finalDamage
-            * Math.max(1, action.hitCount)
+            * expectedHitsOn(action, attacker, context.state.units)
             * (normalizeAccuracy(action.accuracy) / 100);
         if (expected > bestHit) bestHit = expected;
     }

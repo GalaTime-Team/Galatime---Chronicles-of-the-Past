@@ -67,7 +67,7 @@ weapons:
     type: sword
     element: inanus
     damage_type: physical
-    target: individual
+    target: any_one
     power: 40
     stamina_cost: 3
     damage_variance: [0.8, 1.2]
@@ -80,7 +80,7 @@ weapons:
     type: dagger
     element: inanus
     damage_type: physical
-    target: individual
+    target: any_one
     power: 16
     stamina_cost: 1
     damage_variance: [0.6, 1.4]
@@ -94,7 +94,7 @@ weapons:
     type: lance
     element: inanus
     damage_type: physical
-    target: individual
+    target: any_one
     power: 36
     stamina_cost: 3
     damage_variance: [0.6, 1.3]
@@ -107,7 +107,7 @@ weapons:
     type: mace
     element: inanus
     damage_type: physical
-    target: individual
+    target: any_one
     power: 52
     accuracy: 80
     stamina_cost: 4
@@ -121,7 +121,7 @@ weapons:
     type: bow
     element: inanus
     damage_type: physical
-    target: individual
+    target: any_one
     power: 24
     stamina_cost: 2
     accuracy_by_range:
@@ -136,7 +136,7 @@ weapons:
     type: sword
     element: inanus
     damage_type: physical
-    target: individual
+    target: any_one
     power: 40
     stamina_cost: 2
     damage_variance: [0.7, 1.0]
@@ -147,7 +147,7 @@ weapons:
     type: dagger
     element: inanus
     damage_type: physical
-    target: individual
+    target: any_one
     power: 20
     stamina_cost: 1
     damage_variance: [0.85, 1.15]
@@ -160,7 +160,7 @@ weapons:
     type: lance
     element: inanus
     damage_type: physical
-    target: individual
+    target: any_one
     power: 42
     stamina_cost: 3
     damage_variance: [0.85, 1.15]
@@ -173,7 +173,7 @@ weapons:
     type: mace
     element: inanus
     damage_type: physical
-    target: individual
+    target: any_one
     power: 62
     stamina_cost: 4
     durability: { max: 230, wear: 1 }
@@ -185,7 +185,7 @@ weapons:
     type: greatsword
     element: inanus
     damage_type: physical
-    target: individual
+    target: any_one
     power: 56
     stamina_cost: 4
     damage_variance: [0.85, 1.15]
@@ -198,7 +198,7 @@ weapons:
     type: bow
     element: inanus
     damage_type: physical
-    target: individual
+    target: any_one
     power: 30
     stamina_cost: 2
     accuracy_by_range:
@@ -213,7 +213,7 @@ weapons:
     type: sword
     element: inanus
     damage_type: physical
-    target: individual
+    target: any_one
     power: 40
     stamina_cost: 2
     damage_variance: [0.7, 1.0]
@@ -224,7 +224,7 @@ weapons:
     type: dagger
     element: inanus
     damage_type: physical
-    target: individual
+    target: any_one
     power: 18
     stamina_cost: 1
     damage_variance: [0.8, 1.2]
@@ -237,7 +237,7 @@ weapons:
     type: mace
     element: inanus
     damage_type: physical
-    target: individual
+    target: any_one
     power: 56
     stamina_cost: 4
     durability: { max: 200, wear: 1 }
@@ -249,7 +249,7 @@ weapons:
     type: greatsword
     element: inanus
     damage_type: physical
-    target: individual
+    target: any_one
     power: 52
     stamina_cost: 4
     damage_variance: [0.8, 1.2]
@@ -262,7 +262,7 @@ weapons:
     type: bow
     element: inanus
     damage_type: physical
-    target: individual
+    target: any_one
     power: 28
     stamina_cost: 2
     durability: { max: 150, wear: 1 }
@@ -274,7 +274,7 @@ weapons:
     type: sword
     element: inanus
     damage_type: physical
-    target: individual
+    target: any_one
     power: 50
     stamina_cost: 2
     damage_variance: [0.8, 1.2]
@@ -285,7 +285,7 @@ weapons:
     type: sword
     element: caeli
     damage_type: physical
-    target: enemy_one
+    target: any_one
     hits: 1
     accuracy: 0.9
     power: 30
@@ -297,7 +297,7 @@ weapons:
     type: sword
     element: inanus
     damage_type: physical
-    target: individual
+    target: any_one
     hits: 1
     accuracy: 0.95
     power: 85
@@ -310,7 +310,7 @@ weapons:
     type: dagger
     element: umbra
     damage_type: physical
-    target: individual
+    target: any_one
     hits: 6
     accuracy: 80
     power: 30
@@ -323,7 +323,7 @@ weapons:
     type: mace
     element: lux
     damage_type: physical
-    target: individual
+    target: any_one
     hits: 1
     accuracy: 0.80
     power: 100
@@ -333,7 +333,7 @@ weapons:
     effects:
       - effect_id: peace_maker_stun
         status_effect: Stun
-        apply_to: enemy_one
+        apply_to: target
         turns: 4
         effect_hit_chance: 0.4
         prevent_actions: [attack]
@@ -355,14 +355,14 @@ weapons:
     effects:
       - effect_id: heal_hp
         status_effect: Soothing Light
-        apply_to: ally_one
+        apply_to: target
         resource_regen:
           hp: 10
         regen_variance: [0.5, 1.1]
         apply_chance: 0.2
       - effect_id: heal_mana
         status_effect: Soothing Mind
-        apply_to: ally_one
+        apply_to: target
         resource_regen:
           mana: 6
         regen_variance: [0.5, 1.1]
@@ -373,7 +373,7 @@ weapons:
     type: sword
     element: caeli
     damage_type: physical
-    target: individual
+    target: any_one
     power: 50
     stamina_cost: 3
     durability: { max: 240, wear: 1 }
@@ -409,7 +409,7 @@ weapons:
     type: staff
     element: aqua
     damage_type: magical
-    target: individual
+    target: any_one
     power: 30
     stamina_cost: 2
     durability: { max: 200, wear: 1 }
@@ -426,7 +426,7 @@ weapons:
     type: staff
     element: lapis
     damage_type: physical
-    target: individual
+    target: any_one
     power: 45
     stamina_cost: 3
     durability: { max: 300, wear: 1 }
@@ -454,7 +454,7 @@ weapons:
     type: staff
     element: lux
     damage_type: magical
-    target: individual
+    target: any_one
     power: 20
     stamina_cost: 2
     durability: { max: 180, wear: 1 }
@@ -468,7 +468,7 @@ weapons:
     type: staff
     element: caeli
     damage_type: magical
-    target: individual
+    target: any_one
     power: 25
     stamina_cost: 2
     durability: { max: 180, wear: 1 }
@@ -484,7 +484,7 @@ weapons:
     type: sword
     element: inanus
     damage_type: physical
-    target: individual
+    target: any_one
     power: 60
     stamina_cost: 3
     durability: { max: 200, wear: 0, indestructible: true }
@@ -497,7 +497,7 @@ weapons:
     type: lance
     element: inanus
     damage_type: physical
-    target: individual
+    target: any_one
     power: 50
     stamina_cost: 3
     durability: { max: 230, wear: 1 }
@@ -516,7 +516,7 @@ weapons:
     type: bow
     element: florere
     damage_type: physical
-    target: individual
+    target: any_one
     power: 32
     stamina_cost: 2
     durability: { max: 150, wear: 1 }
@@ -532,7 +532,7 @@ weapons:
     type: sword
     element: inanus
     damage_type: physical
-    target: individual
+    target: any_one
     power: 45
     stamina_cost: 3
     durability: { max: 220, wear: 1 }
@@ -547,7 +547,7 @@ weapons:
     type: sword
     element: inanus
     damage_type: physical
-    target: individual
+    target: any_one
     power: 42
     stamina_cost: 2
     damage_variance: [0.8, 1.1]
@@ -561,7 +561,7 @@ weapons:
     type: sword
     element: inanus
     damage_type: physical
-    target: individual
+    target: any_one
     power: 38
     stamina_cost: 3
     damage_variance: [0.6, 1.3]
@@ -576,7 +576,7 @@ weapons:
     type: dagger
     element: lux
     damage_type: physical
-    target: individual
+    target: any_one
     power: 20
     accuracy: 70
     stamina_cost: 1
@@ -591,7 +591,7 @@ weapons:
     type: longsword
     element: lux
     damage_type: physical
-    target: individual
+    target: any_one
     power: 55
     stamina_cost: 3
     durability: { max: 250, wear: 1 }
@@ -606,7 +606,7 @@ weapons:
     type: greatsword
     element: inanus
     damage_type: physical
-    target: individual
+    target: any_one
     power: 60
     stamina_cost: 4
     damage_variance: [0.85, 1.15]
@@ -619,7 +619,7 @@ weapons:
     type: greatsword
     element: inanus
     damage_type: physical
-    target: individual
+    target: any_one
     power: 48
     stamina_cost: 4
     damage_variance: [0.7, 1.1]
@@ -632,7 +632,7 @@ weapons:
     type: greatsword
     element: lux
     damage_type: physical
-    target: individual
+    target: any_one
     power: 58
     stamina_cost: 4
     damage_variance: [0.85, 1.15]
@@ -646,7 +646,7 @@ weapons:
     type: greatsword
     element: umbra
     damage_type: physical
-    target: individual
+    target: any_one
     power: 58
     stamina_cost: 4
     damage_variance: [0.6, 1.4]
@@ -661,7 +661,7 @@ weapons:
     type: dagger
     element: inanus
     damage_type: physical
-    target: individual
+    target: any_one
     power: 20
     stamina_cost: 1
     damage_variance: [0.8, 1.2]
@@ -674,7 +674,7 @@ weapons:
     type: lance
     element: inanus
     damage_type: physical
-    target: individual
+    target: any_one
     power: 40
     stamina_cost: 3
     damage_variance: [0.8, 1.2]
@@ -687,7 +687,7 @@ weapons:
     type: staff
     element: lux
     damage_type: magical
-    target: individual
+    target: any_one
     power: 30
     stamina_cost: 2
     durability: { max: 150, wear: 1 }
@@ -699,7 +699,7 @@ weapons:
     type: staff
     element: umbra
     damage_type: magical
-    target: individual
+    target: any_one
     power: 34
     stamina_cost: 2
     durability: { max: 150, wear: 1 }
@@ -711,7 +711,7 @@ weapons:
     type: mace
     element: inanus
     damage_type: physical
-    target: individual
+    target: any_one
     power: 62
     stamina_cost: 4
     durability: { max: 220, wear: 1 }
@@ -720,7 +720,7 @@ weapons:
     effects:
       - effect_id: hammer_stun
         status_effect: Stun
-        apply_to: enemy_one
+        apply_to: target
         turns: 1
         effect_hit_chance: 0.25
         prevent_actions: [attack]
@@ -730,7 +730,7 @@ weapons:
     type: bow
     element: inanus
     damage_type: physical
-    target: individual
+    target: any_one
     power: 30
     stamina_cost: 2
     durability: { max: 140, wear: 1 }
@@ -742,7 +742,7 @@ weapons:
     type: dagger
     element: inanus
     damage_type: physical
-    target: individual
+    target: any_one
     power: 22
     accuracy: 95
     stamina_cost: 1
@@ -756,7 +756,7 @@ weapons:
     type: lance
     element: inanus
     damage_type: physical
-    target: individual
+    target: any_one
     power: 44
     accuracy: 95
     stamina_cost: 3
@@ -770,7 +770,7 @@ weapons:
     type: bow
     element: florere
     damage_type: physical
-    target: individual
+    target: any_one
     power: 26
     stamina_cost: 1
     durability: { max: 120, wear: 1 }
@@ -782,7 +782,7 @@ weapons:
     type: bow
     element: lux
     damage_type: physical
-    target: individual
+    target: any_one
     power: 32
     stamina_cost: 2
     accuracy_by_range:
@@ -797,7 +797,7 @@ weapons:
     type: bow
     element: umbra
     damage_type: physical
-    target: individual
+    target: any_one
     power: 32
     stamina_cost: 2
     durability: { max: 140, wear: 1 }
@@ -806,7 +806,7 @@ weapons:
     effects:
       - effect_id: umbra_blind
         status_effect: Blinded
-        apply_to: enemy_one
+        apply_to: target
         turns: 2
         effect_hit_chance: 0.3
         debuff:
@@ -818,7 +818,7 @@ weapons:
     type: bow
     element: inanus
     damage_type: physical
-    target: individual
+    target: any_one
     power: 30
     stamina_cost: 2
     accuracy_by_range:
@@ -834,7 +834,7 @@ weapons:
     type: sword
     element: inanus
     damage_type: physical
-    target: individual
+    target: any_one
     power: 52
     stamina_cost: 3
     damage_variance: [0.8, 1.2]
@@ -849,7 +849,7 @@ weapons:
     type: greatsword
     element: chaos
     damage_type: physical
-    target: individual
+    target: any_one
     power: 70
     stamina_cost: 5
     damage_variance: [0.9, 1.3]
@@ -860,7 +860,7 @@ weapons:
     effects:
       - effect_id: chaoseater_drain
         status_effect: "War's Thirst"
-        apply_to: enemy_one
+        apply_to: target
         turns: 1
         resource_drain:
           hp: 8
@@ -876,7 +876,7 @@ weapons:
     type: greatsword
     element: aqua
     damage_type: physical
-    target: individual
+    target: any_one
     power: 62
     stamina_cost: 4
     damage_variance: [0.85, 1.15]
@@ -887,7 +887,7 @@ weapons:
     effects:
       - effect_id: jormungandr_venom
         status_effect: Venom
-        apply_to: enemy_one
+        apply_to: target
         turns: 3
         effect_hit_chance: 0.7
         damage_per_turn: 7
@@ -897,7 +897,7 @@ weapons:
     type: mace
     element: ignis
     damage_type: physical
-    target: individual
+    target: any_one
     power: 72
     stamina_cost: 5
     damage_variance: [0.9, 1.2]
@@ -908,7 +908,7 @@ weapons:
     effects:
       - effect_id: faridun_stun
         status_effect: Stun
-        apply_to: enemy_one
+        apply_to: target
         turns: 2
         effect_hit_chance: 0.5
         prevent_actions: [attack]
@@ -918,7 +918,7 @@ weapons:
     type: dagger
     element: caeli
     damage_type: physical
-    target: individual
+    target: any_one
     power: 24
     hits: 4
     accuracy: 95
@@ -931,7 +931,7 @@ weapons:
     effects:
       - effect_id: rostam_guard_break
         status_effect: Guard Break
-        apply_to: enemy_one
+        apply_to: target
         turns: 3
         effect_hit_chance: 0.5
         debuff:
@@ -942,7 +942,7 @@ weapons:
     type: dagger
     element: umbra
     damage_type: physical
-    target: individual
+    target: any_one
     power: 40
     hits: 2
     accuracy: 85

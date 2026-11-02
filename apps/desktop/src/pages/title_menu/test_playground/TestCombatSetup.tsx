@@ -156,7 +156,7 @@ export function TestCombatSetup({
 
             <footer className="flex shrink-0 flex-wrap items-center justify-between gap-3 border-t border-white/10 pt-3">
                 {/* The hour of the day: a solar skill bites harder by day and a
-                    nocturnal one at night, so the fight is worth setting up in
+                    lunar one at night, so the fight is worth setting up in
                     the light the author had in mind. */}
                 <label className="flex items-center gap-2 text-xs uppercase tracking-[0.15em] text-white/50">
                     <span>{t('playground.combat.hour')}</span>

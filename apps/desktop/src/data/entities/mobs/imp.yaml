@@ -36,6 +36,9 @@ loot:
 
 ai:
   style: balanced
+  # Cornered imps bolt instead of dying for a lost fight.
+  flee:
+    below_hp: 0.35
   targeting:
     prefer: [squishiest]
 

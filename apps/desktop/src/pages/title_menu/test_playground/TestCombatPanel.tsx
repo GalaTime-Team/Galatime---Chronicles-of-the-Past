@@ -46,7 +46,7 @@ export function TestCombatPanel() {
      * The hour of the day the next fight happens at.
      *
      * The fight takes the world clock's hour, so moving it here moves the
-     * world's clock — which is how a solar or nocturnal skill is tried out.
+     * world's clock — which is how a solar or lunar skill is tried out.
      */
     const [hour, setHour] = useState(getWorldHour());
 

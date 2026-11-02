@@ -591,7 +591,7 @@ export function CombatEncounter({
             return;
         }
 
-        if (action.targeting !== 'enemy_one') {
+        if (action.targeting !== 'any_one') {
             submit({ actionId: action.id });
             return;
         }

@@ -192,6 +192,25 @@ export interface CombatEffectInstance {
     rewind: CombatRewindSpec | null;
     /** Flat damage the effect deals to its owner at the start of its turn. */
     damagePerTurn: number;
+    /** Variance rolled on each damage-over-time tick (`[min,max]`), if any. */
+    damagePerTurnVariance?: [number, number] | null;
+    /** Heals the holder whenever any unit on the battlefield falls. */
+    healOnKill?: { flat: number; percent: number } | null;
+    /** The holder may turn a hostile action on its own side. */
+    confuse?: boolean;
+    /** Chance (`0…1`) a confused holder's hostile action turns on its allies. */
+    confusionChance?: number;
+    /** Extra damage against targets below a fraction of their health. */
+    bonusVsHpBelow?: { threshold: number; multiplier: number } | null;
+    /** The status is lifted when a Lux attack hits the holder. */
+    removableByLux?: boolean;
+    /**
+     * When this effect is live on the unit, the first enemy a damaging action
+     * reaches becomes the unit's only legal target (`Keen Focus`).
+     */
+    locksTarget?: boolean;
+    /** Damage channels the holder is immune to while the effect lives. */
+    damageImmunities?: DamageType[] | null;
     /** How many copies are stacked; `1` when the effect does not stack. */
     stacks: number;
     canStack: boolean;
@@ -252,6 +271,16 @@ export interface CombatUnit {
     /** Set by the `defend` action; halves incoming damage until the next turn. */
     defending: boolean;
     /**
+     * The unit a `locks_target` status nailed down, once a hit shows who.
+     *
+     * `null`/absent means the buff has not met a target yet; the first enemy a
+     * damaging action reaches while the buff lives becomes the locked one.
+     * {@link lockedByEffectId} names the status that made the lock, so a read
+     * verifies the status is still there instead of trusting stale state.
+     */
+    lockedTargetId?: string | null;
+    lockedByEffectId?: string | null;
+    /**
      * The equipped weapon's mutable state (durability, ammo, passive modifiers),
      * or `null` for a unit with no weapon. Cloned per unit; the action list is
      * shared, so per-holder state lives here rather than on the action.
@@ -294,7 +323,11 @@ export interface CarriedWeapon {
 
 /** How a unit chooses what an action hits. */
 export type CombatTargetRule =
-    | 'enemy_one'
+    /**
+     * One unit chosen from everybody in the battle — allies, enemies and the
+     * actor itself. The frontend lists every living unit as a legal target.
+     */
+    | 'any_one'
     | 'enemies_all'
     | 'allies_all'
     | 'self'
@@ -332,6 +365,18 @@ export interface CombatAction {
     /** Hit chance as a percentage (`100` always hits). */
     accuracy: number;
     hitCount: number;
+    /**
+     * `true` turns `hitCount` into independent rays instead of repeated hits on
+     * one target: each ray picks its own random living enemy and rolls its own
+     * accuracy. The same unit may be picked several times.
+     */
+    scatterTargets: boolean;
+    /** Number of scatter rays; `null` falls back to {@link hitCount}. */
+    scatterHits: number | null;
+    /** Scatter rays may pick any living enemy, ignoring reach and lane rules. */
+    canHitAnyEnemy: boolean;
+    /** The lane (front/rear) damage multiplier is skipped (`×1`). */
+    ignorePositionPenalty: boolean;
     costs: CombatActionCost;
     targeting: CombatTargetRule;
     effects: AttackEffect[];
@@ -349,14 +394,19 @@ export interface CombatAction {
      */
     weapon?: WeaponActionSpec;
     /**
-     * The action bites harder by day (×1.5) and softer at night (×0.5).
+     * The action is worth its full strength by day and fades to a quarter of it
+     * at night (`SOLAR_NIGHT_MULTIPLIER`).
      *
      * The flag is on the action, not on the effect, because a solar skill is
      * solar in every part of itself.
      */
     solar: boolean;
-    /** The mirror of {@link solar}: ×1.5 at night, ×0.5 by day. */
-    nocturnal: boolean;
+    /** The mirror of {@link solar}: full strength at night, a quarter by day. */
+    lunar: boolean;
+    /** The action only works while the sun is up. */
+    onlyDuringDay?: boolean;
+    /** The action only works while the sun is down. */
+    onlyDuringNight?: boolean;
     /** Base chance of a critical hit, in percent. */
     critChance: number;
     /** The hit always lands, whatever the accuracy roll would say. */
@@ -425,7 +475,7 @@ export interface CombatActionImpact {
     power: number;
     /** Damage channel the action uses. */
     damageType: DamageType;
-    /** Efficacy of the action's element against this target (`x0` … `x4`). */
+    /** Efficacy of the action's element against this target (`x0` … `x1.6`). */
     elementMultiplier: number;
     /** Variance multiplier (`1` for previews, which do not roll). */
     variance: number;
@@ -625,8 +675,22 @@ export type CombatEvent =
  */
 export type CombatTurnGauges = Record<string, number>;
 
-/** Whether the sun is up. Decides what `solar` and `nocturnal` skills are worth. */
+/** Whether the sun is up. Decides what `solar` and `lunar` skills are worth. */
 export type CombatTimePhase = 'day' | 'night';
+
+/**
+ * A battlefield-wide phase forced by a skill (Solar Eclipse).
+ *
+ * While it lasts, `solar` and `lunar` skills and effects read this phase
+ * instead of the hour the fight opened at.
+ */
+export interface CombatPhaseOverride {
+    phase: CombatTimePhase;
+    /** Full rounds left; the override clears when it reaches zero. */
+    rounds: number;
+    /** The unit whose action forced the phase. */
+    sourceId: string;
+}
 
 /** The serializable shape of a fight. The frontend renders this directly. */
 export interface CombatState {
@@ -645,6 +709,13 @@ export interface CombatState {
     hour: number;
     /** Whether the sun is up, derived from {@link CombatState.hour}. */
     timePhase: CombatTimePhase;
+    /**
+     * A phase forced over the battlefield, or `null`.
+     *
+     * Read instead of {@link CombatState.timePhase} by damage, effect magnitudes,
+     * previews and the HUD while it lasts.
+     */
+    phaseOverride: CombatPhaseOverride | null;
     /**
      * Turn queue for the current round, fastest first.
      *
@@ -717,7 +788,7 @@ export interface CombatEncounter {
 /** One action request from the HUD. */
 export interface CombatActionRequest {
     actionId: string;
-    /** Required for `enemy_one`; ignored otherwise. */
+    /** Required for `any_one`; ignored otherwise. */
     targetId?: string;
     /** Item id when the action is `inventory`. */
     itemId?: string;
@@ -748,6 +819,7 @@ export type CombatErrorCode =
     | 'not_your_turn'
     | 'action_not_found'
     | 'action_unavailable'
+    | 'flee_unavailable'
     | 'target_required'
     | 'target_invalid'
     | 'out_of_range'

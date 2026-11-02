@@ -36,6 +36,7 @@ export type AiConsiderationId =
     | 'element_edge'
     | 'effect_value'
     | 'survival'
+    | 'flee'
     | 'heal_ally'
     | 'heal_self'
     | 'defend'
@@ -87,6 +88,20 @@ export interface AiTargeting {
 }
 
 /**
+ * A unit's authored permission to run away.
+ *
+ * Presence is the switch: a profile without this block never carries the
+ * `flee` action. `belowHp` is the panic gate and `baseChance` is the odds at
+ * that gate; the roll climbs towards `MAX_FLEE_CHANCE` as health falls.
+ */
+export interface AiFleeRule {
+    /** Health fraction at or below which the unit may try to flee. */
+    belowHp: number;
+    /** Chance of escaping at `belowHp`; rises as health approaches zero. */
+    baseChance: number;
+}
+
+/**
  * The authored `ai:` block, exactly as it appears in YAML.
  *
  * Every field is optional and read tolerantly: an absent or malformed block
@@ -98,6 +113,8 @@ export interface AiProfileDefinition {
     thresholds?: unknown;
     targeting?: unknown;
     quirks?: unknown;
+    /** `flee: true` or `flee: { below_hp: 0.3, chance: 0.5 }` enables running. */
+    flee?: unknown;
     pace?: unknown;
 }
 
@@ -114,6 +131,8 @@ export interface AiProfile {
     thresholds: AiThresholds;
     targeting: AiTargeting;
     quirks: AiQuirkId[];
+    /** `null` when this unit may not flee; presence also grants the action. */
+    flee: AiFleeRule | null;
     /** Ms the HUD leaves the decision on screen; `null` = use the caller's delay. */
     pace: number | null;
 }
@@ -142,9 +161,9 @@ export interface AiCandidate {
     action: CombatAction;
     /** Stable key for tie-breaking and logging (`actionId` or `actionId:targetId`). */
     key: string;
-    /** The single named target, when the rule is `enemy_one`; else `null`. */
+    /** The single named target, when the rule is `any_one`; else `null`. */
     targetId: string | null;
-    /** Every unit the action would land on (one for `enemy_one`). */
+    /** Every unit the action would land on (one for `any_one`). */
     targetIds: string[];
 }
 

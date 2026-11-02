@@ -47,8 +47,44 @@ export interface AttackEffect {
     debuff?: Record<string, number>;
     resource_regen?: AttackResourceAmounts;
     resource_drain?: AttackResourceAmounts;
-    damage?: number;
+    /** While the effect lives, its holder cannot switch targets. */
+    locks_target?: boolean;
+    /** Landing the effect inverts the victim's current buffs into debuffs. */
+    invert_buffs?: boolean;
+    /** Damage channels the holder cannot be hurt by while the effect lives. */
+    damage_immunities?: Array<'physical' | 'magical'>;
+    /**
+     * Heals the caster by this fraction of the direct damage the hit dealt
+     * (`0.15` = 15%).
+     */
+    drain_percent_of_damage?: number;
+    /** Forces the battlefield's phase (`day`/`night`) while the effect lasts. */
+    set_phase?: 'day' | 'night';
+    /** Rounds the forced phase lasts; defaults to 5. */
+    phase_rounds?: number;
+    /** Flat damage the effect deals to its owner at the start of its turn. */
+    damage_per_turn?: number;
+    /** Variance rolled on each damage-over-time tick (`[min,max]`). */
     damage_variance?: number[];
+    /** Heals the caster for this flat amount whenever any unit falls. */
+    heal_on_kill?: number;
+    /** Heals the caster for this fraction of its max HP whenever any unit falls. */
+    heal_on_kill_percent?: number;
+    /** The holder's hostile actions may hit its own side. */
+    confuse?: boolean;
+    /** Chance (`0…1`) the confusion turns an action; defaults to 0.5. */
+    confusion_chance?: number;
+    /** Extra damage against targets below a fraction of their health. */
+    bonus_vs_hp_below?: { threshold: number; multiplier: number };
+    /** The status is lifted when a Lux attack hits the holder. */
+    removable_by_lux?: boolean;
+    /** Lower a random number of random stats; the values fold into `debuff`. */
+    random_debuff?: { count?: number; amount?: number; stats?: string[] };
+    /** Raise a random number of random stats; the values fold into `buff`. */
+    random_buff?: { count?: number; amount?: number; stats?: string[] };
+    /** Apply to a random subset of the resolved scope. */
+    random_targets?: { min?: number; max?: number };
+    damage?: number;
     can_stack?: boolean;
     /** How the status reads to a cleanse (`negative`) or a dispel (`positive`). */
     polarity?: 'positive' | 'negative' | 'neutral';
@@ -106,15 +142,27 @@ export interface AttackSkill {
     damage?: Record<string, unknown>;
     targeting?: Record<string, unknown> | string;
     hit_count?: number;
+    /** Fire `hit_count` independent rays, each picking a random living enemy. */
+    scatter_targets?: boolean;
+    /** Ray count for a scatter action; defaults to `hit_count`. */
+    scatter_hits?: number;
+    /** Scatter rays may pick any living enemy, ignoring reach and lane rules. */
+    can_hit_any_enemy?: boolean;
+    /** Skip the lane (front/rear) damage multiplier for this action. */
+    ignore_position_penalty?: boolean;
     power?: Record<string, unknown> | number;
     accuracy?: number;
     costs?: Record<string, number>;
     effects?: AttackEffect[];
     collateral?: Record<string, unknown>;
-    /** The skill bites harder by day (×1.5) and softer at night (×0.5). */
+    /** The skill is worth its full strength by day and fades to a quarter of it at night. */
     solar?: boolean;
-    /** The mirror of `solar`: ×1.5 at night, ×0.5 by day. */
-    nocturnal?: boolean;
+    /** The mirror of `solar`: full strength at night, a quarter of it by day. */
+    lunar?: boolean;
+    /** The skill only works while the sun is up (the phase, not the hour). */
+    only_during_day?: boolean;
+    /** The skill only works while the sun is down. */
+    only_during_night?: boolean;
     /** Base chance of a critical hit, in percent. */
     crit_chance?: number;
     /** The hit always lands. */
@@ -154,13 +202,19 @@ export type PublicAttack = Pick<AttackSkill,
     | 'damage'
     | 'targeting'
     | 'hit_count'
+    | 'scatter_targets'
+    | 'scatter_hits'
+    | 'can_hit_any_enemy'
+    | 'ignore_position_penalty'
     | 'power'
     | 'accuracy'
     | 'costs'
     | 'effects'
     | 'collateral'
     | 'solar'
-    | 'nocturnal'
+    | 'lunar'
+    | 'only_during_day'
+    | 'only_during_night'
     | 'crit_chance'
     | 'ignore_accuracy'
     | 'defense_pierce'

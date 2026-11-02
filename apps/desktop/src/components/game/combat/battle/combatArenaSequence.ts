@@ -26,7 +26,7 @@ export interface ArenaHit {
     isHit: boolean;
     /** Element of the action, for the flash/spark tint. */
     elementId: string | null;
-    /** Element efficacy (`x0`…`x4`), kept for a possible emphasis later. */
+    /** Element efficacy (`x0`…`x1.6`), kept for a possible emphasis later. */
     multiplier: number;
     /** The hit brought the target to 0. */
     fatal: boolean;

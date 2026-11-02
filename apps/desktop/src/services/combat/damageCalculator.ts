@@ -14,21 +14,23 @@
  * deals less than {@link MINIMUM_DAMAGE}.
  *
  * `EFFECT` is the element efficacy taken from the shared element matrix, so the
- * existing `elementUtils` scaling (x0 … x4) is reused rather than duplicated. The
- * lane (position) modifier, the bracing reduction and the ability modifier folded
- * from the defender's passives are applied on top.
+ * existing `elementUtils` scaling (x0 … x1.6) is reused rather than duplicated.
+ * The lane (position) modifier, the bracing reduction and the ability modifier
+ * folded from the defender's passives are applied on top. The whole efficacy
+ * ladder lives in `CombatConstants.ELEMENT_DAMAGE_MULTIPLIERS`.
  *
  * On top of that sit the *traits* the skill catalogue authors — the ones the
  * skill forger writes and the engine reads:
  *
- * - `solar` / `nocturnal` — the hour of the day the fight happens at (x1.5 by
- *   day for a solar skill, x0.5 at night; the nocturnal mirror).
+ * - `solar` / `lunar` — the hour of the day the fight happens at (full strength
+ *   for a solar skill by day, a quarter of it at night; the lunar mirror).
  * - `defense_pierce` — the fraction of the target's defence the hit ignores.
  * - `bonus_vs_elements` — an extra multiplier per element of the defender.
  * - `bonus_vs_hp_below` — an extra multiplier against a wounded target.
  * - `crit_chance` / `guaranteed_crit_vs_status` — the critical hit (x1.75).
  * - `accuracy` / `evasion` — the attacker's aim and the defender's dodge.
  * - `ignore_accuracy` — the hit lands whatever the roll says.
+ * - `ignore_position_penalty` — the lane (front/rear) multiplier is skipped.
  *
  * Every consumer — the turn resolver and the HUD preview — goes through
  * {@link resolveDamage}, so this chain exists exactly once.
@@ -42,6 +44,8 @@ import {
     MIN_EFFECTIVE_ACCURACY,
     MINIMUM_DAMAGE,
     MINIMUM_DEFENSE,
+    LUNAR_DAY_MULTIPLIER,
+    LUNAR_NIGHT_MULTIPLIER,
     POWER_DIVISOR,
     RANDOMIZE_POWER_RANGE,
     SOLAR_DAY_MULTIPLIER,
@@ -61,6 +65,7 @@ import type {
 import type { ElementData } from '../../types/ElementDataType';
 import { clamp } from '../../utils/combatUtils';
 import { elementDefenseScore, scoreToMultiplier } from '../../utils/elementUtils';
+import { isImmuneToDamageType } from './effectResolver';
 import { positionDamageModifier } from './positionRules';
 
 /**
@@ -91,7 +96,7 @@ export function buildElementDamageIndex(elements: readonly ElementData[]): Comba
  * The defender's elements ADD their raw scores together — an element that does
  * not mention the offence contributes `0` — and the total is mapped once to a
  * multiplier. So `immune (-3) + unmentioned (0) = -3 -> x0`, while
- * `immune (-3) + weak (+1) = -2 -> x0.25`. This is the same rule the
+ * `immune (-3) + weak (+1) = -2 -> x0.65`. This is the same rule the
  * tooltips use (`elementController`), so a preview and a real hit can never
  * disagree.
  */
@@ -123,20 +128,39 @@ export function defenseStat(stats: CombatStats, damageType: DamageType): number 
 /**
  * The hour-of-the-day multiplier an action gets.
  *
- * A `solar` skill is worth x1.5 by day and x0.5 at night; a `nocturnal` one
- * is the mirror. A skill with neither is worth the same at every hour.
+ * A `solar` skill is worth its full strength by day and a quarter of it at
+ * night; a `lunar` one is the mirror. A skill with neither is the same at every
+ * hour.
  */
 export function phaseDamageMultiplier(
-    action: Pick<CombatAction, 'solar' | 'nocturnal'>,
+    action: Pick<CombatAction, 'solar' | 'lunar'>,
     timePhase: CombatTimePhase,
 ): number {
     const night = timePhase === 'night';
     let multiplier = 1;
 
-    if (action.solar) multiplier *= night ? SOLAR_NIGHT_MULTIPLIER : SOLAR_DAY_MULTIPLIER;
-    if (action.nocturnal) multiplier *= night ? SOLAR_DAY_MULTIPLIER : SOLAR_NIGHT_MULTIPLIER;
+    if (action.solar) {
+        multiplier *= night ? SOLAR_NIGHT_MULTIPLIER : SOLAR_DAY_MULTIPLIER;
+    }
+    if (action.lunar) {
+        multiplier *= night ? LUNAR_NIGHT_MULTIPLIER : LUNAR_DAY_MULTIPLIER;
+    }
 
     return multiplier;
+}
+
+/**
+ * The hour-of-the-day multiplier an action's effects get.
+ *
+ * The same curve as direct damage ({@link phaseDamageMultiplier}): a `solar`
+ * effect is stronger by day and weaker at night, a `lunar` one the mirror.
+ * An action with neither trait is unaffected (`1`).
+ */
+export function phaseEffectMultiplier(
+    action: Pick<CombatAction, 'solar' | 'lunar'>,
+    timePhase: CombatTimePhase,
+): number {
+    return phaseDamageMultiplier(action, timePhase);
 }
 
 /**
@@ -334,7 +358,7 @@ export interface DamageRequest {
     /**
      * The hour of the day the fight happens at.
      *
-     * It decides what a `solar` or `nocturnal` action is worth, so it has to
+     * It decides what a `solar` or `lunar` action is worth, so it has to
      * be part of the chain — not folded in by the caller.
      */
     timePhase: CombatTimePhase;
@@ -345,11 +369,27 @@ export interface DamageRequest {
      */
     defenderHpFraction?: number;
     /**
+     * Extra trait multiplier contributed by the attacker's live statuses
+     * (`1` when none apply).
+     *
+     * Blood Moon-style effects add damage against wounded targets; folding it
+     * here keeps a preview and a real hit reading the same number.
+     */
+    attackerTraits?: number;
+    /**
      * `true` (the default) rolls accuracy and variance, producing the numbers a
      * real hit would use. `false` returns the deterministic expectation of a
      * single hit — no accuracy roll, variance `1` — for target previews.
      */
     roll?: boolean;
+    /**
+     * Hits this request rolls, overriding `action.hitCount`.
+     *
+     * A scatter ray asks for exactly one: the action's ray count lives in the
+     * resolver, which decides who each ray hits, so the damage chain must not
+     * re-multiply it.
+     */
+    attempts?: number;
 }
 
 /** The full damage accounting of one attacker/target pair. */
@@ -370,7 +410,7 @@ export interface DamageResult {
     attackMultiplier: number;
     /** `true` when an ability made the target immune to the hit. */
     immune: boolean;
-    /** Element efficacy (`x0` … `x4`). */
+    /** Element efficacy (`x0` … `x1.6`; see `ELEMENT_DAMAGE_MULTIPLIERS`). */
     elementMultiplier: number;
     /** Variance multiplier applied (`1` when not rolling). */
     variance: number;
@@ -407,11 +447,13 @@ export function resolveDamage(request: DamageRequest): DamageResult {
     // target's own, so the log does not claim it was weaker than it is.
     const pierced = piercedDefense(rawDefense, action.defensePierce ?? 0);
     const effect = elementMultiplier(elementIndex, action.elementId, request.defenderElementIds);
-    const positionModifier = positionDamageModifier(
-        request.attackerLine,
-        request.defenderLine,
-        request.sameSide,
-    );
+    const positionModifier = action.ignorePositionPenalty
+        ? 1
+        : positionDamageModifier(
+            request.attackerLine,
+            request.defenderLine,
+            request.sameSide,
+        );
     const defenseReduction = request.defenderDefending ? DEFEND_DAMAGE_REDUCTION : 0;
     const variance = rolling ? rollVariance(random, action.damageVariance) : 1;
 
@@ -428,6 +470,10 @@ export function resolveDamage(request: DamageRequest): DamageResult {
         request.defenderStats,
     );
     const critChance = critChanceFor(action, request.attackerStats, request.defender ?? null);
+    // A live `damage_immunities` status voids the hit the same way an ability
+    // does, so a preview and a real hit read the same immunity.
+    const immune = request.modifier.immune
+        || (request.defender ? isImmuneToDamageType(request.defender, action.damageType) : false);
     const atkDefRatio = action.weapon?.damageModifiers?.atk_def_ratio === true;
     // Bazar goods (`randomize_power`) wager the authored power on every swing.
     const randomizePower = action.weapon?.randomizePower === true;
@@ -437,9 +483,10 @@ export function resolveDamage(request: DamageRequest): DamageResult {
     // the same numbers.
     const traitMultiplier = phaseDamageMultiplier(action, request.timePhase)
         * bonusVsElementsMultiplier(action, request.defenderElementIds)
-        * bonusVsHpBelowMultiplier(action, request.defenderHpFraction ?? 1);
+        * bonusVsHpBelowMultiplier(action, request.defenderHpFraction ?? 1)
+        * (request.attackerTraits ?? 1);
 
-    const attempts = rolling ? Math.max(1, action.hitCount) : 1;
+    const attempts = rolling ? Math.max(1, request.attempts ?? action.hitCount) : 1;
     let baseDamage = 0;
     let finalDamage = 0;
     let hits = 0;
@@ -466,7 +513,7 @@ export function resolveDamage(request: DamageRequest): DamageResult {
             defenseReduction,
             variance,
             attackMultiplier: request.modifier.multiplier,
-            immune: request.modifier.immune,
+            immune,
             atkDefRatio,
             traits: traitMultiplier * (critical ? CRIT_MULTIPLIER : 1),
         });
@@ -488,7 +535,7 @@ export function resolveDamage(request: DamageRequest): DamageResult {
         positionModifier,
         defenseReduction,
         attackMultiplier: request.modifier.multiplier,
-        immune: request.modifier.immune,
+        immune,
         baseDamage,
         finalDamage,
         critChance,

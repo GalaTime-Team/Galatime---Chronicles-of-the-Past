@@ -19,8 +19,8 @@
         ['rewind', 'Retroceder tempo'],
     ];
     var TARGET_LABELS = {
-        enemy_one: 'um inimigo', enemies_all: 'todos os inimigos',
-        ally_one: 'um aliado', allies_all: 'todos os aliados',
+        any_one: 'qualquer personagem', enemies_all: 'todos os inimigos',
+        allies_all: 'todos os aliados',
         self: 'o próprio atacante', both_teams: 'ambas as equipas',
     };
     var ZOOM_MIN = 0.1;
@@ -369,7 +369,9 @@
         form.elements.hp_cost.value = skill.costs?.hp ?? 0;
         form.elements.cooldown.value = skill.costs?.cooldown ?? 0;
         form.elements.solar.checked = Boolean(skill.solar);
-        form.elements.nocturnal.checked = Boolean(skill.nocturnal);
+        form.elements.lunar.checked = Boolean(skill.lunar);
+        form.elements.only_during_day.checked = Boolean(skill.only_during_day);
+        form.elements.only_during_night.checked = Boolean(skill.only_during_night);
         form.elements.ignore_accuracy.checked = Boolean(skill.ignore_accuracy);
         form.elements.crit_chance.value = skill.crit_chance ?? '';
         form.elements.guaranteed_crit_vs_status.value = skill.guaranteed_crit_vs_status || '';
@@ -442,7 +444,9 @@
         chips.push({ label: 'Custo', value: costs.length ? costs.join(' · ') : 'Grátis' });
         chips.push({ label: 'Aprender', value: (Number(skill.learning_cost?.experience_points) || 0) + ' XP' });
         if (skill.solar) chips.push({ label: 'Traço', value: 'Solar (×1.5 dia / ×0.5 noite)' });
-        if (skill.nocturnal) chips.push({ label: 'Traço', value: 'Noturna (×1.5 noite / ×0.5 dia)' });
+        if (skill.lunar) chips.push({ label: 'Traço', value: 'Noturna (×1.5 noite / ×0.5 dia)' });
+        if (skill.only_during_day) chips.push({ label: 'Restrição', value: 'Só de dia' });
+        if (skill.only_during_night) chips.push({ label: 'Restrição', value: 'Só de noite' });
         if (skill.crit_chance) chips.push({ label: 'Crítico', value: skill.crit_chance + '%' });
         if (skill.ignore_accuracy) chips.push({ label: 'Traço', value: 'Não falha' });
         if (skill.defense_pierce) chips.push({ label: 'Traço', value: 'Ignora ' + Math.round(skill.defense_pierce * 100) + '% da defesa' });
@@ -461,8 +465,8 @@
 
     function normalizeTarget(value) {
         if (typeof value === 'string') return value;
-        if (value && typeof value === 'object') return value.area || value.target || 'enemy_one';
-        return 'enemy_one';
+        if (value && typeof value === 'object') return value.area || value.target || 'any_one';
+        return 'any_one';
     }
 
     function renderPrerequisites(skill) {
@@ -756,7 +760,9 @@
         if (!sim.hasDamage) {
             return '<div class="sim-empty"><h2>' + escapeHtml(skill.name) + '</h2>'
                 + '<p>Esta skill não causa dano direto, por isso não há número de dano a simular. '
-                + 'Os efeitos que ela aplica continuam a valer: ' + escapeHtml(effectSummary(skill)) + '</p></div>';
+                + 'Os efeitos que ela aplica continuam a valer: ' + escapeHtml(effectSummary(skill)) + '</p>'
+                + (sim.phaseLock ? '<span class="sim-block-note">' + escapeHtml(sim.phaseLock) + '</span>' : '')
+                + '</div>';
         }
         var damageLabel = sim.damageType === 'physical' ? 'físico' : 'mágico';
         var rows = [];
@@ -764,7 +770,7 @@
         rows.push(['Ataque ÷ Defesa', sim.attackValue + ' ÷ ' + defenseLabel + ' = ' + round(sim.attackValue / Math.max(1, sim.effectiveDefense), 2)]);
         rows.push(['Elemento (' + skill.element_id + ')', '×' + sim.element.multiplier + ' — ' + sim.element.relation]);
         if (sim.phase !== 1) {
-            rows.push([(skill.nocturnal ? 'Noturna' : 'Solar') + ' (' + (state.simulator.phase === 'night' ? 'noite' : 'dia') + ')', '×' + sim.phase]);
+            rows.push([(skill.lunar ? 'Noturna' : 'Solar') + ' (' + (state.simulator.phase === 'night' ? 'noite' : 'dia') + ')', '×' + sim.phase]);
         }
         if (sim.bonus.multiplier !== 1) {
             rows.push(['Bónus contra ' + sim.bonus.element, '×' + sim.bonus.value]);
@@ -788,6 +794,16 @@
         var flee = sim.fleeBelowHp !== null
             ? '<div><span>Alvo foge abaixo de</span><strong>' + Math.round(sim.fleeBelowHp * 100) + '% de vida</strong></div>'
             : '';
+        var blockedNote = sim.phaseLock
+            ? '<div class="is-blocked"><span>Fase</span><strong>' + escapeHtml(sim.phaseLock) + '</strong></div>'
+            : '';
+        var drainNote = sim.drainPercent !== null
+            ? '<div><span>Drena</span><strong>' + Math.round(sim.drainPercent * 100) + '% do dano → '
+                + sim.drainHeal + ' de cura a quem usa</strong></div>'
+            : '';
+        var mechanicsHtml = effectMechanicNotes(skill).map(function (note) {
+            return '<div><span>Mecânica</span><strong>' + escapeHtml(note) + '</strong></div>';
+        }).join('');
 
         return '<div class="sim-head">'
             + '<div><span class="eyebrow">' + escapeHtml(skill.element_id) + ' · nível ' + sim.tier.label + '</span>'
@@ -808,22 +824,74 @@
             + '<div class="sim-chain-row is-total"><span>Dano por acerto</span><strong>' + sim.finalDamage + '</strong></div>'
             + '</div>'
             + '<div class="sim-meta">'
+            + blockedNote
             + '<div><span>Custo</span><strong>' + (sim.costs.mana ? sim.costs.mana + ' MP' : 'sem mana') + (sim.costs.stamina ? ' · ' + sim.costs.stamina + ' ST' : '') + (sim.costs.hp ? ' · ' + sim.costs.hp + ' HP' : '') + (sim.costs.cooldown ? ' · ' + sim.costs.cooldown + ' turnos' : '') + '</strong></div>'
             + (sim.manaPerDamage !== null ? '<div><span>Mana por ponto de dano</span><strong>' + round(sim.manaPerDamage, 2) + '</strong></div>' : '')
             + '<div><span>Precisão</span><strong>' + Math.round(sim.accuracy.authored) + '% + ' + Math.round(sim.accuracy.modifier) + (sim.accuracy.evasion ? ' − ' + Math.round(sim.accuracy.evasion) + ' esquiva' : '') + ' = ' + Math.round(sim.accuracy.value) + '%</strong></div>'
             + critNote + guaranteed + flee
+            + drainNote
+            + mechanicsHtml
             + '<div><span>Nível</span><strong>' + sim.tier.label + ' · poder ×' + round(sim.tier.powerFactor, 2) + ' · custo ×' + round(sim.tier.costFactor, 2) + '</strong></div>'
             + '</div>'
             + '<p class="sim-note">' + (sim.scalingNote ? escapeHtml(sim.scalingNote) + ' ' : '')
             + 'Sem críticos e sem a variância (0.9 … 1.1): este é o valor esperado de um acerto, não uma tiragem.</p>';
     }
 
+    /** Notas de mecânica nova que os efeitos pedem ao motor. */
+    function effectMechanicNotes(skill) {
+        var notes = [];
+        (skill.effects || []).forEach(function (effect) {
+            if (effect.confuse) {
+                var chance = effect.confusion_chance === undefined || effect.confusion_chance === null
+                    ? 50 : Math.round(Number(effect.confusion_chance) * 100);
+                notes.push('Confunde: com chance de ' + chance + '%, o golpe recai sobre um aliado do alvo');
+            }
+            if (effect.set_phase) {
+                notes.push('Força a fase ' + (effect.set_phase === 'night' ? 'noite' : 'dia') + ' por ' + (effect.phase_rounds ?? 5) + ' ronda(s)');
+            }
+            if (effect.removable_by_lux) notes.push('Removível por Lux: qualquer ataque de Lux levanta o estado');
+            if (effect.random_debuff && typeof effect.random_debuff === 'object') {
+                notes.push('Reduz ' + (effect.random_debuff.count ?? 1) + ' atributo(s) aleatório(s) em '
+                    + (effect.random_debuff.amount ?? '') + ' por ' + (effect.turns || 1) + ' turno(s)');
+            }
+            if (effect.random_buff && typeof effect.random_buff === 'object') {
+                notes.push('Levanta ' + (effect.random_buff.count ?? 1) + ' atributo(s) aleatório(s) em '
+                    + (effect.random_buff.amount ?? '') + ' por ' + (effect.turns || 1) + ' turno(s)');
+            }
+            if (effect.heal_on_kill !== undefined || effect.heal_on_kill_percent !== undefined) {
+                var killHeal = [];
+                if (effect.heal_on_kill !== undefined && effect.heal_on_kill !== null) killHeal.push(String(effect.heal_on_kill));
+                if (effect.heal_on_kill_percent !== undefined && effect.heal_on_kill_percent !== null) {
+                    killHeal.push(Math.round(Number(effect.heal_on_kill_percent) * 100) + '% da vida máxima');
+                }
+                notes.push('Cura ' + killHeal.join(' + ') + ' ao portador por cada morte no campo');
+            }
+            if (effect.random_targets && typeof effect.random_targets === 'object') {
+                var minTargets = effect.random_targets.min ?? 1;
+                notes.push(effect.random_targets.max === undefined || effect.random_targets.max === null
+                    ? 'Atinge até ' + minTargets + ' unidade(s) do âmbito ao acaso'
+                    : 'Atinge entre ' + minTargets + ' e ' + effect.random_targets.max + ' unidades do âmbito ao acaso');
+            }
+            if (effect.locks_target) notes.push('Quem usa não pode trocar de alvo durante o efeito');
+            if (effect.invert_buffs) notes.push('Inverte os buffs ativos do alvo');
+            if (Array.isArray(effect.damage_immunities) && effect.damage_immunities.length) {
+                notes.push('O portador está imune a dano ' + effect.damage_immunities.map(function (channel) {
+                    return channel === 'physical' ? 'físico' : channel === 'magical' ? 'mágico' : channel;
+                }).join(' e '));
+            }
+        });
+        return notes;
+    }
+
     function effectSummary(skill) {
         var effects = skill.effects || [];
         if (!effects.length) return 'não aplica nenhum efeito.';
-        return effects.map(function (effect) {
+        var text = effects.map(function (effect) {
             return (effect.status_effect || effect.effect_id || 'efeito');
         }).join(', ') + '.';
+        var notes = effectMechanicNotes(skill);
+        if (notes.length) text += ' Notas: ' + notes.join('; ') + '.';
+        return text;
     }
 
     function round(value, decimals) {
@@ -965,8 +1033,12 @@
         };
         if (form.elements.solar.checked) skill.solar = true;
         else delete skill.solar;
-        if (form.elements.nocturnal.checked) skill.nocturnal = true;
-        else delete skill.nocturnal;
+        if (form.elements.lunar.checked) skill.lunar = true;
+        else delete skill.lunar;
+        if (form.elements.only_during_day.checked) skill.only_during_day = true;
+        else delete skill.only_during_day;
+        if (form.elements.only_during_night.checked) skill.only_during_night = true;
+        else delete skill.only_during_night;
         if (form.elements.ignore_accuracy.checked) skill.ignore_accuracy = true;
         else delete skill.ignore_accuracy;
         setOptionalNumber(skill, 'crit_chance', form.elements.crit_chance.value);
@@ -1282,6 +1354,12 @@
         var immunities = Array.isArray(effect.status_immunities) ? effect.status_immunities.join(', ') : '';
         var prevented = Array.isArray(effect.prevent_actions) ? effect.prevent_actions.join(', ') : '';
         var deferredCost = effect.deferred_cost || {};
+        var randomDebuff = effect.random_debuff && typeof effect.random_debuff === 'object' ? effect.random_debuff : {};
+        var randomBuff = effect.random_buff && typeof effect.random_buff === 'object' ? effect.random_buff : {};
+        var randomTargets = effect.random_targets && typeof effect.random_targets === 'object' ? effect.random_targets : {};
+        var randomDebuffStats = Array.isArray(randomDebuff.stats) ? randomDebuff.stats.join(', ') : '';
+        var randomBuffStats = Array.isArray(randomBuff.stats) ? randomBuff.stats.join(', ') : '';
+        var damageImmunities = Array.isArray(effect.damage_immunities) ? effect.damage_immunities : [];
         return '<details class="effect-advanced"><summary>Opções avançadas</summary>'
             + '<div class="effect-advanced-group">'
             + '<span class="effect-group-title">Controlo de turno</span>'
@@ -1299,6 +1377,36 @@
             + '<label class="effect-stack"><input type="checkbox" data-effect-field="heal_block" ' + (effect.heal_block ? 'checked' : '') + '> O alvo não pode ser curado por outros</label>'
             + '<label class="effect-stack"><input type="checkbox" data-effect-field="counter" ' + (effect.counter ? 'checked' : '') + '> Reflete o próximo golpe recebido</label>'
             + '</div></div>'
+            + '<div class="effect-advanced-group">'
+            + '<span class="effect-group-title">Mecânica do motor</span>'
+            + '<div class="form-grid effect-main-grid">'
+            + '<label class="effect-field"><span>Drena parte do dano</span><div class="input-suffix"><input class="control" data-effect-field="drain_percent_of_damage" type="number" min="0" max="100" step="5" value="' + escapeHtml(effect.drain_percent_of_damage === undefined || effect.drain_percent_of_damage === null ? '' : Math.round(Number(effect.drain_percent_of_damage) * 100)) + '" placeholder="0"><span>%</span></div><small>O dano causado cura quem usa a skill nesta fração.</small></label>'
+            + '<label class="effect-stack"><input type="checkbox" data-effect-field="confuse" ' + (effect.confuse ? 'checked' : '') + '> Confunde o alvo</label>'
+            + '<label class="effect-field" data-effect-conditional="confusion_chance"' + (effect.confuse ? '' : ' hidden') + '><span>Chance de confusão</span><div class="input-suffix"><input class="control" data-effect-field="confusion_chance" type="number" min="0" max="100" step="5" value="' + escapeHtml(effect.confusion_chance === undefined || effect.confusion_chance === null ? 50 : Math.round(Number(effect.confusion_chance) * 100)) + '"><span>%</span></div></label>'
+            + '<label class="effect-field"><span>Força a fase</span><select class="control" data-effect-field="set_phase">'
+            + optionMarkup('', 'Nenhuma', !effect.set_phase)
+            + optionMarkup('day', 'Dia', effect.set_phase === 'day')
+            + optionMarkup('night', 'Noite', effect.set_phase === 'night')
+            + '</select></label>'
+            + '<label class="effect-field" data-effect-conditional="phase_rounds"' + (effect.set_phase ? '' : ' hidden') + '><span>Duração da fase</span><div class="input-suffix"><input class="control" data-effect-field="phase_rounds" type="number" min="1" step="1" value="' + escapeHtml(effect.phase_rounds ?? 5) + '"><span>rondas</span></div></label>'
+            + '<label class="effect-stack"><input type="checkbox" data-effect-field="removable_by_lux" ' + (effect.removable_by_lux ? 'checked' : '') + '> Levantado por ataques de Lux</label>'
+            + '<label class="effect-stack"><input type="checkbox" data-effect-field="locks_target" ' + (effect.locks_target ? 'checked' : '') + '> Quem usa não pode trocar de alvo</label>'
+            + '<label class="effect-stack"><input type="checkbox" data-effect-field="invert_buffs" ' + (effect.invert_buffs ? 'checked' : '') + '> Inverte os buffs do alvo</label>'
+            + '<label class="effect-field"><span>Cura por morte</span><input class="control" data-effect-field="heal_on_kill" type="number" min="0" value="' + escapeHtml(effect.heal_on_kill ?? '') + '" placeholder="0"><small>Cura fixa ao portador por cada morte no campo.</small></label>'
+            + '<label class="effect-field"><span>Cura por morte (% de vida)</span><div class="input-suffix"><input class="control" data-effect-field="heal_on_kill_percent" type="number" min="0" max="100" step="5" value="' + escapeHtml(effect.heal_on_kill_percent === undefined || effect.heal_on_kill_percent === null ? '' : Math.round(Number(effect.heal_on_kill_percent) * 100)) + '" placeholder="0"><span>%</span></div></label>'
+            + '<label class="effect-field"><span>Debuff aleatório: quantos</span><input class="control" data-effect-field="random_debuff.count" type="number" min="1" step="1" value="' + escapeHtml(randomDebuff.count ?? '') + '" placeholder="1"><small>Nº de atributos sorteados para reduzir.</small></label>'
+            + '<label class="effect-field"><span>Debuff aleatório: quanto</span><input class="control" data-effect-field="random_debuff.amount" type="number" step="1" value="' + escapeHtml(randomDebuff.amount ?? '') + '" placeholder="0"><small>Redução aplicada a cada atributo</small></label>'
+            + '<label class="effect-field effect-field-wide"><span>Debuff aleatório: atributos</span><input class="control" data-effect-field="random_debuff.stats" value="' + escapeHtml(randomDebuffStats) + '" placeholder="speed, accuracy"><small>Nomes separados por vírgula (' + Model.RANDOM_DEBUFF_STATS.join(', ') + '). Vazio sorteia de todos.</small></label>'
+            + '<label class="effect-field"><span>Buff aleatório: quantos</span><input class="control" data-effect-field="random_buff.count" type="number" min="1" step="1" value="' + escapeHtml(randomBuff.count ?? '') + '" placeholder="1"><small>Nº de atributos sorteados para subir.</small></label>'
+            + '<label class="effect-field"><span>Buff aleatório: quanto</span><input class="control" data-effect-field="random_buff.amount" type="number" step="1" value="' + escapeHtml(randomBuff.amount ?? '') + '" placeholder="0"><small>Aumento aplicado a cada atributo</small></label>'
+            + '<label class="effect-field effect-field-wide"><span>Buff aleatório: atributos</span><input class="control" data-effect-field="random_buff.stats" value="' + escapeHtml(randomBuffStats) + '" placeholder="speed, accuracy"><small>Nomes separados por vírgula (' + Model.RANDOM_DEBUFF_STATS.join(', ') + '). Vazio sorteia de todos.</small></label>'
+            + '<label class="effect-field"><span>Alvos ao acaso: mín.</span><input class="control" data-effect-field="random_targets.min" type="number" min="1" step="1" value="' + escapeHtml(randomTargets.min ?? '') + '" placeholder="1"></label>'
+            + '<label class="effect-field"><span>Alvos ao acaso: máx.</span><input class="control" data-effect-field="random_targets.max" type="number" min="1" step="1" value="' + escapeHtml(randomTargets.max ?? '') + '" placeholder="mín."></label>'
+            + '</div>'
+            + '<span class="effect-group-title">Imunidade a dano</span>'
+            + '<label class="effect-stack"><input type="checkbox" data-effect-immunity="physical" ' + (damageImmunities.indexOf('physical') !== -1 ? 'checked' : '') + '> Imune a dano físico durante o efeito</label>'
+            + '<label class="effect-stack"><input type="checkbox" data-effect-immunity="magical" ' + (damageImmunities.indexOf('magical') !== -1 ? 'checked' : '') + '> Imune a dano mágico durante o efeito</label>'
+            + '</div>'
             + '<div class="effect-advanced-group">'
             + '<span class="effect-group-title">Custos e manutenção</span>'
             + '<div class="form-grid effect-main-grid">'
@@ -1541,6 +1649,37 @@
                     var list = String(field.value || '').split(',').map(function (entry) { return entry.trim(); }).filter(Boolean);
                     if (list.length) effect[key] = list;
                     else delete effect[key];
+                } else if (key === 'drain_percent_of_damage' || key === 'heal_on_kill_percent' || key === 'confusion_chance') {
+                    // Mostram-se em percentagem mas guardam-se como fração, à
+                    // maneira da precisão do efeito.
+                    if (field.value === '') delete effect[key];
+                    else {
+                        var fraction = numberValue(field.value, 0) / 100;
+                        if (fraction >= 1) effect[key] = 1;
+                        else effect[key] = fraction;
+                    }
+                } else if (key === 'heal_on_kill') {
+                    if (field.value === '') delete effect.heal_on_kill;
+                    else effect.heal_on_kill = numberValue(field.value, 0);
+                } else if (key === 'set_phase') {
+                    if (field.value) effect.set_phase = field.value;
+                    else {
+                        delete effect.set_phase;
+                        delete effect.phase_rounds;
+                    }
+                } else if (key === 'phase_rounds') {
+                    if (field.value === '' || !effect.set_phase) delete effect.phase_rounds;
+                    else effect.phase_rounds = numberValue(field.value, 5);
+                } else if (key === 'random_debuff.stats') {
+                    var debuffStats = String(field.value || '').split(',').map(function (entry) { return entry.trim(); }).filter(Boolean);
+                    effect.random_debuff = effect.random_debuff || {};
+                    if (debuffStats.length) effect.random_debuff.stats = debuffStats;
+                    else delete effect.random_debuff.stats;
+                } else if (key === 'random_buff.stats') {
+                    var buffStats = String(field.value || '').split(',').map(function (entry) { return entry.trim(); }).filter(Boolean);
+                    effect.random_buff = effect.random_buff || {};
+                    if (buffStats.length) effect.random_buff.stats = buffStats;
+                    else delete effect.random_buff.stats;
                 } else if (key.indexOf('rewind.resources.') === 0) {
                     // Os recursos recuperados são uma lista, não um campo solto.
                     var rewindResource = key.slice('rewind.resources.'.length);
@@ -1608,9 +1747,35 @@
             var drainResource = card.querySelector('[data-effect-drain-resource]');
             var drainAmount = card.querySelector('[data-effect-drain-amount]');
             if (drainResource && drainAmount) effect.resource_drain = { [drainResource.value]: numberValue(drainAmount.value, 0) };
+            var immunityChecks = Array.from(card.querySelectorAll('[data-effect-immunity]'));
+            if (immunityChecks.length) {
+                var damageChannels = immunityChecks.filter(function (check) { return check.checked; })
+                    .map(function (check) { return check.dataset.effectImmunity; });
+                if (damageChannels.length) effect.damage_immunities = damageChannels;
+                else delete effect.damage_immunities;
+            }
+            // Uma casca de `random_debuff` sem campos dentro não é mecânica: some.
+            if (effect.random_debuff && typeof effect.random_debuff === 'object' && !Object.keys(effect.random_debuff).length) {
+                delete effect.random_debuff;
+            }
+            // O mesmo para a casca do `random_buff`.
+            if (effect.random_buff && typeof effect.random_buff === 'object' && !Object.keys(effect.random_buff).length) {
+                delete effect.random_buff;
+            }
+            updateConditionalEffectFields(card, effect);
             updatedById.set(effect.effect_id, effect);
         });
         skill.effects = original.map(function (effect) { return updatedById.get(effect.effect_id) || effect; });
+    }
+
+    /** Campos que só têm sentido quando o campo-pai está ativo. */
+    function updateConditionalEffectFields(card, effect) {
+        var confusionField = card.querySelector('[data-effect-conditional="confusion_chance"]');
+        if (confusionField) confusionField.hidden = !effect.confuse;
+        if (!effect.confuse) delete effect.confusion_chance;
+        var phaseField = card.querySelector('[data-effect-conditional="phase_rounds"]');
+        if (phaseField) phaseField.hidden = !effect.set_phase;
+        if (!effect.set_phase) delete effect.phase_rounds;
     }
 
     function syncCollateral(skill) {
@@ -1966,7 +2131,9 @@
         if (skill.accuracy !== undefined) result.accuracy = skill.accuracy;
         if (skill.hit_count !== undefined) result.hit_count = skill.hit_count;
         if (skill.solar) result.solar = true;
-        if (skill.nocturnal) result.nocturnal = true;
+        if (skill.lunar) result.lunar = true;
+        if (skill.only_during_day) result.only_during_day = true;
+        if (skill.only_during_night) result.only_during_night = true;
         if (skill.ignore_accuracy) result.ignore_accuracy = true;
         if (skill.crit_chance !== undefined) result.crit_chance = skill.crit_chance;
         if (skill.defense_pierce !== undefined) result.defense_pierce = skill.defense_pierce;

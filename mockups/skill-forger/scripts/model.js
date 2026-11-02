@@ -20,6 +20,12 @@
         'speed', 'accuracy', 'evasion', 'crit_chance',
     ];
 
+    /* Atributos que um debuff aleatório pode escolher. */
+    var RANDOM_DEBUFF_STATS = [
+        'physical_attack', 'magical_attack', 'physical_defense', 'magical_defense',
+        'speed', 'accuracy', 'evasion', 'crit_chance',
+    ];
+
     var STAT_LABELS = {
         hp: 'hp — vida máxima',
         mana: 'mana — mana máxima',
@@ -198,15 +204,15 @@
     var TEMPLATES = [
         {
             id: 'physical_strike', title: 'Ataque físico', category: 'Ataques', description: 'Dano físico a um inimigo.',
-            build: function () { return { targeting: 'enemy_one', damage: { kind: 'physical', power: { kind: 'fixed', value: 24 } }, accuracy: 95, hit_count: 1 }; },
+            build: function () { return { targeting: 'any_one', damage: { kind: 'physical', power: { kind: 'fixed', value: 24 } }, accuracy: 95, hit_count: 1 }; },
         },
         {
             id: 'magic_bolt', title: 'Ataque mágico', category: 'Ataques', description: 'Projétil mágico de alvo único.',
-            build: function () { return { targeting: 'enemy_one', damage: { kind: 'magical', power: { kind: 'fixed', value: 32 } }, accuracy: 100, hit_count: 1, costs: { mana: 8, stamina: 0, cooldown: 0 } }; },
+            build: function () { return { targeting: 'any_one', damage: { kind: 'magical', power: { kind: 'fixed', value: 32 } }, accuracy: 100, hit_count: 1, costs: { mana: 8, stamina: 0, cooldown: 0 } }; },
         },
         {
             id: 'multi_strike', title: 'Rajada de golpes', category: 'Ataques', description: 'Vários golpes físicos ao mesmo alvo.',
-            build: function () { return { targeting: 'enemy_one', damage: { kind: 'physical', power: { kind: 'fixed', value: 13 } }, accuracy: 88, hit_count: 4, costs: { mana: 0, stamina: 7, cooldown: 0 } }; },
+            build: function () { return { targeting: 'any_one', damage: { kind: 'physical', power: { kind: 'fixed', value: 13 } }, accuracy: 88, hit_count: 4, costs: { mana: 0, stamina: 7, cooldown: 0 } }; },
         },
         {
             id: 'attack_rain', title: 'Chuva de ataques', category: 'Ataques', description: 'Golpes mágicos repetidos contra todos os inimigos.',
@@ -222,7 +228,7 @@
         },
         {
             id: 'target_debuff', title: 'Debuff individual', category: 'Debuffs', description: 'Reduz um atributo de um inimigo.',
-            build: function (skillId) { return { targeting: 'enemy_one', effects: [makeEffect(skillId, 'debuff', 'target', 0, { debuff: { magical_defense: 12 }, effect_hit_chance: 0.85 })], costs: { mana: 7, stamina: 0, cooldown: 0 } }; },
+            build: function (skillId) { return { targeting: 'any_one', effects: [makeEffect(skillId, 'debuff', 'target', 0, { debuff: { magical_defense: 12 }, effect_hit_chance: 0.85 })], costs: { mana: 7, stamina: 0, cooldown: 0 } }; },
         },
         {
             id: 'area_debuff', title: 'Debuff em área', category: 'Debuffs', description: 'Reduz a velocidade de todos os inimigos.',
@@ -234,7 +240,7 @@
         },
         {
             id: 'ally_heal', title: 'Curar um aliado', category: 'Recuperação', description: 'Recupera vida de um aliado escolhido.',
-            build: function (skillId) { return { targeting: 'ally_one', effects: [makeEffect(skillId, 'regen', 'target', 0, { resource_regen: { hp: 30 } })], costs: { mana: 9, stamina: 0, cooldown: 0 } }; },
+            build: function (skillId) { return { targeting: 'any_one', effects: [makeEffect(skillId, 'regen', 'target', 0, { resource_regen: { hp: 30 } })], costs: { mana: 9, stamina: 0, cooldown: 0 } }; },
         },
         {
             id: 'team_heal', title: 'Curar toda a equipa', category: 'Recuperação', description: 'Recupera vida de todos os aliados.',
@@ -246,35 +252,35 @@
         },
         {
             id: 'damage_sequence', title: 'Dano por turno', category: 'Efeitos contínuos', description: 'Aplica dano ao longo de vários turnos.',
-            build: function (skillId) { return { targeting: 'enemy_one', effects: [makeEffect(skillId, 'damage', 'target', 0, { damage_per_turn: 6, turns: 3, effect_hit_chance: 0.9 })], costs: { mana: 10, stamina: 0, cooldown: 0 } }; },
+            build: function (skillId) { return { targeting: 'any_one', effects: [makeEffect(skillId, 'damage', 'target', 0, { damage_per_turn: 6, turns: 3, effect_hit_chance: 0.9 })], costs: { mana: 10, stamina: 0, cooldown: 0 } }; },
         },
         {
             id: 'life_drain', title: 'Drenar vida', category: 'Efeitos contínuos', description: 'Fere um inimigo e recupera vida do atacante.',
-            build: function (skillId) { return { targeting: 'enemy_one', damage: { kind: 'magical', power: { kind: 'fixed', value: 20 } }, accuracy: 90, hit_count: 1, effects: [makeEffect(skillId, 'regen', 'self', 0, { resource_regen: { hp: 12 } })], costs: { mana: 12, stamina: 0, cooldown: 0 } }; },
+            build: function (skillId) { return { targeting: 'any_one', damage: { kind: 'magical', power: { kind: 'fixed', value: 20 } }, accuracy: 90, hit_count: 1, effects: [makeEffect(skillId, 'regen', 'self', 0, { resource_regen: { hp: 12 } })], costs: { mana: 12, stamina: 0, cooldown: 0 } }; },
         },
         {
             id: 'solar_beam', title: 'Raio solar', category: 'Traços', description: 'Dano magical que só existe à luz do sol e fere Umbra ainda mais.',
-            build: function () { return { targeting: 'enemy_one', damage: { kind: 'magical', power: { kind: 'fixed', value: 18 } }, accuracy: 100, hit_count: 1, solar: true, bonus_vs_elements: { umbra: 1.5 }, costs: { mana: 8, stamina: 0, cooldown: 0 } }; },
+            build: function () { return { targeting: 'any_one', damage: { kind: 'magical', power: { kind: 'fixed', value: 18 } }, accuracy: 100, hit_count: 1, solar: true, bonus_vs_elements: { umbra: 1.5 }, costs: { mana: 8, stamina: 0, cooldown: 0 } }; },
         },
         {
             id: 'blind', title: 'Cegar', category: 'Controle', description: 'Reduz a precisão dos ataques do inimigo.',
-            build: function (skillId) { return { targeting: 'enemy_one', effects: [makeEffect(skillId, 'debuff', 'target', 0, { debuff: { accuracy: 20 }, effect_hit_chance: 0.9 })], costs: { mana: 6, stamina: 0, cooldown: 1 } }; },
+            build: function (skillId) { return { targeting: 'any_one', effects: [makeEffect(skillId, 'debuff', 'target', 0, { debuff: { accuracy: 20 }, effect_hit_chance: 0.9 })], costs: { mana: 6, stamina: 0, cooldown: 1 } }; },
         },
         {
             id: 'purify', title: 'Purificar', category: 'Controle', description: 'Remove estados negativos de um aliado.',
-            build: function (skillId) { return { targeting: 'ally_one', effects: [makeEffect(skillId, 'cleanse', 'target', 0, { cleanse: 2 })], costs: { mana: 10, stamina: 0, cooldown: 1 } }; },
+            build: function (skillId) { return { targeting: 'any_one', effects: [makeEffect(skillId, 'cleanse', 'target', 0, { cleanse: 2 })], costs: { mana: 10, stamina: 0, cooldown: 1 } }; },
         },
         {
             id: 'dispel', title: 'Dissipar', category: 'Controle', description: 'Remove um estado positivo do inimigo.',
-            build: function (skillId) { return { targeting: 'enemy_one', effects: [makeEffect(skillId, 'dispel', 'target', 0, { dispel: 1 })], costs: { mana: 10, stamina: 0, cooldown: 1 } }; },
+            build: function (skillId) { return { targeting: 'any_one', effects: [makeEffect(skillId, 'dispel', 'target', 0, { dispel: 1 })], costs: { mana: 10, stamina: 0, cooldown: 1 } }; },
         },
         {
             id: 'mending_light', title: 'Luz reparadora', category: 'Recuperação', description: 'Regenera vida ao longo de vários turnos.',
-            build: function (skillId) { return { targeting: 'ally_one', effects: [makeEffect(skillId, 'regen_turn', 'target', 0, { regen_per_turn: { hp: 10 }, turns: 4 })], costs: { mana: 12, stamina: 0, cooldown: 2 } }; },
+            build: function (skillId) { return { targeting: 'any_one', effects: [makeEffect(skillId, 'regen_turn', 'target', 0, { regen_per_turn: { hp: 10 }, turns: 4 })], costs: { mana: 12, stamina: 0, cooldown: 2 } }; },
         },
         {
             id: 'night_ambush', title: 'Emboscada noturna', category: 'Golpes críticos', description: 'Golpe noturno com chance de crítico.',
-            build: function () { return { targeting: 'enemy_one', damage: { kind: 'physical', power: { kind: 'fixed', value: 22 } }, accuracy: 90, hit_count: 1, nocturnal: true, crit_chance: 30, costs: { mana: 0, stamina: 8, cooldown: 1 } }; },
+            build: function () { return { targeting: 'any_one', damage: { kind: 'physical', power: { kind: 'fixed', value: 22 } }, accuracy: 90, hit_count: 1, lunar: true, crit_chance: 30, costs: { mana: 0, stamina: 8, cooldown: 1 } }; },
         },
         {
             id: 'veil', title: 'Manto de sombras', category: 'Esquiva', description: 'Aumenta a esquiva de quem o recebe.',
@@ -282,15 +288,15 @@
         },
         {
             id: 'time_lock', title: 'Fecho do tempo', category: 'Controlo', description: 'Impede o alvo de usar skills e de ser escolhido.',
-            build: function (skillId) { return { targeting: 'enemy_one', effects: [makeEffect(skillId, 'debuff', 'target', 0, { prevent_skills: true, untargetable: true, turns: 1 })], costs: { mana: 14, stamina: 0, cooldown: 2 } }; },
+            build: function (skillId) { return { targeting: 'any_one', effects: [makeEffect(skillId, 'debuff', 'target', 0, { prevent_skills: true, untargetable: true, turns: 1 })], costs: { mana: 14, stamina: 0, cooldown: 2 } }; },
         },
         {
             id: 'blink', title: 'Arranque', category: 'Posição', description: 'Move o alvo para a outra linha.',
-            build: function (skillId) { return { targeting: 'enemy_one', effects: [makeEffect(skillId, 'move', 'target', 0, { move: { who: 'target', to_line: 'other' } })], costs: { mana: 10, stamina: 0, cooldown: 1 } }; },
+            build: function (skillId) { return { targeting: 'any_one', effects: [makeEffect(skillId, 'move', 'target', 0, { move: { who: 'target', to_line: 'other' } })], costs: { mana: 10, stamina: 0, cooldown: 1 } }; },
         },
         {
             id: 'oath', title: 'Juramento de sangue', category: 'Preço em vida', description: 'Custa vida agora e paga o resto no turno seguinte.',
-            build: function (skillId) { return { targeting: 'enemy_one', damage: { kind: 'physical', power: { kind: 'fixed', value: 26 } }, accuracy: 100, hit_count: 1, effects: [makeEffect(skillId, 'debuff', 'target', 0, { deferred_cost: { hp: 12 } })], costs: { mana: 0, stamina: 0, hp: 10, cooldown: 1 } }; },
+            build: function (skillId) { return { targeting: 'any_one', damage: { kind: 'physical', power: { kind: 'fixed', value: 26 } }, accuracy: 100, hit_count: 1, effects: [makeEffect(skillId, 'debuff', 'target', 0, { deferred_cost: { hp: 12 } })], costs: { mana: 0, stamina: 0, hp: 10, cooldown: 1 } }; },
         },
     ];
 
@@ -306,7 +312,7 @@
             element_id: elementId || 'aqua',
             learning_cost: { experience_points: 1 },
             learning_requirements: { required_attack_ids: (requirements || []).slice() },
-            targeting: 'enemy_one',
+            targeting: 'any_one',
             costs: { mana: 0, stamina: 0, cooldown: 0 },
             effects: [],
         };
@@ -316,8 +322,8 @@
 
     /* Alvo em linguagem natural, para a descrição automática. */
     var TARGET_PHRASES = {
-        enemy_one: 'a um inimigo', enemies_all: 'a todos os inimigos',
-        ally_one: 'a um aliado', allies_all: 'a todos os aliados',
+        any_one: 'a qualquer personagem', enemies_all: 'a todos os inimigos',
+        allies_all: 'a todos os aliados',
         self: 'a si próprio', both_teams: 'a ambas as equipas',
     };
 
@@ -357,7 +363,9 @@
             sentences.push(headline + (details.length ? ' (' + details.join(', ') + ')' : '') + '.');
         }
         if (skill.solar) sentences.push('Dano solar: ×1.5 de dia, ×0.5 de noite.');
-        if (skill.nocturnal) sentences.push('Dano noturno: ×1.5 de noite, ×0.5 de dia.');
+        if (skill.lunar) sentences.push('Dano noturno: ×1.5 de noite, ×0.5 de dia.');
+        if (skill.only_during_day) sentences.push('Só funciona de dia.');
+        if (skill.only_during_night) sentences.push('Só funciona de noite.');
         if (skill.crit_chance) sentences.push(skill.crit_chance + '% de chance de crítico (×1.75).');
         if (skill.ignore_accuracy) sentences.push('Acerta sempre, sem tirada de precisão.');
         if (skill.defense_pierce) sentences.push('Ignora ' + Math.round(skill.defense_pierce * 100) + '% da defesa do alvo.');
@@ -471,6 +479,55 @@
                 fragments.push('Remove os estados que apareceram nesses turnos.');
             }
         }
+        if (effect.drain_percent_of_damage !== undefined && effect.drain_percent_of_damage !== null) {
+            fragments.push('Drena ' + Math.round(Number(effect.drain_percent_of_damage) * 100) + '% do dano causado para quem a usa.');
+        }
+        if (effect.confuse) {
+            var confusionChance = effect.confusion_chance === undefined || effect.confusion_chance === null
+                ? 0.5 : Number(effect.confusion_chance);
+            fragments.push('Com chance de ' + Math.round(confusionChance * 100) + '%, a ação do alvo volta-se contra aliados.');
+        }
+        if (effect.set_phase) {
+            var phaseRounds = effect.phase_rounds === undefined || effect.phase_rounds === null
+                ? 5 : Number(effect.phase_rounds);
+            fragments.push('Força a fase ' + (effect.set_phase === 'night' ? 'noite' : 'dia') + ' por ' + phaseRounds + ' ronda(s).');
+        }
+        if (effect.removable_by_lux) fragments.push('O estado é levantado por qualquer ataque de Lux.');
+        if (effect.random_debuff && typeof effect.random_debuff === 'object') {
+            var randomCount = Number(effect.random_debuff.count) || 1;
+            var randomAmount = effect.random_debuff.amount;
+            fragments.push('Reduz ' + randomCount + ' atributo(s) aleatório(s) em ' + randomAmount + ' por ' + (effect.turns || 1) + ' turno(s).');
+        }
+        if (effect.random_buff && typeof effect.random_buff === 'object') {
+            var buffCount = Number(effect.random_buff.count) || 1;
+            var buffAmount = effect.random_buff.amount;
+            fragments.push('Levanta ' + buffCount + ' atributo(s) aleatório(s) em ' + buffAmount + ' por ' + (effect.turns || 1) + ' turno(s) ' + where + '.');
+        }
+        if (effect.heal_on_kill !== undefined && effect.heal_on_kill !== null) {
+            var killHeal = 'Cura ' + effect.heal_on_kill;
+            if (effect.heal_on_kill_percent !== undefined && effect.heal_on_kill_percent !== null) {
+                killHeal += ' (e ' + Math.round(Number(effect.heal_on_kill_percent) * 100) + '% da vida máxima)';
+            }
+            fragments.push(killHeal + ' ao portador por cada morte no campo.');
+        } else if (effect.heal_on_kill_percent !== undefined && effect.heal_on_kill_percent !== null) {
+            fragments.push('Cura ' + Math.round(Number(effect.heal_on_kill_percent) * 100) + '% da vida máxima ao portador por cada morte no campo.');
+        }
+        if (effect.random_targets && typeof effect.random_targets === 'object') {
+            var targetMin = Number(effect.random_targets.min) || 1;
+            var targetMax = effect.random_targets.max === undefined || effect.random_targets.max === null
+                ? null : Number(effect.random_targets.max);
+            fragments.push(targetMax === null
+                ? 'Atinge até ' + targetMin + ' unidade(s) escolhida(s) ao acaso.'
+                : 'Atinge entre ' + targetMin + ' e ' + targetMax + ' unidades escolhidas ao acaso.');
+        }
+        if (effect.locks_target) fragments.push('O utilizador não pode trocar de alvo durante o efeito.');
+        if (effect.invert_buffs) fragments.push('Inverte os buffs ativos do alvo (passam a debuffs).');
+        if (Array.isArray(effect.damage_immunities) && effect.damage_immunities.length) {
+            var channels = effect.damage_immunities.map(function (channel) {
+                return channel === 'physical' ? 'físico' : channel === 'magical' ? 'mágico' : channel;
+            });
+            fragments.push('O portador está imune a dano ' + channels.join(' e ') + '.');
+        }
         return fragments.join(' ');
     }
 
@@ -490,7 +547,7 @@
 
         var smoke = makeSkill(project, 'Fumo', 'ignis', [water.id, flame.id], null);
         smoke.description = 'Uma nuvem que reduz a precisão dos ataques do inimigo.';
-        smoke.targeting = 'enemy_one';
+        smoke.targeting = 'any_one';
         smoke.effects = [makeEffect(smoke.id, 'debuff', 'target', 0, { debuff: { accuracy: 20 }, effect_hit_chance: 0.9 })];
         setPosition(project, smoke, 370, 170);
         project.skills.push(smoke);
@@ -511,6 +568,11 @@
             'deferred_damage', 'echo', 'move', 'turn_offset', 'cooldown_tick', 'untargetable',
             'heal_block', 'counter', 'prevent_skills', 'deferred_cost', 'self_upkeep',
             'self_damage_per_target', 'drain_to', 'rewind',
+            // Mecânica nova que o motor já lê.
+            'drain_percent_of_damage', 'confuse', 'confusion_chance', 'set_phase', 'phase_rounds',
+            'removable_by_lux', 'random_debuff', 'heal_on_kill', 'heal_on_kill_percent',
+            'random_targets', 'locks_target', 'invert_buffs', 'damage_immunities',
+            'random_buff',
         ];
         var cleaned = {};
         allowed.forEach(function (key) {
@@ -520,6 +582,16 @@
         // Um retrocesso sem campos não é um retrocesso: some com ele.
         if (cleaned.rewind && typeof cleaned.rewind === 'object' && !Object.keys(cleaned.rewind).length) {
             delete cleaned.rewind;
+        }
+        // O mesmo vale para os objetos novos: uma casca vazia não é mecânica.
+        if (cleaned.random_debuff && typeof cleaned.random_debuff === 'object' && !Object.keys(cleaned.random_debuff).length) {
+            delete cleaned.random_debuff;
+        }
+        if (cleaned.random_buff && typeof cleaned.random_buff === 'object' && !Object.keys(cleaned.random_buff).length) {
+            delete cleaned.random_buff;
+        }
+        if (cleaned.random_targets && typeof cleaned.random_targets === 'object' && !Object.keys(cleaned.random_targets).length) {
+            delete cleaned.random_targets;
         }
         return cleaned;
     }
@@ -535,7 +607,7 @@
                 required_attack_ids: Array.isArray(source.learning_requirements?.required_attack_ids)
                     ? source.learning_requirements.required_attack_ids.slice() : [],
             },
-            targeting: source.targeting || source.target || 'enemy_one',
+            targeting: source.targeting || source.target || 'any_one',
             costs: {
                 mana: Number(source.costs?.mana ?? source.mana_cost ?? 0),
                 stamina: Number(source.costs?.stamina ?? source.stamina_cost ?? 0),
@@ -555,7 +627,9 @@
         });
         if (source.description) skill.description = source.description;
         if (source.solar === true || source.solar === 'true') skill.solar = true;
-        if (source.nocturnal === true || source.nocturnal === 'true') skill.nocturnal = true;
+        if (source.lunar === true || source.lunar === 'true') skill.lunar = true;
+        if (source.only_during_day === true || source.only_during_day === 'true') skill.only_during_day = true;
+        if (source.only_during_night === true || source.only_during_night === 'true') skill.only_during_night = true;
         if (source.ignore_accuracy === true || source.ignore_accuracy === 'true') skill.ignore_accuracy = true;
         if (source.kind && typeof source.kind === 'string') skill.kind = source.kind;
         ['crit_chance', 'flee_below_hp', 'defense_pierce'].forEach(function (key) {
@@ -596,7 +670,7 @@
             skill.hit_count = Number(source.hit_count ?? source.hits ?? skill.damage.hit_count ?? 1);
         }
         if (source.targeting && typeof source.targeting === 'object') {
-            skill.targeting = source.targeting.area || source.targeting.target || 'enemy_one';
+            skill.targeting = source.targeting.area || source.targeting.target || 'any_one';
         }
         if (source.collateral && typeof source.collateral === 'object') skill.collateral = clone(source.collateral);
         return skill;
@@ -689,11 +763,20 @@
             if (skill.solar !== undefined && typeof skill.solar !== 'boolean') {
                 errors.push({ path: path + '.solar', message: '“solar” tem de ser verdadeiro ou falso.' });
             }
-            if (skill.nocturnal !== undefined && typeof skill.nocturnal !== 'boolean') {
-                errors.push({ path: path + '.nocturnal', message: '“nocturnal” tem de ser verdadeiro ou falso.' });
+            if (skill.lunar !== undefined && typeof skill.lunar !== 'boolean') {
+                errors.push({ path: path + '.lunar', message: '“lunar” tem de ser verdadeiro ou falso.' });
             }
-            if (skill.solar === true && skill.nocturnal === true) {
-                warnings.push({ path: path + '.nocturnal', message: 'Uma skill não pode ser solar e noturna ao mesmo tempo — os dois traços se cancelam.' });
+            if (skill.solar === true && skill.lunar === true) {
+                warnings.push({ path: path + '.lunar', message: 'Uma skill não pode ser solar e noturna ao mesmo tempo — os dois traços se cancelam.' });
+            }
+            if (skill.only_during_day !== undefined && typeof skill.only_during_day !== 'boolean') {
+                errors.push({ path: path + '.only_during_day', message: '“only_during_day” tem de ser verdadeiro ou falso.' });
+            }
+            if (skill.only_during_night !== undefined && typeof skill.only_during_night !== 'boolean') {
+                errors.push({ path: path + '.only_during_night', message: '“only_during_night” tem de ser verdadeiro ou falso.' });
+            }
+            if (skill.only_during_day === true && skill.only_during_night === true) {
+                warnings.push({ path: path + '.only_during_night', message: 'A skill não pode ser só de dia e só de noite ao mesmo tempo.' });
             }
             if (skill.ignore_accuracy !== undefined && typeof skill.ignore_accuracy !== 'boolean') {
                 errors.push({ path: path + '.ignore_accuracy', message: '“ignore_accuracy” tem de ser verdadeiro ou falso.' });
@@ -829,6 +912,106 @@
                         errors.push({ path: effectPath + '.' + key, message: '“' + key + '” tem de ser verdadeiro ou falso.' });
                     }
                 });
+                ['confuse', 'removable_by_lux', 'locks_target', 'invert_buffs'].forEach(function (key) {
+                    if (effect[key] !== undefined && typeof effect[key] !== 'boolean') {
+                        errors.push({ path: effectPath + '.' + key, message: '“' + key + '” tem de ser verdadeiro ou falso.' });
+                    }
+                });
+                ['drain_percent_of_damage', 'confusion_chance', 'heal_on_kill_percent'].forEach(function (key) {
+                    if (effect[key] === undefined || effect[key] === null) return;
+                    var fraction = Number(effect[key]);
+                    if (!Number.isFinite(fraction) || fraction < 0 || fraction > 1) {
+                        errors.push({ path: effectPath + '.' + key, message: '“' + key + '” tem de ser uma fração entre 0 e 1.' });
+                    }
+                });
+                if (effect.set_phase !== undefined && effect.set_phase !== '' && ['day', 'night'].indexOf(effect.set_phase) === -1) {
+                    errors.push({ path: effectPath + '.set_phase', message: 'A fase forçada tem de ser day ou night.' });
+                }
+                if (effect.phase_rounds !== undefined && effect.phase_rounds !== null) {
+                    var forcedRounds = Number(effect.phase_rounds);
+                    if (!Number.isInteger(forcedRounds) || forcedRounds < 1) {
+                        errors.push({ path: effectPath + '.phase_rounds', message: 'As rondas de fase têm de ser um inteiro de 1 ou mais.' });
+                    }
+                }
+                if (effect.heal_on_kill !== undefined && effect.heal_on_kill !== null) {
+                    var killHeal = Number(effect.heal_on_kill);
+                    if (!Number.isFinite(killHeal) || killHeal < 0) {
+                        errors.push({ path: effectPath + '.heal_on_kill', message: 'A cura por morte tem de ser zero ou mais.' });
+                    }
+                }
+                if (effect.random_debuff !== undefined) {
+                    if (!effect.random_debuff || typeof effect.random_debuff !== 'object' || Array.isArray(effect.random_debuff)) {
+                        errors.push({ path: effectPath + '.random_debuff', message: 'O debuff aleatório tem de ser um objeto.' });
+                    } else {
+                        if (effect.random_debuff.count !== undefined && effect.random_debuff.count !== null) {
+                            var debuffCount = Number(effect.random_debuff.count);
+                            if (!Number.isInteger(debuffCount) || debuffCount < 1) {
+                                errors.push({ path: effectPath + '.random_debuff.count', message: 'O número de atributos tem de ser um inteiro de 1 ou mais.' });
+                            }
+                        }
+                        if (effect.random_debuff.amount !== undefined && effect.random_debuff.amount !== null) {
+                            var debuffAmount = Number(effect.random_debuff.amount);
+                            if (!Number.isFinite(debuffAmount) || debuffAmount <= 0) {
+                                errors.push({ path: effectPath + '.random_debuff.amount', message: 'A redução tem de ser maior que zero.' });
+                            }
+                        }
+                        (Array.isArray(effect.random_debuff.stats) ? effect.random_debuff.stats : []).forEach(function (statName) {
+                            if (RANDOM_DEBUFF_STATS.indexOf(statName) === -1) {
+                                errors.push({ path: effectPath + '.random_debuff.stats', message: 'Atributo desconhecido: ' + statName + ' (' + RANDOM_DEBUFF_STATS.join(', ') + ').' });
+                            }
+                        });
+                    }
+                }
+                if (effect.random_buff !== undefined) {
+                    if (!effect.random_buff || typeof effect.random_buff !== 'object' || Array.isArray(effect.random_buff)) {
+                        errors.push({ path: effectPath + '.random_buff', message: 'O buff aleatório tem de ser um objeto.' });
+                    } else {
+                        if (effect.random_buff.count !== undefined && effect.random_buff.count !== null) {
+                            var buffRandomCount = Number(effect.random_buff.count);
+                            if (!Number.isInteger(buffRandomCount) || buffRandomCount < 1) {
+                                errors.push({ path: effectPath + '.random_buff.count', message: 'O número de atributos tem de ser um inteiro de 1 ou mais.' });
+                            }
+                        }
+                        if (effect.random_buff.amount !== undefined && effect.random_buff.amount !== null) {
+                            var buffRandomAmount = Number(effect.random_buff.amount);
+                            if (!Number.isFinite(buffRandomAmount) || buffRandomAmount <= 0) {
+                                errors.push({ path: effectPath + '.random_buff.amount', message: 'O aumento tem de ser maior que zero.' });
+                            }
+                        }
+                        (Array.isArray(effect.random_buff.stats) ? effect.random_buff.stats : []).forEach(function (statName) {
+                            if (RANDOM_DEBUFF_STATS.indexOf(statName) === -1) {
+                                errors.push({ path: effectPath + '.random_buff.stats', message: 'Atributo desconhecido: ' + statName + ' (' + RANDOM_DEBUFF_STATS.join(', ') + ').' });
+                            }
+                        });
+                    }
+                }
+                if (effect.random_targets !== undefined) {
+                    if (!effect.random_targets || typeof effect.random_targets !== 'object' || Array.isArray(effect.random_targets)) {
+                        errors.push({ path: effectPath + '.random_targets', message: 'O alcance aleatório tem de ser um objeto.' });
+                    } else {
+                        var randomMin = effect.random_targets.min === undefined || effect.random_targets.min === null
+                            ? null : Number(effect.random_targets.min);
+                        var randomMax = effect.random_targets.max === undefined || effect.random_targets.max === null
+                            ? null : Number(effect.random_targets.max);
+                        if (randomMin !== null && (!Number.isInteger(randomMin) || randomMin < 1)) {
+                            errors.push({ path: effectPath + '.random_targets.min', message: 'O mínimo tem de ser um inteiro de 1 ou mais.' });
+                        }
+                        if (randomMax !== null && (!Number.isInteger(randomMax) || randomMax < Math.max(1, randomMin === null ? 1 : randomMin))) {
+                            errors.push({ path: effectPath + '.random_targets.max', message: 'O máximo tem de ser um inteiro igual ou acima do mínimo.' });
+                        }
+                    }
+                }
+                if (effect.damage_immunities !== undefined) {
+                    if (!Array.isArray(effect.damage_immunities)) {
+                        errors.push({ path: effectPath + '.damage_immunities', message: 'As imunidades de dano têm de ser uma lista.' });
+                    } else {
+                        effect.damage_immunities.forEach(function (channel) {
+                            if (['physical', 'magical'].indexOf(channel) === -1) {
+                                errors.push({ path: effectPath + '.damage_immunities', message: 'Canal de dano desconhecido: ' + channel + ' (só physical ou magical).' });
+                            }
+                        });
+                    }
+                }
                 if (effect.turn_offset !== undefined && !Number.isFinite(Number(effect.turn_offset))) {
                     errors.push({ path: effectPath + '.turn_offset', message: 'O deslocamento da ordem de turno tem de ser um número.' });
                 }
@@ -966,6 +1149,7 @@
         PREVENT_ACTIONS: PREVENT_ACTIONS,
         STAT_NAMES: STAT_NAMES,
         STAT_LABELS: STAT_LABELS,
+        RANDOM_DEBUFF_STATS: RANDOM_DEBUFF_STATS,
         PATTERN_STATUS_NAMES: PATTERN_STATUS_NAMES,
         TEMPLATES: TEMPLATES,
         clone: clone,

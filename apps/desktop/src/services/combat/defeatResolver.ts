@@ -16,6 +16,7 @@ import { MAX_UNITS_PER_LINE } from '../../constants/CombatConstants';
 import type { CombatEvent, CombatRandom, CombatSide, CombatState } from '../../types/CombatType';
 import { passiveTriggerContext } from './abilityContext';
 import { resolveAbilityEvent } from './abilityTriggers';
+import { changeResource, effectiveStats } from './effectResolver';
 
 /** Passes allowed while reaping: a reflection or a split can kill again. */
 const MAX_REAP_PASSES = 8;
@@ -42,8 +43,14 @@ export function reapDefeated(state: CombatState, events: CombatEvent[], random: 
             unit.effects = [];
             unit.defending = false;
             unit.immunities = [];
+            unit.lockedTargetId = null;
+            unit.lockedByEffectId = null;
             events.push({ type: 'unit_defeated', unitId: unit.id });
         }
+
+        // A `heal_on_kill` status (Blood Moon) pays every holder for each death
+        // on the battlefield, whoever landed the blow.
+        for (const unit of fallen) payKillHeals(state, unit.id, events);
 
         for (const unit of fallen) {
             events.push(...resolveAbilityEvent(state, unit, 'on_death', passiveTriggerContext(random, state.units)));
@@ -53,6 +60,26 @@ export function reapDefeated(state: CombatState, events: CombatEvent[], random: 
     // A death can empty a side's front line, and an empty front line cannot hold
     // the fight: the rear steps up as part of the same sweep.
     if (reaped) promoteRearLines(state, events);
+}
+
+/**
+ * Heals every living holder of a `heal_on_kill` status for one death.
+ *
+ * The heal is `flat + percent × maxHp`; the fallen unit is already marked
+ * defeated and stripped of its effects, so a corpse cannot heal itself.
+ */
+function payKillHeals(state: CombatState, fallenId: string, events: CombatEvent[]): void {
+    for (const holder of state.units) {
+        if (holder.status !== 'alive' || holder.id === fallenId) continue;
+
+        for (const effect of holder.effects) {
+            const heal = effect.healOnKill;
+            if (!heal) continue;
+
+            const amount = Math.round(heal.flat + effectiveStats(holder).maxHp * heal.percent);
+            if (amount > 0) events.push(...changeResource(holder, 'hp', amount));
+        }
+    }
 }
 
 /** First slot index a line still has free, or `null` when it is full. */

@@ -16,10 +16,10 @@
 
 import {
     COUNTER_REFLECT_FRACTION,
-    FLEE_CHANCE,
     REST_MANA_RESTORE_FRACTION,
     REST_STAMINA_RESTORE_FRACTION,
 } from '../constants/CombatConstants';
+import type { AttackEffect } from '../types/AttackDataType';
 import type {
     AttackResolution,
     CombatAction,
@@ -30,19 +30,24 @@ import type {
     CombatState,
     CombatUnit,
 } from '../types/CombatType';
-import { asRecord, readNumber, readString } from '../utils/combatUtils';
+import { asRecord, readBoolean, readNumber, readString } from '../utils/combatUtils';
 import type { AbilityTriggerContext } from './combat/abilityContext';
 import { foldAttackModifiers } from './combat/abilityModifiers';
 import { resolveAbilityEvent } from './combat/abilityTriggers';
-import { resolveDamage } from './combat/damageCalculator';
+import { phaseEffectMultiplier, resolveDamage } from './combat/damageCalculator';
 import { reapDefeated, promoteRearLines } from './combat/defeatResolver';
 import {
     applyEffectResources,
     applyEffectToUnit,
+    bonusVsHpBelowFromEffects,
     changeResource,
+    claimTargetLock,
+    confusionChance,
     effectiveStats,
     hasCounter,
     isHealBlocked,
+    invertBuffsOn,
+    liftLuxCurses,
     resolveEffectTargets,
 } from './combat/effectResolver';
 import {
@@ -51,7 +56,9 @@ import {
     applyMove,
     applyRewind,
 } from './combat/effectMechanics';
-import { reachableTargets } from './combat/targetResolver';
+import { reachableTargets, scatterCandidates } from './combat/targetResolver';
+import { effectiveTimePhase, setPhaseOverride } from './combat/phaseOverride';
+import { fleeChanceFor } from './combat/fleeRules';
 import { weaponStackMultiplier, effectPowerMultiplier } from './combat/weaponEffects';
 import { applyWeaponActionHooks } from './combat/weaponActionHooks';
 
@@ -59,7 +66,7 @@ export interface ActionResolutionContext {
     state: CombatState;
     actor: CombatUnit;
     action: CombatAction;
-    /** The chosen target for `enemy_one`; `null` for rule-based actions. */
+    /** The chosen target for `any_one`; `null` for rule-based actions. */
     target: CombatUnit | null;
     elementIndex: CombatElementIndex;
     random: CombatRandom;
@@ -80,7 +87,12 @@ export interface ActionResolution {
 /** The units an action addresses: the named one, or every reachable candidate. */
 function resolveActionTargets(context: ActionResolutionContext): CombatUnit[] {
     const { state, actor, action, target } = context;
-    if (action.targeting === 'enemy_one' && target) return [target];
+    // A scatter action does not aim: every ray draws its own target, so the
+    // action addresses the whole pool.
+    if (action.scatterTargets && action.dealsDamage) {
+        return scatterCandidates(state.units, actor, action);
+    }
+    if (action.targeting === 'any_one' && target) return [target];
     return reachableTargets(state.units, actor, action);
 }
 
@@ -103,6 +115,27 @@ function attackAbilityContext(
         units: context.state.units,
         random: context.random,
     };
+}
+
+/**
+ * Applies any battlefield-phase override the action authors (`set_phase`).
+ *
+ * It runs after the action's own hit and effects, so the eclipse cannot change
+ * the cast that created it.
+ */
+function resolveForcedPhase(
+    state: CombatState,
+    actor: CombatUnit,
+    action: CombatAction,
+): void {
+    for (const effect of action.effects) {
+        const record = asRecord(effect);
+        const phase = readString(record?.set_phase, '');
+        if (phase !== 'day' && phase !== 'night') continue;
+
+        setPhaseOverride(state, phase, readNumber(record?.phase_rounds, 5), actor.id);
+        return;
+    }
 }
 
 /** Resolves a submitted action. Assumes the action was already validated. */
@@ -138,6 +171,10 @@ export function resolveCombatAction(context: ActionResolutionContext): ActionRes
 
             const attackEvents = resolveAttack(context);
             events.push(...attackEvents);
+
+            // A battlefield-phase override lands after the cast that authored
+            // it, so an eclipse does not change its own damage retroactively.
+            resolveForcedPhase(state, actor, action);
 
             const landed = attackEvents.some(
                 (event) => event.type === 'attack_resolved' && event.resolution.isHit,
@@ -204,12 +241,31 @@ function resolveRest(context: ActionResolutionContext): CombatEvent[] {
     ];
 }
 
+/**
+ * Rolls a panic escape.
+ *
+ * The unit must already be below its health gate (the service refuses the
+ * action otherwise), so this only owns the dice and the consequence. A
+ * player-controlled success ends the fight as `'fled'`; an enemy success takes
+ * that enemy out of the fight instead, leaving the rest of the battle running.
+ */
 function resolveFlee(context: ActionResolutionContext, events: CombatEvent[]): CombatOutcome | null {
-    const canFlee = context.actor.side === 'allies';
-    const escaped = canFlee && context.random() < FLEE_CHANCE;
+    const { actor, state } = context;
+    const chance = fleeChanceFor(actor);
+    const escaped = chance > 0 && context.random() < chance;
 
-    events.push({ type: 'flee_attempted', unitId: context.actor.id, escaped });
-    return escaped ? 'fled' : null;
+    events.push({ type: 'flee_attempted', unitId: actor.id, escaped });
+
+    if (!escaped) return null;
+    if (actor.isPlayerControlled) return 'fled';
+
+    // An enemy that escapes is out of the fight but was not killed: mark it so
+    // victory still resolves, keep it out of the loot table, and let the rear
+    // line step up if it was holding the front.
+    actor.status = 'defeated';
+    actor.flags.fled = true;
+    promoteRearLines(state, events);
+    return null;
 }
 
 /**
@@ -221,11 +277,13 @@ function resolveFlee(context: ActionResolutionContext, events: CombatEvent[]): C
 function buildResolution(
     context: ActionResolutionContext,
     target: CombatUnit,
+    options: { attempts?: number } = {},
 ): AttackResolution {
     const { actor, action, elementIndex, random, state } = context;
 
     const result = resolveDamage({
         action,
+        attempts: options.attempts,
         attackerStats: effectiveStats(actor),
         defenderStats: effectiveStats(target),
         defenderElementIds: target.elementIds,
@@ -235,10 +293,12 @@ function buildResolution(
         defenderLine: target.line,
         sameSide: actor.side === target.side,
         defenderDefending: target.defending,
-        // The hour of the day decides what a solar or nocturnal action is worth.
-        timePhase: state.timePhase,
+        // The hour of the day decides what a solar or lunar action is worth.
+        timePhase: effectiveTimePhase(state),
         // The wounded-target bonus reads how much of its health is left.
         defenderHpFraction: hpFraction(target),
+        // A status such as Blood Moon can add damage against wounded targets.
+        attackerTraits: bonusVsHpBelowFromEffects(actor, hpFraction(target)),
         modifier: foldAttackModifiers(
             target,
             { damageType: action.damageType, elementId: action.elementId },
@@ -272,16 +332,165 @@ function hpFraction(unit: CombatUnit): number {
     return max > 0 ? unit.currentHp / max : 0;
 }
 
+/**
+ * Rolls a scatter action's rays.
+ *
+ * Each ray picks a random living enemy from the pool, so the same unit may take
+ * several rays and the back line can be reached without a lane penalty when the
+ * action authors `can_hit_any_enemy` / `ignore_position_penalty`. A ray that
+ * empties a target's health removes it from the pool for the remaining rays;
+ * the deaths themselves are reaped once the whole cast is over.
+ */
+function rollScatter(
+    context: ActionResolutionContext,
+    pool: readonly CombatUnit[],
+    resolutions: Map<string, AttackResolution>,
+): void {
+    const { action, random } = context;
+    const rays = Math.max(1, action.scatterHits ?? action.hitCount);
+    const candidates = [...pool];
+
+    for (let ray = 0; ray < rays && candidates.length > 0; ray += 1) {
+        // Clamp only guards a random source that returns exactly `1`.
+        const index = Math.min(candidates.length - 1, Math.floor(random() * candidates.length));
+        const target = candidates[index];
+
+        // One ray is one hit: the damage chain must not multiply it by hitCount.
+        const resolution = buildResolution(context, target, { attempts: 1 });
+        const existing = resolutions.get(target.id);
+        resolutions.set(target.id, existing ? mergeResolution(existing, resolution) : resolution);
+
+        if (target.currentHp <= 0) candidates.splice(index, 1);
+    }
+}
+
+/** Folds one scatter ray's outcome into the target's running total. */
+function mergeResolution(into: AttackResolution, ray: AttackResolution): AttackResolution {
+    return {
+        ...into,
+        isHit: into.isHit || ray.isHit,
+        hits: into.hits + ray.hits,
+        isCrit: into.isCrit || ray.isCrit,
+        finalDamage: into.finalDamage + ray.finalDamage,
+        targetHpAfter: ray.targetHpAfter,
+    };
+}
+
+/**
+ * Whether an action is aimed at the enemy side.
+ *
+ * Only these actions can be turned by confusion; a self-buff or a team heal is
+ * never redirected.
+ */
+function isHostileAction(action: CombatAction): boolean {
+    return action.dealsDamage
+        || action.targeting === 'any_one'
+        || action.targeting === 'enemies_all';
+}
+
+/**
+ * The actor's own side, as the target of a confused action.
+ *
+ * A single-target action picks one ally at random (the actor included); an area
+ * action covers the whole side, mirroring how it would have covered the enemy
+ * side.
+ */
+function confusedTargets(
+    state: CombatState,
+    actor: CombatUnit,
+    action: CombatAction,
+    random: CombatRandom,
+): CombatUnit[] {
+    const allies = state.units.filter(
+        (unit) => unit.status === 'alive' && unit.side === actor.side,
+    );
+    if (allies.length === 0) return [actor];
+
+    if (action.targeting === 'enemies_all' || action.targeting === 'both_teams') return allies;
+
+    const index = Math.min(allies.length - 1, Math.floor(random() * allies.length));
+    return [allies[index]];
+}
+
+/** Mirrors a team scope when confusion turns an action on its own side. */
+function swapTeamScope(scope: string): string {
+    if (scope === 'enemies_all') return 'allies_all';
+    if (scope === 'allies_all') return 'enemies_all';
+    return scope;
+}
+
+/**
+ * Takes a random subset of a resolved scope (`random_targets`).
+ *
+ * Plague uses it to curse only some of the enemies rather than the whole line.
+ * The roll happens after the scope is resolved, so it composes with `both_teams`.
+ */
+function pickRandomTargets(
+    targets: CombatUnit[],
+    effect: AttackEffect,
+    random: CombatRandom,
+): CombatUnit[] {
+    const spec = asRecord(asRecord(effect)?.random_targets);
+    if (!spec || targets.length <= 1) return targets;
+
+    const min = Math.max(1, Math.round(readNumber(spec.min, 1)));
+    const max = Math.max(min, Math.round(readNumber(spec.max, targets.length)));
+    const count = Math.min(targets.length, min + Math.floor(random() * (max - min + 1)));
+
+    const pool = [...targets];
+    for (let index = pool.length - 1; index > 0; index -= 1) {
+        const swap = Math.min(index, Math.floor(random() * (index + 1)));
+        const held = pool[index];
+        pool[index] = pool[swap];
+        pool[swap] = held;
+    }
+
+    return pool.slice(0, count);
+}
+
 function resolveAttack(context: ActionResolutionContext): CombatEvent[] {
     const { state, actor, action, random } = context;
     const events: CombatEvent[] = [];
-    const actionTargets = resolveActionTargets(context);
+    // A scatter action does not aim: every ray draws its own target from the
+    // pool. The rest of the resolver still works off the units the action hit.
+    const scatter = action.dealsDamage && action.scatterTargets;
+
+    // Confusion is rolled once per action: an entire area attack either turns on
+    // the actor's own side or lands normally.
+    const confused = isHostileAction(action) && random() < confusionChance(actor);
+    const actionTargets = confused
+        ? confusedTargets(state, actor, action, random)
+        : resolveActionTargets(context);
     const primaryTarget = actionTargets[0] ?? null;
 
     const resolutions = new Map<string, AttackResolution>();
     if (action.dealsDamage) {
+        if (scatter) {
+            rollScatter(context, actionTargets, resolutions);
+        } else {
+            for (const target of actionTargets) {
+                resolutions.set(target.id, buildResolution(context, target));
+            }
+        }
+    }
+
+    // The `target` scope of a scatter action follows the rays: only the units a
+    // ray actually hit receive the effect. The team scopes keep their literal
+    // meaning and are resolved once for the whole battlefield.
+    const targetScope = scatter
+        ? actionTargets.filter((target) => resolutions.get(target.id)?.isHit)
+        : actionTargets;
+
+    // The same hour-of-the-day curve the direct hit uses also scales the effect
+    // magnitudes — never their duration, costs or control flags.
+    const phaseMultiplier = phaseEffectMultiplier(action, effectiveTimePhase(state));
+
+    // Any Lux attack that lands lifts a `removable_by_lux` curse (Curse, Hex,
+    // Plague), whether it belonged to the caster or to somebody else.
+    if (action.elementId === 'lux') {
         for (const target of actionTargets) {
-            resolutions.set(target.id, buildResolution(context, target));
+            if (!resolutions.get(target.id)?.isHit) continue;
+            events.push(...liftLuxCurses(target));
         }
     }
 
@@ -292,13 +501,19 @@ function resolveAttack(context: ActionResolutionContext): CombatEvent[] {
     for (const effect of action.effects) {
         const applyTo = readString(effect.apply_to, '') || null;
         const scopeTargets = applyTo === null || applyTo === 'target'
-            ? actionTargets
-            : resolveEffectTargets(applyTo, actor, primaryTarget, state.units);
+            ? targetScope
+            : resolveEffectTargets(
+                confused ? swapTeamScope(applyTo) : applyTo,
+                actor,
+                primaryTarget,
+                state.units,
+            );
+        const effectTargets = pickRandomTargets(scopeTargets, effect, random);
 
-        for (const scopeTarget of scopeTargets) {
+        for (const scopeTarget of effectTargets) {
             if (scopeTarget.status !== 'alive') continue;
 
-            const applied = applyEffectToUnit(scopeTarget, effect, action.id, action.elementId, random, effectPowerMultiplier(actor));
+            const applied = applyEffectToUnit(scopeTarget, effect, action.id, action.elementId, random, effectPowerMultiplier(actor), phaseMultiplier);
             if (applied) {
                 events.push(applied);
                 if (applied.type === 'effect_applied') {
@@ -327,12 +542,17 @@ function resolveAttack(context: ActionResolutionContext): CombatEvent[] {
                 effect,
                 random,
                 effectPowerMultiplier(actor),
-                { healBlocked, drainRecipient: actor },
+                { healBlocked, drainRecipient: actor, phaseMultiplier, damageDealt: resolutions.get(scopeTarget.id)?.finalDamage ?? 0 },
             ));
 
             // The effects that change the battlefield rather than a number.
             events.push(...applyCleanse(scopeTarget, effect));
             events.push(...applyDispel(scopeTarget, effect));
+            // An `invert_buffs` landing turns the gifts the target still holds
+            // into curses of the same size (Solar Exorcism).
+            if (readBoolean((asRecord(effect) ?? {}).invert_buffs, false)) {
+                events.push(...invertBuffsOn(scopeTarget));
+            }
             events.push(...applyMove(state, actor, scopeTarget, effect));
             events.push(...applyRewind(scopeTarget, effect));
 
@@ -379,13 +599,27 @@ function resolveAttack(context: ActionResolutionContext): CombatEvent[] {
         }
     }
 
+    // A `locks_target` status grows its focus on the first target a damaging
+    // action reaches while the buff lives (Keen Focus cast on oneself).
+    if (action.dealsDamage) {
+        for (const target of actionTargets) {
+            if (target.status !== 'alive') continue;
+            if (!resolutions.get(target.id)?.isHit) continue;
+
+            claimTargetLock(actor, target.id);
+            break;
+        }
+    }
+
     // A skill that says "the target panics below this much health" takes it
-    // out of the fight when the hit leaves it that low.
+    // out of the fight when the hit leaves it that low. Control skills (Fear and
+    // friends) have no damage roll, so they reach their targets outright.
     const fleeBelowHp = action.fleeBelowHp;
     if (fleeBelowHp !== null && fleeBelowHp > 0) {
         for (const target of actionTargets) {
             const resolution = resolutions.get(target.id);
-            if (!resolution || !resolution.isHit || target.status !== 'alive') continue;
+            const landed = resolution ? resolution.isHit : !action.dealsDamage;
+            if (!landed || target.status !== 'alive') continue;
             if (hpFraction(target) > fleeBelowHp) continue;
 
             target.status = 'defeated';

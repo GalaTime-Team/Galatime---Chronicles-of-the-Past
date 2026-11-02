@@ -9,7 +9,7 @@ skills:
     experience_points: 1
   learning_requirements:
     required_attack_ids: []
-  targeting: enemy_one
+  targeting: any_one
   damage:
     kind: magical
     damage_type: magical
@@ -41,7 +41,7 @@ skills:
   learning_requirements:
     required_attack_ids:
     - spark
-  targeting: enemy_one
+  targeting: any_one
   damage:
     kind: magical
     damage_type: magical
@@ -63,7 +63,7 @@ skills:
   learning_requirements:
     required_attack_ids:
     - burst
-  targeting: enemy_one
+  targeting: any_one
   damage:
     kind: magical
     damage_type: magical
@@ -85,7 +85,7 @@ skills:
   learning_requirements:
     required_attack_ids:
     - burst
-  targeting: enemy_one
+  targeting: any_one
   damage:
     kind: magical
     damage_type: magical
@@ -107,7 +107,7 @@ skills:
   learning_requirements:
     required_attack_ids:
     - volley_burst
-  targeting: enemy_one
+  targeting: any_one
   damage:
     kind: magical
     damage_type: magical
@@ -129,7 +129,7 @@ skills:
   learning_requirements:
     required_attack_ids:
     - detonate
-  targeting: enemy_one
+  targeting: any_one
   damage:
     kind: magical
     damage_type: magical
@@ -218,7 +218,7 @@ skills:
   learning_requirements:
     required_attack_ids:
     - explosion
-  targeting: enemy_one
+  targeting: any_one
   damage:
     kind: magical
     damage_type: magical
@@ -240,7 +240,7 @@ skills:
   learning_requirements:
     required_attack_ids:
     - concussive_blast
-  targeting: enemy_one
+  targeting: any_one
   damage:
     kind: magical
     damage_type: magical
@@ -383,7 +383,7 @@ skills:
   learning_requirements:
     required_attack_ids:
     - lightning_bolt
-  targeting: enemy_one
+  targeting: any_one
   damage:
     kind: magical
     damage_type: magical
@@ -431,7 +431,7 @@ skills:
   learning_requirements:
     required_attack_ids:
     - charge
-  targeting: enemy_one
+  targeting: any_one
   damage:
     kind: magical
     damage_type: magical
@@ -497,7 +497,7 @@ skills:
   learning_requirements:
     required_attack_ids:
     - lightning_bolt
-  targeting: enemy_one
+  targeting: any_one
   damage:
     kind: magical
     damage_type: magical
@@ -519,7 +519,7 @@ skills:
   learning_requirements:
     required_attack_ids:
     - lightning_bolt
-  targeting: enemy_one
+  targeting: any_one
   damage:
     kind: magical
     damage_type: magical
@@ -541,7 +541,7 @@ skills:
   learning_requirements:
     required_attack_ids:
     - discharge
-  targeting: enemy_one
+  targeting: any_one
   damage:
     kind: magical
     damage_type: magical
@@ -608,7 +608,7 @@ skills:
   learning_requirements:
     required_attack_ids:
     - charge
-  targeting: enemy_one
+  targeting: any_one
   hit_count: 1
   costs:
     mana: 10
@@ -623,7 +623,7 @@ skills:
   learning_requirements:
     required_attack_ids:
     - shock
-  targeting: enemy_one
+  targeting: any_one
   damage:
     kind: magical
     damage_type: magical
@@ -645,7 +645,7 @@ skills:
   learning_requirements:
     required_attack_ids:
     - shock
-  targeting: enemy_one
+  targeting: any_one
   hit_count: 1
   costs:
     mana: 9
@@ -736,7 +736,7 @@ skills:
   learning_requirements:
     required_attack_ids:
     - charge
-  targeting: enemy_one
+  targeting: any_one
   hit_count: 1
   costs:
     mana: 7
@@ -804,7 +804,7 @@ skills:
   learning_requirements:
     required_attack_ids:
     - burst
-  targeting: enemy_one
+  targeting: any_one
   damage:
     kind: magical
     damage_type: magical
@@ -851,7 +851,7 @@ skills:
   learning_requirements:
     required_attack_ids:
     - time
-  targeting: ally_one
+  targeting: any_one
   hit_count: 1
   costs:
     mana: 8
@@ -866,7 +866,7 @@ skills:
   learning_requirements:
     required_attack_ids:
     - haste
-  targeting: ally_one
+  targeting: any_one
   hit_count: 1
   costs:
     mana: 12
@@ -881,7 +881,7 @@ skills:
   learning_requirements:
     required_attack_ids:
     - quickening
-  targeting: ally_one
+  targeting: any_one
   hit_count: 1
   costs:
     mana: 17
@@ -896,7 +896,7 @@ skills:
   learning_requirements:
     required_attack_ids:
     - time
-  targeting: enemy_one
+  targeting: any_one
   hit_count: 1
   costs:
     mana: 8
@@ -911,7 +911,7 @@ skills:
   learning_requirements:
     required_attack_ids:
     - slow
-  targeting: enemy_one
+  targeting: any_one
   hit_count: 1
   costs:
     mana: 12
@@ -927,7 +927,7 @@ skills:
   learning_requirements:
     required_attack_ids:
     - drag
-  targeting: enemy_one
+  targeting: any_one
   hit_count: 1
   costs:
     mana: 18
@@ -942,7 +942,7 @@ skills:
   learning_requirements:
     required_attack_ids:
     - time
-  targeting: enemy_one
+  targeting: any_one
   hit_count: 1
   costs:
     mana: 13
@@ -957,7 +957,7 @@ skills:
   learning_requirements:
     required_attack_ids:
     - time_lock
-  targeting: enemy_one
+  targeting: any_one
   hit_count: 1
   costs:
     mana: 17
@@ -1019,7 +1019,7 @@ skills:
   learning_requirements:
     required_attack_ids:
     - time
-  targeting: enemy_one
+  targeting: any_one
   damage:
     kind: magical
     damage_type: magical
@@ -1041,7 +1041,7 @@ skills:
   learning_requirements:
     required_attack_ids:
     - delayed_strike
-  targeting: enemy_one
+  targeting: any_one
   damage:
     kind: magical
     damage_type: magical
@@ -1063,7 +1063,7 @@ skills:
   learning_requirements:
     required_attack_ids:
     - time
-  targeting: enemy_one
+  targeting: any_one
   hit_count: 1
   costs:
     mana: 12
@@ -1124,7 +1124,7 @@ skills:
   learning_requirements:
     required_attack_ids:
     - time
-  targeting: ally_one
+  targeting: any_one
   hit_count: 1
   costs:
     mana: 9
@@ -1139,7 +1139,7 @@ skills:
   learning_requirements:
     required_attack_ids:
     - rewind
-  targeting: ally_one
+  targeting: any_one
   hit_count: 1
   costs:
     mana: 13
@@ -1155,7 +1155,7 @@ skills:
   learning_requirements:
     required_attack_ids:
     - rewind
-  targeting: enemy_one
+  targeting: any_one
   hit_count: 1
   costs:
     mana: 12
@@ -1188,7 +1188,7 @@ skills:
   learning_requirements:
     required_attack_ids:
     - warp
-  targeting: enemy_one
+  targeting: any_one
   hit_count: 1
   costs:
     mana: 15
@@ -1244,7 +1244,7 @@ skills:
   learning_requirements:
     required_attack_ids:
     - blink
-  targeting: enemy_one
+  targeting: any_one
   damage:
     kind: magical
     damage_type: magical
@@ -1283,7 +1283,7 @@ skills:
   learning_requirements:
     required_attack_ids:
     - blink
-  targeting: ally_one
+  targeting: any_one
   hit_count: 1
   costs:
     mana: 16
@@ -1316,7 +1316,7 @@ skills:
   learning_requirements:
     required_attack_ids:
     - space
-  targeting: enemy_one
+  targeting: any_one
   hit_count: 1
   costs:
     mana: 15
@@ -1332,7 +1332,7 @@ skills:
   learning_requirements:
     required_attack_ids:
     - warp
-  targeting: enemy_one
+  targeting: any_one
   damage:
     kind: magical
     damage_type: magical
@@ -1355,7 +1355,7 @@ skills:
   learning_requirements:
     required_attack_ids:
     - warp
-  targeting: ally_one
+  targeting: any_one
   hit_count: 1
   costs:
     mana: 18
@@ -1395,7 +1395,7 @@ skills:
     required_attack_ids:
     - warp
     - displace
-  targeting: enemy_one
+  targeting: any_one
   damage:
     kind: magical
     damage_type: magical
@@ -1418,7 +1418,7 @@ skills:
   learning_requirements:
     required_attack_ids:
     - space
-  targeting: enemy_one
+  targeting: any_one
   hit_count: 1
   costs:
     mana: 15
@@ -1433,7 +1433,7 @@ skills:
   learning_requirements:
     required_attack_ids:
     - gravity_well
-  targeting: enemy_one
+  targeting: any_one
   damage:
     kind: magical
     damage_type: magical
@@ -1470,7 +1470,7 @@ skills:
   learning_requirements:
     required_attack_ids:
     - implosion
-  targeting: enemy_one
+  targeting: any_one
   damage:
     kind: magical
     damage_type: magical
@@ -1494,7 +1494,7 @@ skills:
     required_attack_ids:
     - implosion
     - vortex
-  targeting: enemy_one
+  targeting: any_one
   hit_count: 1
   costs:
     mana: 29
@@ -1539,7 +1539,7 @@ skills:
   learning_requirements:
     required_attack_ids:
     - future_sight
-  targeting: ally_one
+  targeting: any_one
   hit_count: 1
   costs:
     mana: 20
@@ -1572,7 +1572,7 @@ skills:
     required_attack_ids:
     - prescience
     - oracle
-  targeting: enemy_one
+  targeting: any_one
   damage:
     kind: magical
     damage_type: magical

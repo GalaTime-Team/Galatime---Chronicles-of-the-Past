@@ -9,6 +9,7 @@ import {
     ARENA_LUNGE_MS,
     elementTint,
 } from '../../../../constants/CombatAnimationConstants';
+import { ELEMENT_DAMAGE_MULTIPLIERS } from '../../../../constants/CombatConstants';
 import { CombatFormationHealthMeter } from './CombatFormationHealthMeter';
 import { hitFor, type ArenaSequence } from '../battle/combatArenaSequence';
 import type { CombatFormationEntity as CombatFormationEntityData, CombatFormationLaneId, CombatFormationSideId } from './CombatFormationHUD.types';
@@ -47,15 +48,16 @@ const DEATH_SINK_MS = 1700;
  * green one means the target shrugs it off.
  */
 function effectivenessChip(multiplier: number): string {
-    if (multiplier === 0) return 'bg-galatime-element-immune';
-    if (multiplier <= 0.25) return 'bg-galatime-element-superStrong';
-    if (multiplier < 1) return 'bg-galatime-element-strong';
-    if (multiplier === 1) return 'bg-black/80';
-    if (multiplier < 3) return 'bg-galatime-element-weak';
+    const ladder = ELEMENT_DAMAGE_MULTIPLIERS;
+    if (multiplier === ladder.immune) return 'bg-galatime-element-immune';
+    if (multiplier <= ladder.super_strong) return 'bg-galatime-element-superStrong';
+    if (multiplier < ladder.normal) return 'bg-galatime-element-strong';
+    if (multiplier === ladder.normal) return 'bg-black/80';
+    if (multiplier < ladder.super_weak) return 'bg-galatime-element-weak';
     return 'bg-galatime-element-superWeak';
 }
 
-/** `x0.5`, `x1`, `x2` … trimmed to at most two decimals. */
+/** `x0.65`, `x1`, `x1.3` … trimmed to at most two decimals. */
 function multiplierLabel(multiplier: number): string {
     return `x${Math.round(multiplier * 100) / 100}`;
 }

@@ -15,7 +15,7 @@
  * escrito já no formato final:
  *   - `accuracy` é um modificador *de saída* (afeta os próprios ataques).
  *   - `evasion` é um modificador *de entrada* (afeta o acerto contra o alvo).
- *   - `solar` rende x1.5 de dia e x0.5 de noite; `nocturnal`, o contrário.
+ *   - `solar` rende x1.5 de dia e x0.5 de noite; `lunar`, o contrário.
  *   - `bonus_vs_elements` multiplica sobre a tabela de elementos.
  *   - `crit_chance` e `crit_multiplier` descrevem o golpe crítico.
  */
@@ -39,8 +39,12 @@
         /* O fator das skills de dia e de noite. */
         SOLAR_DAY_MULTIPLIER: 1.5,
         SOLAR_NIGHT_MULTIPLIER: 0.5,
+        LUNAR_NIGHT_MULTIPLIER: 1.5,
+        LUNAR_DAY_MULTIPLIER: 0.5,
         /* O multiplicador do golpe crítico. */
         CRIT_MULTIPLIER: 1.75,
+        /* A escada de eficácia elementar (CombatConstants.ELEMENT_DAMAGE_MULTIPLIERS). */
+        ELEMENT_DAMAGE_MULTIPLIERS: { immune: 0, super_strong: 0.65, strong: 0.8, normal: 1, weak: 1.3, super_weak: 1.6 },
         /* Limites da precisão efetiva. */
         MIN_EFFECTIVE_ACCURACY: 5,
         MAX_EFFECTIVE_ACCURACY: 100,
@@ -115,18 +119,13 @@
 
     /** Pontuação → multiplicador (elementUtils.scoreToMultiplier). */
     function scoreToMultiplier(score) {
-        switch (score) {
-            case -3: return 0;
-            case -2: return 0.25;
-            case -1: return 0.5;
-            case 0: return 1;
-            case 1: return 2;
-            case 2: return 4;
-            default:
-                if (score < -3) return 0;
-                if (score > 2) return 4;
-                return 1;
-        }
+        var ladder = CONSTANTS.ELEMENT_DAMAGE_MULTIPLIERS;
+        if (score <= SCORE_MAP.immune) return ladder.immune;
+        if (score <= SCORE_MAP.super_strong) return ladder.super_strong;
+        if (score <= SCORE_MAP.strong) return ladder.strong;
+        if (score >= SCORE_MAP.super_weak) return ladder.super_weak;
+        if (score >= SCORE_MAP.weak) return ladder.weak;
+        return ladder.normal;
     }
 
     /** Rótulo da relação resultante (para a legenda do simulador). */
@@ -222,14 +221,14 @@
     /**
      * Fator de dia ou de noite.
      *
-     * `solar` rende x1.5 de dia e x0.5 de noite; `nocturnal` o inverso. As
+     * `solar` rende x1.5 de dia e x0.5 de noite; `lunar` o inverso. As
      * duas regras leem a mesma hora do encontro.
      */
     function phaseMultiplier(skill, phase) {
         var night = phase === 'night';
         var multiplier = 1;
         if (skill.solar) multiplier *= night ? CONSTANTS.SOLAR_NIGHT_MULTIPLIER : CONSTANTS.SOLAR_DAY_MULTIPLIER;
-        if (skill.nocturnal) multiplier *= night ? CONSTANTS.SOLAR_DAY_MULTIPLIER : CONSTANTS.SOLAR_NIGHT_MULTIPLIER;
+        if (skill.lunar) multiplier *= night ? CONSTANTS.LUNAR_NIGHT_MULTIPLIER : CONSTANTS.LUNAR_DAY_MULTIPLIER;
         return multiplier;
     }
 
@@ -273,6 +272,30 @@
     function pierceDefense(defenseValue, pierce) {
         var fraction = clamp(numberOr(pierce, 0), 0, 1);
         return { value: defenseValue * (1 - fraction), fraction: fraction };
+    }
+
+    /**
+     * Janela ativa da skill: `only_during_day` / `only_during_night`.
+     *
+     * Quando a fase simulada não coincide, a skill não funciona — o simulador
+     * mostra a nota em vez de fingir que o golpe saiu.
+     */
+    function phaseLock(skill, phase) {
+        if (skill.only_during_day === true && phase === 'night') {
+            return 'só funciona de dia — bloqueado à noite';
+        }
+        if (skill.only_during_night === true && phase === 'day') {
+            return 'só funciona de noite — bloqueado de dia';
+        }
+        return null;
+    }
+
+    /** Primeiro efeito que drena uma fração do dano causado. */
+    function drainPercentOfDamage(skill) {
+        var entry = (skill.effects || []).find(function (effect) {
+            return effect && effect.drain_percent_of_damage !== undefined && effect.drain_percent_of_damage !== null;
+        });
+        return entry ? clamp(numberOr(entry.drain_percent_of_damage, 0), 0, 1) : null;
     }
 
     /**
@@ -327,6 +350,8 @@
         var hpBonus = bonusVsHpBelow(skill.bonus_vs_hp_below, options.targetHpFraction);
         var defenseReduction = options.defenderDefending ? CONSTANTS.DEFEND_DAMAGE_REDUCTION : 0;
         var pierced = pierceDefense(defenseValue, skill.defense_pierce);
+        var blocked = phaseLock(skill, options.phase === 'night' ? 'night' : 'day');
+        var drainPercent = drainPercentOfDamage(skill);
 
         var defense = Math.max(CONSTANTS.MINIMUM_DEFENSE, pierced.value);
         var base = (attackValue / defense) * element.multiplier * (power / CONSTANTS.POWER_DIVISOR);
@@ -393,6 +418,9 @@
             expectedHits: expectedHits,
             expectedTotal: expectedTotal,
             fleeBelowHp: skill.flee_below_hp === undefined ? null : numberOr(skill.flee_below_hp, 0),
+            phaseLock: blocked,
+            drainPercent: drainPercent,
+            drainHeal: element.multiplier !== 0 && drainPercent !== null ? roundHalf(finalDamage * drainPercent) : null,
             costs: { mana: manaCost, stamina: staminaCost, hp: hpCost, cooldown: cooldownCost },
             manaPerDamage: expectedTotal > 0 ? manaCost / expectedTotal : null,
             scalingNote: scalingNote,
@@ -422,6 +450,8 @@
         bonusVsMultiplier: bonusVsMultiplier,
         bonusVsHpBelow: bonusVsHpBelow,
         pierceDefense: pierceDefense,
+        phaseLock: phaseLock,
+        drainPercentOfDamage: drainPercentOfDamage,
         simulate: simulate,
     };
 })(window);

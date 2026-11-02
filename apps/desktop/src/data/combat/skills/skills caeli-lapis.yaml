@@ -30,7 +30,7 @@ skills:
     learning_requirements:
       required_attack_ids:
         - wind
-    targeting: enemy_one
+    targeting: any_one
     damage:
       kind: magical
       damage_type: magical
@@ -52,7 +52,7 @@ skills:
     learning_requirements:
       required_attack_ids:
         - wind_slash
-    targeting: enemy_one
+    targeting: any_one
     damage:
       kind: magical
       damage_type: magical
@@ -74,7 +74,7 @@ skills:
     learning_requirements:
       required_attack_ids:
         - wind_slash
-    targeting: enemy_one
+    targeting: any_one
     damage:
       kind: magical
       damage_type: magical
@@ -104,7 +104,7 @@ skills:
     learning_requirements:
       required_attack_ids:
         - razor_wind
-    targeting: enemy_one
+    targeting: any_one
     damage:
       kind: magical
       damage_type: magical
@@ -126,7 +126,7 @@ skills:
     learning_requirements:
       required_attack_ids:
         - cutting_gale
-    targeting: enemy_one
+    targeting: any_one
     damage:
       kind: magical
       damage_type: magical
@@ -180,7 +180,7 @@ skills:
     learning_requirements:
       required_attack_ids:
         - wind
-    targeting: ally_one
+    targeting: any_one
     costs:
       mana: 5
       stamina: 0
@@ -188,7 +188,7 @@ skills:
     effects:
       - effect_id: tailwind_effect
         status_effect: Tailwind
-        apply_to: ally_one
+        apply_to: target
         turns: 3
         buff:
           speed: 12
@@ -316,7 +316,7 @@ skills:
     learning_requirements:
       required_attack_ids:
         - wind
-    targeting: enemy_one
+    targeting: any_one
     costs:
       mana: 4
       stamina: 0
@@ -338,7 +338,7 @@ skills:
     learning_requirements:
       required_attack_ids:
         - wind
-    targeting: enemy_one
+    targeting: any_one
     costs:
       mana: 4
       stamina: 0
@@ -382,7 +382,7 @@ skills:
     learning_requirements:
       required_attack_ids:
         - gust
-    targeting: enemy_one
+    targeting: any_one
     damage:
       kind: magical
       damage_type: magical
@@ -435,7 +435,7 @@ skills:
     learning_requirements:
       required_attack_ids:
         - galeforce_shove
-    targeting: enemy_one
+    targeting: any_one
     costs:
       mana: 10
       stamina: 0
@@ -486,7 +486,7 @@ skills:
     learning_requirements:
       required_attack_ids:
         - skyfall
-    targeting: enemy_one
+    targeting: any_one
     damage:
       kind: magical
       damage_type: magical
@@ -538,7 +538,7 @@ skills:
     learning_requirements:
       required_attack_ids:
         - sky
-    targeting: enemy_one
+    targeting: any_one
     damage:
       kind: magical
       damage_type: magical
@@ -563,7 +563,7 @@ skills:
     learning_requirements:
       required_attack_ids:
         - skyfall
-    targeting: enemy_one
+    targeting: any_one
     damage:
       kind: magical
       damage_type: magical
@@ -588,7 +588,7 @@ skills:
     learning_requirements:
       required_attack_ids:
         - skyfall
-    targeting: enemy_one
+    targeting: any_one
     damage:
       kind: magical
       damage_type: magical
@@ -611,7 +611,7 @@ skills:
     learning_requirements:
       required_attack_ids:
         - dive_bomb
-    targeting: enemy_one
+    targeting: any_one
     damage:
       kind: magical
       damage_type: magical
@@ -636,7 +636,7 @@ skills:
     learning_requirements:
       required_attack_ids:
         - skydive
-    targeting: enemy_one
+    targeting: any_one
     damage:
       kind: magical
       damage_type: magical
@@ -1065,7 +1065,7 @@ skills:
     learning_requirements:
       required_attack_ids:
         - earth
-    targeting: enemy_one
+    targeting: any_one
     damage:
       kind: magical
       damage_type: magical
@@ -1087,7 +1087,7 @@ skills:
     learning_requirements:
       required_attack_ids:
         - rock_throw
-    targeting: enemy_one
+    targeting: any_one
     damage:
       kind: magical
       damage_type: magical
@@ -1131,7 +1131,7 @@ skills:
     learning_requirements:
       required_attack_ids:
         - earthquake
-    targeting: enemy_one
+    targeting: any_one
     damage:
       kind: magical
       damage_type: magical
@@ -1251,7 +1251,7 @@ skills:
     learning_requirements:
       required_attack_ids:
         - earth
-    targeting: enemy_one
+    targeting: any_one
     costs:
       mana: 6
       stamina: 0
@@ -1330,7 +1330,7 @@ skills:
     learning_requirements:
       required_attack_ids:
         - quicksand
-    targeting: enemy_one
+    targeting: any_one
     costs:
       mana: 13
       stamina: 0
@@ -1539,7 +1539,7 @@ skills:
     learning_requirements:
       required_attack_ids:
         - boulder
-    targeting: enemy_one
+    targeting: any_one
     damage:
       kind: magical
       damage_type: magical
@@ -1591,7 +1591,7 @@ skills:
     learning_requirements:
       required_attack_ids:
         - stone
-    targeting: enemy_one
+    targeting: any_one
     damage:
       kind: magical
       damage_type: magical
@@ -1613,7 +1613,7 @@ skills:
     learning_requirements:
       required_attack_ids:
         - boulder
-    targeting: enemy_one
+    targeting: any_one
     damage:
       kind: magical
       damage_type: magical
@@ -1635,7 +1635,7 @@ skills:
     learning_requirements:
       required_attack_ids:
         - boulder
-    targeting: enemy_one
+    targeting: any_one
     damage:
       kind: magical
       damage_type: magical
@@ -1696,7 +1696,7 @@ skills:
       required_attack_ids:
         - crushing_blow
         - avalanche
-    targeting: enemy_one
+    targeting: any_one
     damage:
       kind: magical
       damage_type: magical
@@ -1951,7 +1951,7 @@ skills:
     learning_requirements:
       required_attack_ids:
         - stone
-    targeting: enemy_one
+    targeting: any_one
     costs:
       mana: 11
       stamina: 0
@@ -1979,7 +1979,7 @@ skills:
     learning_requirements:
       required_attack_ids:
         - petrify
-    targeting: enemy_one
+    targeting: any_one
     costs:
       mana: 15
       stamina: 0
@@ -2000,7 +2000,7 @@ skills:
     learning_requirements:
       required_attack_ids:
         - petrify
-    targeting: enemy_one
+    targeting: any_one
     costs:
       mana: 13
       stamina: 0
@@ -2075,7 +2075,7 @@ skills:
     learning_requirements:
       required_attack_ids:
         - sandstorm
-    targeting: enemy_one
+    targeting: any_one
     damage:
       kind: magical
       damage_type: magical

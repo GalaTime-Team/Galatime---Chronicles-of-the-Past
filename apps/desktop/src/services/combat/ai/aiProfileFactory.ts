@@ -12,6 +12,9 @@
 
 import {
     AI_STYLE_PRESETS,
+    DEFAULT_AI_FLEE_BASE_CHANCE,
+    DEFAULT_AI_FLEE_BELOW_HP,
+    DEFAULT_AI_FLEE_WEIGHT,
     DEFAULT_AI_TARGETING,
     DEFAULT_AI_THRESHOLDS,
     DEFAULT_AI_WEIGHTS,
@@ -19,6 +22,7 @@ import {
 import type { CombatAbilityInstance } from '../../../types/AbilityType';
 import type {
     AiConsiderationId,
+    AiFleeRule,
     AiProfile,
     AiQuirkId,
     AiStyleId,
@@ -26,7 +30,7 @@ import type {
     AiTargetPreference,
     AiThresholds,
 } from '../../../types/AiType';
-import { asRecord, readNumber, readString } from '../../../utils/combatUtils';
+import { asRecord, clamp, readNumber, readString } from '../../../utils/combatUtils';
 
 const CONSIDERATION_IDS = Object.keys(DEFAULT_AI_WEIGHTS) as AiConsiderationId[];
 const STYLE_IDS: AiStyleId[] = ['balanced', 'brute', 'caster', 'support', 'coward'];
@@ -75,6 +79,38 @@ function readEnumList<T extends string>(raw: unknown, allowed: readonly T[]): T[
         .map((entry) => readString(entry, ''))
         .filter((entry): entry is T => (allowed as readonly string[]).includes(entry));
     return picked;
+}
+
+/**
+ * Reads `ai.flee`.
+ *
+ * `true` is shorthand for the defaults; an object may name `below_hp`/`belowHp`
+ * and `chance`/`base_chance`/`baseChance`. A missing, false or zeroed block means
+ * the unit has no flee action at all.
+ */
+function readFlee(raw: unknown): AiFleeRule | null {
+    if (raw === true) {
+        return { belowHp: DEFAULT_AI_FLEE_BELOW_HP, baseChance: DEFAULT_AI_FLEE_BASE_CHANCE };
+    }
+
+    const record = asRecord(raw);
+    if (!record) return null;
+
+    const belowHp = readNumber(
+        record.below_hp ?? record.belowHp,
+        DEFAULT_AI_FLEE_BELOW_HP,
+    );
+    const baseChance = readNumber(
+        record.chance ?? record.base_chance ?? record.baseChance,
+        DEFAULT_AI_FLEE_BASE_CHANCE,
+    );
+
+    if (belowHp <= 0 || baseChance <= 0) return null;
+
+    return {
+        belowHp: clamp(belowHp, 0, 1),
+        baseChance: clamp(baseChance, 0, 1),
+    };
 }
 
 /**
@@ -155,6 +191,13 @@ export function createAiProfile(
         if (!authoredWeightKeys.has('heal_self')) weights.heal_self = FEARLESS_SURVIVAL_WEIGHT;
     }
 
+    // The `flee` block is both the permission and the tuning. Granting it also
+    // gives the consideration a sensible weight, unless the author set one.
+    const flee = readFlee(definition.flee);
+    if (flee && !authoredWeightKeys.has('flee')) {
+        weights.flee = Math.max(weights.flee, DEFAULT_AI_FLEE_WEIGHT);
+    }
+
     const authoredPace = readNumber(definition.pace, Number.NaN);
     const pace = Number.isFinite(authoredPace) && authoredPace >= 0
         ? Math.round(authoredPace)
@@ -166,6 +209,7 @@ export function createAiProfile(
         thresholds,
         targeting,
         quirks: [...quirks],
+        flee,
         pace,
     };
 }

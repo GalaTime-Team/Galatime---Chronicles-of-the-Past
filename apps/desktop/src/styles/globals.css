@@ -183,7 +183,7 @@
     calc(var(--text-base) * 0.6 + 0.8vw),
     calc(var(--text-base) * 1.6)
   );
-  --dialogue-line-height: calc(var(--dialogue-text-size) * 1.4);
+  --dialogue-line-height: calc(var(--dialogue-text-size) * 1.15);
 }
 
 /* Tailwind v4 exposes its font sizes as `--text-*` theme variables. Rescaling them here enlarges
@@ -235,6 +235,7 @@ body,
 body {
   margin: 0;
   font-family: 'm5x7', "Trebuchet MS", "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+  line-height: 1.1;
   overflow-y: auto;
   overflow-x: hidden;
   -webkit-user-select: none;

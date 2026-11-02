@@ -89,9 +89,8 @@
                         <div class="combat-step target-step">
                             <div class="step-copy"><span class="mini-step">1</span><div><h3>Quem é o alvo?</h3><p>A skill aplica o resultado direto a esta seleção.</p></div></div>
                             <label class="field target-field"><span>Alvo principal<span class="info-tip" tabindex="0" role="note" data-tip="A seleção principal da skill. Os efeitos podem ir além dela: nas secções 4 e 5 escolhes a quem mais é afetado, sem repetir a pergunta.">i</span></span><select class="control" name="targeting">
-                                <option value="enemy_one">Um inimigo</option>
+                                <option value="any_one">Qualquer personagem</option>
                                 <option value="enemies_all">Todos os inimigos</option>
-                                <option value="ally_one">Um aliado</option>
                                 <option value="allies_all">Todos os aliados</option>
                                 <option value="self">O próprio atacante</option>
                                 <option value="both_teams">Ambas as equipas</option>
@@ -161,7 +160,9 @@
                         <div class="trait-block">
                             <span class="trait-head-label">HORA DO DIA</span>
                             <label class="toggle-row trait-toggle"><input type="checkbox" name="solar"><span class="toggle-track"></span><span>Skill solar<span class="info-tip" tabindex="0" role="note" data-tip="Faz ×1.5 de dano de dia e ×0.5 de noite. A hora do dia vem do encontro (time_phase), não da skill.">i</span></span></label>
-                            <label class="toggle-row trait-toggle"><input type="checkbox" name="nocturnal"><span class="toggle-track"></span><span>Skill noturna<span class="info-tip" tabindex="0" role="note" data-tip="O inverso da solar: ×1.5 de noite e ×0.5 de dia. As duas leem a mesma hora do encontro.">i</span></span></label>
+                            <label class="toggle-row trait-toggle"><input type="checkbox" name="lunar"><span class="toggle-track"></span><span>Skill noturna<span class="info-tip" tabindex="0" role="note" data-tip="O inverso da solar: ×1.5 de noite e ×0.5 de dia. As duas leem a mesma hora do encontro.">i</span></span></label>
+                            <label class="toggle-row trait-toggle"><input type="checkbox" name="only_during_day"><span class="toggle-track"></span><span>Só funciona de dia<span class="info-tip" tabindex="0" role="note" data-tip="Fora da fase de dia a skill não funciona: o motor bloqueia-a por completo. Diferente da marca solar, que muda o dano mas nunca proíbe a skill.">i</span></span></label>
+                            <label class="toggle-row trait-toggle"><input type="checkbox" name="only_during_night"><span class="toggle-track"></span><span>Só funciona de noite<span class="info-tip" tabindex="0" role="note" data-tip="O inverso: a skill só pode ser usada à noite. As duas marcas em simultâneo não fazem sentido — o validador avisa.">i</span></span></label>
                         </div>
 
                         <div class="trait-block">

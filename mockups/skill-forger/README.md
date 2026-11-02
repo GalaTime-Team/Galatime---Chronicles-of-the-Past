@@ -65,7 +65,7 @@ significado de cada campo — está em `docs/combat/FORGER_MECHANICS.md`.
 
 Em resumo:
 
-- `solar` (×1.5 de dia, ×0.5 de noite) e `nocturnal` (o inverso), lidos contra
+- `solar` (×1.5 de dia, ×0.5 de noite) e `lunar` (o inverso), lidos contra
   a **hora do mundo** — a luta guarda a hora com que começou.
 - `accuracy`, `evasion` e `crit_chance` como stats: a precisão é de *saída* (afeta
   os próprios ataques), a esquiva é de *entrada*, e o crítico multiplica o golpe
@@ -87,7 +87,7 @@ que a skill possa ser composta já no formato final:
 
 | Elemento | Campos que usa |
 |---|---|
-| **Umbra** (noite, escuridão) | `nocturnal`, `crit_chance`, `evasion` (buff), `heal_block`, `guaranteed_crit_vs_status`, `bonus_vs_hp_below`, `drain_to` |
+| **Umbra** (noite, escuridão) | `lunar`, `crit_chance`, `evasion` (buff), `heal_block`, `guaranteed_crit_vs_status`, `bonus_vs_hp_below`, `drain_to` |
 | **Spatium** (tempo, espaço) | `turn_offset`, `cooldown_tick`, `move`, `deferred_damage`, `echo`, `untargetable`, `ignore_accuracy`, `prevent_actions` |
 | **Vetus** (poder antigo) | `costs.hp`, `deferred_cost`, `self_upkeep`, `prevent_skills`, `defense_pierce`, `cleanse`, `dispel` |
 | **Lux** (dia, luz) | `solar`, `bonus_vs_elements`, `dispel`, `cleanse`, `regen_per_turn`, `status_immunities` |
@@ -116,7 +116,7 @@ quando o motor ainda não as implementa:
 
 | Regra | Efeito na simulação |
 |---|---|
-| `solar` / `nocturnal` | ×1.5 de dia / ×0.5 de noite (e o inverso) |
+| `solar` / `lunar` | ×1.5 de dia / ×0.5 de noite (e o inverso) |
 | `accuracy` / `evasion` | A precisão do atacante menos a esquiva do alvo |
 | `ignore_accuracy` | O golpe acerta sempre |
 | `crit_chance` | Chance de crítico mostrada à parte (×1.75) |
@@ -176,7 +176,7 @@ da skill.
 | `learning_requirements.required_attack_ids` | Pré-requisitos, de qualquer elemento |
 | `targeting`, `damage`, `accuracy`, `hit_count` | Alvo e resultado direto |
 | `costs` | `mana`, `stamina`, `hp`, `cooldown` |
-| `solar`, `nocturnal` | ×1.5 de dia / ×0.5 de noite (e o inverso) |
+| `solar`, `lunar` | ×1.5 de dia / ×0.5 de noite (e o inverso) |
 | `crit_chance` | Percentagem de acertos críticos (×1.75) |
 | `ignore_accuracy` | O golpe acerta sempre |
 | `guaranteed_crit_vs_status` | ID do status que garante o crítico |

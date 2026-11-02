@@ -117,7 +117,7 @@ function pickWithDifficulty(context: AiDecisionContext, scored: readonly Scored[
 /** The request the service accepts. */
 function toRequest(candidate: AiCandidate): CombatActionRequest {
     const request: CombatActionRequest = { actionId: candidate.action.id };
-    if (candidate.action.targeting === 'enemy_one' && candidate.targetId) {
+    if (candidate.action.targeting === 'any_one' && candidate.targetId) {
         request.targetId = candidate.targetId;
     }
     return request;

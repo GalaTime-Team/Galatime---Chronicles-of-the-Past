@@ -20,6 +20,7 @@ import type {
     CombatStatDelta,
     CombatStats,
     CombatUnit,
+    DamageType,
 } from '../../types/CombatType';
 import {
     asRecord,
@@ -30,6 +31,7 @@ import {
     readString,
     readVariance,
 } from '../../utils/combatUtils';
+import { rollVariance } from './damageCalculator';
 
 /**
  * Authored stat name (as written in YAML) to the runtime stat field(s).
@@ -289,22 +291,127 @@ export function readPolarity(effect: AttackEffect, instance: {
     return 'neutral';
 }
 
-/** Builds the runtime instance of an authored effect. */
+/** Stats a `random_debuff`/`random_buff` may pick; resource pools would read as unplayable. */
+const RANDOM_DEBUFF_STATS = [
+    'physical_attack', 'magical_attack', 'physical_defense', 'magical_defense',
+    'speed', 'accuracy', 'evasion', 'crit_chance',
+] as const;
+
+/** Picks `count` distinct stats and turns them into a stat delta. */
+function readRandomStats(
+    source: Record<string, unknown>,
+    field: 'random_debuff' | 'random_buff',
+    magnitude: number,
+    random: CombatRandom,
+): CombatStatDelta | null {
+    const spec = asRecord(source[field]);
+    if (!spec) return null;
+
+    const amount = readNumber(spec.amount, 0);
+    if (amount === 0) return null;
+
+    const authored = Array.isArray(spec.stats)
+        ? spec.stats.filter((entry): entry is string => typeof entry === 'string')
+        : [];
+    const pool = authored.length > 0 ? [...authored] : [...RANDOM_DEBUFF_STATS];
+
+    // Fisher–Yates: every stat is equally likely and none is rolled twice.
+    for (let index = pool.length - 1; index > 0; index -= 1) {
+        const swap = Math.min(index, Math.floor(random() * (index + 1)));
+        const held = pool[index];
+        pool[index] = pool[swap];
+        pool[swap] = held;
+    }
+
+    const count = Math.min(pool.length, Math.max(1, Math.round(readNumber(spec.count, 1))));
+    const delta: Record<string, number> = {};
+    for (const stat of pool.slice(0, count)) delta[stat] = amount;
+
+    return scaleStatDelta(delta as CombatStatDelta, magnitude);
+}
+
+/** Picks `count` distinct stats and turns them into a negative delta. */
+
+
+/** Adds two stat deltas, keeping both contributions. */
+function mergeDeltas(
+    first: CombatStatDelta | null,
+    second: CombatStatDelta | null,
+): CombatStatDelta | null {
+    if (!first) return second;
+    if (!second) return first;
+
+    const merged: Record<string, number> = { ...first as Record<string, number> };
+    for (const [key, value] of Object.entries(second as Record<string, number>)) {
+        merged[key] = (merged[key] ?? 0) + value;
+    }
+    return merged as CombatStatDelta;
+}
+
+/** Reads an effect's `bonus_vs_hp_below` spec. */
+function readBonusVsHpBelow(source: unknown): { threshold: number; multiplier: number } | null {
+    const record = asRecord(source);
+    if (!record) return null;
+
+    const threshold = readNumber(record.threshold, Number.NaN);
+    const multiplier = readNumber(record.multiplier, Number.NaN);
+    if (!Number.isFinite(threshold) || !Number.isFinite(multiplier)) return null;
+
+    return { threshold, multiplier };
+}
+
+/** Reads the on-kill healing a status grants its holder. */
+function readHealOnKill(source: Record<string, unknown>): { flat: number; percent: number } | null {
+    const flat = Math.max(0, readNumber(source.heal_on_kill, 0));
+    const percent = clamp(readNumber(source.heal_on_kill_percent, 0), 0, 1);
+    return flat > 0 || percent > 0 ? { flat, percent } : null;
+}
+
+/** Reads the damage channels a status shields its holder from. */
+function readDamageImmunities(source: Record<string, unknown>): DamageType[] | null {
+    const raw = Array.isArray(source.damage_immunities) ? source.damage_immunities : [];
+    const channels = raw.filter((entry): entry is DamageType => entry === 'physical' || entry === 'magical');
+    return channels.length > 0 ? channels : null;
+}
+
+/**
+ * Builds the runtime instance of an authored effect.
+ *
+ * `outputMultiplier` scales the holder's own output (a weapon's effect power);
+ * `phaseMultiplier` is the hour-of-the-day value of the action that cast it.
+ * Both scale `buff`/`debuff` magnitudes, while the hour alone scales the
+ * effect's own damage and regeneration. Duration, costs, chances and control
+ * flags are never scaled.
+ *
+ * `random` is only consumed by `random_debuff`, which rolls the stats it lowers.
+ */
 export function createEffectInstance(
     effect: AttackEffect,
     sourceId: string,
     elementId: string | null,
     outputMultiplier = 1,
+    phaseMultiplier = 1,
+    random: CombatRandom = Math.random,
 ): CombatEffectInstance {
     const record = asRecord(effect) ?? {};
-    const buff = scaleStatDelta(readStatDelta(effect.buff), outputMultiplier);
-    const debuff = scaleStatDelta(readStatDelta(effect.debuff), outputMultiplier);
-    const damagePerTurn = Math.max(0, readNumber(record.damage_per_turn, 0));
+    const magnitude = outputMultiplier * phaseMultiplier;
+    const buff = mergeDeltas(
+        scaleStatDelta(readStatDelta(effect.buff), magnitude),
+        readRandomStats(record, 'random_buff', magnitude, random),
+    );
+    const debuff = mergeDeltas(
+        scaleStatDelta(readStatDelta(effect.debuff), magnitude),
+        readRandomStats(record, 'random_debuff', magnitude, random),
+    );
+    const damagePerTurn = Math.max(
+        0,
+        Math.round(readNumber(record.damage_per_turn, 0) * phaseMultiplier),
+    );
 
     // `lower_accuracy` is the older spelling of a debuff on the attacker's own
     // aim; it is folded into the same stat so there is one place a modifier
     // lives.
-    const lowerAccuracy = readNumber(record.lower_accuracy, 0);
+    const lowerAccuracy = readNumber(record.lower_accuracy, 0) * phaseMultiplier;
     const mergedDebuff = lowerAccuracy > 0
         ? { ...(debuff ?? {}), accuracy: (debuff?.accuracy ?? 0) + lowerAccuracy }
         : debuff;
@@ -317,8 +424,7 @@ export function createEffectInstance(
         : [];
 
     const instance: CombatEffectInstance = {
-        effectId: readString(effect.effect_id, `${sourceId}_effect`),
-        sourceId,
+        effectId: readString(effect.effect_id, `${sourceId}_effect`),        sourceId,
         statusEffect: readString(effect.status_effect, '') || null,
         elementId: readString(effect.element_id, '') || elementId,
         turns: resolveTurns(effect.turns),
@@ -327,7 +433,10 @@ export function createEffectInstance(
         debuff: mergedDebuff,
         statMultipliers: null,
         polarity: 'neutral',
-        regenPerTurn: readStatDelta(record.regen_per_turn) as CombatStatDelta | null,
+        regenPerTurn: scaleStatDelta(
+            readStatDelta(record.regen_per_turn),
+            phaseMultiplier,
+        ) as CombatStatDelta | null,
         selfUpkeep: readStatDelta(record.self_upkeep) as CombatStatDelta | null,
         deferredCost: readStatDelta(record.deferred_cost) as CombatStatDelta | null,
         immunities: immunities.length > 0 ? immunities : null,
@@ -336,11 +445,19 @@ export function createEffectInstance(
         untargetable: readBoolean(record.untargetable, false),
         healBlock: readBoolean(record.heal_block, false),
         counter: readBoolean(record.counter, false),
+        locksTarget: readBoolean(record.locks_target, false),
         turnOffset: Math.round(readNumber(record.turn_offset, 0)),
         cooldownTick: Math.max(0, Math.round(readNumber(record.cooldown_tick, 0))),
         move: readMoveSpec(effect),
         rewind: readRewindSpec(effect),
         damagePerTurn,
+        damagePerTurnVariance: readVariance(record.damage_variance),
+        healOnKill: readHealOnKill(record),
+        confuse: readBoolean(record.confuse, false),
+        confusionChance: clamp(readNumber(record.confusion_chance, 0.5), 0, 1),
+        bonusVsHpBelow: readBonusVsHpBelow(record.bonus_vs_hp_below),
+        removableByLux: readBoolean(record.removable_by_lux, false),
+        damageImmunities: readDamageImmunities(record),
         stacks: 1,
         canStack: readBoolean(effect.can_stack, false),
     };
@@ -393,6 +510,9 @@ export function isImmuneToStatus(unit: CombatUnit, statusId: string): boolean {
  *
  * A unit that is immune to the status does not take it: the effect is skipped
  * and the refusal is reported, so the log can say "resisted".
+ *
+ * `outputMultiplier` is the caster's own output boost; `phaseMultiplier` is the
+ * action's hour-of-the-day value (see {@link createEffectInstance}).
  */
 export function applyEffectToUnit(
     unit: CombatUnit,
@@ -401,11 +521,12 @@ export function applyEffectToUnit(
     elementId: string | null,
     random: CombatRandom,
     outputMultiplier = 1,
+    phaseMultiplier = 1,
 ): EffectOutcomeEvent | null {
     const chance = effectChance(effect);
     if (chance < 1 && random() >= chance) return null;
 
-    const instance = createEffectInstance(effect, sourceId, elementId, outputMultiplier);
+    const instance = createEffectInstance(effect, sourceId, elementId, outputMultiplier, phaseMultiplier, random);
 
     // The immunity bites on the status the effect carries, by id or by label.
     const statusKey = instance.statusEffect ?? instance.effectId;
@@ -455,13 +576,24 @@ export function applyEffectToUnit(
  * the resources back, `self_upkeep` takes them, and `deferred_cost` is paid
  * once, on the turn after the effect landed.
  */
-export function tickUnitEffects(unit: CombatUnit): CombatEvent[] {
+export function tickUnitEffects(
+    unit: CombatUnit,
+    random: CombatRandom = Math.random,
+): CombatEvent[] {
     const events: CombatEvent[] = [];
     const remaining: CombatEffectInstance[] = [];
 
     for (const effect of unit.effects) {
         if (effect.damagePerTurn > 0) {
-            const amount = effect.damagePerTurn * Math.max(1, effect.stacks);
+            // A variable DoT rolls its own `damage_variance` every tick, so a
+            // rot can bite hard one turn and barely the next.
+            const variance = effect.damagePerTurnVariance
+                ? rollVariance(random, effect.damagePerTurnVariance)
+                : 1;
+            const amount = Math.max(
+                1,
+                Math.round(effect.damagePerTurn * Math.max(1, effect.stacks) * variance),
+            );
             events.push(...changeResource(unit, 'hp', -amount));
         }
 
@@ -484,18 +616,21 @@ export function tickUnitEffects(unit: CombatUnit): CombatEvent[] {
 
     const expiring: CombatEffectInstance[] = [];
     for (const effect of remaining) {
-        if (effect.turns === null) {
-            expiring.push(effect);
+        const expires = effect.turns !== null && effect.turns - 1 <= 0;
+        if (!expires) {
+            expiring.push(
+                effect.turns === null ? effect : { ...effect, turns: effect.turns - 1 },
+            );
             continue;
         }
 
-        const turns = effect.turns - 1;
-        if (turns <= 0) {
-            events.push({ type: 'effect_expired', unitId: unit.id, effectId: effect.effectId });
-            continue;
-        }
+        events.push({ type: 'effect_expired', unitId: unit.id, effectId: effect.effectId });
 
-        expiring.push({ ...effect, turns });
+        // A focus status that runs out lets its holder choose targets again.
+        if (effect.locksTarget && unit.lockedByEffectId === effect.effectId) {
+            unit.lockedTargetId = null;
+            unit.lockedByEffectId = null;
+        }
     }
 
     unit.effects = expiring;
@@ -567,7 +702,10 @@ export function changeResource(
  *
  * `healBlocked` refuses the healing half (a `heal_block` status: the holder
  * cannot be healed by anybody else). `drainRecipient` is where a drained
- * resource goes when the effect says `drain_to: caster`.
+ * resource goes when the effect says `drain_to: caster` — and who a
+ * `drain_percent_of_damage` effect heals. `phaseMultiplier` is the action's
+ * hour-of-the-day value: it scales every magnitude here, but the caster's
+ * output boost only reaches healing and regeneration.
  */
 export function applyEffectResources(
     unit: CombatUnit,
@@ -577,23 +715,38 @@ export function applyEffectResources(
     options: {
         healBlocked?: boolean;
         drainRecipient?: CombatUnit | null;
+        phaseMultiplier?: number;
+        /** Direct damage the hit dealt, for a `drain_percent_of_damage` effect. */
+        damageDealt?: number;
     } = {},
 ): CombatEvent[] {
     const events: CombatEvent[] = [];
     const record = asRecord(effect) ?? {};
+    const phase = options.phaseMultiplier ?? 1;
 
     const flatDamage = readNumber(effect.damage, 0);
     if (flatDamage > 0) {
         const variance = readVariance(effect.damage_variance) ?? [1, 1];
-        const amount = Math.max(1, Math.round(flatDamage * (variance[0] + random() * (variance[1] - variance[0]))));
+        const amount = Math.max(1, Math.round(
+            flatDamage * phase * (variance[0] + random() * (variance[1] - variance[0])),
+        ));
         events.push(...changeResource(unit, 'hp', -amount));
     }
 
+    // A percentage drain pays the caster back out of the hit it just landed.
+    // The damage already carries its own hour-of-day value, so it is not
+    // multiplied by the phase again.
+    const drainPercent = clamp(readNumber(record.drain_percent_of_damage, 0), 0, 1);
+    if (drainPercent > 0 && options.drainRecipient) {
+        const drained = Math.round(Math.max(0, options.damageDealt ?? 0) * drainPercent);
+        if (drained > 0) events.push(...changeResource(options.drainRecipient, 'hp', drained));
+    }
+
     // Healing and regen are the holder's *own* output, so a weapon like the
-    // Asclepius Wand boosts them; damage and drain are not touched.
+    // Asclepius Wand boosts them; damage and drain are not touched by it.
     const heal = readNumber(record.heal, 0);
     if (heal > 0 && !options.healBlocked) {
-        events.push(...changeResource(unit, 'hp', Math.round(heal * outputMultiplier)));
+        events.push(...changeResource(unit, 'hp', Math.round(heal * outputMultiplier * phase)));
     }
 
     if (effect.resource_regen) {
@@ -601,8 +754,8 @@ export function applyEffectResources(
             const amount = readNumber(value, 0);
             const blocked = resource === 'hp' && options.healBlocked;
             if (blocked) continue;
-            if (amount > 0) events.push(...changeResource(unit, resource as CombatResourceId, Math.round(amount * outputMultiplier)));
-            else if (amount !== 0) events.push(...changeResource(unit, resource as CombatResourceId, amount));
+            if (amount > 0) events.push(...changeResource(unit, resource as CombatResourceId, Math.round(amount * outputMultiplier * phase)));
+            else if (amount !== 0) events.push(...changeResource(unit, resource as CombatResourceId, Math.round(amount * phase)));
         }
     }
 
@@ -611,7 +764,7 @@ export function applyEffectResources(
         const recipient = toCaster ? options.drainRecipient ?? null : null;
 
         for (const [resource, value] of Object.entries(effect.resource_drain)) {
-            const amount = readNumber(value, 0);
+            const amount = Math.round(readNumber(value, 0) * phase);
             if (amount === 0) continue;
 
             events.push(...changeResource(unit, resource as CombatResourceId, -amount));
@@ -751,4 +904,120 @@ export function isUntargetable(unit: CombatUnit): boolean {
 /** Whether a unit reflects the next hit it takes. */
 export function hasCounter(unit: CombatUnit): boolean {
     return unit.effects.some((effect) => effect.counter);
+}
+
+/**
+ * Extra damage a unit's live statuses grant against a wounded target.
+ *
+ * Effects such as Ruthless Hunt or Blood Moon carry the same
+ * `bonus_vs_hp_below` spec a skill does; the strongest applicable one wins.
+ */
+export function bonusVsHpBelowFromEffects(unit: CombatUnit, hpFraction: number): number {
+    let best = 1;
+
+    for (const effect of unit.effects) {
+        const spec = effect.bonusVsHpBelow;
+        if (!spec) continue;
+        if (hpFraction < spec.threshold) best = Math.max(best, spec.multiplier);
+    }
+
+    return best;
+}
+
+/** Chance (`0…1`) that confusion turns the unit's hostile action on its own side. */
+export function confusionChance(unit: CombatUnit): number {
+    let chance = 0;
+
+    for (const effect of unit.effects) {
+        if (effect.confuse) chance = Math.max(chance, effect.confusionChance ?? 0.5);
+    }
+
+    return chance;
+}
+
+/** Lifts every status that says a Lux attack can remove it. */
+export function liftLuxCurses(unit: CombatUnit): CombatEvent[] {
+    const lifted = unit.effects.filter((effect) => effect.removableByLux);
+    if (lifted.length === 0) return [];
+
+    unit.effects = unit.effects.filter((effect) => !effect.removableByLux);
+
+    return lifted.map((effect) => ({
+        type: 'effect_expired',
+        unitId: unit.id,
+        effectId: effect.effectId,
+    }));
+}
+
+/**
+ * Damage channels a status shields its holder from.
+ *
+ * A live `damage_immunities` effect (`divine_protection`) makes the holder
+ * immune to the named channel while the effect lasts; the immunity dies with
+ * the effect.
+ */
+export function isImmuneToDamageType(unit: CombatUnit, damageType: DamageType): boolean {
+    return unit.effects.some(
+        (effect) => effect.damageImmunities?.includes(damageType) ?? false,
+    );
+}
+
+/** The focus status — a `locks_target` effect — that is live on the unit. */
+export function grantedLockEffect(unit: CombatUnit): CombatEffectInstance | null {
+    return unit.effects.find((effect) => effect.locksTarget) ?? null;
+}
+
+/**
+ * The unit id the holder is currently locked onto, or `null` when unlocked.
+ *
+ * The lock is grown, not cast: a fresh focus status has no target yet, and the
+ * first enemy a damaging action reaches claims it. The claim is remembered on
+ * the unit, validated here against the status that caused it, so a renewed
+ * buff keeps the same foe in focus and an expired one releases it.
+ */
+export function liveTargetLockId(unit: CombatUnit): string | null {
+    const lock = grantedLockEffect(unit);
+    if (!lock || unit.lockedByEffectId !== lock.effectId) return null;
+
+    return unit.lockedTargetId ?? null;
+}
+
+/** Pins the holder's focus onto a target when the status has none yet. */
+export function claimTargetLock(unit: CombatUnit, targetId: string): void {
+    const lock = grantedLockEffect(unit);
+    if (!lock || unit.lockedByEffectId === lock.effectId) return;
+
+    unit.lockedTargetId = targetId;
+    unit.lockedByEffectId = lock.effectId;
+}
+
+/**
+ * Inverts the holder's gift statuses: each buff becomes an equal debuff and
+ * the status turns into a curse (`Solar Exorcism`).
+ *
+ * The inversion survives the effect's own turns, so a wasted buff hurts for as
+ * long as it had left to live — and a cleanse can now take it off.
+ */
+export function invertBuffsOn(unit: CombatUnit): CombatEvent[] {
+    const events: CombatEvent[] = [];
+
+    for (const effect of unit.effects) {
+        if (effect.polarity !== 'positive') continue;
+        if (!effect.buff && !effect.debuff) continue;
+
+        const buff = effect.debuff;
+        const debuff = effect.buff;
+        effect.buff = buff;
+        effect.debuff = debuff;
+        effect.polarity = 'negative';
+        events.push({
+            type: 'effect_applied',
+            unitId: unit.id,
+            effectId: effect.effectId,
+            statusEffect: effect.statusEffect,
+            turns: effect.turns,
+        });
+    }
+
+    return events;
 }

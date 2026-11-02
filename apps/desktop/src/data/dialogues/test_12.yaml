@@ -1,0 +1,1045 @@
+# Gerado pelo Dialogue Forger. Comentários do ficheiro original não são preservados.
+
+start_node: entra_4
+nodes:
+  entra_4:
+    type: character_enter
+    character_id: raphael
+    position: right
+    animation_id: run_in_from_right
+    emotion: neutral
+    next: acao_3
+
+  acao_3:
+    type: character_action
+    character_id: noelia
+    position: left
+    emotion: neutral
+    animation_id: step_across_from_left
+    next: sai
+
+  sai:
+    type: character_exit
+    character_id: noelia
+    animation_id: step_out
+    direction: left
+    next: entra
+
+  entra:
+    type: character_enter
+    character_id: annah
+    position: center_left
+    emotion: serious
+    next: entra_2
+
+  entra_2:
+    type: character_enter
+    character_id: arthur
+    position: center_right
+    emotion: serious
+    next: entra_3
+
+  entra_3:
+    type: character_enter
+    character_id: raphael
+    position: right
+    emotion: serious
+    next: fala
+
+  fala:
+    type: line
+    speaker_id: annah
+    emotion: serious
+    animation_id: idle
+    text:
+      - type: styled_text
+        value: You! Stop right there!
+        style:
+          bold: true
+    next: fala_2
+
+  fala_2:
+    type: line
+    speaker_id: arthur
+    emotion: serious
+    animation_id: idle
+    auto_advance: true
+    text:
+      - type: text
+        value: Sorry, but we-
+    next: acao
+
+  acao:
+    type: character_action
+    character_id: arthur
+    position: center_left
+    emotion: serious
+    animation_id: step_across_from_left
+    next: acao_2
+
+  acao_2:
+    type: character_action
+    character_id: arthur
+    position: center_right
+    emotion: surprised
+    animation_id: step_across_from_right
+    next: fala_3
+
+  fala_3:
+    type: line
+    speaker_id: arthur
+    emotion: surprised
+    animation_id: idle
+    text:
+      - type: text
+        value: Huh!?
+    next: fala_4
+
+  fala_4:
+    type: line
+    speaker_id: annah
+    emotion: serious
+    animation_id: idle
+    text:
+      - type: text
+        value: "You are "
+      - type: styled_text
+        value: not
+        style:
+          bold: true
+      - type: text
+        value: " going anywhere until you explain yourselves!"
+    next: fala_5
+
+  fala_5:
+    type: line
+    speaker_id: raphael
+    emotion: frustrated
+    animation_id: idle
+    text:
+      - type: text
+        value: "Miss, we do "
+      - type: styled_text
+        value: not
+        style:
+          bold: true
+      - type: text
+        value: " have the time for this..."
+    next: fala_6
+
+  fala_6:
+    type: line
+    speaker_id: annah
+    emotion: serious
+    animation_id: idle
+    text:
+      - type: text
+        value: Exactly, so explain the reason as to why you're disturbing the peace before I take you two to prison, Raphael!
+    next: fala_7
+
+  fala_7:
+    type: line
+    speaker_id: raphael
+    emotion: frustrated
+    animation_id: idle
+    auto_advance: true
+    text:
+      - type: text
+        value: Miss, you-
+    next: fala_8
+
+  fala_8:
+    type: line
+    speaker_id: raphael
+    emotion: suspicious
+    animation_id: idle
+    text:
+      - type: text
+        value: Wait a second, I never told you my name. Who are you?
+    next: fala_9
+
+  fala_9:
+    type: line
+    speaker_id: annah
+    emotion: serious
+    animation_id: idle
+    text:
+      - type: text
+        value: I am captain Annah Froy. We've met during the ceremony of the completion of my training with Pacci.
+    next: fala_10
+
+  fala_10:
+    type: line
+    speaker_id: annah
+    emotion: annoyed
+    animation_id: idle
+    text:
+      - type: text
+        value: "Now, tell me why you two are disturbing the peace, "
+      - type: styled_text
+        value: immediately
+        style:
+          bold: true
+      - type: text
+        value: .
+    next: fala_11
+
+  fala_11:
+    type: line
+    speaker_id: arthur
+    emotion: nervous
+    animation_id: idle
+    delivery: thought
+    text:
+      - type: text
+        value: She's scary.
+    next: fala_12
+
+  fala_12:
+    type: line
+    speaker_id: raphael
+    emotion: nervous
+    animation_id: idle
+    text:
+      - type: text
+        value: Agreed.
+    next: fala_13
+
+  fala_13:
+    type: line
+    speaker_id: arthur
+    emotion: surprised
+    animation_id: idle
+    text:
+      - type: text
+        value: Huh!?
+    next: fala_14
+
+  fala_14:
+    type: line
+    speaker_id: raphael
+    emotion: neutral
+    animation_id: idle
+    text:
+      - type: text
+        value: Look, that girl you saw running by is a suspect of an attack from the state!
+    next: fala_15
+
+  fala_15:
+    type: line
+    speaker_id: annah
+    emotion: surprised
+    animation_id: idle
+    text:
+      - type: text
+        value: What!?
+    next: fala_16
+
+  fala_16:
+    type: line
+    speaker_id: annah
+    emotion: serious
+    animation_id: idle
+    text:
+      - type: text
+        value: That's a pretty serious accusation. Elaborate!
+    next: fala_17
+
+  fala_17:
+    type: line
+    speaker_id: raphael
+    emotion: neutral
+    animation_id: idle
+    auto_advance: true
+    text:
+      - type: text
+        value: Sure, let's run after her whi-
+    next: fala_18
+
+  fala_18:
+    type: line
+    speaker_id: annah
+    emotion: serious
+    animation_id: idle
+    text:
+      - type: text
+        value: You're not going anywhere until you've fully explained the situation to me!
+    next: fala_19
+
+  fala_19:
+    type: line
+    speaker_id: raphael
+    emotion: nervous
+    animation_id: idle
+    delivery: thought
+    text:
+      - type: text
+        value: This is taking too long.
+    next: fala_20
+
+  fala_20:
+    type: line
+    speaker_id: raphael
+    emotion: neutral
+    animation_id: idle
+    text:
+      - type: whisper
+        value: Psst, Arthur. Run after the girl while I distract Annah.
+    next: fala_21
+
+  fala_21:
+    type: line
+    speaker_id: annah
+    emotion: suspicious
+    animation_id: idle
+    text:
+      - type: text
+        value: What are you whispering?
+    next: fala_22
+
+  fala_22:
+    type: line
+    speaker_id: raphael
+    emotion: nervous
+    animation_id: idle
+    text:
+      - type: text
+        value: Nothing. Just... wondering where to start.
+    next: escolha
+
+  escolha:
+    type: choice
+    prompt:
+      speaker_id: raphael
+      emotion: neutral
+      text:
+        - type: text
+          value: So, it all started with an attack on Celordion.
+    choices:
+      - choice_id: try_to_sneak_away
+        text: Try to sneak away
+        next: fala_23
+      - choice_id: wait_for_an_opportunity
+        text: Wait for an opportunity
+        next: escolha_2
+
+  escolha_2:
+    type: choice
+    prompt:
+      speaker_id: annah
+      emotion: suspicious
+      text:
+        - type: text
+          value: The city where SISO's head quarters is located?
+    choices:
+      - choice_id: try_to_sneak_away
+        text: Try to sneak away
+        next: fala_23
+      - choice_id: wait_for_an_opportunity
+        text: Wait for an opportunity
+        next: escolha_3
+
+  escolha_3:
+    type: choice
+    prompt:
+      speaker_id: raphael
+      emotion: serious
+      text:
+        - type: text
+          value: Yes. A few days ago, someone was poisoning the mana on the city, but we managed to stop it before things got critical.
+    choices:
+      - choice_id: try_to_sneak_away
+        text: Try to sneak away
+        next: fala_23
+      - choice_id: wait_for_an_opportunity
+        text: Wait for an opportunity
+        next: escolha_4
+
+  escolha_4:
+    type: choice
+    prompt:
+      speaker_id: annah
+      emotion: serious
+      text:
+        - type: text
+          value: What happened to the perpetrator?
+    choices:
+      - choice_id: try_to_sneak_away
+        text: Try to sneak away
+        next: fala_23
+      - choice_id: wait_for_an_opportunity
+        text: Wait for an opportunity
+        next: escolha_5
+
+  escolha_5:
+    type: choice
+    prompt:
+      speaker_id: raphael
+      emotion: serious
+      text:
+        - type: text
+          value: It was taken in and interrogated. We don't find much but we managed to find out that there are two more cities that are threatened by the organization. This city being one of them.
+    choices:
+      - choice_id: try_to_sneak_away
+        text: Try to sneak away
+        next: fala_23
+      - choice_id: wait_for_an_opportunity
+        text: Wait for an opportunity
+        effects_before:
+          - type: set_flag
+            flag: distraction
+            value: true
+        next: escolha_6
+
+  escolha_6:
+    type: choice
+    prompt:
+      speaker_id: annah
+      emotion: surprised
+      text:
+        - type: text
+          value: ...
+    choices:
+      - choice_id: try_to_sneak_away
+        text: Try to sneak away
+        next: fala_23
+      - choice_id: wait_for_an_opportunity
+        text: Wait for an opportunity
+        next: escolha_7
+
+  escolha_7:
+    type: choice
+    prompt:
+      speaker_id: raphael
+      emotion: serious
+      text:
+        - type: text
+          value: While I was interrogating the perpetrator, a girl appeared and tried to kill the perpetrator before we could extract anything.
+    choices:
+      - choice_id: try_to_sneak_away
+        text: Try to sneak away
+        next: fala_23
+      - choice_id: wait_for_an_opportunity
+        text: Wait for an opportunity
+        next: escolha_8
+
+  escolha_8:
+    type: choice
+    prompt:
+      speaker_id: annah
+      emotion: neutral
+      text:
+        - type: text
+          value: Was that girl the one who ran past me?
+    choices:
+      - choice_id: try_to_sneak_away
+        text: Try to sneak away
+        next: fala_23
+      - choice_id: wait_for_an_opportunity
+        text: Wait for an opportunity
+        next: escolha_9
+
+  escolha_9:
+    type: choice
+    prompt:
+      speaker_id: raphael
+      emotion: neutral
+      text:
+        - type: text
+          value: Yes. From what we know, her name is Noelia and has some sort of weird magic.
+    choices:
+      - choice_id: try_to_sneak_away
+        text: Try to sneak away
+        next: fala_23
+      - choice_id: wait_for_an_opportunity
+        text: Wait for an opportunity
+        next: fala_32
+
+  fala_23:
+    type: line
+    speaker_id: arthur
+    emotion: nervous
+    animation_id: idle
+    delivery: thought
+    text:
+      - type: text
+        value: Ok, while she is distracted with Raphael will just sneak past her...
+    next: acao_4
+
+  acao_4:
+    type: character_action
+    character_id: arthur
+    position: left
+    emotion: nervous
+    animation_id: step_across_from_left
+    next: ramificacao
+
+  ramificacao:
+    type: conditional
+    branches:
+      - branch_id: sem_distracao
+        if:
+          all:
+            - condition: equals
+              left: flags.distraction
+              right: false
+        next: fala_24
+      - branch_id: com_distracao
+        if:
+          all:
+            - condition: equals
+              left: flags.distraction
+              right: true
+        next: fala_29
+      - branch_id: padrao
+        next: fim_error
+
+  fala_24:
+    type: line
+    speaker_id: annah
+    emotion: suspicious
+    animation_id: idle
+    text:
+      - type: text
+        value: "Where do you think "
+      - type: styled_text
+        value: you're
+        style:
+          bold: true
+      - type: text
+        value: " going?"
+    next: fala_25
+
+  fala_25:
+    type: line
+    speaker_id: arthur
+    emotion: stressed
+    animation_id: idle
+    delivery: thought
+    text:
+      - type: text
+        value: Oh no!
+    next: fala_26
+
+  fala_26:
+    type: line
+    speaker_id: annah
+    emotion: serious
+    animation_id: idle
+    text:
+      - type: text
+        value: Were you trying to sneak past me?
+    next: fala_27
+
+  fala_27:
+    type: line
+    speaker_id: arthur
+    emotion: nervous
+    animation_id: idle
+    text:
+      - type: styled_text
+        value: N-no?
+        style:
+          shake: light
+          shake_speed: 0.8
+    next: fala_28
+
+  fala_28:
+    type: line
+    speaker_id: annah
+    emotion: frustrated
+    animation_id: idle
+    text:
+      - type: text
+        value: "... "
+      - type: shout
+        value: Guards!
+    next: fim_bad
+
+  fim_bad:
+    type: end
+    result: bad
+
+  fala_29:
+    type: line
+    speaker_id: arthur
+    emotion: neutral
+    animation_id: idle
+    delivery: thought
+    text:
+      - type: text
+        value: Please don't notice me. Please don't notice me.
+    next: sai_2
+
+  sai_2:
+    type: character_exit
+    character_id: raphael
+    animation_id: fade_out
+    direction: right
+    next: sai_3
+
+  sai_3:
+    type: character_exit
+    character_id: annah
+    animation_id: fade_out
+    direction: right
+    next: fala_30
+
+  fala_30:
+    type: line
+    speaker_id: arthur
+    emotion: nervous
+    animation_id: idle
+    text:
+      - type: text
+        value: Phew. It's done.
+    next: fala_31
+
+  fala_31:
+    type: line
+    speaker_id: arthur
+    emotion: serious
+    animation_id: idle
+    text:
+      - type: text
+        value: I need to catch up to her fast.
+    next: sai_4
+
+  sai_4:
+    type: character_exit
+    character_id: arthur
+    animation_id: step_out
+    direction: right
+    next: fim_good
+
+  fim_good:
+    type: end
+    result: good
+
+  fala_32:
+    type: line
+    speaker_id: raphael
+    emotion: serious
+    animation_id: idle
+    text:
+      - type: text
+        value: After we arrived here to start our investigation, we saw her walking around the street and started to give chase.
+    next: fala_33
+
+  fala_33:
+    type: line
+    speaker_id: raphael
+    emotion: annoyed
+    animation_id: idle
+    text:
+      - type: whisper
+        value: Damn it, Arthur! Why didn't you sneak way!?
+    next: fala_34
+
+  fala_34:
+    type: line
+    speaker_id: arthur
+    emotion: nervous
+    animation_id: idle
+    auto_advance: true
+    text:
+      - type: text
+        value: "{whisper speed=0.8|I... well-}"
+    next: fala_35
+
+  fala_35:
+    type: line
+    speaker_id: pacci
+    emotion: neutral
+    animation_id: idle
+    text:
+      - type: text
+        value: Hey guys!
+    next: fala_36
+
+  fala_36:
+    type: line
+    speaker_id: annah
+    emotion: surprised
+    animation_id: idle
+    text:
+      - type: text
+        value: Hm?
+    next: acao_5
+
+  acao_5:
+    type: character_action
+    character_id: annah
+    animation_id: step_across
+    next: entra_5
+
+  entra_5:
+    type: character_enter
+    character_id: pacci
+    position: left
+    animation_id: step_in_from_left
+    emotion: neutral
+    next: fala_37
+
+  fala_37:
+    type: line
+    speaker_id: pacci
+    emotion: neutral
+    animation_id: idle
+    auto_advance: true
+    text:
+      - type: text
+        value: Raphael! Arthur! Me and Neven we-
+    next: fala_38
+
+  fala_38:
+    type: line
+    speaker_id: pacci
+    emotion: surprised
+    animation_id: idle
+    text:
+      - type: text
+        value: ... Annah?
+    next: fala_39
+
+  fala_39:
+    type: line
+    speaker_id: annah
+    emotion: happy
+    animation_id: idle
+    text:
+      - type: text
+        value: Pacci...
+    next: fala_40
+
+  fala_40:
+    type: line
+    speaker_id: pacci
+    emotion: happy
+    animation_id: idle
+    text:
+      - type: text
+        value: It's been a while hasn't it?
+    next: fala_41
+
+  fala_41:
+    type: line
+    speaker_id: annah
+    emotion: relaxed
+    animation_id: idle
+    text:
+      - type: text
+        value: Yeah. It's been what, 3 years?
+    next: fala_42
+
+  fala_42:
+    type: line
+    speaker_id: pacci
+    emotion: relaxed
+    animation_id: idle
+    text:
+      - type: text
+        value: Yeah, it feels like it's been more though. How have you been?
+    next: fala_43
+
+  fala_43:
+    type: line
+    speaker_id: annah
+    emotion: relaxed
+    animation_id: idle
+    text:
+      - type: text
+        value: Oh, ya know. Some no goods here, paper work there, the usual.
+    next: fala_44
+
+  fala_44:
+    type: line
+    speaker_id: raphael
+    emotion: neutral
+    animation_id: idle
+    delivery: thought
+    text:
+      - type: text
+        value: Oh, I remember her now. She's Pacci's little crush.
+    next: fala_45
+
+  fala_45:
+    type: line
+    speaker_id: arthur
+    emotion: surprised
+    animation_id: idle
+    delivery: thought
+    text:
+      - type: text
+        value: That's weird. She's acting like a completely different person.
+    next: fala_46
+
+  fala_46:
+    type: line
+    speaker_id: raphael
+    emotion: thinking
+    animation_id: idle
+    delivery: thought
+    text:
+      - type: text
+        value: Perhaps we could use this opportunity to investigate the scene... And leave the two love birds alone.
+    next: fala_47
+
+  fala_47:
+    type: line
+    speaker_id: raphael
+    emotion: neutral
+    animation_id: idle
+    text:
+      - type: text
+        value: It appears that you have much to catch on. Perhaps we should be on our way.
+    next: fala_48
+
+  fala_48:
+    type: line
+    speaker_id: pacci
+    emotion: suspicious
+    animation_id: idle
+    text:
+      - type: text
+        value: Huh? Going away already?
+    next: fala_49
+
+  fala_49:
+    type: line
+    speaker_id: annah
+    emotion: serious
+    animation_id: idle
+    text:
+      - type: text
+        value: Hold on, you two. I still have questions about the situation.
+    next: fala_50
+
+  fala_50:
+    type: line
+    speaker_id: raphael
+    emotion: neutral
+    animation_id: idle
+    text:
+      - type: text
+        value: "Worry not Annah. Pacci can explain everything to you. "
+    next: fala_51
+
+  fala_51:
+    type: line
+    speaker_id: arthur
+    emotion: nervous
+    animation_id: idle
+    text:
+      - type: whisper
+        value: Raphael, are you sure this is a good idea?
+    next: fala_52
+
+  fala_52:
+    type: line
+    speaker_id: annah
+    emotion: neutral
+    animation_id: idle
+    text:
+      - type: text
+        value: ... Very well.
+    next: fala_53
+
+  fala_53:
+    type: line
+    speaker_id: arthur
+    emotion: surprised
+    animation_id: idle
+    text:
+      - type: text
+        value: Wait, what!?
+    next: fala_54
+
+  fala_54:
+    type: line
+    speaker_id: pacci
+    emotion: unsure
+    animation_id: idle
+    text:
+      - type: text
+        value: Explain what, exactly?
+    next: fala_55
+
+  fala_55:
+    type: line
+    speaker_id: annah
+    emotion: serious
+    animation_id: idle
+    text:
+      - type: text
+        value: You two are dismissed.
+    next: fala_56
+
+  fala_56:
+    type: line
+    speaker_id: raphael
+    emotion: happy
+    animation_id: idle
+    text:
+      - type: text
+        value: But of course. Pacci, please explain what has happened to Celordion in the past few days.
+    next: fala_57
+
+  fala_57:
+    type: line
+    speaker_id: raphael
+    emotion: neutral
+    animation_id: idle
+    text:
+      - type: text
+        value: Me and Arthur are going to investigate something.
+    next: fala_58
+
+  fala_58:
+    type: line
+    speaker_id: pacci
+    emotion: unsure
+    animation_id: idle
+    text:
+      - type: text
+        value: ... Ok.
+    next: fala_59
+
+  fala_59:
+    type: line
+    speaker_id: raphael
+    emotion: neutral
+    animation_id: idle
+    text:
+      - type: text
+        value: Oh, before I go.
+    next: fala_60
+
+  fala_60:
+    type: line
+    speaker_id: raphael
+    emotion: angry
+    animation_id: idle
+    text:
+      - type: text
+        value: Keep your eyes peeled. The girl that attacked me and Keely is in this city.
+    next: fala_61
+
+  fala_61:
+    type: line
+    speaker_id: pacci
+    emotion: serious
+    animation_id: idle
+    text:
+      - type: text
+        value: "*nods*"
+    next: fala_62
+
+  fala_62:
+    type: line
+    speaker_id: raphael
+    emotion: neutral
+    animation_id: idle
+    text:
+      - type: text
+        value: Well, have fun! Arthur, let's get back to that alley.
+    next: sai_5
+
+  sai_5:
+    type: character_exit
+    character_id: raphael
+    animation_id: step_out
+    direction: right
+    next: fala_63
+
+  fala_63:
+    type: line
+    speaker_id: arthur
+    emotion: surprised
+    animation_id: idle
+    text:
+      - type: text
+        value: Wait, shouldn't we go after her!?
+    next: fala_64
+
+  fala_64:
+    type: line
+    speaker_id: raphael
+    emotion: neutral
+    animation_id: idle
+    text:
+      - type: text
+        value: She could be anywhere by now! Let's look for clues instead!
+    next: sai_6
+
+  sai_6:
+    type: character_exit
+    character_id: arthur
+    animation_id: step_out
+    direction: right
+    next: acao_6
+
+  acao_6:
+    type: character_action
+    character_id: annah
+    position: center_right
+    emotion: happy
+    animation_id: step_across_from_right
+    next: fala_65
+
+  fala_65:
+    type: line
+    speaker_id: pacci
+    emotion: unsure
+    animation_id: idle
+    text:
+      - type: text
+        value: Well, I guess I've got some explaining to do.
+    next: fala_66
+
+  fala_66:
+    type: line
+    speaker_id: annah
+    emotion: neutral
+    animation_id: idle
+    text:
+      - type: text
+        value: Looks like it.
+    next: fala_67
+
+  fala_67:
+    type: line
+    speaker_id: annah
+    emotion: relaxing
+    animation_id: idle
+    text:
+      - type: text
+        value: Wanna go to the bar while you tell me everything?
+    next: fala_68
+
+  fala_68:
+    type: line
+    speaker_id: pacci
+    emotion: thinking
+    animation_id: idle
+    text:
+      - type: text
+        value: ...
+    next: fala_69
+
+  fala_69:
+    type: line
+    speaker_id: pacci
+    emotion: happy
+    animation_id: idle
+    text:
+      - type: text
+        value: Sure. There's a lot that happened in the last few days.
+    next: fim_neutral
+
+  fim_neutral:
+    type: end
+    result: neutral
+
+  fim_error:
+    type: end

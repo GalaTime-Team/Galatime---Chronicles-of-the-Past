@@ -132,6 +132,14 @@ function scaleEffect(effect: AttackEffect, factor: number): AttackEffect {
     if (effect.deferred_cost) next.deferred_cost = scaleNumericRecord(effect.deferred_cost, factor);
     if (effect.heal !== undefined) next.heal = scaleRounded(effect.heal, factor);
     if (effect.damage_per_turn !== undefined) next.damage_per_turn = scaleRounded(effect.damage_per_turn, factor);
+    // Randomized curse/gift magnitudes and flat on-kill heals are output too.
+    if (effect.random_debuff?.amount !== undefined) {
+        next.random_debuff = { ...effect.random_debuff, amount: scaleRounded(effect.random_debuff.amount, factor) };
+    }
+    if (effect.random_buff?.amount !== undefined) {
+        next.random_buff = { ...effect.random_buff, amount: scaleRounded(effect.random_buff.amount, factor) };
+    }
+    if (effect.heal_on_kill !== undefined) next.heal_on_kill = scaleRounded(effect.heal_on_kill, factor);
 
     return next;
 }

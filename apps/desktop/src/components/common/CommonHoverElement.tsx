@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { getElementsWeaknesses, ElementMultiplierResult, getElementsDamage } from '../../controllers/elementController';
 import { ElementIcon } from '../../assets/GalatimeIcon';
+import { ELEMENT_DAMAGE_MULTIPLIERS } from '../../constants/CombatConstants';
 
 interface CommonHoverElementProps {
     /** Single element ID (backwards-compatible) */
@@ -59,15 +60,13 @@ const CommonHoverElement: React.FC<CommonHoverElementProps> = ({
 
     // Helper to determine color and weight based on multiplier
     const getMultiplierStyle = (multiplier: number) => {
-        switch (multiplier) {
-            case 0: return 'text-galatime-element-immune font-bold';
-            case 0.25: return 'text-galatime-element-superStrong font-bold';
-            case 0.5: return 'text-galatime-element-strong font-bold';
-            case 1: return 'text-galatime-element-normal';
-            case 2: return 'text-galatime-element-weak font-bold';
-            case 4: return 'text-galatime-element-superWeak font-bold';
-            default: return 'text-white';
-        }
+        const ladder = ELEMENT_DAMAGE_MULTIPLIERS;
+        if (multiplier === ladder.immune) return 'text-galatime-element-immune font-bold';
+        if (multiplier <= ladder.super_strong) return 'text-galatime-element-superStrong font-bold';
+        if (multiplier < ladder.normal) return 'text-galatime-element-strong font-bold';
+        if (multiplier === ladder.normal) return 'text-galatime-element-normal';
+        if (multiplier < ladder.super_weak) return 'text-galatime-element-weak font-bold';
+        return 'text-galatime-element-superWeak font-bold';
     };
 
     // Split the weakness entries into two columns

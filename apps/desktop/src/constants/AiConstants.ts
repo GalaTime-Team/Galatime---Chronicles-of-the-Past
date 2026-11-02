@@ -25,6 +25,7 @@ export const DEFAULT_AI_WEIGHTS: Record<AiConsiderationId, number> = {
     element_edge: 0.3,
     effect_value: 0.5,
     survival: 0.8,
+    flee: 0.0,
     heal_ally: 1.2,
     heal_self: 1.4,
     defend: 0.5,
@@ -55,6 +56,18 @@ export const DEFAULT_AI_TARGETING: AiTargeting = {
 /** Default "thinking" pause (ms) when an entity authors no `pace`. */
 export const DEFAULT_AI_PACE = 350;
 
+/** Panic gate used by `ai.flee: true` when the author gives no threshold. */
+export const DEFAULT_AI_FLEE_BELOW_HP = 0.3;
+
+/** Escape chance at the panic gate when `ai.flee` does not name one. */
+export const DEFAULT_AI_FLEE_BASE_CHANCE = 0.5;
+
+/**
+ * Weight a profile gets for `flee` when it authorises the action but stays
+ * silent about the weight. Explicit `weights.flee` always wins.
+ */
+export const DEFAULT_AI_FLEE_WEIGHT = 1.0;
+
 /** A preset of defaults, merged under any authored override. */
 export interface AiStylePreset {
     weights?: AiWeights;
@@ -72,7 +85,8 @@ export interface AiStylePreset {
 export const AI_STYLE_PRESETS: Record<AiStyleId, AiStylePreset> = {
     balanced: {},
     brute: {
-        // Charges in, never braces, and does not fear the grave.
+        // Charges in, never braces, and does not fear the grave by default.
+        // An authored `flee:` block can still make a cornered exception.
         weights: { survival: 0.2, heal_self: 0.2, defend: 0.0, kill_secure: 2.0 },
         thresholds: { wounded: 0.2 },
     },
@@ -89,8 +103,8 @@ export const AI_STYLE_PRESETS: Record<AiStyleId, AiStylePreset> = {
         targeting: { prefer: ['weakest'] },
     },
     coward: {
-        // Braces and mends early, only swings when it must.
-        weights: { survival: 1.6, defend: 1.4, heal_self: 1.8, expected_damage: 0.5 },
+        // Braces and mends early, only swings when it must; runners commit to it.
+        weights: { survival: 1.6, flee: 1.4, defend: 1.4, heal_self: 1.8, expected_damage: 0.5 },
         thresholds: { wounded: 0.55, panic: 0.6 },
     },
 };

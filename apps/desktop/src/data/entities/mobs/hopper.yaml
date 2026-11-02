@@ -39,5 +39,8 @@ loot:
 
 ai:
   style: brute
+  # A cornered hopper runs for its babies rather than die for the fight.
+  flee:
+    below_hp: 0.25
 
 

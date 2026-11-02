@@ -1,11 +1,83 @@
 /**
- * Tunable numbers for the combat system.
+ * Tunable numbers for the combat system — the single balance file.
  *
  * Everything a designer is likely to want to change lives here, so the rule
  * modules (`services/combat/*`) stay about structure instead of magic numbers.
+ *
+ * This includes:
+ * - the base stats every unit is born with (`BASE_*`);
+ * - the element efficacy ladder (`ELEMENT_RELATION_SCORES` /
+ *   `ELEMENT_DAMAGE_MULTIPLIERS`);
+ * - the damage formula, critical, variance, position and ability defaults.
+ *
+ * Change a number here, not in the services that read it.
  */
 
 import type { CombatLine, CombatRange, DamageType } from '../types/CombatType';
+import type { ElementRelationKey } from '../types/ElementDataType';
+
+/* ------------------------------------------------------------------------- */
+/* Unit baselines                                                            */
+/* ------------------------------------------------------------------------- */
+
+/**
+ * Base critical-hit chance every unit is born with, in percent.
+ */
+export const BASE_CRIT_CHANCE = 1;
+
+/**
+ * Base evasion every unit is born with, in points.
+ *
+ * Evasion is subtracted from the attacker's accuracy, exactly like a buff's
+ * `evasion` does. `0` means a unit is hit at the action's authored chance
+ * unless something raises its evasion.
+ */
+export const BASE_EVASION = 1;
+
+/** Base accuracy modifier every unit is born with, in points. */
+export const BASE_ACCURACY_MODIFIER = 0;
+
+/* ------------------------------------------------------------------------- */
+/* Element efficacy                                                          */
+/* ------------------------------------------------------------------------- */
+
+/**
+ * Raw score each authored element relationship is worth.
+ *
+ * The defender's elements ADD their scores together (an element that does not
+ * mention the offence contributes `0`) and the sum is mapped once through
+ * {@link ELEMENT_DAMAGE_MULTIPLIERS}. These anchors are the vocabulary of the
+ * catalogue: `immune` -3, `super_strong` -2, `strong` -1, `weak` +1,
+ * `super_weak` +2.
+ */
+export const ELEMENT_RELATION_SCORES: Record<ElementRelationKey, number> = {
+    immune: -3,
+    super_strong: -2,
+    strong: -1,
+    weak: 1,
+    super_weak: 2,
+};
+
+/**
+ * Final damage multiplier for each summed element score band.
+ *
+ * Kept deliberately narrow so a good or bad matchup tilts a fight instead of
+ * deciding it: a super-effective hit is worth +60%, not the old ×4, and a
+ * resisted hit only loses 20% instead of half. Immunity stays absolute (`0`).
+ * Any summed score beyond `super_weak` (several defending elements all weak to
+ * the same offence) is clamped to this same band.
+ */
+export const ELEMENT_DAMAGE_MULTIPLIERS = {
+    immune: 0,
+    super_strong: 0.65,
+    strong: 0.8,
+    normal: 1,
+    weak: 1.3,
+    super_weak: 1.6,
+} as const;
+
+/** The element efficacy band a summed score falls into. */
+export type ElementEfficacyBand = keyof typeof ELEMENT_DAMAGE_MULTIPLIERS;
 
 /**
  * Units a single battle line can hold. Authored rosters must respect it.
@@ -49,10 +121,19 @@ export const RANGE_REACHES_LINE: Record<CombatRange, CombatLine[]> = {
  * Speed a unit must bank to earn one turn in a round.
  *
  * Turn frequency is proportional to speed: a unit banks `speed` points every
- * round and spends this much per turn, so speed 20 acts once a round while
- * speed 60 acts three times. Lower it to make speed matter more sharply.
+ * round and spends this much per turn by default. Lower it to make speed
+ * matter more sharply.
  */
 export const SPEED_PER_TURN = 20;
+
+/**
+ * Multiplier that defines when extra turns are earned.
+ *
+ * By default `3.5`, a unit needs 3.5 times as much speed as {@link SPEED_PER_TURN}
+ * to earn its second turn, 7 times for its third, etc. (so speed 70 = 2
+ * turns, speed 140 = 3 turns with the default values).
+ */
+export const EXTRA_TURN_RATIO = 3.5;
 
 /**
  * Damage channel a weapon uses.
@@ -103,6 +184,15 @@ export const CURSED_WEAR_BONUS = 1;
 /** Extra stamina a `cursed` weapon demands of every action it performs. */
 export const CURSED_STAMINA_TAX = 2;
 
+/** Chance that a `fragile` weapon breaks on a swing. */
+export const FRAGILE_WEAPON_BREAK_CHANCE = 0.08;
+
+/** Fraction of shots that spend ammo when a weapon authors no `consume_chance`. */
+export const DEFAULT_AMMO_CONSUME_CHANCE = 1;
+
+/** Fraction of a hit a `reflect` ability throws back when it authors no `fraction`. */
+export const DEFAULT_REFLECT_FRACTION = 0.5;
+
 /** Assumed reach when an action does not author one. */
 export const DEFAULT_SKILL_RANGE: CombatRange = 'medium';
 
@@ -130,23 +220,45 @@ export const RESOURCE_REGEN_MINIMUM = 1;
  */
 export const RESOURCE_REGEN_MAX_FRACTION = 1 / 8;
 
-/** Chance that `flee` escapes the fight outright. */
+/** Base chance a `flee` attempt succeeds at the unit's panic threshold. */
 export const FLEE_CHANCE = 0.5;
+
+/**
+ * Ceiling for the flee chance.
+ *
+ * A unit below its panic threshold rolls between {@link FLEE_CHANCE} and this,
+ * rising as its health approaches zero. Even a cornered unit can be caught.
+ */
+export const MAX_FLEE_CHANCE = 0.9;
+
+/**
+ * Health fraction below which a player-controlled unit may try to flee.
+ *
+ * Enemies get their own threshold from the `ai.flee` block; the player has no
+ * `ai` profile, so this is the shared "you are desperate enough" line.
+ */
+export const PLAYER_FLEE_BELOW_HP = 0.3;
 
 /**
  * Multiplier a `solar` skill gets by day.
  *
- * Symmetric around ×1 (`SOLAR_NIGHT_MULTIPLIER` is its mirror), so a solar
- * skill is neutral across a full day and the *hour* only decides which branch
- * the holder wants to be holding.
+ * The day value is `1` — the sun's own hour is how a solar skill is meant to
+ * feel — and {@link SOLAR_NIGHT_MULTIPLIER} is how much the borrowed power
+ * fades once night falls.
  */
-export const SOLAR_DAY_MULTIPLIER = 1.5;
+export const SOLAR_DAY_MULTIPLIER = 1.0;
 
-/** Multiplier a `solar` skill gets at night. */
-export const SOLAR_NIGHT_MULTIPLIER = 0.5;
+/** Multiplier a `solar` skill gets when it is not day (i.e. at night). */
+export const SOLAR_NIGHT_MULTIPLIER = 0.25;
+
+/** Multiplier a `lunar` skill gets at night. */
+export const LUNAR_NIGHT_MULTIPLIER = 1.0;
+
+/** Multiplier a `lunar` skill gets when it is not night (i.e. by day). */
+export const LUNAR_DAY_MULTIPLIER = 0.25;
 
 /** Multiplier a critical hit deals. */
-export const CRIT_MULTIPLIER = 1.75;
+export const CRIT_MULTIPLIER = 1.5;
 
 /**
  * Fraction of a landed hit a `counter` status throws back at the attacker.

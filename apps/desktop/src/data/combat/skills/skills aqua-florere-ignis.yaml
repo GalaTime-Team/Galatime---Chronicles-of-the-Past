@@ -29,7 +29,7 @@ skills:
     learning_requirements:
       required_attack_ids:
         - water
-    targeting: enemy_one
+    targeting: any_one
     damage:
       kind: magical
       damage_type: magical
@@ -51,7 +51,7 @@ skills:
     learning_requirements:
       required_attack_ids:
         - water_bolt
-    targeting: enemy_one
+    targeting: any_one
     damage:
       kind: magical
       damage_type: magical
@@ -73,7 +73,7 @@ skills:
     learning_requirements:
       required_attack_ids:
         - tide_crash
-    targeting: enemy_one
+    targeting: any_one
     damage:
       kind: magical
       damage_type: magical
@@ -117,7 +117,7 @@ skills:
     learning_requirements:
       required_attack_ids:
         - riptide
-    targeting: enemy_one
+    targeting: any_one
     damage:
       kind: magical
       damage_type: magical
@@ -162,7 +162,7 @@ skills:
     learning_requirements:
       required_attack_ids:
         - water
-    targeting: ally_one
+    targeting: any_one
     costs:
       mana: 6
       stamina: 0
@@ -176,7 +176,7 @@ skills:
     learning_requirements:
       required_attack_ids:
         - healing_mist
-    targeting: ally_one
+    targeting: any_one
     costs:
       mana: 5
       stamina: 0
@@ -190,7 +190,7 @@ skills:
     learning_requirements:
       required_attack_ids:
         - healing_mist
-    targeting: ally_one
+    targeting: any_one
     costs:
       mana: 9
       stamina: 0
@@ -204,7 +204,7 @@ skills:
     learning_requirements:
       required_attack_ids:
         - healing_mist
-    targeting: ally_one
+    targeting: any_one
     costs:
       mana: 7
       stamina: 0
@@ -255,7 +255,7 @@ skills:
     learning_requirements:
       required_attack_ids:
         - mana_spring
-    targeting: ally_one
+    targeting: any_one
     costs:
       mana: 11
       stamina: 0
@@ -284,7 +284,7 @@ skills:
     learning_requirements:
       required_attack_ids:
         - water
-    targeting: enemy_one
+    targeting: any_one
     costs:
       mana: 10
       stamina: 0
@@ -333,7 +333,7 @@ skills:
     learning_requirements:
       required_attack_ids:
         - flood
-    targeting: enemy_one
+    targeting: any_one
     costs:
       mana: 12
       stamina: 0
@@ -384,7 +384,7 @@ skills:
     learning_requirements:
       required_attack_ids:
         - frost_spike
-    targeting: enemy_one
+    targeting: any_one
     damage:
       kind: magical
       damage_type: magical
@@ -435,7 +435,7 @@ skills:
     learning_requirements:
       required_attack_ids:
         - ice
-    targeting: enemy_one
+    targeting: any_one
     damage:
       kind: magical
       damage_type: magical
@@ -457,7 +457,7 @@ skills:
     learning_requirements:
       required_attack_ids:
         - frost_spike
-    targeting: enemy_one
+    targeting: any_one
     damage:
       kind: magical
       damage_type: magical
@@ -524,7 +524,7 @@ skills:
     learning_requirements:
       required_attack_ids:
         - glacier
-    targeting: enemy_one
+    targeting: any_one
     damage:
       kind: magical
       damage_type: magical
@@ -553,7 +553,7 @@ skills:
     learning_requirements:
       required_attack_ids:
         - ice_shard_volley
-    targeting: enemy_one
+    targeting: any_one
     damage:
       kind: magical
       damage_type: magical
@@ -582,7 +582,7 @@ skills:
     learning_requirements:
       required_attack_ids:
         - ice
-    targeting: enemy_one
+    targeting: any_one
     costs:
       mana: 6
       stamina: 0
@@ -603,7 +603,7 @@ skills:
     learning_requirements:
       required_attack_ids:
         - chill
-    targeting: enemy_one
+    targeting: any_one
     costs:
       mana: 9
       stamina: 0
@@ -632,7 +632,7 @@ skills:
     learning_requirements:
       required_attack_ids:
         - chill
-    targeting: enemy_one
+    targeting: any_one
     costs:
       mana: 9
       stamina: 0
@@ -654,7 +654,7 @@ skills:
     learning_requirements:
       required_attack_ids:
         - frostbite
-    targeting: enemy_one
+    targeting: any_one
     costs:
       mana: 13
       stamina: 0
@@ -736,7 +736,7 @@ skills:
     learning_requirements:
       required_attack_ids:
         - ice
-    targeting: enemy_one
+    targeting: any_one
     damage:
       kind: magical
       damage_type: magical
@@ -763,7 +763,7 @@ skills:
     learning_requirements:
       required_attack_ids:
         - freeze
-    targeting: enemy_one
+    targeting: any_one
     costs:
       mana: 16
       stamina: 0
@@ -892,7 +892,7 @@ skills:
       required_attack_ids:
         - frost_armor
         - freeze
-    targeting: enemy_one
+    targeting: any_one
     costs:
       mana: 18
       stamina: 0
@@ -985,7 +985,7 @@ skills:
     learning_requirements:
       required_attack_ids:
         - flora
-    targeting: ally_one
+    targeting: any_one
     costs:
       mana: 6
       stamina: 0
@@ -999,7 +999,7 @@ skills:
     learning_requirements:
       required_attack_ids:
         - bloom
-    targeting: ally_one
+    targeting: any_one
     costs:
       mana: 9
       stamina: 0
@@ -1013,7 +1013,7 @@ skills:
     learning_requirements:
       required_attack_ids:
         - bloom
-    targeting: ally_one
+    targeting: any_one
     costs:
       mana: 8
       stamina: 0
@@ -1027,7 +1027,7 @@ skills:
     learning_requirements:
       required_attack_ids:
         - regrowth
-    targeting: ally_one
+    targeting: any_one
     costs:
       mana: 8
       stamina: 0
@@ -1041,7 +1041,7 @@ skills:
     learning_requirements:
       required_attack_ids:
         - regrowth
-    targeting: ally_one
+    targeting: any_one
     costs:
       mana: 11
       stamina: 0
@@ -1241,7 +1241,7 @@ skills:
     learning_requirements:
       required_attack_ids:
         - poison_spores
-    targeting: enemy_one
+    targeting: any_one
     damage:
       kind: magical
       damage_type: magical
@@ -1299,7 +1299,7 @@ skills:
     learning_requirements:
       required_attack_ids:
         - rot
-    targeting: enemy_one
+    targeting: any_one
     costs:
       mana: 7
       stamina: 0
@@ -1322,7 +1322,7 @@ skills:
     learning_requirements:
       required_attack_ids:
         - poison_spores
-    targeting: enemy_one
+    targeting: any_one
     costs:
       mana: 10
       stamina: 0
@@ -1351,7 +1351,7 @@ skills:
     learning_requirements:
       required_attack_ids:
         - poison_spores
-    targeting: enemy_one
+    targeting: any_one
     costs:
       mana: 10
       stamina: 0
@@ -1424,7 +1424,7 @@ skills:
     learning_requirements:
       required_attack_ids:
         - rot
-    targeting: enemy_one
+    targeting: any_one
     damage:
       kind: magical
       damage_type: magical
@@ -1446,7 +1446,7 @@ skills:
     learning_requirements:
       required_attack_ids:
         - vine_whip
-    targeting: enemy_one
+    targeting: any_one
     costs:
       mana: 12
       stamina: 0
@@ -1465,7 +1465,7 @@ skills:
     learning_requirements:
       required_attack_ids:
         - vine_whip
-    targeting: enemy_one
+    targeting: any_one
     damage:
       kind: magical
       damage_type: magical
@@ -1487,7 +1487,7 @@ skills:
     learning_requirements:
       required_attack_ids:
         - thorn_lash
-    targeting: enemy_one
+    targeting: any_one
     damage:
       kind: magical
       damage_type: magical
@@ -1559,7 +1559,7 @@ skills:
     learning_requirements:
       required_attack_ids:
         - rot
-    targeting: enemy_one
+    targeting: any_one
     damage:
       kind: magical
       damage_type: magical
@@ -1581,7 +1581,7 @@ skills:
     learning_requirements:
       required_attack_ids:
         - leech_seed
-    targeting: enemy_one
+    targeting: any_one
     damage:
       kind: magical
       damage_type: magical
@@ -1603,7 +1603,7 @@ skills:
     learning_requirements:
       required_attack_ids:
         - leech_seed
-    targeting: enemy_one
+    targeting: any_one
     damage:
       kind: magical
       damage_type: magical
@@ -1625,7 +1625,7 @@ skills:
     learning_requirements:
       required_attack_ids:
         - siphon_roots
-    targeting: enemy_one
+    targeting: any_one
     damage:
       kind: magical
       damage_type: magical
@@ -1733,7 +1733,7 @@ skills:
       experience_points: 1
     learning_requirements:
       required_attack_ids: []
-    targeting: enemy_one
+    targeting: any_one
     damage:
       kind: magical
       damage_type: magical
@@ -1764,7 +1764,7 @@ skills:
     learning_requirements:
       required_attack_ids:
         - fire
-    targeting: enemy_one
+    targeting: any_one
     damage:
       kind: magical
       damage_type: magical
@@ -1786,7 +1786,7 @@ skills:
     learning_requirements:
       required_attack_ids:
         - fire
-    targeting: enemy_one
+    targeting: any_one
     damage:
       kind: magical
       damage_type: magical
@@ -1808,7 +1808,7 @@ skills:
     learning_requirements:
       required_attack_ids:
         - fire
-    targeting: enemy_one
+    targeting: any_one
     costs:
       mana: 6
       stamina: 0
@@ -1831,7 +1831,7 @@ skills:
     learning_requirements:
       required_attack_ids:
         - fire
-    targeting: enemies_row
+    targeting: enemies_all
     damage:
       kind: magical
       damage_type: magical
@@ -1853,7 +1853,7 @@ skills:
     learning_requirements:
       required_attack_ids:
         - ember
-    targeting: enemy_one
+    targeting: any_one
     damage:
       kind: magical
       damage_type: magical
@@ -1875,7 +1875,7 @@ skills:
     learning_requirements:
       required_attack_ids:
         - fireball
-    targeting: enemy_one
+    targeting: any_one
     damage:
       kind: magical
       damage_type: magical
@@ -1897,7 +1897,7 @@ skills:
     learning_requirements:
       required_attack_ids:
         - flame_burst
-    targeting: enemy_one
+    targeting: any_one
     damage:
       kind: magical
       damage_type: magical
@@ -1926,7 +1926,7 @@ skills:
     learning_requirements:
       required_attack_ids:
         - fire_lance
-    targeting: enemy_one
+    targeting: any_one
     damage:
       kind: magical
       damage_type: magical
@@ -1970,7 +1970,7 @@ skills:
     learning_requirements:
       required_attack_ids:
         - flame_burst
-    targeting: enemy_one
+    targeting: any_one
     damage:
       kind: magical
       damage_type: magical
@@ -2002,7 +2002,7 @@ skills:
     learning_requirements:
       required_attack_ids:
         - fire_lance
-    targeting: enemies_row
+    targeting: enemies_all
     damage:
       kind: magical
       damage_type: magical
@@ -2018,7 +2018,7 @@ skills:
     effects:
       - effect_id: magma_surge_effect
         status_effect: Burning
-        apply_to: enemies_row
+        apply_to: enemies_all
         turns: 2
         damage: 5
         damage_variance:
@@ -2033,7 +2033,7 @@ skills:
     learning_requirements:
       required_attack_ids:
         - burn
-    targeting: enemy_one
+    targeting: any_one
     costs:
       mana: 9
       stamina: 0
@@ -2056,7 +2056,7 @@ skills:
     learning_requirements:
       required_attack_ids:
         - burn
-    targeting: enemy_one
+    targeting: any_one
     costs:
       mana: 8
       stamina: 0
@@ -2085,7 +2085,7 @@ skills:
     learning_requirements:
       required_attack_ids:
         - immolate
-    targeting: enemy_one
+    targeting: any_one
     costs:
       mana: 13
       stamina: 0
@@ -2114,7 +2114,7 @@ skills:
     learning_requirements:
       required_attack_ids:
         - cinder_mark
-    targeting: enemy_one
+    targeting: any_one
     costs:
       mana: 10
       stamina: 0
@@ -2225,7 +2225,7 @@ skills:
     learning_requirements:
       required_attack_ids:
         - melt_armor
-    targeting: enemy_one
+    targeting: any_one
     damage:
       kind: magical
       damage_type: magical
@@ -2269,7 +2269,7 @@ skills:
     learning_requirements:
       required_attack_ids:
         - heat
-    targeting: enemy_one
+    targeting: any_one
     costs:
       mana: 6
       stamina: 0
@@ -2290,7 +2290,7 @@ skills:
     learning_requirements:
       required_attack_ids:
         - heat
-    targeting: enemy_one
+    targeting: any_one
     costs:
       mana: 8
       stamina: 0
@@ -2311,7 +2311,7 @@ skills:
     learning_requirements:
       required_attack_ids:
         - heat
-    targeting: enemy_one
+    targeting: any_one
     costs:
       mana: 8
       stamina: 0
@@ -2334,7 +2334,7 @@ skills:
     learning_requirements:
       required_attack_ids:
         - heat
-    targeting: enemy_one
+    targeting: any_one
     damage:
       kind: magical
       damage_type: magical
@@ -2363,7 +2363,7 @@ skills:
     learning_requirements:
       required_attack_ids:
         - scorch
-    targeting: enemy_one
+    targeting: any_one
     costs:
       mana: 9
       stamina: 0
@@ -2385,7 +2385,7 @@ skills:
     learning_requirements:
       required_attack_ids:
         - melt_armor
-    targeting: enemy_one
+    targeting: any_one
     costs:
       mana: 11
       stamina: 0
@@ -2406,7 +2406,7 @@ skills:
     learning_requirements:
       required_attack_ids:
         - melt_armor
-    targeting: enemy_one
+    targeting: any_one
     costs:
       mana: 11
       stamina: 0
@@ -2427,7 +2427,7 @@ skills:
     learning_requirements:
       required_attack_ids:
         - heat_wave
-    targeting: enemy_one
+    targeting: any_one
     costs:
       mana: 10
       stamina: 0
@@ -2493,7 +2493,7 @@ skills:
     learning_requirements:
       required_attack_ids:
         - flame_charge
-    targeting: enemy_one
+    targeting: any_one
     damage:
       kind: magical
       damage_type: magical
@@ -2515,7 +2515,7 @@ skills:
     learning_requirements:
       required_attack_ids:
         - heat_shock
-    targeting: enemy_one
+    targeting: any_one
     damage:
       kind: magical
       damage_type: magical
@@ -2559,7 +2559,7 @@ skills:
     learning_requirements:
       required_attack_ids:
         - heat_shock
-    targeting: enemy_one
+    targeting: any_one
     damage:
       kind: magical
       damage_type: magical
@@ -2692,7 +2692,7 @@ skills:
       required_attack_ids:
         - thermal_lance
         - slag_shell
-    targeting: enemy_one
+    targeting: any_one
     damage:
       kind: magical
       damage_type: magical

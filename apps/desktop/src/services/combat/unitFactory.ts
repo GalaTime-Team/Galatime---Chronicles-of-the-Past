@@ -7,6 +7,11 @@
  * the fight.
  */
 
+import {
+    BASE_ACCURACY_MODIFIER,
+    BASE_CRIT_CHANCE,
+    BASE_EVASION,
+} from '../../constants/CombatConstants';
 import type { EntitiesData } from '../../types/EntityDataType';
 import type { CombatAbilityInstance } from '../../types/AbilityType';
 import type { WeaponRuntimeState, WeaponStatDelta } from '../../types/WeaponType';
@@ -21,6 +26,7 @@ import type {
 } from '../../types/CombatType';
 import { readNumber, readString } from '../../utils/combatUtils';
 import { createAbilityInstances } from './abilityFactory';
+import { createFleeAction } from './actionFactory';
 import { createAiProfile } from './ai/aiProfileFactory';
 import { recordTimelineSnapshot } from './rewind';
 
@@ -108,11 +114,12 @@ export function buildCombatStats(entity: CombatEntitySource): CombatStats {
         physicalDefense: readNumber(base?.physical_defense, 0),
         magicalDefense: readNumber(base?.magical_defense, 0),
         speed: readNumber(base?.speed, 0),
-        // The combat modifiers start at zero: they are offsets a buff moves,
-        // not percentages the entity is born with.
-        accuracy: 0,
-        evasion: 0,
-        critChance: 0,
+        // The combat modifiers start at the centralised baselines: they are
+        // offsets a buff moves, not percentages the entity is born with. Crit
+        // and evasion are both `BASE_*` in `CombatConstants`.
+        accuracy: BASE_ACCURACY_MODIFIER,
+        evasion: BASE_EVASION,
+        critChance: BASE_CRIT_CHANCE,
     };
 }
 
@@ -123,6 +130,15 @@ export function createCombatUnit(params: CreateUnitParams): CombatUnit {
     const resolved: CombatStats = { ...stats, maxHp };
 
     const abilities = params.abilities ?? createAbilityInstances(params.entity.abilities);
+    const aiProfile = createAiProfile(params.entity.ai, abilities);
+
+    // Fleeing is opt-in: the player always carries it, an enemy only when its
+    // profile authors `ai.flee`. Appending here keeps the cached blueprint
+    // shared while the per-unit permission stays per-unit.
+    const mayFlee = (params.isPlayerControlled ?? false) || aiProfile.flee !== null;
+    const actions = mayFlee && !params.actions.some((action) => action.kind === 'flee')
+        ? [...params.actions, createFleeAction()]
+        : params.actions;
 
     const unit: CombatUnit = {
         id: params.id,
@@ -141,10 +157,10 @@ export function createCombatUnit(params: CreateUnitParams): CombatUnit {
         currentHp: resolved.maxHp,
         currentMana: resolved.maxMana,
         currentStamina: resolved.maxStamina,
-        actions: params.actions,
+        actions,
         effects: [],
         abilities,
-        aiProfile: createAiProfile(params.entity.ai, abilities),
+        aiProfile,
         immunities: [],
         turnCount: 0,
         resourceIdleTurns: { mana: 0, stamina: 0 },
@@ -153,6 +169,8 @@ export function createCombatUnit(params: CreateUnitParams): CombatUnit {
         flags: {},
         cooldowns: {},
         defending: false,
+        lockedTargetId: null,
+        lockedByEffectId: null,
         weapon: params.weapon ?? null,
         carriedWeapons: [],
         timeline: [],

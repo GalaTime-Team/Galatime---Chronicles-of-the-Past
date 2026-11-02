@@ -53,6 +53,8 @@ import {
     tickUnitEffects,
 } from './combat/effectResolver';
 import { recordTimelineSnapshot } from './combat/rewind';
+import { effectiveTimePhase, tickPhaseOverride } from './combat/phaseOverride';
+import { canAttemptFlee, fleeRuleFor } from './combat/fleeRules';
 import { resolveFightHour, timePhaseForHour } from './state/worldClock';
 import { tickResourceRegen } from './combat/resourceRegen';
 import { getEncounter, getAllEncounters } from './combat/encounterLoader';
@@ -171,6 +173,7 @@ export const AVAILABILITY_MESSAGES: Partial<Record<CombatErrorCode, string>> = {
     out_of_ammo: 'No ammunition left.',
     out_of_range: 'This action cannot be used from this line.',
     target_invalid: 'There is nothing this action can hit.',
+    flee_unavailable: 'You can only flee when badly wounded.',
     not_implemented: 'This action is not available yet.',
 };
 
@@ -196,12 +199,13 @@ function findUnit(state: CombatState, unitId: string): CombatUnit | null {
  */
 function actionAvailability(state: CombatState, actor: CombatUnit, action: CombatAction): CombatErrorCode | null {
     if (actor.status !== 'alive') return 'unit_not_found';
-    if (!actor.isPlayerControlled && action.kind === 'flee') return 'action_unavailable';
     // A `silenced`-style status forbids the action outright; the reference schema
     // uses `attack` as the umbrella for the offensive kinds.
     if (isActionPrevented(action, preventedActionKinds(actor))) return 'action_unavailable';
     // A sealed unit may not use its skills, though it may still brace or rest.
     if (action.kind === 'skill' && areSkillsPrevented(actor)) return 'action_unavailable';
+    // Running is a panic move: only a unit below its own health gate may pick it.
+    if (action.kind === 'flee' && !canAttemptFlee(actor)) return 'flee_unavailable';
     if ((actor.cooldowns[action.id] ?? 0) > 0) return 'action_on_cooldown';
 
     // A ranged weapon with no rounds left cannot be fired (Fairy Bow).
@@ -234,10 +238,16 @@ function actionAvailability(state: CombatState, actor: CombatUnit, action: Comba
         }
     }
 
-    const needsTarget = action.targeting === 'enemy_one'
+    const needsTarget = action.targeting === 'any_one'
         || action.targeting === 'enemies_all'
         || action.targeting === 'both_teams';
     if (needsTarget && legalTargetIds(state, actor, action).length === 0) return 'target_invalid';
+
+    // A skill that borrows its power from the sky only works while that sky is
+    // the one it was written for ("Only works during the day").
+    const timePhase = effectiveTimePhase(state);
+    if (action.onlyDuringDay && timePhase !== 'day') return 'action_unavailable';
+    if (action.onlyDuringNight && timePhase !== 'night') return 'action_unavailable';
 
     return null;
 }
@@ -281,7 +291,7 @@ function beginUnitTurn(state: CombatState, unit: CombatUnit, random: CombatRando
         else unit.cooldowns[actionId] = remaining;
     }
 
-    const ticked = tickUnitEffects(unit);
+    const ticked = tickUnitEffects(unit, random);
     events.push(...ticked);
 
     // One `on_status_removed` per status that wore off this turn.
@@ -307,11 +317,15 @@ function advanceToNextUnit(
     const events: CombatEvent[] = [];
 
     for (let guard = 0; guard < MAX_UNITS_PER_LINE * 4; guard += 1) {
+        const previousRound = state.round;
         const advance = advanceTurnIndex(state);
         state.turnIndex = advance.turnIndex;
         state.round = advance.round;
         state.order = advance.order;
         state.turnGauges = advance.gauges;
+
+        // A forced phase lasts whole rounds; spend one at every round boundary.
+        if (advance.round !== previousRound) tickPhaseOverride(state);
 
         if (!advance.unit) return { events, unit: null };
 
@@ -527,6 +541,7 @@ export async function startCombat(
         units,
         hour,
         timePhase,
+        phaseOverride: null,
         phase: 'active',
         outcome: null,
         log: [],
@@ -579,7 +594,7 @@ export function getCombatState(sessionId: string): CombatResult<CombatState> {
  */
 function buildActionPreviews(state: CombatState, actor: CombatUnit): CombatActionPreview[] {
     return actor.actions
-        .filter((action) => action.kind !== 'flee' || actor.isPlayerControlled)
+        .filter((action) => action.kind !== 'flee' || fleeRuleFor(actor) !== null)
         .map((action) => {
             const reason = actionAvailability(state, actor, action);
             return {
@@ -883,7 +898,7 @@ export function previewCombatDamage(
         units: state.units,
         elementIndex,
         random,
-        timePhase: state.timePhase,
+        timePhase: effectiveTimePhase(state),
         defenderHpFraction: hpFraction(target),
     }));
 }
@@ -1098,6 +1113,8 @@ function resolveLootOnVictory(
 ): CombatEvent[] {
     const defeated = state.units
         .filter((unit) => unit.side === 'enemies' && unit.status !== 'alive')
+        // A unit that ran away kept what it was carrying.
+        .filter((unit) => unit.flags.fled !== true)
         .map((unit) => ({ unit, loot: lootTables.get(unit.id) ?? [] }))
         .filter((entry) => entry.loot.length > 0);
 

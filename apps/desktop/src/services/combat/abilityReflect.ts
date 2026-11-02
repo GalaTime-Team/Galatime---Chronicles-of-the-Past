@@ -8,6 +8,7 @@
 
 import type { AbilityDefinition } from '../../types/AbilityType';
 import type { CombatUnit } from '../../types/CombatType';
+import { DEFAULT_REFLECT_FRACTION } from '../../constants/CombatConstants';
 import { clamp, readNumber } from '../../utils/combatUtils';
 import type { AbilityTriggerContext } from './abilityContext';
 import { abilityNotFired } from './abilityResult';
@@ -23,7 +24,7 @@ export function reflectDamage(
     const attacker = context.source;
     if (!attacker || attacker.status !== 'alive' || context.damage <= 0) return abilityNotFired();
 
-    const fraction = clamp(readNumber(definition.action.parameters?.fraction, 0.5), 0, 1);
+    const fraction = clamp(readNumber(definition.action.parameters?.fraction, DEFAULT_REFLECT_FRACTION), 0, 1);
     const accuracy = readNumber(definition.action.parameters?.accuracy, 100);
 
     const isHit = rollHit(context.random, accuracy);
