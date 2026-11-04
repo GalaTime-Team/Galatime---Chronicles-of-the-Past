@@ -2,6 +2,31 @@ import React, { useState, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import CommonImage from '../components/common/CommonImage';
 
+// Checked-in UI glyphs, hashed by Vite at build time (or inlined as data URIs when small).
+import arrowRightUrl from './images/ui/arrow/arrow_right.svg';
+import arrowUpUrl from './images/ui/arrow/arrow_up.svg';
+import arrowDownUrl from './images/ui/arrow/arrow_down.svg';
+import musicNoteUrl from './images/ui/misc/music_note.svg';
+import folderUrl from './images/ui/misc/folder.svg';
+import unknownUrl from './images/ui/misc/unknown.svg';
+import addUrl from './images/ui/misc/add.svg';
+import closeUrl from './images/ui/misc/close.svg';
+import controlUrl from './images/ui/misc/control.svg';
+import editUrl from './images/ui/misc/edit.svg';
+import fitUrl from './images/ui/misc/fit.svg';
+import removeUrl from './images/ui/misc/remove.svg';
+import selectorUrl from './images/ui/misc/selector.svg';
+import trashUrl from './images/ui/misc/trash.svg';
+import defendUrl from './images/elements/extra/defend.svg';
+import restUrl from './images/elements/extra/rest.svg';
+import weaponUrl from './images/elements/extra/weapon.svg';
+import inventoryUrl from './images/elements/extra/inventory.svg';
+import changeUrl from './images/elements/extra/change.svg';
+import loading0Url from './images/ui/loading/loading_0.svg';
+import loading1Url from './images/ui/loading/loading_1.svg';
+import loading2Url from './images/ui/loading/loading_2.svg';
+import loading3Url from './images/ui/loading/loading_3.svg';
+
 // --- App Icon (Genérico) ---
 interface AppIconProps {
   src: string;
@@ -47,26 +72,31 @@ export const ChevronRight: React.FC<ChevronIconProps> = ({ className = '' }) => 
   </svg>
 );
 
-// --- Arrow Icon ---
-interface ArrowIconProps {
+// --- Mask Icon (shared glyph renderer) ---
+interface MaskIconProps {
   className?: string;
+  /** Size box classes, so an icon can default to a size relative to the text it sits in. */
+  sizeClass?: string;
 }
 
 /**
- * One arrow from `public/images/ui/arrow/`, applied as a CSS mask and filled with
- * `currentColor` so it follows the tone of whatever renders it.
+ * Renders one of the SVGs imported above as a CSS mask, filled with `currentColor` so it
+ * follows the tone of whatever renders it.
  *
- * It is sized in `em`, so the font-size of the surrounding text decides how big it is — pass a
- * `text-*` class to the wrapper rather than a `h-*`/`w-*` one (an arbitrary `[0.8em]` height
- * beats a plain Tailwind size, the same trap `MiscIcon` documents).
+ * The `src` is the Vite-resolved URL of an imported `.svg`, so production builds get hashed
+ * filenames (or an inlined data URI) while a dev server keeps a dev URL — either way the icon
+ * cannot drift from the module graph the way a hand-typed `public/` path could.
+ *
+ * Like {@link ArrowRight}'s old glyph, icons are sized in `em` by default (the `em`-based size
+ * classes beat a plain `text-*` font-size; pass `h-*`/`w-*` classes to force concrete sizes).
  */
-const ArrowGlyph: React.FC<ArrowIconProps & { file: string }> = ({ file, className = '' }) => (
+const MaskIcon: React.FC<MaskIconProps & { src: string }> = ({ src, sizeClass = 'h-[1em] w-[1em]', className = '' }) => (
   <span
     aria-hidden="true"
-    className={`block h-[0.8em] w-[0.8em] bg-current ${className}`}
+    className={`block ${sizeClass} bg-current ${className}`}
     style={{
-      maskImage: `url(/images/ui/arrow/${file}.svg)`,
-      WebkitMaskImage: `url(/images/ui/arrow/${file}.svg)`,
+      maskImage: `url(${src})`,
+      WebkitMaskImage: `url(${src})`,
       maskRepeat: 'no-repeat',
       WebkitMaskRepeat: 'no-repeat',
       maskPosition: 'center',
@@ -77,19 +107,26 @@ const ArrowGlyph: React.FC<ArrowIconProps & { file: string }> = ({ file, classNa
   />
 );
 
-export const ArrowRight: React.FC<ArrowIconProps> = ({ className = '' }) => (
-  <ArrowGlyph file="arrow_right" className={className} />
-);
+// --- Arrow Icons ---
+interface ArrowIconProps {
+  className?: string;
+}
+
+/**
+ * One arrow from `src/assets/images/ui/arrow/`, applied as a CSS mask and filled with
+ * `currentColor` so it follows the tone of whatever renders it.
+ *
+ * It is sized in `em`, so the font-size of the surrounding text decides how big it is — pass a
+ * `text-*` class to the wrapper rather than a `h-*`/`w-*` one (an arbitrary `[0.8em]` height
+ * beats a plain Tailwind size, the same trap `MaskIcon` documents).
+ */
+export const ArrowRight: React.FC<ArrowIconProps> = ({ className = '' }) => <MaskIcon src={arrowRightUrl} sizeClass="h-[0.8em] w-[0.8em]" className={className} />;
 
 /** Used to mark a statistic a status effect has raised. */
-export const ArrowUp: React.FC<ArrowIconProps> = ({ className = '' }) => (
-  <ArrowGlyph file="arrow_up" className={className} />
-);
+export const ArrowUp: React.FC<ArrowIconProps> = ({ className = '' }) => <MaskIcon src={arrowUpUrl} sizeClass="h-[0.8em] w-[0.8em]" className={className} />;
 
 /** Used to mark a statistic a status effect has lowered. */
-export const ArrowDown: React.FC<ArrowIconProps> = ({ className = '' }) => (
-  <ArrowGlyph file="arrow_down" className={className} />
-);
+export const ArrowDown: React.FC<ArrowIconProps> = ({ className = '' }) => <MaskIcon src={arrowDownUrl} sizeClass="h-[0.8em] w-[0.8em]" className={className} />;
 
 // --- Switch Icon ---
 interface SwitchIconProps {
@@ -128,27 +165,14 @@ interface MusicNoteIconProps {
 }
 
 /**
- * Music note from `public/images/ui/misc/music_note.svg`, used by the "now playing" card.
+ * Music note from `src/assets/images/ui/misc/music_note.svg`, used by the "now playing" card.
  *
- * The file paints its own path white, so it is applied as a CSS mask and filled with
- * `currentColor` instead of being embedded with `<img>`: that keeps it following the accent
- * tone of whatever renders it, exactly like the inline icons above.
+ * The file paints its own path white, so it is applied as a CSS mask by {@link MaskIcon} and
+ * filled with `currentColor` instead of being embedded with `<img>`: that keeps it following the
+ * accent tone of whatever renders it.
  */
 export const MusicNote: React.FC<MusicNoteIconProps> = ({ className = '' }) => (
-  <span
-    aria-hidden="true"
-    className={`block h-[0.9em] w-[0.9em] bg-current ${className}`}
-    style={{
-      maskImage: 'url(/images/ui/misc/music_note.svg)',
-      WebkitMaskImage: 'url(/images/ui/misc/music_note.svg)',
-      maskRepeat: 'no-repeat',
-      WebkitMaskRepeat: 'no-repeat',
-      maskPosition: 'center',
-      WebkitMaskPosition: 'center',
-      maskSize: 'contain',
-      WebkitMaskSize: 'contain',
-    }}
-  />
+  <MaskIcon src={musicNoteUrl} sizeClass="h-[0.9em] w-[0.9em]" className={className} />
 );
 
 // --- Folder Icon ---
@@ -157,11 +181,11 @@ interface FolderIconProps {
 }
 
 /**
- * Folder from `public/images/ui/misc/folder.svg`, used by the Settings header to open the
+ * Folder from `src/assets/images/ui/misc/folder.svg`, used by the Settings header to open the
  * folder that stores `settings.json`.
  *
- * Like {@link MusicNote}, the file paints its own path white, so it is applied as a CSS mask
- * and filled with `currentColor` instead of being embedded with `<img>`: that keeps it
+ * Like {@link MusicNote}, the file paints its own path white, so {@link MaskIcon} applies it as
+ * a CSS mask filled with `currentColor` instead of embedding it with `<img>`: that keeps it
  * following the accent tone of whatever renders it.
  *
  * The default size is deliberately small and relative (`em`), so the icon scales with the text
@@ -169,20 +193,7 @@ interface FolderIconProps {
  * `h-*`/`w-*` class to resize it for other uses.
  */
 export const FolderIcon: React.FC<FolderIconProps> = ({ className = '' }) => (
-  <span
-    aria-hidden="true"
-    className={`block h-[0.4em] w-[0.4em] bg-current ${className}`}
-    style={{
-      maskImage: 'url(/images/ui/misc/folder.svg)',
-      WebkitMaskImage: 'url(/images/ui/misc/folder.svg)',
-      maskRepeat: 'no-repeat',
-      WebkitMaskRepeat: 'no-repeat',
-      maskPosition: 'center',
-      WebkitMaskPosition: 'center',
-      maskSize: 'contain',
-      WebkitMaskSize: 'contain',
-    }}
-  />
+  <MaskIcon src={folderUrl} sizeClass="h-[0.4em] w-[0.4em]" className={className} />
 );
 
 // --- Unknown Icon ---
@@ -191,60 +202,30 @@ interface UnknownIconProps {
 }
 
 /**
- * Question mark from `public/images/ui/misc/unknown.svg`, shown wherever an entity has no
+ * Question mark from `src/assets/images/ui/misc/unknown.svg`, shown wherever an entity has no
  * sprite of its own.
  *
- * Like {@link MusicNote}, the file paints its own path white, so it is applied as a CSS mask
- * and filled with `currentColor` instead of being embedded with `<img>`: that keeps it
+ * Like {@link MusicNote}, the file paints its own path white, so {@link MaskIcon} applies it as
+ * a CSS mask filled with `currentColor` instead of embedding it with `<img>`: that keeps it
  * following the tone of whatever renders it. Pass a `h-*`/`w-*` class to size it.
  */
 export const UnknownIcon: React.FC<UnknownIconProps> = ({ className = '' }) => (
-  <span
-    aria-hidden="true"
-    className={`block h-[1em] w-[1em] bg-current ${className}`}
-    style={{
-      maskImage: 'url(/images/ui/misc/unknown.svg)',
-      WebkitMaskImage: 'url(/images/ui/misc/unknown.svg)',
-      maskRepeat: 'no-repeat',
-      WebkitMaskRepeat: 'no-repeat',
-      maskPosition: 'center',
-      WebkitMaskPosition: 'center',
-      maskSize: 'contain',
-      WebkitMaskSize: 'contain',
-    }}
-  />
+  <MaskIcon src={unknownUrl} className={className} />
 );
 
-// --- Misc UI icons (public/images/ui/misc) ---
+// --- Misc UI icons (imported from src/assets/images/ui/misc) ---
 interface MiscIconProps {
   className?: string;
 }
 
-const MiscIcon: React.FC<MiscIconProps & { file: string }> = ({ file, className = '' }) => (
-  <span
-    aria-hidden="true"
-    className={`block h-[1em] w-[1em] bg-current ${className}`}
-    style={{
-      maskImage: `url(/images/ui/misc/${file}.svg)`,
-      WebkitMaskImage: `url(/images/ui/misc/${file}.svg)`,
-      maskRepeat: 'no-repeat',
-      WebkitMaskRepeat: 'no-repeat',
-      maskPosition: 'center',
-      WebkitMaskPosition: 'center',
-      maskSize: 'contain',
-      WebkitMaskSize: 'contain',
-    }}
-  />
-);
-
-export const AddIcon: React.FC<MiscIconProps> = ({ className = '' }) => <MiscIcon file="add" className={className} />;
-export const ControlIcon: React.FC<MiscIconProps> = ({ className = '' }) => <MiscIcon file="control" className={className} />;
-export const EditIcon: React.FC<MiscIconProps> = ({ className = '' }) => <MiscIcon file="edit" className={className} />;
-export const RemoveIcon: React.FC<MiscIconProps> = ({ className = '' }) => <MiscIcon file="remove" className={className} />;
-export const TrashIcon: React.FC<MiscIconProps> = ({ className = '' }) => <MiscIcon file="trash" className={className} />;
-export const CloseIcon: React.FC<MiscIconProps> = ({ className = '' }) => <MiscIcon file="close" className={className} />;
-export const FitIcon: React.FC<MiscIconProps> = ({ className = '' }) => <MiscIcon file="fit" className={className} />;
-export const SelectorIcon: React.FC<MiscIconProps> = ({ className = '' }) => <MiscIcon file="selector" className={className} />;
+export const AddIcon: React.FC<MiscIconProps> = ({ className = '' }) => <MaskIcon src={addUrl} className={className} />;
+export const ControlIcon: React.FC<MiscIconProps> = ({ className = '' }) => <MaskIcon src={controlUrl} className={className} />;
+export const EditIcon: React.FC<MiscIconProps> = ({ className = '' }) => <MaskIcon src={editUrl} className={className} />;
+export const RemoveIcon: React.FC<MiscIconProps> = ({ className = '' }) => <MaskIcon src={removeUrl} className={className} />;
+export const TrashIcon: React.FC<MiscIconProps> = ({ className = '' }) => <MaskIcon src={trashUrl} className={className} />;
+export const CloseIcon: React.FC<MiscIconProps> = ({ className = '' }) => <MaskIcon src={closeUrl} className={className} />;
+export const FitIcon: React.FC<MiscIconProps> = ({ className = '' }) => <MaskIcon src={fitUrl} className={className} />;
+export const SelectorIcon: React.FC<MiscIconProps> = ({ className = '' }) => <MaskIcon src={selectorUrl} className={className} />;
 
 // --- Element Icon ---
 interface ElementIconProps {
@@ -266,28 +247,11 @@ interface CombatIconProps {
   className?: string;
 }
 
-const CombatIcon: React.FC<CombatIconProps & { file: string }> = ({ file, className = '' }) => (
-  <span
-    aria-hidden="true"
-    className={`block h-[1em] w-[1em] bg-current ${className}`}
-    style={{
-      maskImage: `url(/images/elements/extra/${file}.svg)`,
-      WebkitMaskImage: `url(/images/elements/extra/${file}.svg)`,
-      maskRepeat: 'no-repeat',
-      WebkitMaskRepeat: 'no-repeat',
-      maskPosition: 'center',
-      WebkitMaskPosition: 'center',
-      maskSize: 'contain',
-      WebkitMaskSize: 'contain',
-    }}
-  />
-);
-
-export const DefendIcon: React.FC<CombatIconProps> = ({ className = '' }) => <CombatIcon file="defend" className={className} />;
-export const RestIcon: React.FC<CombatIconProps> = ({ className = '' }) => <CombatIcon file="rest" className={className} />;
-export const WeaponIcon: React.FC<CombatIconProps> = ({ className = '' }) => <CombatIcon file="weapon" className={className} />;
-export const InventoryIcon: React.FC<CombatIconProps> = ({ className = '' }) => <CombatIcon file="inventory" className={className} />;
-export const ChangeIcon: React.FC<CombatIconProps> = ({ className = '' }) => <CombatIcon file="change" className={className} />;
+export const DefendIcon: React.FC<CombatIconProps> = ({ className = '' }) => <MaskIcon src={defendUrl} className={className} />;
+export const RestIcon: React.FC<CombatIconProps> = ({ className = '' }) => <MaskIcon src={restUrl} className={className} />;
+export const WeaponIcon: React.FC<CombatIconProps> = ({ className = '' }) => <MaskIcon src={weaponUrl} className={className} />;
+export const InventoryIcon: React.FC<CombatIconProps> = ({ className = '' }) => <MaskIcon src={inventoryUrl} className={className} />;
+export const ChangeIcon: React.FC<CombatIconProps> = ({ className = '' }) => <MaskIcon src={changeUrl} className={className} />;
 
 // --- Loading Component ---
 interface LoadingProps {
@@ -301,13 +265,15 @@ interface LoadingProps {
   subtextClassName?: string;
 }
 
+const DEFAULT_LOADING_IMAGES: [string, string, string, string] = [
+  loading0Url,
+  loading1Url,
+  loading2Url,
+  loading3Url,
+];
+
 export const Loading: React.FC<LoadingProps> = ({
-  images = [
-    '/images/ui/loading/loading_0.svg',
-    '/images/ui/loading/loading_1.svg',
-    '/images/ui/loading/loading_2.svg',
-    '/images/ui/loading/loading_3.svg',
-  ],
+  images = DEFAULT_LOADING_IMAGES,
   interval = 500,
   loadingText,
   subtext,

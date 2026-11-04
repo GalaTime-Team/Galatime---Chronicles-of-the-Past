@@ -17,7 +17,17 @@ interface CommonImageProps {
   fallbackSrc?: string;
 }
 
-const VECTOR_SOURCE = /\.svg(?:[?#]|$)/i;
+/**
+ * Matches both file sources (`…/loading_0.svg`, `…/loading_0.svg?v=d41d`) and the data URIs
+ * Vite substitutes when it inlines a small `.svg` asset at build time — vector sources must go
+ * through the `<img>` branch, since a rasterised canvas needs intrinsic pixel dimensions.
+ */
+/**
+ * Matches both file sources (`…/loading_0.svg`, `…/loading_0.svg?v=d41d`) and the data URIs
+ * Vite substitutes when it inlines a small `.svg` asset at build time — vector sources must go
+ * through the `<img>` branch, since a rasterised canvas needs intrinsic pixel dimensions.
+ */
+const VECTOR_SOURCE = /\.svg(?:[?#]|$)|^data:image\/svg/i;
 
 /** What a sprite needs to be drawn: the filter, the resolution and the box it fills. */
 interface RenderState {
