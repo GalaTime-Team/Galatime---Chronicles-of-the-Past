@@ -15,12 +15,12 @@ Windows, macOS and Linux.</p>
 </p>
 
 <p align="center">
+  <a href="#disclosure">Disclosure</a> ·
   <a href="#download"><strong>Download</strong></a> ·
   <a href="#how-to-install-and-run"><strong>How to Install and Run</strong></a> ·
   <a href="#folder-structure">Folder Structure</a> ·
   <a href="#documentation">Documentation</a> ·
-  <a href="#forgers--customization">Forgers & Customization</a> ·
-  <a href="#disclaimers">Disclaimers</a>
+  <a href="#forgers--customization">Forgers & Customization</a>
 </p>
 
 <p align="center">
@@ -34,7 +34,7 @@ Windows, macOS and Linux.</p>
   <img src="https://img.shields.io/badge/license-GPLv3-24292f" alt="License GPLv3">
 </p>
 
-## Disclaimers
+## Disclosure
 
 > [!IMPORTANT]  
 > **AI Disclosure:** This project was developed with the assistance of Artificial Intelligence **for code only**. But not for any other aspect of the project (e.g., design, art, story, logic, documentation, etc.).  
