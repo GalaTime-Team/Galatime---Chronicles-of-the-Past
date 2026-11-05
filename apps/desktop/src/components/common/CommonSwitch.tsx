@@ -94,7 +94,7 @@ const CommonSwitch: React.FC<CommonSwitchProps> = ({
                             onPointerDown={handlePointerDown}
                             onMouseEnter={handleMouseEnter}
                             disabled={disabled}
-                            className={`text-2xl focus:outline-none hover:scale-105 active:scale-95 transition-all duration-150 ${disabled
+                            className={`text-2xl focus:outline-none transition-colors duration-150 ${disabled
                                 ? 'text-white/15 cursor-not-allowed'
                                 : 'text-white/70 cursor-pointer hover:text-white'
                                 } ${switchClassName}`}

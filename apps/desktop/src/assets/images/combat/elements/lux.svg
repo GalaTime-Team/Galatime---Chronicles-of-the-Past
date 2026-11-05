@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Generator: visioncortex VTracer 1.0.0-alpha.4 -->
+<svg viewBox="0 0 14 14" version="1.1" xmlns="http://www.w3.org/2000/svg" width="14" height="14">
+<path d="M4,0l6,0l0,1l2,0l0,1l1,0l0,2l1,0l0,6l-1,0l0,2l-1,0l0,1l-2,0l0,1L4,14l0-1L2,13l0-1L1,12l0-2L0,10L0,4L1,4L1,2L2,2L2,1L4,1Z" fill="#EBD561"/>
+<path d="M4,1l6,0l0,1l1,0l0,4l1,0l0,1L11,7l0,2l1,0l0,1L2,10L2,9L3,9L3,7L2,7L2,6L3,6L3,2L4,2Z" fill="#F2EF6C"/>
+<path d="M4,0l6,0l0,1L4,1ZM2,1L4,1L4,2L2,2Zm8,0l2,0l0,1L10,2ZM1,2L2,2L2,4L1,4ZM12,2l1,0l0,2L12,4ZM0,4L1,4l0,6L0,10ZM13,4l1,0l0,6l-1,0ZM1,10l1,0l0,2L1,12Zm11,0l1,0l0,2l-1,0ZM2,12l2,0l0,1L2,13Zm8,0l2,0l0,1l-2,0ZM4,13l6,0l0,1L4,14Z" fill="#C4A640"/>
+<path d="M6,4L8,4L8,5L6,5ZM5,5L6,5L6,7L5,7L5,8L4,8L4,6L5,6ZM8,5L9,5L9,6l1,0l0,2L9,8L9,7L8,7ZM3,8L4,8L4,9l6,0l0-1l1,0l0,1l1,0l0,1L2,10L2,9L3,9Z" fill="#FFFFFF"/>
+<path d="M4,1L8,1L8,3L7,3L7,4L6,4L6,5L5,5L5,6L4,6L4,7L2,7L2,6L3,6L3,2L4,2ZM6,5L7,5L7,6L6,6Z" fill="#F2EF6C"/>
+<path d="M4,0l6,0l0,1L4,1ZM2,1L4,1L4,2L2,2Zm8,0l2,0l0,1L10,2ZM1,2L2,2L2,4L1,4ZM12,2l1,0l0,1L12,3Z" fill="#C4A640"/>
+<path d="M11,2l1,0l0,2l1,0l0,5L11,9l0-2l1,0l0-1L11,6Z" fill="#EBD561"/>
+<path d="M2,2L3,2L3,6L2,6L2,7L3,7L3,9L1,9L1,4L2,4Z" fill="#EBD561"/>
+<path d="M4,10l6,0l0,1L4,11Z" fill="#EDDF65"/>
+<path d="M11,2l1,0l0,4L11,6Z" fill="#EDDF65"/>
+<path d="M2,2L3,2L3,6L2,6Z" fill="#EDDF65"/>
+<path d="M6,1L8,1L8,3L6,3Z" fill="#FFFFFF"/>
+<path d="M2,1L3,1L3,2L2,2ZM1,2L2,2L2,4L1,4Z" fill="#C4A640"/>
+<path d="M11,7l1,0l0,2L11,9Z" fill="#EDDF65"/>
+<path d="M2,7L3,7L3,9L2,9Z" fill="#EDDF65"/>
+<path d="M11,2l1,0l0,2L11,4Z" fill="#EDDF65"/>
+<path d="M2,2L3,2L3,4L2,4Z" fill="#EDDF65"/>
+<path d="M11,6l1,0l0,1L11,7Z" fill="#FFFFFF"/>
+<path d="M2,6L3,6L3,7L2,7Z" fill="#FFFFFF"/>
+<path d="M10,3l1,0l0,1L10,4Z" fill="#FFFFFF"/>
+<path d="M3,3L4,3L4,4L3,4Z" fill="#FFFFFF"/>
+<path d="M1,3L2,3L2,4L1,4Z" fill="#C3A63E"/>
+<path d="M11,2l1,0l0,1L11,3Z" fill="#EBD561"/>
+<path d="M3,2L4,2L4,3L3,3Z" fill="#F2EF6C"/>
+<path d="M2,2L3,2L3,3L2,3Z" fill="#EBD561"/>
+<path d="M9,1l1,0l0,1L9,2Z" fill="#EDDF65"/>
+<path d="M4,1L5,1L5,2L4,2Z" fill="#EDDF65"/>
+</svg>

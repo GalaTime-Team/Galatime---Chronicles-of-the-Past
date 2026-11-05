@@ -163,7 +163,7 @@ export function NewGameScreen({ onBack }: { onBack: () => void }) {
                                         onClick={() => void makeSave(slot)}
                                         className="group flex min-h-16 flex-1 flex-row items-center justify-center gap-3 text-white/45 transition-colors duration-300 hover:text-white"
                                     >
-                                        <AddIcon className="h-7! w-7! text-galatime-primary transition-transform duration-300 group-hover:scale-110" />
+                                        <AddIcon className="h-7! w-7! text-galatime-primary transition-colors duration-300 group-hover:text-white" />
                                         <span className="text-xs uppercase tracking-[0.22em]">{t('newGame.emptySlot', { slot })}</span>
                                     </button>
                                 )}

@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Generator: visioncortex VTracer 1.0.0-alpha.4 -->
+<svg viewBox="0 0 14 14" version="1.1" xmlns="http://www.w3.org/2000/svg" width="14" height="14">
+<path d="M4,0l6,0l0,1l2,0l0,1l1,0l0,2l1,0l0,6l-1,0l0,2l-1,0l0,1l-2,0l0,1L4,14l0-1L2,13l0-1L1,12l0-2L0,10L0,4L1,4L1,2L2,2L2,1L4,1Z" fill="#006747"/>
+<path d="M4,1l6,0l0,1l1,0l0,2l1,0l0,5L11,9l0,1l-1,0l0-7L9,3l0,8L5,11L5,3L4,3l0,7L3,10L3,9L2,9L2,4L3,4L3,2L4,2Z" fill="#003F47"/>
+<path d="M4,0l6,0l0,1L4,1ZM2,1L4,1L4,2L2,2Zm8,0l2,0l0,1L10,2ZM1,2L2,2L2,4L1,4ZM12,2l1,0l0,2L12,4ZM0,4L1,4l0,6L0,10ZM13,4l1,0l0,6l-1,0ZM1,10l1,0l0,2L1,12Zm11,0l1,0l0,2l-1,0ZM2,12l2,0l0,1L2,13Zm8,0l2,0l0,1l-2,0ZM4,13l6,0l0,1L4,14Z" fill="#7EA369"/>
+<path d="M10,2l1,0l0,2l1,0l0,5L11,9l0,1l-1,0Z" fill="#003F47"/>
+<path d="M9,3l1,0l0,8L9,11Z" fill="#FFFFFF"/>
+<path d="M4,3L5,3l0,8L4,11Z" fill="#FFFFFF"/>
+<path d="M11,4l1,0l0,5L11,9ZM10,9l1,0l0,1l-1,0Z" fill="#004D46"/>
+<path d="M2,4L3,4L3,9L2,9ZM3,9L4,9l0,1L3,10Z" fill="#004D46"/>
+<path d="M3,4L4,4L4,9L3,9Z" fill="#003F47"/>
+<path d="M4,1L6,1L6,2L5,2L5,3L4,3L4,4L3,4L3,2L4,2Z" fill="#003F47"/>
+<path d="M5,10l4,0l0,1L5,11Z" fill="#004D46"/>
+<path d="M3,2L4,2L4,3L3,3Z" fill="#003F47"/>
+<path d="M9,1l1,0l0,1L9,2Z" fill="#004A47"/>
+<path d="M4,1L5,1L5,2L4,2Z" fill="#004A47"/>
+</svg>

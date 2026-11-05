@@ -5,7 +5,11 @@ import { createPortal } from 'react-dom';
 import CommonHoverElement from '../../../common/CommonHoverElement';
 import CommonHoverAttackType from '../../../common/CommonHoverAttackType';
 import CommonImage from '../../../common/CommonImage';
-import { ElementIcon } from '../../../../assets/GalatimeIcon';
+import { ElementIcon, UNKNOWN_ELEMENT_ICON } from '../../../../assets/GalatimeIcon';
+import buffTypeUrl from '../../../../assets/images/combat/type/buff.svg';
+import debuffTypeUrl from '../../../../assets/images/combat/type/debuff.svg';
+import magicalTypeUrl from '../../../../assets/images/combat/type/magical.svg';
+import physicalTypeUrl from '../../../../assets/images/combat/type/physical.svg';
 
 import { useGame } from '../../../../context/GameContext';
 
@@ -51,6 +55,13 @@ interface AttackCardProps {
     className?: string;
 }
 
+const ATTACK_TYPE_ICONS: Record<Attack['type'], string> = {
+    magical: magicalTypeUrl,
+    physical: physicalTypeUrl,
+    buff: buffTypeUrl,
+    debuff: debuffTypeUrl,
+};
+
 const AttackCard: React.FC<AttackCardProps> = ({
     attack,
     onClick,
@@ -64,8 +75,7 @@ const AttackCard: React.FC<AttackCardProps> = ({
     const [isElementTooltipVisible, setIsElementTooltipVisible] = useState(false);
     const [isAttackTypeTooltipVisible, setIsAttackTypeTooltipVisible] = useState(false);
 
-    const assetPath = "/images/elements";
-    const typeIconPath = `${assetPath}/type/${type}.svg`;
+    const typeIconPath = ATTACK_TYPE_ICONS[type];
     // Skill sprites live under `public/images/skills/<element>/<skill>.png`, the same
     // convention the skill tree uses. A skill without a sprite shows the unknown glyph.
     const mainIconPath = `/images/skills/${elementId}/${attack.id}.png`;
@@ -104,7 +114,7 @@ const AttackCard: React.FC<AttackCardProps> = ({
                     <CommonImage
                         src={mainIconPath}
                         alt={title}
-                        fallbackSrc="/images/elements/unknown.png"
+                        fallbackSrc={UNKNOWN_ELEMENT_ICON}
                         className="w-full h-full object-contain"
                     />
                 </div>

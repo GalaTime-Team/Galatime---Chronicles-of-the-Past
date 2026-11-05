@@ -17,11 +17,43 @@ import fitUrl from './images/ui/misc/fit.svg';
 import removeUrl from './images/ui/misc/remove.svg';
 import selectorUrl from './images/ui/misc/selector.svg';
 import trashUrl from './images/ui/misc/trash.svg';
-import defendUrl from './images/elements/extra/defend.svg';
-import restUrl from './images/elements/extra/rest.svg';
-import weaponUrl from './images/elements/extra/weapon.svg';
-import inventoryUrl from './images/elements/extra/inventory.svg';
-import changeUrl from './images/elements/extra/change.svg';
+import defendUrl from './images/combat/extra/defend.svg';
+import restUrl from './images/combat/extra/rest.svg';
+import weaponUrl from './images/combat/extra/weapon.svg';
+import inventoryUrl from './images/combat/extra/inventory.svg';
+import changeUrl from './images/combat/extra/change.svg';
+
+// Element orbs, from `src/assets/images/combat/elements/` — the vector set that replaced the
+// old `public/images/elements/*.png` sprites (now deleted), so combat renders vectors everywhere.
+//
+// The folder is discovered with `import.meta.glob` instead of one import per file: publishing a
+// new element is just dropping an `<element id>.svg` in there — no code edit, no registry to
+// keep in sync, exactly the discipline the runtime-built paths had. Vite re-scans the glob when
+// the dev server reloads and on every build, and each file still flows through the module graph
+// (hashed or inlined like the direct imports above), so it cannot drift off the build.
+// The unknown orb is a fixed, always-present fallback, imported directly.
+import elementUnknownUrl from './images/combat/elements/unknown.svg';
+
+/** Every scanned element orb, keyed by the path Vite matched (`…/elements/aqua.svg`). */
+const COMBAT_ELEMENT_RESOURCES = import.meta.glob<string>('./images/combat/elements/*.svg', {
+  eager: true,
+  query: '?url',
+  import: 'default',
+});
+
+/**
+ * URL of the orb of an element id, or `undefined` when the folder has no sprite for it (the
+ * caller decides what to show instead — {@link ElementIcon} falls back to the unknown orb).
+ */
+function combatElementResource(elementId: string): string | undefined {
+  return COMBAT_ELEMENT_RESOURCES[`./images/combat/elements/${elementId}.svg`];
+}
+
+/**
+ * The unknown-element orb, exported for any sprite that has none of its own: the same glyph the
+ * old `/images/elements/unknown.png` string constant pointed at, now hashed by Vite.
+ */
+export const UNKNOWN_ELEMENT_ICON: string = elementUnknownUrl;
 import loading0Url from './images/ui/loading/loading_0.svg';
 import loading1Url from './images/ui/loading/loading_1.svg';
 import loading2Url from './images/ui/loading/loading_2.svg';
@@ -38,7 +70,7 @@ export const AppIcon: React.FC<AppIconProps> = ({ src, alt = '', className = '' 
   <CommonImage
     src={src}
     alt={alt}
-    fallbackSrc="/images/elements/unknown.png"
+    fallbackSrc={UNKNOWN_ELEMENT_ICON}
     className={`object-contain ${className}`}
   />
 );
@@ -233,11 +265,19 @@ interface ElementIconProps {
   className?: string;
 }
 
+/**
+ * The element's orb from `src/assets/images/combat/elements/`, hashed by Vite.
+ *
+ * The orb is discovered by scanning the folder (`import.meta.glob`), so an unregistered element —
+ * or one whose SVG has not been authored yet — falls back to the unknown orb rather than waiting
+ * for a load failure. Authoring a new element's orb needs no code change: the file name's stem
+ * (`<element id>.svg`) is the id `ElementIcon` looks up.
+ */
 export const ElementIcon: React.FC<ElementIconProps> = ({ id, className = '' }) => (
   <CommonImage
-    src={`/images/elements/${id}.png`}
+    src={combatElementResource(id) ?? elementUnknownUrl}
     alt={id}
-    fallbackSrc="/images/elements/unknown.png"
+    fallbackSrc={elementUnknownUrl}
     className={`object-contain ${className}`}
   />
 );

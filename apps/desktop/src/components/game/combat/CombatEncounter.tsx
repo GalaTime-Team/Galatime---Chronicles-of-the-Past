@@ -31,7 +31,7 @@ import {
 } from '../../../controllers/combatController';
 import { previewCombatAttack } from '../../../controllers/damageController';
 import { chooseCombatAction } from '../../../services/combat/combatAi';
-import { CloseIcon } from '../../../assets/GalatimeIcon';
+import { CloseIcon, UNKNOWN_ELEMENT_ICON } from '../../../assets/GalatimeIcon';
 import CommonImage from '../../common/CommonImage';
 import type {
     CombatAction,
@@ -165,7 +165,7 @@ function InventoryChoiceButton({
             <CommonImage
                 src={`/images/items/${entry.itemId}.png`}
                 alt={entry.name}
-                fallbackSrc="/images/elements/unknown.png"
+                fallbackSrc={UNKNOWN_ELEMENT_ICON}
                 className="h-10 w-10 shrink-0 object-contain"
             />
 
@@ -188,7 +188,7 @@ function InventoryChoiceButton({
                         <CommonImage
                             src={`/images/items/${entry.itemId}.png`}
                             alt={entry.name}
-                            fallbackSrc="/images/elements/unknown.png"
+                            fallbackSrc={UNKNOWN_ELEMENT_ICON}
                             className="h-16 w-16 shrink-0 object-contain"
                         />
                         <div className="flex min-w-0 flex-col gap-y-0.5">
@@ -267,7 +267,7 @@ function WeaponChoiceButton({
             <CommonImage
                 src={`/images/weapons/${entry.weaponId}.png`}
                 alt={entry.name}
-                fallbackSrc="/images/elements/unknown.png"
+                fallbackSrc={UNKNOWN_ELEMENT_ICON}
                 className="h-10 w-10 shrink-0 object-contain"
             />
 

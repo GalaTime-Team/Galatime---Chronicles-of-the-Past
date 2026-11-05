@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Generator: visioncortex VTracer 1.0.0-alpha.4 -->
+<svg viewBox="0 0 14 14" version="1.1" xmlns="http://www.w3.org/2000/svg" width="14" height="14">
+<path d="M4,0l6,0l0,1l2,0l0,1l1,0l0,2l1,0l0,6l-1,0l0,2l-1,0l0,1l-2,0l0,1L4,14l0-1L2,13l0-1L1,12l0-2L0,10L0,4L1,4L1,2L2,2L2,1L4,1Z" fill="#A2A5AC"/>
+<path d="M4,1l6,0l0,2l1,0l0,4l1,0l0,1L11,8l0,1L10,9l0,1L8,10l0,1L6,11l0-1L4,10L4,9L2,9L2,7L3,7L3,2L4,2Z" fill="#D2D2D2"/>
+<path d="M4,1l6,0l0,2l1,0l0,2L10,5l0-1L4,4L4,3L3,3L3,2L4,2ZM3,4L4,4L4,5L5,5L5,6L3,6ZM9,5l1,0l0,1L9,6ZM5,6L9,6L9,7L5,7Z" fill="#DEDEDE"/>
+<path d="M4,0l6,0l0,1L4,1ZM2,1L4,1L4,2L3,2L3,7L1,7L1,4L2,4Zm8,0l2,0l0,3l1,0l0,3L11,7l0-4L10,3Z" fill="#A7A7B2"/>
+<path d="M12,2l1,0l0,2L12,4Zm1,2l1,0l0,6l-2,0l0,1l-2,0l0,1L8,12l0-2l2,0l0-1l1,0l0-1l1,0l0-1l1,0Z" fill="#A2A5AC"/>
+<path d="M1,10l1,0l0,2L1,12Zm11,0l1,0l0,2l-1,0ZM2,12l2,0l0,1L2,13Zm8,0l2,0l0,1l-2,0ZM4,13l6,0l0,1L4,14Z" fill="#727279"/>
+<path d="M9,2l1,0l0,1l1,0l0,2L10,5l0-1L9,4ZM3,4L4,4L4,5L5,5L5,6L3,6ZM9,5l1,0l0,1L9,6ZM5,6L9,6L9,7L5,7Z" fill="#FFFFFF"/>
+<path d="M2,7L3,7L3,8L4,8L4,9L2,9Zm9,0l1,0l0,1L11,8ZM10,8l1,0l0,1L10,9ZM4,9L6,9l0,1L4,10ZM8,9l2,0l0,1L8,10ZM6,10l2,0l0,1L6,11Z" fill="#FFFFFF"/>
+<path d="M2,11l2,0l0,1L2,12Zm8,0l2,0l0,1l-2,0ZM4,12l6,0l0,1L4,13Z" fill="#9A9EA5"/>
+<path d="M10,2l2,0l0,2l1,0l0,3L11,7l0-4L10,3Z" fill="#B2B5BA"/>
+<path d="M4,8l6,0l0,1L8,9l0,1L6,10L6,9L4,9Z" fill="#CDCDCD"/>
+<path d="M12,2l1,0l0,2L12,4Zm1,2l1,0l0,6l-1,0Z" fill="#83838B"/>
+<path d="M1,2L2,2L2,4L1,4ZM0,4L1,4l0,6L0,10Z" fill="#83838B"/>
+<path d="M2,2L3,2L3,7L1,7L1,4L2,4Z" fill="#B2B5BA"/>
+<path d="M11,8l1,0l0,1L11,9ZM10,9l1,0l0,1l-1,0ZM8,10l2,0l0,1L8,11Z" fill="#B6B8BC"/>
+<path d="M12,2l1,0l0,2L12,4Zm1,2l1,0l0,2L13,6Z" fill="#9797A0"/>
+<path d="M1,2L2,2L2,4L1,4ZM0,4L1,4L1,6L0,6Z" fill="#9797A0"/>
+<path d="M3,9L4,9l0,1L3,10Zm1,1l2,0l0,1L4,11Z" fill="#B6B8BC"/>
+<path d="M11,4l1,0l0,3L11,7Z" fill="#C3C4C7"/>
+<path d="M2,4L3,4L3,7L2,7Z" fill="#C3C4C7"/>
+<path d="M1,5L2,5L2,7L1,7Z" fill="#B2B5BA"/>
+<path d="M10,2l2,0l0,1L10,3Z" fill="#C2C4C8"/>
+<path d="M10,2l1,0l0,1L10,3Z" fill="#DEDEDE"/>
+<path d="M3,2L4,2L4,3L3,3Z" fill="#DEDEDE"/>
+<path d="M2,2L3,2L3,3L2,3Z" fill="#C2C4C8"/>
+<path d="M9,1l1,0l0,1L9,2Z" fill="#D6D6D7"/>
+<path d="M4,1L5,1L5,2L4,2Z" fill="#D6D6D7"/>
+</svg>

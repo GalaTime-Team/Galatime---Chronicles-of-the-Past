@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { useFloating, autoUpdate, offset, flip, shift } from '@floating-ui/react';
 import { createPortal } from 'react-dom';
-import { ArrowRight, ChangeIcon, DefendIcon, InventoryIcon, RestIcon, WeaponIcon, ElementIcon } from '../../../../assets/GalatimeIcon';
+import { ArrowRight, ChangeIcon, DefendIcon, InventoryIcon, RestIcon, WeaponIcon, ElementIcon, UNKNOWN_ELEMENT_ICON } from '../../../../assets/GalatimeIcon';
 import CommonImage from '../../../common/CommonImage';
 import { useGame } from '../../../../context/GameContext';
 import type { CombatMovementWeapon } from './CombatHUD';
@@ -129,7 +129,7 @@ const ExtraMovementCard: React.FC<ExtraMovementCardProps> = ({
                         {weapon && (
                             <CommonImage
                                 src={`/images/weapons/${weapon.id}.png`}
-                                fallbackSrc="/images/elements/unknown.png"
+                                fallbackSrc={UNKNOWN_ELEMENT_ICON}
                                 alt={weapon.name}
                                 className="h-16 w-16 shrink-0 object-contain"
                             />

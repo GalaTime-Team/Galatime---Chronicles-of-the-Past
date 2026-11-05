@@ -2,7 +2,7 @@ import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import type { PointerEvent as ReactPointerEvent } from 'react';
 import { autoUpdate, flip, offset, shift, useFloating } from '@floating-ui/react';
 import { useTranslation } from 'react-i18next';
-import { AddIcon, ElementIcon, FitIcon, RemoveIcon } from '../../../assets/GalatimeIcon';
+import { AddIcon, ElementIcon, FitIcon, RemoveIcon, UNKNOWN_ELEMENT_ICON } from '../../../assets/GalatimeIcon';
 import CommonImage from '../../../components/common/CommonImage';
 import { fetchAttacks } from '../../../controllers/attackController';
 import { getAllElementsDataService } from '../../../services/elementService';
@@ -24,7 +24,7 @@ import {
 } from '../../../utils/skillTreeLayout';
 import { SkillNodeTooltip } from '../../../components/game/skills/SkillNodeTooltip';
 
-const SKILL_IMAGE_FALLBACK = '/images/elements/unknown.png';
+const SKILL_IMAGE_FALLBACK = UNKNOWN_ELEMENT_ICON;
 
 /** Camera of the map: a scale plus the translation applied to the laid-out world. */
 interface SkillTreeView {
@@ -407,7 +407,7 @@ function SkillTreeNode({
                 onMouseLeave={() => setIsTooltipOpen(false)}
                 onFocus={() => setIsTooltipOpen(true)}
                 onBlur={() => setIsTooltipOpen(false)}
-                className="absolute z-1 flex items-center justify-center border-0 bg-transparent p-0 transition-transform duration-150 hover:scale-110 focus-visible:scale-110 focus-visible:outline-none"
+                className="absolute z-1 flex items-center justify-center border-0 bg-transparent p-0 outline-2 outline-offset-2 outline-transparent transition-[outline-color] duration-150 hover:outline-white/60 focus-visible:outline-white"
                 style={{ left: x - size / 2, top: y - size / 2, width: size, height: size }}
             >
                 <CommonImage
