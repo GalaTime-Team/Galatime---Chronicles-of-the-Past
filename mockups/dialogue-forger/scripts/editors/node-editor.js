@@ -34,7 +34,7 @@
         { value: '{thought|texto}', label: 'Pensamento' },
         { value: '{whisper|texto}', label: 'Sussurro' },
         { value: '{shout|texto}', label: 'Berro' },
-        { value: '{style bold color=#D88CFF speed=0.8|texto}', label: 'Estilo' },
+        { value: '{style bold color=#D88CFF speed=0.8|texto}', label: 'Estilo (bold, italic, color, speed)' },
         { value: '{style wave=normal wave_speed=0.8|texto}', label: 'Ondulação' },
         { value: '{style shake=light shake_speed=1.2|texto}', label: 'Vibração' },
         { value: '{style jitter=normal jitter_speed=0.8|texto}', label: 'Tremor' },

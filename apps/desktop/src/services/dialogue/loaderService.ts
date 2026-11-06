@@ -1,5 +1,10 @@
 import * as yaml from 'js-yaml';
 import type { DialogueDefinition } from '../../types/DialogueType';
+import {
+    listModDialogueIds,
+    loadModDialogue,
+    clearModDialogueCache,
+} from '../modDialogueService';
 
 /**
  * Locates and parses dialogue files.
@@ -41,6 +46,16 @@ export async function loadDialogue(dialogueId: string): Promise<DialogueDefiniti
             return cached;
         }
 
+        // Mods take precedence over built-in dialogues with the same id.
+        const modIds = await listModDialogueIds();
+        if (modIds.includes(dialogueId)) {
+            const modParsed = await loadModDialogue(dialogueId);
+            if (modParsed) {
+                dialogueCache.set(dialogueId, modParsed);
+                return modParsed;
+            }
+        }
+
         await initializeDialoguesGlob();
 
         if (!dialoguesGlob) {
@@ -69,13 +84,14 @@ export async function loadDialogue(dialogueId: string): Promise<DialogueDefiniti
 export async function listDialogueIds(): Promise<string[]> {
     await initializeDialoguesGlob();
 
-    if (!dialoguesGlob) {
-        return [];
-    }
+    const builtIn = dialoguesGlob
+        ? Object.keys(dialoguesGlob).map((path) =>
+              path.replace(DIALOGUES_GLOB_PREFIX, '').replace('.yaml', ''),
+          )
+        : [];
 
-    return Object.keys(dialoguesGlob).map((path) =>
-        path.replace(DIALOGUES_GLOB_PREFIX, '').replace('.yaml', ''),
-    );
+    const modIds = await listModDialogueIds();
+    return Array.from(new Set([...builtIn, ...modIds]));
 }
 
 /**
@@ -86,4 +102,5 @@ export async function listDialogueIds(): Promise<string[]> {
  */
 export function clearDialogueCache(): void {
     dialogueCache.clear();
+    clearModDialogueCache();
 }

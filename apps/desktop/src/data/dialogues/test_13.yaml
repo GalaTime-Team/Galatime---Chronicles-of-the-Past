@@ -1,0 +1,589 @@
+# Gerado pelo Dialogue Forger. Comentários do ficheiro original não são preservados.
+
+start_node: entra
+nodes:
+  entra:
+    type: character_enter
+    character_id: neven
+    position: right
+    animation_id: step_in_from_right
+    emotion: neutral
+    next: entra_2
+
+  entra_2:
+    type: character_enter
+    character_id: raphael
+    position: right
+    depth: back
+    animation_id: step_in_from_right
+    emotion: neutral
+    next: fala
+
+  fala:
+    type: line
+    speaker_id: raphael
+    emotion: neutral
+    animation_id: idle
+    text:
+      - type: text
+        value: Thanks again for the intel. These new books should help me with my experiments.
+    next: fala_2
+
+  fala_2:
+    type: line
+    speaker_id: neven
+    emotion: neutral
+    animation_id: idle
+    text:
+      - type: text
+        value: ...
+    next: fala_3
+
+  fala_3:
+    type: line
+    speaker_id: raphael
+    emotion: neutral
+    animation_id: idle
+    text:
+      - type: text
+        value: By the way, how is Pacci? It's been a hot while since I've saw him?
+    next: fala_4
+
+  fala_4:
+    type: line
+    speaker_id: neven
+    emotion: like
+    animation_id: idle
+    text:
+      - type: text
+        value: ...
+    next: entra_3
+
+  entra_3:
+    type: character_enter
+    character_id: tritania
+    position: left
+    pose: sit
+    animation_id: fade_in_from_left
+    emotion: neutral
+    next: fala_5
+
+  fala_5:
+    type: line
+    speaker_id: raphael
+    emotion: neutral
+    animation_id: idle
+    text:
+      - type: text
+        value: That's good. I've heard that security's gotten more intense with the sudden appearance of a group of firecloaks.
+    next: acao
+
+  acao:
+    type: character_action
+    character_id: tritania
+    position: left
+    emotion: happy
+    next: fala_6
+
+  fala_6:
+    type: line
+    speaker_id: raphael
+    emotion: thinking
+    animation_id: idle
+    text:
+      - type: text
+        value: Where do you think those things came from? There aren't any volcanoes or abandoned buildings outside the city walls...
+    next: fala_7
+
+  fala_7:
+    type: line
+    speaker_id: tritania
+    emotion: happy
+    animation_id: idle
+    text:
+      - type: text
+        value: My, my. Look who finally made a friend.
+    next: fala_8
+
+  fala_8:
+    type: line
+    speaker_id: neven
+    emotion: unsure
+    animation_id: idle
+    text:
+      - type: text
+        value: ...
+    next: fala_9
+
+  fala_9:
+    type: line
+    speaker_id: raphael
+    emotion: neutral
+    animation_id: idle
+    text:
+      - type: text
+        value: ... Can I help you?
+    next: fala_10
+
+  fala_10:
+    type: line
+    speaker_id: tritania
+    emotion: neutral
+    animation_id: idle
+    text:
+      - type: text
+        value: Oh, don't mind me.
+    next: fala_11
+
+  fala_11:
+    type: line
+    speaker_id: tritania
+    emotion: happy
+    animation_id: idle
+    text:
+      - type: text
+        value: I'm just happy that he's meet someone who isn't mocking him.
+    next: fala_12
+
+  fala_12:
+    type: line
+    speaker_id: raphael
+    emotion: unsure
+    animation_id: idle
+    text:
+      - type: text
+        value: Is she a friend of yours, Neven?
+    next: fala_13
+
+  fala_13:
+    type: line
+    speaker_id: neven
+    emotion: neutral
+    animation_id: idle
+    text:
+      - type: text
+        value: ...
+    next: fala_14
+
+  fala_14:
+    type: line
+    speaker_id: raphael
+    emotion: neutral
+    animation_id: idle
+    text:
+      - type: text
+        value: I see.
+    next: fala_15
+
+  fala_15:
+    type: line
+    speaker_id: tritania
+    emotion: unsure
+    animation_id: idle
+    delivery: thought
+    text:
+      - type: text
+        value: He didn't say anything though.
+    next: fala_16
+
+  fala_16:
+    type: line
+    speaker_id: raphael
+    emotion: neutral
+    animation_id: idle
+    text:
+      - type: text
+        value: "I guess I should introduce myself then. My name is Raphael. "
+    next: fala_17
+
+  fala_17:
+    type: line
+    speaker_id: tritania
+    emotion: neutral
+    animation_id: idle
+    text:
+      - type: text
+        value: Well hello, Raphael. I'm Tritania.
+    next: fala_18
+
+  fala_18:
+    type: line
+    speaker_id: raphael
+    emotion: suspicious
+    animation_id: idle
+    text:
+      - type: text
+        value: "So, Tritania, what do you mean when you said "
+      - type: styled_text
+        value: "\"someone who isn't mocking him\""
+        style:
+          italic: true
+      - type: text
+        value: "?"
+    next: fala_19
+
+  fala_19:
+    type: line
+    speaker_id: neven
+    emotion: nervous
+    animation_id: idle
+    text:
+      - type: text
+        value: ...
+    next: fala_20
+
+  fala_20:
+    type: line
+    speaker_id: raphael
+    emotion: neutral
+    animation_id: idle
+    text:
+      - type: text
+        value: No no. I want to hear it from her.
+    next: fala_21
+
+  fala_21:
+    type: line
+    speaker_id: tritania
+    emotion: unsure
+    animation_id: idle
+    text:
+      - type: thought
+        value: Is he insane or can he just read minds?
+      - type: text
+        value: " Well..."
+    next: fala_22
+
+  fala_22:
+    type: line
+    speaker_id: raphael
+    emotion: neutral
+    animation_id: idle
+    text:
+      - type: text
+        value: I'm actually just reading the text in the box.
+    next: fala_23
+
+  fala_23:
+    type: line
+    speaker_id: tritania
+    emotion: surprised
+    animation_id: idle
+    text:
+      - type: text
+        value: Wait what?
+    next: fala_24
+
+  fala_24:
+    type: line
+    speaker_id: raphael
+    emotion: neutral
+    animation_id: idle
+    text:
+      - type: text
+        value: But nevermind that. Is anyone mocking Neven?
+    next: fala_25
+
+  fala_25:
+    type: line
+    speaker_id: tritania
+    emotion: neutral
+    animation_id: idle
+    text:
+      - type: thought
+        value: Yeah, he's definitively crazy.
+      - type: text
+        value: |-
+
+          Well, the nobles constantly bully him and tease him. Usually because he just doesn't speak.
+    next: fala_26
+
+  fala_26:
+    type: line
+    speaker_id: raphael
+    emotion: annoyed
+    animation_id: idle
+    text:
+      - type: text
+        value: Is that so?
+    next: fala_27
+
+  fala_27:
+    type: line
+    speaker_id: tritania
+    emotion: concerned
+    animation_id: idle
+    text:
+      - type: text
+        value: Oh, yes. Poor Neven gets made fun of a lot.
+    next: fala_28
+
+  fala_28:
+    type: line
+    speaker_id: neven
+    emotion: nervous
+    animation_id: idle
+    text:
+      - type: text
+        value: ...
+    next: fala_29
+
+  fala_29:
+    type: line
+    speaker_id: tritania
+    emotion: happy
+    animation_id: idle
+    text:
+      - type: text
+        value: However, I come here sometimes and give him some company. So it's no so bad. Isn't that right, sweetie?
+    next: fala_30
+
+  fala_30:
+    type: line
+    speaker_id: neven
+    emotion: neutral
+    animation_id: idle
+    text:
+      - type: text
+        value: ...
+    next: fala_31
+
+  fala_31:
+    type: line
+    speaker_id: raphael
+    emotion: neutral
+    animation_id: idle
+    text:
+      - type: text
+        value: I see. It's nice that you're making friends, Neven.
+    next: fala_32
+
+  fala_32:
+    type: line
+    speaker_id: raphael
+    emotion: annoyed
+    animation_id: idle
+    text:
+      - type: text
+        value: Though, if someone is giving you a bad time, tell me.
+    next: fala_33
+
+  fala_33:
+    type: line
+    speaker_id: tritania
+    emotion: happy
+    animation_id: idle
+    text:
+      - type: text
+        value: My, my. I didn't know Neven had such a caring friend.
+    next: fala_34
+
+  fala_34:
+    type: line
+    speaker_id: tritania
+    emotion: happy
+    animation_id: idle
+    text:
+      - type: text
+        value: That's so sweet.
+    next: fala_35
+
+  fala_35:
+    type: line
+    speaker_id: neven
+    emotion: neutral
+    animation_id: idle
+    text:
+      - type: text
+        value: ...
+    next: fala_36
+
+  fala_36:
+    type: line
+    speaker_id: raphael
+    animation_id: idle
+    text:
+      - type: text
+        value: Ah, right, the books. These will do, yes.
+    next: acao_2
+
+  acao_2:
+    type: character_action
+    character_id: neven
+    position: left
+    pose: sit
+    emotion: neutral
+    animation_id: sit_down_from_left
+    next: fala_37
+
+  fala_37:
+    type: line
+    speaker_id: neven
+    emotion: neutral
+    animation_id: idle
+    text:
+      - type: text
+        value: ...
+    next: fala_38
+
+  fala_38:
+    type: line
+    speaker_id: tritania
+    emotion: neutral
+    animation_id: idle
+    text:
+      - type: text
+        value: ...
+    next: fala_39
+
+  fala_39:
+    type: line
+    speaker_id: raphael
+    emotion: neutral
+    animation_id: idle
+    text:
+      - type: text
+        value: ... So, Tritania, what book are you reading?
+    next: fala_40
+
+  fala_40:
+    type: line
+    speaker_id: tritania
+    emotion: surprised
+    animation_id: idle
+    text:
+      - type: text
+        value: Huh!?
+    next: fala_41
+
+  fala_41:
+    type: line
+    speaker_id: raphael
+    emotion: neutral
+    animation_id: idle
+    text:
+      - type: text
+        value: "{speed=0.8|What book are you reading?}"
+    next: fala_42
+
+  fala_42:
+    type: line
+    speaker_id: tritania
+    emotion: nervous
+    animation_id: idle
+    text:
+      - type: text
+        value: Uhhh. You know, it's... *shows cover*
+    next: fala_43
+
+  fala_43:
+    type: line
+    speaker_id: raphael
+    emotion: neutral
+    animation_id: idle
+    text:
+      - type: styled_text
+        value: The little prince and the little hopper
+        style:
+          italic: true
+          speed_multiplier: 0.8
+    next: fala_44
+
+  fala_44:
+    type: line
+    speaker_id: raphael
+    emotion: unsure
+    animation_id: idle
+    text:
+      - type: text
+        value: Isn't that a children's book?
+    next: fala_45
+
+  fala_45:
+    type: line
+    speaker_id: tritania
+    emotion: surprised
+    animation_id: idle
+    delivery: thought
+    text:
+      - type: text
+        value: Wait. Is that why there's so many pictures!?
+    next: fala_46
+
+  fala_46:
+    type: line
+    speaker_id: tritania
+    emotion: nervous
+    animation_id: idle
+    delivery: thought
+    text:
+      - type: text
+        value: This is bad. This mortal can't find out I can't read. Think Tritania, think!
+    next: fala_47
+
+  fala_47:
+    type: line
+    speaker_id: tritania
+    emotion: nervous
+    animation_id: idle
+    text:
+      - type: text
+        value: You see. I'm reading this... because I used to read this in my childhood.
+    next: fala_48
+
+  fala_48:
+    type: line
+    speaker_id: raphael
+    emotion: neutral
+    animation_id: idle
+    delivery: thought
+    text:
+      - type: text
+        value: Why the f$%k you lyin'? Why you always lyin'?
+    next: fala_49
+
+  fala_49:
+    type: line
+    speaker_id: tritania
+    emotion: neutral
+    animation_id: idle
+    text:
+      - type: text
+        value: Yeah. When I was kid, I used to read this a lot. So I'm reading this again for old times sake.
+    next: fala_50
+
+  fala_50:
+    type: line
+    speaker_id: neven
+    emotion: nervous
+    animation_id: idle
+    text:
+      - type: text
+        value: ...
+    next: fala_51
+
+  fala_51:
+    type: line
+    speaker_id: tritania
+    emotion: happy
+    animation_id: idle
+    delivery: thought
+    text:
+      - type: text
+        value: "*Phew* Saved it."
+    next: fala_52
+
+  fala_52:
+    type: line
+    speaker_id: raphael
+    emotion: nervous
+    animation_id: idle
+    delivery: thought
+    text:
+      - type: text
+        value: Yeah... You saved it...
+    next: fim
+
+  fim:
+    type: end
+    result: neutral
