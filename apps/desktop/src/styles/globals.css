@@ -450,6 +450,27 @@ img {
   .common-button-lg {
     @apply px-5 py-1 text-base;
   }
+
+  /* CommonInput underline.
+   *
+   * The rule is a separate layer under the field, so growing the line never
+   * resizes the input (which would scroll or shift the text while typing). It
+   * spans the full space the player may fill while the field is at rest and
+   * empty, and animates towards the typed characters (plus the caret) once it
+   * is focused. Each instance feeds its own width through
+   * `--common-input-line-width`, so a call-site width utility still wins over
+   * this layered default. */
+  .common-input-line {
+    width: var(--common-input-line-width, auto);
+    max-width: 100%;
+    transition: width 300ms ease-out;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .common-input-line {
+      transition: none;
+    }
+  }
 }
 
 /* Click-burst particle overlays sit on top of buttons; they must never swallow

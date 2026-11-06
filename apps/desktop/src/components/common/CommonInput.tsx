@@ -1,5 +1,6 @@
-import React, { useId, useMemo } from 'react';
+import React, { useEffect, useId, useLayoutEffect, useMemo, useRef, useState } from 'react';
 import CommonTooltip from './CommonTooltip';
+import { resolveInputLineWidth } from './commonInputStyles';
 
 /** Visual arrangement of the input relative to its title. */
 export type CommonInputVariant =
@@ -92,17 +93,74 @@ const CommonInput: React.FC<CommonInputProps> = ({
     const showTitle = !isBare && Boolean(title);
     const showInlineDescription = !isTitleLeft && showDescription && Boolean(description);
     const descriptionId = useId();
+    const [isFocused, setIsFocused] = useState(false);
+    const [fontsReady, setFontsReady] = useState(false);
+    const lineRef = useRef<HTMLSpanElement>(null);
+    const measureRef = useRef<HTMLSpanElement>(null);
 
     const characters = useMemo(() => splitGraphemes(value), [value]);
     const characterCount = characters.length;
+    const hasText = characterCount > 0;
 
-    // Titled variants keep the compact content-driven width; `bare` fills its container.
-    const widthClassName = isBare ? 'w-full' : 'w-auto min-w-7.5';
+    /*
+     * The rule is measured from the rendered text instead of assuming a fixed
+     * character advance: m5x7 is proportional, so `ch` drifts for narrow or wide
+     * glyphs. The hidden mirror below renders exactly what the field shows; an
+     * empty field at rest mirrors the full length it may fill.
+     */
+    const measurementText = hasText || isFocused
+        ? value
+        : '0'.repeat(Math.max(1, maxCharacters));
+
+    useEffect(() => {
+        if (typeof document === 'undefined' || !document.fonts) return;
+
+        let active = true;
+        document.fonts.ready.then(() => {
+            if (active) setFontsReady(true);
+        });
+
+        return () => {
+            active = false;
+        };
+    }, []);
+
     // Allow callers to override alignment via inputClassName (e.g. `text-right`).
+    const customAlign = inputClassName.match(/\btext-(left|center|right|start|end)\b/)?.[1];
     const hasCustomAlign = /\btext-(left|center|right|justify|start|end)\b/.test(inputClassName);
     const alignClassName = hasCustomAlign ? '' : isTitleLeft || isBare ? 'text-left' : 'text-center';
+    // Anchor the rule to the same edge the text is aligned to, so it grows with
+    // the text instead of dragging it sideways.
+    const isCenteredLine = customAlign ? customAlign === 'center' : !isTitleLeft && !isBare;
+    const isRightLine = customAlign === 'right' || customAlign === 'end';
+    const lineAlignClassName = isCenteredLine
+        ? 'left-1/2 -translate-x-1/2'
+        : isRightLine
+            ? 'right-0'
+            : 'left-0';
+    // The field itself keeps the full width so typing never scrolls the text;
+    // only the rule under it animates.
+    const fieldWidth = `${Math.max(1, maxCharacters)}ch`;
     const stretchClassName = isBare ? 'w-full' : '';
+    // Left-anchored layouts keep the rule starting where the title/text starts.
+    const itemsClassName = isTitleLeft || isBare ? 'items-start' : 'items-center';
     const hasCustomItems = /\bitems-(start|end|center|baseline|stretch)\b/.test(containerClassName);
+
+    useLayoutEffect(() => {
+        const line = lineRef.current;
+        const mirror = measureRef.current;
+
+        if (!line || !mirror) return;
+
+        line.style.setProperty(
+            '--common-input-line-width',
+            resolveInputLineWidth({
+                textWidth: mirror.getBoundingClientRect().width,
+                hasText,
+                isFocused,
+            }),
+        );
+    }, [fontsReady, hasText, isFocused, maxCharacters, value]);
 
     const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         const nextCharacters = splitGraphemes(e.target.value);
@@ -143,18 +201,34 @@ const CommonInput: React.FC<CommonInputProps> = ({
                     disabled={!isTitleLeft || !showDescription}
                     textClassName={descriptionClassName}
                 >
-                    <div className={`flex flex-col items-center justify-center ${stretchClassName}`}>
-                        <input
-                            ref={inputRef}
-                            type={type}
-                            value={value}
-                            onChange={handleChange}
-                            disabled={disabled}
-                            placeholder={placeholder}
-                            aria-label={title}
-                            aria-describedby={showInlineDescription ? descriptionId : undefined}
-                            className={`bg-transparent border-0 border-b-game text-lg border-galatime-primary/40 text-white placeholder:text-galatime-primary/40 focus:outline-none focus:ring-0 px-0 transition ${widthClassName} ${alignClassName} ${inputClassName}`}
-                        />
+                    <div className={`flex ${itemsClassName} flex-col justify-center max-w-full ${stretchClassName}`}>
+                        <div className="relative max-w-full" style={{ width: fieldWidth }}>
+                            <input
+                                ref={inputRef}
+                                type={type}
+                                value={value}
+                                onChange={handleChange}
+                                onFocus={() => setIsFocused(true)}
+                                onBlur={() => setIsFocused(false)}
+                                disabled={disabled}
+                                placeholder={placeholder}
+                                aria-label={title}
+                                aria-describedby={showInlineDescription ? descriptionId : undefined}
+                                className={`w-full bg-transparent border-0 border-b-game border-transparent text-lg text-white placeholder:text-galatime-primary/40 focus:placeholder:opacity-0 focus:outline-none focus:ring-0 px-0 ${alignClassName} ${inputClassName}`}
+                            />
+                            <span
+                                ref={lineRef}
+                                aria-hidden="true"
+                                className={`common-input-line pointer-events-none absolute bottom-0 h-[var(--game-border-width)] bg-galatime-primary/40 text-lg ${lineAlignClassName}`}
+                            />
+                            <span
+                                ref={measureRef}
+                                aria-hidden="true"
+                                className="pointer-events-none invisible absolute top-0 left-0 whitespace-pre text-lg"
+                            >
+                                {measurementText}
+                            </span>
+                        </div>
 
                         {showCounter && (
                             <div
