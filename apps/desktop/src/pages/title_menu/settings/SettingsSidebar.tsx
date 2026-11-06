@@ -28,7 +28,7 @@ export function SettingsSidebar({ activeTab, onChange, labels }: SettingsSidebar
                         aria-current={isActive ? 'page' : undefined}
                         className={`justify-start w-full px-3 py-1.5 tracking-[0.15em] border-0 ${isActive
                                 ? 'bg-white font-semibold text-galatime-dark'
-                                : 'opacity-60'
+                                : 'opacity-60 hover:opacity-100'
                             }`}
                     >
                         {labels[tab]}

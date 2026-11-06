@@ -366,7 +366,7 @@ function GalleryChevron({ direction, disabled, onClick }: {
             aria-label={direction === 'left' ? 'Previous image' : 'Next image'}
             className={`shrink-0 ${disabled
                 ? 'cursor-not-allowed disabled:bg-transparent disabled:text-white/40'
-                : 'opacity-70'
+                : 'opacity-70 hover:opacity-100'
                 }`}
             onPress={onClick}
         />

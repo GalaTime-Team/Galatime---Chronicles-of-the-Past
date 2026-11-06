@@ -111,7 +111,7 @@ export function SettingsControlsPanel({ settings }: SettingsPanelProps) {
                                 <CommonButton
                                     variant="ghost"
                                     size="sm"
-                                    className="px-0 border-0 opacity-40"
+                                    className="px-0 border-0 opacity-40 hover:opacity-100"
                                     onPress={() => setControlBinding(definition.id, defaults)}
                                 >
                                     {t('settings.controls.reset')}

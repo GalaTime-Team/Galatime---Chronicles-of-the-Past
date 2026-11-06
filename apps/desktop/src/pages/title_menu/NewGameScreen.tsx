@@ -142,8 +142,8 @@ export function NewGameScreen({ onBack }: { onBack: () => void }) {
                                                 aria-label={t('newGame.edit')}
                                                 title={t('newGame.edit')}
                                                 onPress={() => undefined}
-                                                className="h-7 w-7 border-2 p-0"
-                                                icon={<EditIcon className="h-3.5 w-3.5 opacity-55" />}
+                                                className="h-7 w-7 border-2 p-0 opacity-55 hover:opacity-100"
+                                                icon={<EditIcon className="h-3.5 w-3.5" />}
                                             />
                                             <CommonButton
                                                 variant="ghost"

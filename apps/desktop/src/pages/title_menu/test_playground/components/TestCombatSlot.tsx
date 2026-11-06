@@ -43,7 +43,7 @@ export function TestCombatSlot({
         return (
             <CommonButton
                 variant="ghost"
-                icon={<AddIcon className="h-4 w-4 opacity-40" />}
+                icon={<AddIcon className="h-4 w-4" />}
                 className="h-20 w-20 shrink-0 border-2 border-dashed border-white/15"
                 title={t('playground.combat.slotEmpty')}
                 aria-label={`${label}: ${t('playground.combat.slotEmpty')}`}
@@ -67,7 +67,6 @@ export function TestCombatSlot({
                 variant="ghost"
                 icon={<CloseIcon className="h-3 w-3" />}
                 className="absolute -right-1.5 -top-1.5 h-5 w-5"
-                title={t('playground.combat.remove')}
                 aria-label={`${label}: ${t('playground.combat.remove')}`}
                 onPress={onRemove}
             />
@@ -89,10 +88,9 @@ export function TestCombatSlot({
                     icon={<ControlIcon className="h-3 w-3" />}
                     className={`h-5 w-5 ${slot.controlled
                         ? 'bg-white text-galatime-dark'
-                        : 'opacity-50'
+                        : 'opacity-50 hover:opacity-100'
                         }`}
                     aria-pressed={slot.controlled}
-                    title={t(slot.controlled ? 'playground.combat.controlOn' : 'playground.combat.controlOff')}
                     aria-label={`${label}: ${t(slot.controlled ? 'playground.combat.controlOn' : 'playground.combat.controlOff')}`}
                     onPress={onToggleControl}
                 />
@@ -109,9 +107,8 @@ export function TestCombatSlot({
                     </>}
                     className={`relative h-5 w-5 ${carriedKinds > 0
                             ? 'bg-white text-galatime-dark'
-                            : 'opacity-50'
+                            : 'opacity-50 hover:opacity-100'
                         }`}
-                    title={t('playground.combat.inventoryOpen')}
                     aria-label={`${label}: ${t('playground.combat.inventoryOpen')}`}
                     onPress={onOpenInventory}
                 />

@@ -65,8 +65,8 @@ function StockRow({
             <div className="flex shrink-0 items-center gap-1">
                 <CommonButton
                     variant="ghost"
-                    icon={<RemoveIcon className="h-3 w-3 opacity-50" />}
-                    className="h-6 w-6 disabled:opacity-30"
+                    icon={<RemoveIcon className="h-3 w-3" />}
+                    className="h-6 w-6 opacity-50 hover:opacity-100 disabled:opacity-30"
                     disabled={!canRemove}
                     aria-label={`${name}: ${removeLabel}`}
                     onPress={onRemove}
@@ -78,8 +78,8 @@ function StockRow({
 
                 <CommonButton
                     variant="ghost"
-                    icon={<AddIcon className="h-3 w-3 opacity-50" />}
-                    className="h-6 w-6 disabled:opacity-30"
+                    icon={<AddIcon className="h-3 w-3" />}
+                    className="h-6 w-6 opacity-50 hover:opacity-100 disabled:opacity-30"
                     disabled={!canAdd}
                     aria-label={`${name}: ${addLabel}`}
                     onPress={onAdd}
@@ -245,7 +245,7 @@ export function TestSlotInventoryPopup({
                     onPress={() => setTab('items')}
                     className={`px-3 py-1 border-0 tracking-[0.15em] ${tab === 'items'
                         ? 'bg-white font-semibold text-galatime-dark'
-                        : 'opacity-50'
+                        : 'opacity-50 hover:opacity-100'
                         }`}
                 >
                     {t('playground.combat.tabItems')}
@@ -258,7 +258,7 @@ export function TestSlotInventoryPopup({
                     onPress={() => setTab('weapons')}
                     className={`px-3 py-1 border-0 tracking-[0.15em] ${tab === 'weapons'
                         ? 'bg-white font-semibold text-galatime-dark'
-                        : 'opacity-50'
+                        : 'opacity-50 hover:opacity-100'
                         }`}
                 >
                     {t('playground.combat.tabWeapons')}

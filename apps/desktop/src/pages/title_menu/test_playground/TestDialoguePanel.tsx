@@ -100,7 +100,7 @@ function RequirementEditor({
                             onPress={() => onChange(status)}
                             className={`px-2 py-1 border-0 tracking-[0.15em] ${value === status
                                 ? 'bg-white font-semibold text-galatime-dark'
-                                : 'opacity-60'
+                                : 'opacity-60 hover:opacity-100'
                                 }`}
                         >
                             {status}

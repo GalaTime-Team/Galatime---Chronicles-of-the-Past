@@ -84,9 +84,9 @@ export function TestCombatPickerPopup({ open, catalogue, onDismiss, onPick }: Te
                                 alt=""
                                 className="h-7 w-7 shrink-0"
                             />
-                            <span className="min-w-0 flex-1 truncate normal-case text-sm opacity-90">{entry.name}</span>
-                            <span className="shrink-0 font-pixel text-xs opacity-50 normal-case">{entry.entityId}</span>
-                            <span className="shrink-0 border border-white/15 px-1.5 py-0.5 text-[0.6rem] uppercase tracking-[0.12em] opacity-70">
+                            <span className="min-w-0 flex-1 truncate normal-case text-sm">{entry.name}</span>
+                            <span className="shrink-0 font-pixel text-xs normal-case">{entry.entityId}</span>
+                            <span className="shrink-0 border border-white/15 px-1.5 py-0.5 text-[0.6rem] uppercase tracking-[0.12em]">
                                 {entry.entityType}
                             </span>
                         </CommonButton>

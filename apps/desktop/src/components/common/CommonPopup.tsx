@@ -510,8 +510,8 @@ export function CommonPopup({
                                     {showCloseButton && (
                                         <CommonButton
                                             variant="ghost"
-                                            icon={<CloseIcon className="h-3 w-3 opacity-55" />}
-                                            className="ml-auto h-8 w-8 shrink-0"
+                                            icon={<CloseIcon className="h-3 w-3" />}
+                                            className="ml-auto h-8 w-8 shrink-0 opacity-55 hover:opacity-100"
                                             aria-label={t('close')}
                                             onPress={() => onDismiss?.()}
                                         />

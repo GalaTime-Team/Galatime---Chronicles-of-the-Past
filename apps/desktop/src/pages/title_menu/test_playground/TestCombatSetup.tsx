@@ -114,7 +114,7 @@ export function TestCombatSetup({
                                             {t(`playground.combat.${line}`)}
                                         </p>
 
-                                        <div className="flex gap-2 overflow-x-auto pb-2">
+                                        <div className="flex gap-2 overflow-x-auto pt-2 pr-2 pb-2">
                                             {setup[side][line].map((slot, index) => {
                                                 if (!slot) return null;
 

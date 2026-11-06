@@ -141,7 +141,7 @@ export function TestSkillTreePanel() {
                                 ? 'border border-white/70 bg-white text-galatime-dark'
                                 : isDisabled
                                     ? 'cursor-not-allowed border border-white/5 bg-white/2 text-white/25'
-                                    : 'border border-white/10 opacity-60'
+                                    : 'border border-white/10 opacity-60 hover:opacity-100'
                                 }`}
                         >
                             <ElementIcon id={element.id} className="h-5 w-5" />
@@ -345,24 +345,24 @@ function SkillTreeMap({ layout }: { layout: SkillTreeLayout }) {
             >
                 <CommonButton
                     variant="ghost"
-                    icon={<RemoveIcon className="h-4 w-4 opacity-70" />}
-                    className="h-6 w-6"
+                    icon={<RemoveIcon className="h-4 w-4" />}
+                    className="h-6 w-6 opacity-70 hover:opacity-100"
                     aria-label={t('playground.skillTree.zoomOut')}
                     title={t('playground.skillTree.zoomOut')}
                     onPress={() => zoomByStep(1 / ZOOM_BUTTON_STEP)}
                 />
                 <CommonButton
                     variant="ghost"
-                    icon={<FitIcon className="h-4 w-4 opacity-70" />}
-                    className="h-6 w-6"
+                    icon={<FitIcon className="h-4 w-4" />}
+                    className="h-6 w-6 opacity-70 hover:opacity-100"
                     aria-label={t('playground.skillTree.fitView')}
                     title={t('playground.skillTree.fitView')}
                     onPress={fitToView}
                 />
                 <CommonButton
                     variant="ghost"
-                    icon={<AddIcon className="h-4 w-4 opacity-70" />}
-                    className="h-6 w-6"
+                    icon={<AddIcon className="h-4 w-4" />}
+                    className="h-6 w-6 opacity-70 hover:opacity-100"
                     aria-label={t('playground.skillTree.zoomIn')}
                     title={t('playground.skillTree.zoomIn')}
                     onPress={() => zoomByStep(ZOOM_BUTTON_STEP)}

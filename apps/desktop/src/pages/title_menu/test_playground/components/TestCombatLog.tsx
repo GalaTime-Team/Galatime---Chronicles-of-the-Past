@@ -280,7 +280,7 @@ export function TestCombatLog({ events, units, onClear, className = '' }: TestCo
                     <CommonButton
                         variant="ghost"
                         size="sm"
-                        className="text-[10px] tracking-[0.12em] border-0 opacity-40"
+                        className="text-[10px] tracking-[0.12em] border-0 opacity-40 hover:opacity-100"
                         onPress={onClear}
                     >
                         {t('playground.combat.logClear')}

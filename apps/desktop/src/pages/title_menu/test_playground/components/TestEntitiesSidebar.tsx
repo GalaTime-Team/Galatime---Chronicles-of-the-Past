@@ -61,7 +61,7 @@ export function TestEntitiesSidebar({ characters, mobs, selected, onSelect }: Te
                             onClick={() => onSelect({ id: c.id, name: `${c.name} ${c.surname}`, type: 'character', data: c })}
                             className={`justify-start px-3 py-2 normal-case tracking-normal text-left border-0 ${selected?.id === c.id && selected?.type === 'character'
                                     ? 'bg-white font-semibold text-galatime-dark'
-                                    : 'opacity-70'
+                                    : 'opacity-70 hover:opacity-100'
                                 }`}
                         >
                             {c.name} {c.surname}
@@ -80,7 +80,7 @@ export function TestEntitiesSidebar({ characters, mobs, selected, onSelect }: Te
                             onClick={() => onSelect({ id: m.id, name: m.name, type: 'mob', data: m })}
                             className={`justify-start px-3 py-2 normal-case tracking-normal text-left border-0 ${selected?.id === m.id && selected?.type === 'mob'
                                     ? 'bg-white font-semibold text-galatime-dark'
-                                    : 'opacity-70'
+                                    : 'opacity-70 hover:opacity-100'
                                 }`}
                         >
                             {m.name}

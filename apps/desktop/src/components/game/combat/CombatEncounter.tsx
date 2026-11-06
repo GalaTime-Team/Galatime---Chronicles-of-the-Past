@@ -777,8 +777,8 @@ export function CombatEncounter({
                         <div className="mb-2 flex shrink-0 items-center justify-end gap-2">
                             <CommonButton
                                 variant="ghost"
-                                icon={<CloseIcon className="h-5 w-5 opacity-50" />}
-                                className="p-1"
+                                icon={<CloseIcon className="h-5 w-5" />}
+                                className="p-1 opacity-50 hover:opacity-100"
                                 aria-label={t('combat.inventoryCancel')}
                                 onPress={() => setInventoryChoices(null)}
                             />
