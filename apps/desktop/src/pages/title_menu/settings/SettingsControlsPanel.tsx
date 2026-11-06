@@ -18,10 +18,10 @@ type RebindingDevice = 'keyboard' | 'gamepad';
 /** Badge shaped like a key cap. */
 function KeyCap({ variant = 'default', children }: { variant?: 'default' | 'listening' | 'empty' | 'conflict'; children: ReactNode }) {
     const variantStyles = {
-        default: 'border-2 border-galatime-primary/50 text-galatime-accent',
-        listening: 'animate-pulse border-2 border-galatime-accent bg-galatime-primary/20 text-galatime-accent',
-        empty: 'border-2 border-dashed border-white/30 text-white/40',
-        conflict: 'border-2 border-galatime-error/70 text-galatime-error',
+        default: 'border-game border-galatime-primary/50 text-galatime-accent',
+        listening: 'animate-pulse border-game border-galatime-accent bg-galatime-primary/20 text-galatime-accent',
+        empty: 'border-game border-dashed border-white/30 text-white/40',
+        conflict: 'border-game border-galatime-error/70 text-galatime-error',
     } as const;
 
     return <kbd className={`min-w-16 px-3 py-1 text-center ${variantStyles[variant]}`}>{children}</kbd>;
@@ -103,7 +103,7 @@ export function SettingsControlsPanel({ settings }: SettingsPanelProps) {
                     setRebinding(isListening(device) ? null : { id: definition.id, device });
 
                 return (
-                    <div key={definition.id} className="setting-line border-b-4 border-white/10 py-3">
+                    <div key={definition.id} className="setting-line border-b-game border-white/10 py-3">
                         <span className="text-lg text-white">{t(definition.label)}</span>
 
                         <span className="flex flex-wrap items-center justify-end gap-x-4 gap-y-2">

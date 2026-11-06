@@ -111,7 +111,7 @@ export function NewGameScreen({ onBack }: { onBack: () => void }) {
                                 initial={{ opacity: 0, y: 10 }}
                                 animate={{ opacity: 1, y: 0 }}
                                 transition={{ delay: slot * 0.04, duration: 0.25 }}
-                                className="flex w-full flex-col border-2 border-white/15 bg-galatime-dark/60 py-2.5 px-4 transition-colors duration-300 hover:border-galatime-primary/70 sm:flex-row sm:items-center sm:gap-3"
+                                className="flex w-full flex-col border-game border-white/15 bg-galatime-dark/60 py-2.5 px-4 transition-colors duration-300 hover:border-galatime-primary/70 sm:flex-row sm:items-center sm:gap-3"
                             >
                                 {occupied[slot] ? (
                                     <>
@@ -135,14 +135,14 @@ export function NewGameScreen({ onBack }: { onBack: () => void }) {
                                                 ))}
                                             </div>
                                         </div>
-                                        <div className="flex shrink-0 flex-row justify-end gap-2 border-t border-white/10 pt-2 sm:ml-5 sm:w-8 sm:flex-col sm:justify-center sm:border-l sm:border-t-0 sm:border-white/10 sm:pt-0 sm:pl-3">
+                                        <div className="flex shrink-0 flex-row justify-end gap-2 border-t-game border-white/10 pt-2 sm:ml-5 sm:w-8 sm:flex-col sm:justify-center sm:border-l-game sm:border-t-0 sm:border-white/10 sm:pt-0 sm:pl-3">
                                             <CommonButton
                                                 variant="ghost"
                                                 size="sm"
                                                 aria-label={t('newGame.edit')}
                                                 title={t('newGame.edit')}
                                                 onPress={() => undefined}
-                                                className="h-7 w-7 border-2 p-0 opacity-55 hover:opacity-100"
+                                                className="h-7 w-7 border-game p-0 opacity-55 hover:opacity-100"
                                                 icon={<EditIcon className="h-3.5 w-3.5" />}
                                             />
                                             <CommonButton
@@ -151,7 +151,7 @@ export function NewGameScreen({ onBack }: { onBack: () => void }) {
                                                 aria-label={t('newGame.remove')}
                                                 title={t('newGame.remove')}
                                                 onPress={() => setDeleteSlot(slot)}
-                                                className="h-7 w-7 border-2 p-0"
+                                                className="h-7 w-7 border-game p-0"
                                                 icon={<TrashIcon className="h-3.5 w-3.5 text-galatime-error" />}
                                             />
                                         </div>

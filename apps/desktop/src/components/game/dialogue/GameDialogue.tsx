@@ -183,7 +183,7 @@ export const GameDialogue = forwardRef<GameDialogueHandle, GameDialogueProps>(fu
             className={`relative w-full cursor-default select-none ${className}`}
         >
             <div
-                className={`relative flex w-full flex-col overflow-hidden bg-galatime-dark outline-2 outline-white ${boxClassName}`}
+                className={`relative flex w-full flex-col overflow-hidden bg-galatime-dark outline-game outline-white ${boxClassName}`}
             >
                 {/*
                   No rule under the plate: the name and the line are one block. The

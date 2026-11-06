@@ -170,7 +170,7 @@ const CommonPopupCard: React.FC<CommonPopupCardProps> = ({
                     transition={{ type: 'spring', stiffness: 400, damping: 25 }}
                     role="status"
                     aria-live="polite"
-                    className={`fixed z-50 flex max-w-xs cursor-pointer select-none items-stretch overflow-hidden text-left shadow-lg outline-2 backdrop-blur-sm pointer-events-auto
+                    className={`fixed z-50 flex max-w-xs cursor-pointer select-none items-stretch overflow-hidden text-left shadow-lg outline-game backdrop-blur-sm pointer-events-auto
             ${POSITION_CLASSES[position]}
             ${styles.surface}
             ${className}

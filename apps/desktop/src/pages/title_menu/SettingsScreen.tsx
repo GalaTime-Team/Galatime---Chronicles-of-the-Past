@@ -90,7 +90,7 @@ export function SettingsScreen({ onBack }: SettingsScreenProps) {
                 </div>
 
                 {/* Footer — Credits style */}
-                <footer className="shrink-0 border-t border-white/10 pt-4 text-center">
+                <footer className="shrink-0 border-t-game border-white/10 pt-4 text-center">
                     <CommonButton variant="ghost" size="sm" onPress={() => setConfirmReset(true)}>
                         {t('settings.restoreDefaults')}
                     </CommonButton>

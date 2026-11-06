@@ -491,7 +491,7 @@ export function CommonPopup({
                             onClick={(event) => event.stopPropagation()}
                             /* The halo is the card's shadow, tinted with the popup's own variant tone. */
                             style={glow ? { boxShadow: glowShadow(haloTone) } : undefined}
-                            className={`relative z-10 w-full border-3 bg-galatime-dark p-4 outline-none ${glow ? '' : 'shadow-2xl'} ${styles.border} ${className}`}
+                            className={`relative z-10 w-full border-game bg-galatime-dark p-4 outline-none ${glow ? '' : 'shadow-2xl'} ${styles.border} ${className}`}
                         >
                             {/* Header row: the title keeps the top-left corner, the close control the
                                 top-right one. `ml-auto` is what pins the button to that corner even when

@@ -107,7 +107,7 @@ export function DialogueChoiceList({
                         // Options are the one thing here that is genuinely pressable,
                         // so they carry the pointer cursor themselves — the dialogue
                         // box deliberately does not hand it down to its prose.
-                        className={`flex items-center justify-end gap-2 border-r-4 px-3 py-1.5 text-right transition-colors duration-300 ease-out ${
+                        className={`flex items-center justify-end gap-2 border-r-game px-3 py-1.5 text-right transition-colors duration-300 ease-out ${
                             isLocked
                                 ? 'cursor-not-allowed border-transparent text-white/25'
                                 : disabled

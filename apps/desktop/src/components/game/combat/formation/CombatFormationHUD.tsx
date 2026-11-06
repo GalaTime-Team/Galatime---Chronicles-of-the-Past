@@ -148,7 +148,7 @@ export function CombatFormationHUD({
                 phase comes without its sun or moon, so the icons say which
                 side of the sky the fight is really happening under. */}
             {timePhase && (
-                <div className="pointer-events-none absolute left-2 top-2 z-10 flex items-center gap-2 border-2 border-white/70 bg-black/60 px-2 py-1 backdrop-blur-sm">
+                <div className="pointer-events-none absolute left-2 top-2 z-10 flex items-center gap-2 border-game border-white/70 bg-black/60 px-2 py-1 backdrop-blur-sm">
                     <img
                         aria-hidden="true"
                         src={phaseOverridden

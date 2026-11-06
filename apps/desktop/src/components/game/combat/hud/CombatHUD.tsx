@@ -204,7 +204,7 @@ export const CombatHUD: React.FC<CombatHUDProps> = ({
                                     onClick={() => onAttackClick(attack)}
                                 />
                             ) : (
-                                <div className="h-full min-h-20 border-2 border-dashed border-gray-700/20 bg-gray-800/5" />
+                                <div className="h-full min-h-20 border-game border-dashed border-gray-700/20 bg-gray-800/5" />
                             )}
                         </div>
                     ))}

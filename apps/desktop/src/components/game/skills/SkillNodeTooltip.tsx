@@ -25,7 +25,7 @@ export function SkillNodeTooltip({ skill, open, floatingRef, floatingStyles }: S
             ref={floatingRef}
             style={floatingStyles}
             role="tooltip"
-            className="pointer-events-none z-100 flex w-72 select-none flex-col border-2 border-white bg-black text-white shadow-xl"
+            className="pointer-events-none z-100 flex w-72 select-none flex-col border-game border-white bg-black text-white shadow-xl"
         >
             <div className="flex items-center gap-2 px-3 pb-2 pt-2.5">
                 <ElementIcon id={skill.element_id} className="h-6 w-6 shrink-0" />

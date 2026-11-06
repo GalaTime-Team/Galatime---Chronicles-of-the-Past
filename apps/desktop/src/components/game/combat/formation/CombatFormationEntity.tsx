@@ -408,7 +408,7 @@ export function CombatFormationEntity({
                         : preview?.kind === 'damage' && isTargetable
                             ? depthBase + 100 + stackIndex
                             : depthBase + stackIndex + 1,
-                    outline: keyboardFocused ? '2px solid #fff' : 'none',
+                    outline: keyboardFocused ? 'var(--game-border-width, 2px) solid #fff' : 'none',
                     outlineOffset: keyboardFocused ? '2px' : '0',
                 }}
                 className="group absolute flex h-14 w-14 items-end justify-center outline-none sm:h-20 sm:w-20"
@@ -487,7 +487,7 @@ export function CombatFormationEntity({
                             {reflected && (
                                 <span
                                     aria-hidden="true"
-                                    className="pointer-events-none absolute left-1/2 top-0 z-40 h-8 w-8 -translate-x-1/2 border-2 border-galatime-stats-manaTo sm:h-16 sm:w-16"
+                                    className="pointer-events-none absolute left-1/2 top-0 z-40 h-8 w-8 -translate-x-1/2 border-game border-galatime-stats-manaTo sm:h-16 sm:w-16"
                                     style={{ animation: `combat-shield 460ms ease-out ${ARENA_IMPACT_MS}ms both` }}
                                 />
                             )}
@@ -500,7 +500,7 @@ export function CombatFormationEntity({
                                     {entity.statusBadges.slice(0, MAX_STATUS_BADGES).map((badge) => (
                                         <span
                                             key={badge.id}
-                                            className="h-1.5 w-1.5 rounded-[1px] border border-black/50 sm:h-2 sm:w-2"
+                                            className="h-1.5 w-1.5 rounded-[1px] border-game border-black/50 sm:h-2 sm:w-2"
                                             style={{
                                                 backgroundColor: STATUS_TONE_COLORS[badge.tone],
                                                 borderColor: badge.elementId ? elementTint(badge.elementId) : undefined,

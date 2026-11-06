@@ -30,7 +30,7 @@ export function SettingsDisplayPanel({ settings, updateSettings }: SettingsPanel
                 title={t('settings.display.fullscreen')}
                 defaultChecked={settings.display.fullscreen}
                 onChange={(checked) => updateDisplay({ fullscreen: checked })}
-                containerClassName="setting-line border-b-4 border-white/10 py-4"
+                containerClassName="setting-line border-b-game border-white/10 py-4"
             />
 
             {/* Image Rendering Selector */}
@@ -42,12 +42,12 @@ export function SettingsDisplayPanel({ settings, updateSettings }: SettingsPanel
                 orientation="horizontal"
                 showDescription
                 ns="settings"
-                containerClassName="setting-line border-b-4 border-white/10 py-4"
+                containerClassName="setting-line border-b-game border-white/10 py-4"
                 optionsWidthClassName="w-20 flex-none"
             />
 
             {/* Render Scale Slider */}
-            <div className="border-b-4 border-white/10 py-4">
+            <div className="border-b-game border-white/10 py-4">
                 <CommonSlider
                     title={t('settings.display.scale')}
                     min={RENDER_SCALE_MIN}

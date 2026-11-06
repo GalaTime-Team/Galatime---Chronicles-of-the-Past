@@ -32,7 +32,7 @@ export function SettingsGamePanel({ settings, updateSettings }: SettingsPanelPro
                 defaultChecked={settings.fightingTooltipVisible}
                 onChange={(checked) => updateSettings({ fightingTooltipVisible: checked })}
                 showDescription
-                containerClassName="setting-line border-b-4 border-white/10 py-4"
+                containerClassName="setting-line border-b-game border-white/10 py-4"
             />
 
             {/* Action Tips Toggle */}
@@ -43,7 +43,7 @@ export function SettingsGamePanel({ settings, updateSettings }: SettingsPanelPro
                 defaultChecked={settings.actionsTooltipVisible}
                 onChange={(checked) => updateSettings({ actionsTooltipVisible: checked })}
                 showDescription
-                containerClassName="setting-line border-b-4 border-white/10 py-4"
+                containerClassName="setting-line border-b-game border-white/10 py-4"
             />
 
             {/* Dialogue Tips Toggle */}
@@ -54,7 +54,7 @@ export function SettingsGamePanel({ settings, updateSettings }: SettingsPanelPro
                 defaultChecked={settings.dialogueTooltipVisible}
                 onChange={(checked) => updateSettings({ dialogueTooltipVisible: checked })}
                 showDescription
-                containerClassName="setting-line border-b-4 border-white/10 py-4"
+                containerClassName="setting-line border-b-game border-white/10 py-4"
             />
 
             {/* Combat Animations Toggle */}
@@ -65,11 +65,11 @@ export function SettingsGamePanel({ settings, updateSettings }: SettingsPanelPro
                 defaultChecked={settings.combatAnimations}
                 onChange={(checked) => updateSettings({ combatAnimations: checked })}
                 showDescription
-                containerClassName="setting-line border-b-4 border-white/10 py-4"
+                containerClassName="setting-line border-b-game border-white/10 py-4"
             />
 
             {/* Text Speed Slider */}
-            <div className="border-b-4 border-white/10 py-4">
+            <div className="border-b-game border-white/10 py-4">
                 <CommonSlider
                     title={t('game.settings.textSpeed.title')}
                     min={DIALOGUE_TEXT_SPEED_MIN}

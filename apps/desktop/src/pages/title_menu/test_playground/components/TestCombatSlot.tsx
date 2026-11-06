@@ -44,7 +44,7 @@ export function TestCombatSlot({
             <CommonButton
                 variant="ghost"
                 icon={<AddIcon className="h-4 w-4" />}
-                className="h-20 w-20 shrink-0 border-2 border-dashed border-white/15"
+                className="h-20 w-20 shrink-0 border-game border-dashed border-white/15"
                 title={t('playground.combat.slotEmpty')}
                 aria-label={`${label}: ${t('playground.combat.slotEmpty')}`}
                 onPress={onAdd}
@@ -58,7 +58,7 @@ export function TestCombatSlot({
 
     return (
         <div
-            className={`group relative flex h-20 w-20 shrink-0 flex-col items-center justify-center gap-1 border-2 px-1.5 py-1 transition-colors duration-300 ease-out ${slot.controlled
+            className={`group relative flex h-20 w-20 shrink-0 flex-col items-center justify-center gap-1 border-game px-1.5 py-1 transition-colors duration-300 ease-out ${slot.controlled
                 ? 'border-galatime-primary bg-galatime-primary/15'
                 : 'border-white/20 bg-white/5'
                 }`}

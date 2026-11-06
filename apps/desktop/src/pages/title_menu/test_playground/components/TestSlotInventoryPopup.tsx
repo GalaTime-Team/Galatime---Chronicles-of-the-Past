@@ -53,7 +53,7 @@ function StockRow({
 }) {
     return (
         <li
-            className={`flex items-center gap-3 border-b border-white/5 px-2 py-1.5 ${
+            className={`flex items-center gap-3 border-b-game border-white/5 px-2 py-1.5 ${
                 quantity > 0 ? 'bg-white/10' : ''
             }`}
         >
@@ -236,7 +236,7 @@ export function TestSlotInventoryPopup({
             }}
             cancelAction={{ label: t('playground.combat.cancel'), variant: 'ghost' }}
         >
-            <div role="tablist" className="flex gap-1 border-b border-white/10 pb-2">
+            <div role="tablist" className="flex gap-1 border-b-game border-white/10 pb-2">
                 <CommonButton
                     variant="ghost"
                     size="sm"
@@ -281,7 +281,7 @@ export function TestSlotInventoryPopup({
                         {t('playground.combat.inventoryCount', { count: carriedKinds })}
                     </p>
 
-                    <ul className="mt-2 max-h-72 overflow-y-auto border-t border-white/10">
+                    <ul className="mt-2 max-h-72 overflow-y-auto border-t-game border-white/10">
                         {visibleItems.map((item) => {
                             const quantity = draft[item.id] ?? 0;
 
@@ -328,7 +328,7 @@ export function TestSlotInventoryPopup({
                             : t('playground.combat.weaponCount', { count: weaponDraft.length, max: MAX_CARRIED_WEAPONS })}
                     </p>
 
-                    <ul className="mt-2 max-h-72 overflow-y-auto border-t border-white/10">
+                    <ul className="mt-2 max-h-72 overflow-y-auto border-t-game border-white/10">
                         {visibleWeapons.map((weapon) => {
                             const quantity = weaponCounts.get(weapon.id) ?? 0;
 

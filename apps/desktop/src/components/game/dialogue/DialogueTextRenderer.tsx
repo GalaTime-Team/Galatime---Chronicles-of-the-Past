@@ -335,7 +335,7 @@ export function DialogueTextRenderer({
                             // from the prose around it, hover included; a keyboard focus
                             // ring is kept either way, because a focus ring that is also
                             // hidden leaves no way to reach the phrase at all.
-                            className={`inline cursor-pointer border-0 bg-transparent p-0 font-custom transition-colors duration-300 ease-out focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-galatime-accent disabled:cursor-default ${highlightInteractive
+                            className={`inline cursor-pointer border-0 bg-transparent p-0 font-custom transition-colors duration-300 ease-out focus-visible:outline-game focus-visible:outline-offset-2 focus-visible:outline-galatime-accent disabled:cursor-default ${highlightInteractive
                                 ? 'text-galatime-accent underline decoration-dotted underline-offset-4 hover:text-white focus-visible:text-white disabled:no-underline'
                                 : 'text-inherit'
                                 }`}

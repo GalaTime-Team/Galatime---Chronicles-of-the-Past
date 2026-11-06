@@ -269,9 +269,9 @@ export function TestCombatLog({ events, units, onClear, className = '' }: TestCo
     return (
         <section
             aria-label={t('playground.combat.logTitle')}
-            className={`flex min-h-0 flex-col border-2 border-white/15 bg-black/40 ${className}`}
+            className={`flex min-h-0 flex-col border-game border-white/15 bg-black/40 ${className}`}
         >
-            <header className="flex shrink-0 items-center justify-between gap-2 border-b-2 border-white/15 px-2 py-1">
+            <header className="flex shrink-0 items-center justify-between gap-2 border-b-game border-white/15 px-2 py-1">
                 <h3 className="text-[11px] uppercase tracking-[0.15em] text-white/55">
                     {t('playground.combat.logTitle')}
                 </h3>

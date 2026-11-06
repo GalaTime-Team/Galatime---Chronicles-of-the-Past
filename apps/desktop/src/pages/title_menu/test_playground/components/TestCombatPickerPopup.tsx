@@ -70,7 +70,7 @@ export function TestCombatPickerPopup({ open, catalogue, onDismiss, onPick }: Te
                 {t('playground.combat.pickerSuggestions')}
             </p>
 
-            <ul className="mt-2 max-h-64 overflow-y-auto border-t border-white/10">
+            <ul className="mt-2 max-h-64 overflow-y-auto border-t-game border-white/10">
                 {suggestions.map((entry) => (
                     <li key={`${entry.entityType}:${entry.entityId}`}>
                         <CommonButton
@@ -86,7 +86,7 @@ export function TestCombatPickerPopup({ open, catalogue, onDismiss, onPick }: Te
                             />
                             <span className="min-w-0 flex-1 truncate normal-case text-sm">{entry.name}</span>
                             <span className="shrink-0 font-pixel text-xs normal-case">{entry.entityId}</span>
-                            <span className="shrink-0 border border-white/15 px-1.5 py-0.5 text-[0.6rem] uppercase tracking-[0.12em]">
+                            <span className="shrink-0 border-game border-white/15 px-1.5 py-0.5 text-[0.6rem] uppercase tracking-[0.12em]">
                                 {entry.entityType}
                             </span>
                         </CommonButton>

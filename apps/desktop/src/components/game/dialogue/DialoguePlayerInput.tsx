@@ -76,7 +76,7 @@ export function DialoguePlayerInput({
                     submit(value);
                 }
             }}
-            className={`flex w-full flex-col gap-3 bg-galatime-dark p-4 outline-2 outline-white ${className}`}
+            className={`flex w-full flex-col gap-3 bg-galatime-dark p-4 outline-game outline-white ${className}`}
         >
             <p className="font-custom text-lg text-white">
                 {request.question}

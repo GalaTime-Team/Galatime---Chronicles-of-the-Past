@@ -2,6 +2,14 @@
 @config "../../tailwind.config.js";
 
 @theme {
+  /* The one border/outline width of the whole game. Every framed surface — buttons,
+     cards, popups, tooltips, panels, dividers, badges — must use `border-game` (or a
+     directional variant such as `border-t-game`) and `outline-game` rather than a raw
+     width utility such as `border-2` / `outline-2`. Change `--game-border-width` in
+     `:root` once and the entire interface follows, including future components. */
+  --border-width-game: var(--game-border-width);
+  --outline-width-game: var(--game-border-width);
+
   /* Preview bands on the combat bars: the mana/stamina a hovered or pending
      action is about to spend. Blinks harder than Tailwind's `animate-pulse`
      (which only dips to 50% opacity over 2s) so the doomed slice of the bar is
@@ -254,6 +262,10 @@
 :root {
   font-size: 20px;
   color-scheme: dark;
+  /* Single source of truth for every border/outline width in the game. The Tailwind
+     `--border-width-game` / `--outline-width-game` tokens above point here, so the
+     utilities `border-game`, `border-t-game`, `outline-game`, … all follow this value. */
+  --game-border-width: 2px;
   /* Global typography scale: every Tailwind `text-*` utility multiplies its base size by this
      factor, so the whole platform's letter size can be tuned from this single value.
      1 = original size, 1.15 = +15%, 1.25 = +25%, etc. */
@@ -382,7 +394,7 @@ img {
   /* Label-bearing content only (text | icon+text). Icon-only buttons skip this
      class and stay a plain centred square. */
   .common-button-label {
-    @apply gap-2 uppercase tracking-widest border-4;
+    @apply gap-2 uppercase tracking-widest border-game;
   }
 
   .common-button-primary {

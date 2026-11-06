@@ -39,7 +39,7 @@ export function TestMusicPanel() {
     return (
         <div className="space-y-2">
             {/* Now Playing */}
-            <div className="border-b-4 border-white/10 py-4">
+            <div className="border-b-game border-white/10 py-4">
                 <div className="flex items-center justify-between">
                     <div className="flex items-center gap-3">
                         <MusicNote className="text-galatime-accent" />
@@ -81,7 +81,7 @@ export function TestMusicPanel() {
                     return (
                         <div
                             key={track.id}
-                            className={`flex items-center justify-between border-b border-white/10 py-3 ${isPlaying ? 'text-galatime-accent' : 'text-white'}`}
+                            className={`flex items-center justify-between border-b-game border-white/10 py-3 ${isPlaying ? 'text-galatime-accent' : 'text-white'}`}
                         >
                             <div className="flex-1">
                                 <p className="text-sm font-medium">{track.title}</p>

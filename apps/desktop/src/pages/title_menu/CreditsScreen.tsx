@@ -128,7 +128,7 @@ export function CreditsScreen({ onBack }: CreditsScreenProps) {
                             <CreditSection
                                 key={group.key}
                                 group={group}
-                                className="lg:border-l lg:border-white/10 lg:px-4 lg:first:border-l-0"
+                                className="lg:border-l-game lg:border-white/10 lg:px-4 lg:first:border-l-0"
                             />
                         ))}
                     </div>
@@ -138,7 +138,7 @@ export function CreditsScreen({ onBack }: CreditsScreenProps) {
                     ))}
                 </div>
 
-                <footer className="shrink-0 border-t border-white/10 pt-4 text-center">
+                <footer className="shrink-0 border-t-game border-white/10 pt-4 text-center">
                     <CommonImage
                         src={gtStudioLogoUrl}
                         alt={t('splash.teamAlt')}

@@ -138,10 +138,10 @@ export function TestSkillTreePanel() {
                             disabled={isDisabled}
                             onPress={() => toggleElement(element.id)}
                             className={`disabled:opacity-100 normal-case tracking-normal gap-1.5 px-2 py-1 ${isSelected
-                                ? 'border border-white/70 bg-white text-galatime-dark'
+                                ? 'border-game border-white/70 bg-white text-galatime-dark'
                                 : isDisabled
-                                    ? 'cursor-not-allowed border border-white/5 bg-white/2 text-white/25'
-                                    : 'border border-white/10 opacity-60 hover:opacity-100'
+                                    ? 'cursor-not-allowed border-game border-white/5 bg-white/2 text-white/25'
+                                    : 'border-game border-white/10 opacity-60 hover:opacity-100'
                                 }`}
                         >
                             <ElementIcon id={element.id} className="h-5 w-5" />
@@ -151,7 +151,7 @@ export function TestSkillTreePanel() {
                 })}
             </div>
 
-            <div className="relative min-h-0 flex-1 overflow-hidden border border-white/10 bg-galatime-background">
+            <div className="relative min-h-0 flex-1 overflow-hidden border-game border-white/10 bg-galatime-background">
                 <div className="pointer-events-none absolute inset-0 opacity-30 bg-[linear-gradient(to_right,rgba(255,255,255,0.035)_1px,transparent_1px),linear-gradient(to_bottom,rgba(255,255,255,0.035)_1px,transparent_1px)] bg-size-[32px_32px]" />
                 {visibleAttacks.length === 0 ? (
                     <div className="relative flex h-full items-center justify-center px-4 text-center text-sm text-white/45">
@@ -340,7 +340,7 @@ function SkillTreeMap({ layout }: { layout: SkillTreeLayout }) {
             </div>
 
             <div
-                className="absolute bottom-3 right-3 z-10 flex items-center gap-1 border border-white/10 bg-black/50 p-1"
+                className="absolute bottom-3 right-3 z-10 flex items-center gap-1 border-game border-white/10 bg-black/50 p-1"
                 onPointerDown={(event) => event.stopPropagation()}
             >
                 <CommonButton
@@ -406,7 +406,7 @@ function SkillTreeNode({
                 onMouseLeave={() => setIsTooltipOpen(false)}
                 onFocus={() => setIsTooltipOpen(true)}
                 onBlur={() => setIsTooltipOpen(false)}
-                className="absolute z-1 flex items-center justify-center border-0 bg-transparent p-0 outline-2 outline-offset-2 outline-transparent transition-[outline-color] duration-150 hover:outline-white/60 focus-visible:outline-white"
+                className="absolute z-1 flex items-center justify-center border-0 bg-transparent p-0 outline-game outline-offset-2 outline-transparent transition-[outline-color] duration-150 hover:outline-white/60 focus-visible:outline-white"
                 style={{ left: x - size / 2, top: y - size / 2, width: size, height: size }}
             >
                 <CommonImage

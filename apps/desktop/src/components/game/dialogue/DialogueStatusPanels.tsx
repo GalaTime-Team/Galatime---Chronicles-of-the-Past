@@ -13,7 +13,7 @@ import CommonButton from '../../common/CommonButton';
  */
 
 /** Shared frame, so the three panels cannot drift apart. */
-const PANEL_FRAME = 'w-full bg-galatime-dark outline-2 outline-white px-4 py-3';
+const PANEL_FRAME = 'w-full bg-galatime-dark outline-game outline-white px-4 py-3';
 
 /** The conversation is being loaded. */
 export function DialogueLoadingPanel() {
@@ -46,7 +46,7 @@ export function DialogueErrorPanel({ error, onDismiss }: DialogueErrorPanelProps
         || t('dialogue.error.unknown');
 
     return (
-        <div className={`${PANEL_FRAME} border-l-4 border-l-galatime-error`}>
+        <div className={`${PANEL_FRAME} border-l-game border-l-galatime-error`}>
             <p className="text-sm uppercase tracking-[0.15em] text-galatime-error">
                 {t('dialogue.error.title')}
             </p>
@@ -101,7 +101,7 @@ export function DialogueResultPanel({ result, changes, onClose }: DialogueResult
     const { t } = useTranslation('dialogue');
 
     return (
-        <div className={`${PANEL_FRAME} border-l-4 border-l-galatime-accent`}>
+        <div className={`${PANEL_FRAME} border-l-game border-l-galatime-accent`}>
             <p className="text-sm uppercase tracking-[0.15em] text-white/60">
                 {t('dialogue.result.title')}
             </p>

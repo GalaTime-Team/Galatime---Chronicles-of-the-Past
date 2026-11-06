@@ -155,7 +155,7 @@ function InventoryChoiceButton({
             onMouseLeave={() => setIsTooltipVisible(false)}
             aria-disabled={!entry.usable || undefined}
             aria-pressed={selected || undefined}
-            className={`flex w-full items-center gap-2 border-2 p-1 text-left transition-[opacity,filter,box-shadow,background-color,border-color] duration-200 ${
+            className={`flex w-full items-center gap-2 border-game p-1 text-left transition-[opacity,filter,box-shadow,background-color,border-color] duration-200 ${
                 selected
                     ? 'border-white bg-galatime-darkHover text-white shadow-[0_0_14px_rgba(255,255,255,0.45)]'
                     : entry.usable
@@ -185,7 +185,7 @@ function InventoryChoiceButton({
                     style={floatingStyles}
                     className="pointer-events-none z-50"
                 >
-                    <div className="flex max-w-[min(20rem,calc(100vw-2rem))] items-start gap-3 border-2 border-white bg-galatime-dark px-3 py-2.5 text-white shadow-[0_8px_26px_rgba(0,0,0,0.6)]">
+                    <div className="flex max-w-[min(20rem,calc(100vw-2rem))] items-start gap-3 border-game border-white bg-galatime-dark px-3 py-2.5 text-white shadow-[0_8px_26px_rgba(0,0,0,0.6)]">
                         <CommonImage
                             src={`/images/items/${entry.itemId}.png`}
                             alt={entry.name}
@@ -257,7 +257,7 @@ function WeaponChoiceButton({
             onMouseLeave={() => setIsTooltipVisible(false)}
             aria-disabled={broken || undefined}
             aria-pressed={entry.equipped || undefined}
-            className={`flex w-full items-center gap-2 border-2 p-1 text-left transition-[opacity,filter,box-shadow,background-color,border-color] duration-200 ${
+            className={`flex w-full items-center gap-2 border-game p-1 text-left transition-[opacity,filter,box-shadow,background-color,border-color] duration-200 ${
                 entry.equipped
                     ? 'border-white bg-white text-black'
                     : 'border-white bg-black text-white hover:bg-white/10'
@@ -289,7 +289,7 @@ function WeaponChoiceButton({
                     style={floatingStyles}
                     className="pointer-events-none z-50"
                 >
-                    <div className="flex max-w-[min(20rem,calc(100vw-2rem))] flex-col gap-y-1 border-2 border-white bg-galatime-dark px-3 py-2.5 text-white shadow-[0_8px_26px_rgba(0,0,0,0.6)]">
+                    <div className="flex max-w-[min(20rem,calc(100vw-2rem))] flex-col gap-y-1 border-game border-white bg-galatime-dark px-3 py-2.5 text-white shadow-[0_8px_26px_rgba(0,0,0,0.6)]">
                         <span className="font-pixel text-sm uppercase tracking-[0.08em] sm:text-lg">
                             {entry.name}
                         </span>
@@ -751,9 +751,9 @@ export function CombatEncounter({
                         type="button"
                         onClick={cancelSelection}
                         title={t('combat.cancelSelection')}
-                        className="flex items-center gap-2 border-2 border-white/70 bg-black/60 px-2 py-1 text-[11px] uppercase tracking-[0.15em] text-white/80 backdrop-blur-sm transition-colors hover:border-white hover:text-white"
+                        className="flex items-center gap-2 border-game border-white/70 bg-black/60 px-2 py-1 text-[11px] uppercase tracking-[0.15em] text-white/80 backdrop-blur-sm transition-colors hover:border-white hover:text-white"
                     >
-                        <kbd className="border border-white/60 px-1 font-pixel text-[10px]">{t('combat.escKey')}</kbd>
+                        <kbd className="border-game border-white/60 px-1 font-pixel text-[10px]">{t('combat.escKey')}</kbd>
                         {t('combat.cancelSelection')}
                     </button>
                 </div>
@@ -773,7 +773,7 @@ export function CombatEncounter({
                     )}
                     {/* Min height equals max height: the panel keeps its size
                         whether the bag holds one potion or a page of them. */}
-                    <div className="absolute inset-x-2 bottom-2 z-30 flex h-[55%] flex-col border-2 border-white/70 bg-galatime-dark p-3 backdrop-blur-sm">
+                    <div className="absolute inset-x-2 bottom-2 z-30 flex h-[55%] flex-col border-game border-white/70 bg-galatime-dark p-3 backdrop-blur-sm">
                         <div className="mb-2 flex shrink-0 items-center justify-end gap-2">
                             <CommonButton
                                 variant="ghost"
@@ -796,7 +796,7 @@ export function CombatEncounter({
                                         aria-selected={inventoryTab === tab}
                                         disabled={pendingItem !== null}
                                         onClick={() => setInventoryTab(tab)}
-                                        className={`border-2 px-2 py-1.5 text-left text-xs uppercase tracking-[0.15em] transition-colors disabled:opacity-40 ${
+                                        className={`border-game px-2 py-1.5 text-left text-xs uppercase tracking-[0.15em] transition-colors disabled:opacity-40 ${
                                             inventoryTab === tab
                                                 ? 'border-white bg-white text-galatime-dark'
                                                 : 'border-white/40 text-white/60 hover:border-white hover:text-white'

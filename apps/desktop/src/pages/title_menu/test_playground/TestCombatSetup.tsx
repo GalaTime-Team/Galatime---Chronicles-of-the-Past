@@ -87,7 +87,7 @@ export function TestCombatSetup({
                         <section
                             key={side}
                             aria-label={t(`playground.combat.${side}`)}
-                            className="flex flex-col gap-3 border border-white/10 bg-white/5 p-3"
+                            className="flex flex-col gap-3 border-game border-white/10 bg-white/5 p-3"
                         >
                             <div className="flex items-baseline justify-between gap-2">
                                 <h3 className="text-sm uppercase tracking-[0.15em] text-white/80">
@@ -154,7 +154,7 @@ export function TestCombatSetup({
                 </div>
             </div>
 
-            <footer className="flex shrink-0 flex-wrap items-center justify-between gap-3 border-t border-white/10 pt-3">
+            <footer className="flex shrink-0 flex-wrap items-center justify-between gap-3 border-t-game border-white/10 pt-3">
                 {/* The hour of the day: a solar skill bites harder by day and a
                     lunar one at night, so the fight is worth setting up in
                     the light the author had in mind. */}

@@ -121,7 +121,7 @@ const AttackCard: React.FC<AttackCardProps> = ({
             </div>
 
             {/* The main box - shifted right to accommodate the icon */}
-            <div className={`ml-8 my-2 mr-2 w-full outline-3 flex flex-col text-white overflow-hidden gap-1 transition-colors ${selected ? 'bg-galatime-darkHover outline-white shadow-[0_0_18px_rgba(255,255,255,0.45)]' : disabled ? 'bg-black/70 outline-white/40' : 'bg-galatime-dark hover:bg-galatime-darkHover outline-white'}`}>
+            <div className={`ml-8 my-2 mr-2 w-full outline-game flex flex-col text-white overflow-hidden gap-1 transition-colors ${selected ? 'bg-galatime-darkHover outline-white shadow-[0_0_18px_rgba(255,255,255,0.45)]' : disabled ? 'bg-black/70 outline-white/40' : 'bg-galatime-dark hover:bg-galatime-darkHover outline-white'}`}>
 
                 {/* Top Half */}
                 <div className="flex flex-1">
@@ -187,7 +187,7 @@ const AttackCard: React.FC<AttackCardProps> = ({
                     {traits && traits.length > 0 && (
                         <div className="flex flex-wrap items-center gap-1 pl-14 text-[10px] uppercase tracking-[0.12em] text-white/50">
                             {traits.map((trait) => (
-                                <span key={trait} className="border border-white/25 px-1">
+                                <span key={trait} className="border-game border-white/25 px-1">
                                     {trait}
                                 </span>
                             ))}

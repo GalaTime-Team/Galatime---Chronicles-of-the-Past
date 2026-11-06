@@ -84,7 +84,7 @@ export function TestItemsPanel() {
             </div>
 
             <div className="flex min-h-0 flex-1 gap-3">
-                <div className="min-h-0 flex-1 overflow-y-auto border border-white/10">
+                <div className="min-h-0 flex-1 overflow-y-auto border-game border-white/10">
                     <table className="w-full text-left text-xs">
                         <thead className="sticky top-0 bg-black/70 text-white/45">
                             <tr>
@@ -101,7 +101,7 @@ export function TestItemsPanel() {
                                         playSfx('click');
                                         setSelectedId(item.id);
                                     }}
-                                    className={`cursor-pointer border-t border-white/5 transition-colors ${
+                                    className={`cursor-pointer border-t-game border-white/5 transition-colors ${
                                         selectedId === item.id ? 'bg-white/15' : 'hover:bg-white/5'
                                     }`}
                                 >
@@ -121,7 +121,7 @@ export function TestItemsPanel() {
                     </table>
                 </div>
 
-                <div className="min-h-0 w-72 shrink-0 overflow-y-auto border border-white/10 p-2">
+                <div className="min-h-0 w-72 shrink-0 overflow-y-auto border-game border-white/10 p-2">
                     <h3 className="mb-2 text-xs uppercase tracking-[0.15em] text-white/45">
                         {t('playground.items.detailsTitle')}
                     </h3>
@@ -147,7 +147,7 @@ function ItemDetails({ item }: { item: ItemDefinition }) {
             <p className="text-white/50">{item.id}</p>
             <p className="text-white/70">{item.description}</p>
 
-            <dl className="flex flex-col gap-1 border-t border-white/10 pt-2">
+            <dl className="flex flex-col gap-1 border-t-game border-white/10 pt-2">
                 <div className="flex justify-between gap-2">
                     <dt className="text-white/45">{t('playground.items.category')}</dt>
                     <dd>{item.category}</dd>
@@ -174,7 +174,7 @@ function ItemDetails({ item }: { item: ItemDefinition }) {
                 </div>
             </dl>
 
-            <div className="border-t border-white/10 pt-2">
+            <div className="border-t-game border-white/10 pt-2">
                 <p className="mb-1 text-white/45">{t('playground.items.effects')}</p>
                 {item.effects.length === 0 ? (
                     <p className="text-white/50">{t('playground.items.noEffects')}</p>

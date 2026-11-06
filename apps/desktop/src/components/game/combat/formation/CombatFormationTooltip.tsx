@@ -203,7 +203,7 @@ export function CombatFormationTooltip({
             role="tooltip"
             onPointerEnter={onPointerEnter}
             onPointerLeave={onPointerLeave}
-            className="z-100 w-max max-w-[min(15rem,calc(100vw-3rem))] border-2 border-white bg-galatime-dark px-2 py-1.5 text-white shadow-[0_8px_26px_rgba(0,0,0,0.6)] sm:max-w-[min(21rem,calc(100vw-1.5rem))] sm:px-3 sm:py-2.5"
+            className="z-100 w-max max-w-[min(15rem,calc(100vw-3rem))] border-game border-white bg-galatime-dark px-2 py-1.5 text-white shadow-[0_8px_26px_rgba(0,0,0,0.6)] sm:max-w-[min(21rem,calc(100vw-1.5rem))] sm:px-3 sm:py-2.5"
         >
             <div className="flex flex-wrap items-center gap-x-2 gap-y-0.5">
                 <p className="font-pixel text-sm uppercase tracking-[0.08em] sm:text-lg">{entity.name}</p>
@@ -220,7 +220,7 @@ export function CombatFormationTooltip({
                 its live ammo when the weapon feeds on any. Only meaningful with
                 the detail view on. */}
             {showDetails && weapon && (
-                <div className="mt-4 flex flex-col gap-y-0.5 border-t border-white/20 pt-3 sm:mt-5 sm:pt-4">
+                <div className="mt-4 flex flex-col gap-y-0.5 border-t-game border-white/20 pt-3 sm:mt-5 sm:pt-4">
                     <span className="flex items-baseline gap-1.5 font-pixel text-xs text-white/90 sm:text-sm">
                         {weapon.name}
                         <span className="text-[10px] uppercase tracking-[0.08em] text-white/40 sm:text-xs">{weapon.type}</span>
@@ -237,7 +237,7 @@ export function CombatFormationTooltip({
             {/* Abilities sit right under the identity: what this creature *is*,
                 before the list of things it can cast. */}
             {showDetails && abilities.length > 0 && (
-                <div className="mt-4 flex flex-col gap-y-1.5 border-t border-white/20 pt-3 sm:mt-5 sm:gap-y-2 sm:pt-4">
+                <div className="mt-4 flex flex-col gap-y-1.5 border-t-game border-white/20 pt-3 sm:mt-5 sm:gap-y-2 sm:pt-4">
                     {abilities.map((ability) => (
                         <div key={ability.id} className="flex flex-col gap-y-0.5">
                             <span className="font-pixel text-xs text-white/90 sm:text-sm">
@@ -256,7 +256,7 @@ export function CombatFormationTooltip({
             {showDetails && (skills === null ? (
                 <p className="mt-4 font-pixel text-xs text-white/35 sm:mt-5">Loading skills…</p>
             ) : skills.length > 0 ? (
-                <div className="mt-4 flex flex-col gap-y-1 border-t border-white/20 pt-3 sm:mt-5 sm:gap-y-1.5 sm:pt-4">
+                <div className="mt-4 flex flex-col gap-y-1 border-t-game border-white/20 pt-3 sm:mt-5 sm:gap-y-1.5 sm:pt-4">
                     {skills.map((skill) => (
                         <span
                             key={skill.id}

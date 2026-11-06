@@ -67,7 +67,7 @@ function RequirementEditor({
     // Where the dialogue reads it. Worth showing: it is the answer to "why is this
     // variable here at all".
     const usage = requirement.usage.join(', ');
-    const frame = 'border-b-4 border-white/10 py-3';
+    const frame = 'border-b-game border-white/10 py-3';
 
     if (requirement.kind === 'boolean') {
         return (
@@ -388,7 +388,7 @@ export function TestDialoguePanel() {
                     </CommonButton>
 
                     {error && (
-                        <p className="border-l-4 border-galatime-error pl-3 text-sm text-galatime-error">
+                        <p className="border-l-game border-galatime-error pl-3 text-sm text-galatime-error">
                             {error}
                         </p>
                     )}
@@ -396,7 +396,7 @@ export function TestDialoguePanel() {
             ) : (
                 /* Step two: the values this dialogue gates on, and the stage. */
                 <>
-                    <header className="flex shrink-0 flex-wrap items-end justify-between gap-3 border-b border-white/10 pb-3">
+                    <header className="flex shrink-0 flex-wrap items-end justify-between gap-3 border-b-game border-white/10 pb-3">
                         <div className="min-w-0">
                             <p className="settings-label">{t('playground.dialogue.variables')}</p>
                             <p className="truncate font-mono text-sm text-white">{loaded.id}</p>
@@ -505,7 +505,7 @@ export function TestDialoguePanel() {
                     </div>
 
                     {/* Session readout */}
-                    <details className="max-h-44 shrink-0 overflow-y-auto border border-white/10 px-3 py-2">
+                    <details className="max-h-44 shrink-0 overflow-y-auto border-game border-white/10 px-3 py-2">
                         <summary className="cursor-pointer text-xs uppercase tracking-[0.15em] text-white/60">
                             {t('dialogue.debug.title')}
                         </summary>

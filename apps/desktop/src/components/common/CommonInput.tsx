@@ -153,7 +153,7 @@ const CommonInput: React.FC<CommonInputProps> = ({
                             placeholder={placeholder}
                             aria-label={title}
                             aria-describedby={showInlineDescription ? descriptionId : undefined}
-                            className={`bg-transparent border-0 border-b text-lg border-galatime-primary/40 text-white placeholder:text-galatime-primary/40 focus:outline-none focus:ring-0 px-0 transition ${widthClassName} ${alignClassName} ${inputClassName}`}
+                            className={`bg-transparent border-0 border-b-game text-lg border-galatime-primary/40 text-white placeholder:text-galatime-primary/40 focus:outline-none focus:ring-0 px-0 transition ${widthClassName} ${alignClassName} ${inputClassName}`}
                         />
 
                         {showCounter && (
