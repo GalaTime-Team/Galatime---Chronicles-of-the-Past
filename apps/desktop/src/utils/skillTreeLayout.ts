@@ -99,14 +99,14 @@ export function getLearnableAttacks(attacks: PublicAttack[], selectedElementIds:
 /**
  * Places every attack with dagre and returns the node **centres** in map units.
  *
- * `rankdir: 'BT'` keeps the game's reading order: prerequisites at the bottom, the skills they
- * unlock above them. The default `network-simplex` ranker assigns the tightest ranks it can, so
- * long prerequisite chains are not stretched onto rows they do not need.
+ * `rankdir: 'TB'` reads top to bottom: prerequisites at the top, the skills they unlock below
+ * them. The default `network-simplex` ranker assigns the tightest ranks it can, so long
+ * prerequisite chains are not stretched onto rows they do not need.
  */
 export function buildSkillTreeLayout(attacks: PublicAttack[]): SkillTreeLayout {
     const graph = new Graph({ multigraph: false, compound: false });
     graph.setGraph({
-        rankdir: 'BT',
+        rankdir: 'TB',
         nodesep: HORIZONTAL_NODE_SPACING,
         ranksep: VERTICAL_RANK_SPACING,
         edgesep: EDGE_SPACING,

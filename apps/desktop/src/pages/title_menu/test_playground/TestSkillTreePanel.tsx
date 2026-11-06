@@ -22,6 +22,7 @@ import {
     buildSkillTreeLayout,
     getLearnableAttacks,
     type SkillTreeLayout,
+    type SkillTreeLayoutNode,
 } from '../../../utils/skillTreeLayout';
 import { SkillNodeTooltip } from '../../../components/game/skills/SkillNodeTooltip';
 
@@ -277,6 +278,11 @@ function SkillTreeMap({ layout }: { layout: SkillTreeLayout }) {
     }
 
     const nodeById = new Map(layout.nodes.map((node) => [node.skill.id, node]));
+    const edges = layout.edges.flatMap(({ parentId, childId }) => {
+        const parent = nodeById.get(parentId);
+        const child = nodeById.get(childId);
+        return parent && child ? [{ parentId, childId, parent, child }] : [];
+    });
     const nodeSize = SKILL_NODE_SIZE * view.zoom;
     const iconSize = SKILL_ICON_SIZE * view.zoom;
 
@@ -306,25 +312,37 @@ function SkillTreeMap({ layout }: { layout: SkillTreeLayout }) {
                     viewBox={`0 0 ${layout.width} ${layout.height}`}
                     preserveAspectRatio="none"
                 >
-                    {layout.edges.map(({ parentId, childId }) => {
-                        const parent = nodeById.get(parentId);
-                        const child = nodeById.get(childId);
-                        if (!parent || !child) return null;
-                        // A straight line between the two sprite centres. The nodes are painted above
-                        // the SVG, so it reads as leaving the middle of each image.
-                        return (
-                            <line
-                                key={`${parentId}:${childId}`}
+                    <defs>
+                        {edges.map(({ parentId, childId, parent, child }) => (
+                            <linearGradient
+                                key={edgeGradientId(parentId, childId)}
+                                id={edgeGradientId(parentId, childId)}
+                                gradientUnits="userSpaceOnUse"
                                 x1={parent.x}
                                 y1={parent.y}
                                 x2={child.x}
                                 y2={child.y}
-                                stroke="rgba(160, 160, 160, 0.85)"
-                                strokeWidth={2}
-                                vectorEffect="non-scaling-stroke"
-                            />
-                        );
-                    })}
+                            >
+                                {/* The line fades into both sprites instead of stopping against them. */}
+                                <stop offset="0" stopColor="#a0a0a0" stopOpacity="0" />
+                                <stop offset="0.18" stopColor="#a0a0a0" stopOpacity="0.85" />
+                                <stop offset="0.82" stopColor="#a0a0a0" stopOpacity="0.85" />
+                                <stop offset="1" stopColor="#a0a0a0" stopOpacity="0" />
+                            </linearGradient>
+                        ))}
+                    </defs>
+
+                    {edges.map(({ parentId, childId, parent, child }) => (
+                        <path
+                            key={`${parentId}:${childId}`}
+                            d={buildSkillEdgePath(parent, child)}
+                            fill="none"
+                            stroke={`url(#${edgeGradientId(parentId, childId)})`}
+                            strokeWidth={2}
+                            strokeLinecap="round"
+                            vectorEffect="non-scaling-stroke"
+                        />
+                    ))}
                 </svg>
 
                 {layout.nodes.map((node) => (
@@ -426,4 +444,19 @@ function SkillTreeNode({
             />
         </>
     );
+}
+
+/** Unique id of the gradient that fades one connector into its two skills. */
+function edgeGradientId(parentId: string, childId: string): string {
+    return `skill-edge-${parentId}-${childId}`;
+}
+
+/**
+ * Connector from a prerequisite to the skill it unlocks. Both control points sit on the vertical
+ * axis of their node, so the line leaves and enters the sprites straight and only bends in the
+ * middle — the curved links of the reference tree instead of straight diagonals.
+ */
+function buildSkillEdgePath(parent: SkillTreeLayoutNode, child: SkillTreeLayoutNode): string {
+    const middleY = (parent.y + child.y) / 2;
+    return `M ${parent.x} ${parent.y} C ${parent.x} ${middleY}, ${child.x} ${middleY}, ${child.x} ${child.y}`;
 }
