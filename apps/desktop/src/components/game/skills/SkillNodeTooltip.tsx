@@ -1,6 +1,7 @@
 import type { CSSProperties, Ref } from 'react';
 import { createPortal } from 'react-dom';
 import { ElementIcon } from '../../../assets/GalatimeIcon';
+import CommonTooltipCard from '../../common/CommonTooltipCard';
 import type { PublicAttack } from '../../../types/AttackDataType';
 
 interface SkillNodeTooltipProps {
@@ -21,11 +22,11 @@ export function SkillNodeTooltip({ skill, open, floatingRef, floatingStyles }: S
     if (!open) return null;
 
     return createPortal(
-        <div
+        <CommonTooltipCard
             ref={floatingRef}
             style={floatingStyles}
             role="tooltip"
-            className="pointer-events-none z-100 flex w-72 select-none flex-col border-game border-white bg-black text-white shadow-xl"
+            className="z-100 flex w-72 flex-col"
         >
             <div className="flex items-center gap-2 px-3 pb-2 pt-2.5">
                 <ElementIcon id={skill.element_id} className="h-6 w-6 shrink-0" />
@@ -42,7 +43,7 @@ export function SkillNodeTooltip({ skill, open, floatingRef, floatingStyles }: S
                 <SkillStat label="SN" value={readNumber(skill.costs?.stamina)} />
                 <SkillStat label="XP" value={readNumber(skill.learning_cost?.experience_points)} />
             </dl>
-        </div>,
+        </CommonTooltipCard>,
         document.body,
     );
 }

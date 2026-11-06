@@ -1,4 +1,5 @@
 import CommonImage from './CommonImage';
+import CommonTooltipCard from './CommonTooltipCard';
 
 interface CommonHoverAttackTypeProps {
     typeName: string;
@@ -17,7 +18,7 @@ const CommonHoverAttackType: React.FC<CommonHoverAttackTypeProps> = ({
 
 
     return (
-        <div className={`flex flex-col border-game border-white bg-galatime-dark z-50 pointer-events-none select-none ${className}`}>
+        <CommonTooltipCard className={`flex flex-col z-50 ${className}`}>
             {/* Header: Name and Main Icon */}
             <div className="flex items-center justify-center gap-2 mx-4">
                 <h2 className="text-lg font-bold text-white uppercase tracking-wider">
@@ -29,7 +30,7 @@ const CommonHoverAttackType: React.FC<CommonHoverAttackTypeProps> = ({
                     className="w-5 h-5 items-center justify-center"
                 />
             </div>
-        </div>
+        </CommonTooltipCard>
     );
 };
 

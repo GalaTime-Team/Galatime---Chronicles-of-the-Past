@@ -1,8 +1,9 @@
-import { useEffect, useMemo, useState, type CSSProperties } from 'react';
+import { useEffect, useMemo, useState, type CSSProperties, type Ref } from 'react';
 import { createPortal } from 'react-dom';
 import { autoUpdate, flip, offset, shift, useFloating } from '@floating-ui/react';
 import { ArrowDown, ArrowUp, ElementIcon } from '../../../../assets/GalatimeIcon';
 import CommonHoverElement from '../../../common/CommonHoverElement';
+import CommonTooltipCard from '../../../common/CommonTooltipCard';
 import { fetchAttack } from '../../../../controllers/attackController';
 import type { CombatStats } from '../../../../types/CombatType';
 import type { CombatFormationEntity, CombatStatModifier, CombatWeaponDisplay } from './CombatFormationHUD.types';
@@ -11,7 +12,7 @@ interface CombatFormationTooltipProps {
     id: string;
     entity: CombatFormationEntity;
     showDetails: boolean;
-    floatingRef: (node: HTMLElement | null) => void;
+    floatingRef: Ref<HTMLDivElement>;
     style: CSSProperties;
     onPointerEnter: () => void;
     onPointerLeave: () => void;
@@ -196,14 +197,14 @@ export function CombatFormationTooltip({
     }, [skillIds, showDetails]);
 
     return (
-        <div
+        <CommonTooltipCard
             id={id}
             ref={floatingRef}
             style={style}
             role="tooltip"
             onPointerEnter={onPointerEnter}
             onPointerLeave={onPointerLeave}
-            className="z-100 w-max max-w-[min(15rem,calc(100vw-3rem))] border-game border-white bg-galatime-dark px-2 py-1.5 text-white shadow-[0_8px_26px_rgba(0,0,0,0.6)] sm:max-w-[min(21rem,calc(100vw-1.5rem))] sm:px-3 sm:py-2.5"
+            className="pointer-events-auto z-100 w-max max-w-[min(15rem,calc(100vw-3rem))] px-2 py-1.5 sm:max-w-[min(21rem,calc(100vw-1.5rem))] sm:px-3 sm:py-2.5"
         >
             <div className="flex flex-wrap items-center gap-x-2 gap-y-0.5">
                 <p className="font-pixel text-sm uppercase tracking-[0.08em] sm:text-lg">{entity.name}</p>
@@ -269,6 +270,6 @@ export function CombatFormationTooltip({
                     ))}
                 </div>
             ) : null)}
-        </div>
+        </CommonTooltipCard>
     );
 }

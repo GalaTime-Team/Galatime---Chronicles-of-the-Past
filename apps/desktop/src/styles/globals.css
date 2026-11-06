@@ -385,6 +385,23 @@ img {
  * callers never need the `!` important suffix.
  */
 @layer components {
+  /* CommonTooltip / CommonTooltipCard layered defaults.
+   *
+   * The card is only the frame and surface; internal layout belongs to the
+   * tooltip. `text` is the compact settings-description bubble, while `panel`
+   * carries rich skill, item, weapon and character hovers. Call-site utilities
+   * (width, padding, pointer-events, z-index) override these rules because the
+   * components layer is emitted before Tailwind's utilities layer. */
+  .common-tooltip-card {
+    @apply pointer-events-none select-none border-game border-white bg-galatime-dark text-white shadow-[0_8px_26px_rgba(0,0,0,0.6)];
+  }
+
+  /* Only the compact text layout differs. Colours, border and shadow always
+     come from the card, so every tooltip shares the same surface. */
+  .common-tooltip-text {
+    @apply px-3 py-2 text-center text-xs;
+  }
+
   /* Shared structure: positioned anchor (the click-burst overlay relies on it),
      centring, transitions and disabled state. */
   .common-button {

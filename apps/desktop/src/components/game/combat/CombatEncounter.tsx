@@ -34,6 +34,7 @@ import { chooseCombatAction } from '../../../services/combat/combatAi';
 import { CloseIcon, UNKNOWN_ELEMENT_ICON } from '../../../assets/GalatimeIcon';
 import CommonImage from '../../common/CommonImage';
 import CommonButton from '../../common/CommonButton';
+import CommonTooltipCard from '../../common/CommonTooltipCard';
 import type {
     CombatAction,
     CombatActionImpact,
@@ -185,7 +186,7 @@ function InventoryChoiceButton({
                     style={floatingStyles}
                     className="pointer-events-none z-50"
                 >
-                    <div className="flex max-w-[min(20rem,calc(100vw-2rem))] items-start gap-3 border-game border-white bg-galatime-dark px-3 py-2.5 text-white shadow-[0_8px_26px_rgba(0,0,0,0.6)]">
+                    <CommonTooltipCard className="flex max-w-[min(20rem,calc(100vw-2rem))] items-start gap-3 px-3 py-2.5">
                         <CommonImage
                             src={`/images/items/${entry.itemId}.png`}
                             alt={entry.name}
@@ -205,7 +206,7 @@ function InventoryChoiceButton({
                                 </span>
                             )}
                         </div>
-                    </div>
+                    </CommonTooltipCard>
                 </div>,
                 document.body,
             )}
@@ -289,7 +290,7 @@ function WeaponChoiceButton({
                     style={floatingStyles}
                     className="pointer-events-none z-50"
                 >
-                    <div className="flex max-w-[min(20rem,calc(100vw-2rem))] flex-col gap-y-1 border-game border-white bg-galatime-dark px-3 py-2.5 text-white shadow-[0_8px_26px_rgba(0,0,0,0.6)]">
+                    <CommonTooltipCard className="flex max-w-[min(20rem,calc(100vw-2rem))] flex-col gap-y-1 px-3 py-2.5">
                         <span className="font-pixel text-sm uppercase tracking-[0.08em] sm:text-lg">
                             {entry.name}
                         </span>
@@ -311,7 +312,7 @@ function WeaponChoiceButton({
                                 <span className="text-white">{entry.staminaCost}</span>
                             </div>
                         </div>
-                    </div>
+                    </CommonTooltipCard>
                 </div>,
                 document.body,
             )}

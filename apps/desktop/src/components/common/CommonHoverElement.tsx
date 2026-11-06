@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { getElementsWeaknesses, ElementMultiplierResult, getElementsDamage } from '../../controllers/elementController';
 import { ElementIcon } from '../../assets/GalatimeIcon';
 import { ELEMENT_DAMAGE_MULTIPLIERS } from '../../constants/CombatConstants';
+import CommonTooltipCard from './CommonTooltipCard';
 
 interface CommonHoverElementProps {
     /** Single element ID (backwards-compatible) */
@@ -91,7 +92,7 @@ const CommonHoverElement: React.FC<CommonHoverElementProps> = ({
         : (elementName || resolvedIds.join(' / ') || elementId || '');
 
     return (
-        <div className={`flex flex-col border-game border-white bg-galatime-dark z-50 pointer-events-none select-none ${className}`}>
+        <CommonTooltipCard className={`flex flex-col z-50 ${className}`}>
             {/* Header: Name(s) and Icon(s) */}
             <div className="flex items-center justify-center gap-2 mx-4">
                 <h2 className="text-lg font-bold text-white uppercase tracking-wider">
@@ -134,7 +135,7 @@ const CommonHoverElement: React.FC<CommonHoverElementProps> = ({
                     </div>
                 </div>
             )}
-        </div>
+        </CommonTooltipCard>
     );
 };
 

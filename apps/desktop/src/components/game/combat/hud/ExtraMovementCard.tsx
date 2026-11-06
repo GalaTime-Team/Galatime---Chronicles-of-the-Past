@@ -3,6 +3,7 @@ import { useFloating, autoUpdate, offset, flip, shift } from '@floating-ui/react
 import { createPortal } from 'react-dom';
 import { ArrowRight, ChangeIcon, DefendIcon, InventoryIcon, RestIcon, WeaponIcon, ElementIcon, UNKNOWN_ELEMENT_ICON } from '../../../../assets/GalatimeIcon';
 import CommonImage from '../../../common/CommonImage';
+import CommonTooltipCard from '../../../common/CommonTooltipCard';
 import { useGame } from '../../../../context/GameContext';
 import type { CombatMovementWeapon } from './CombatHUD';
 
@@ -125,7 +126,7 @@ const ExtraMovementCard: React.FC<ExtraMovementCardProps> = ({
                     style={floatingStyles}
                     className="pointer-events-none z-50"
                 >
-                    <div className="flex max-w-[min(20rem,calc(100vw-2rem))] items-start gap-3 border-game border-white bg-galatime-dark px-3 py-2.5 text-white shadow-[0_8px_26px_rgba(0,0,0,0.6)]">
+                    <CommonTooltipCard className="flex max-w-[min(20rem,calc(100vw-2rem))] items-start gap-3 px-3 py-2.5">
                         {weapon && (
                             <CommonImage
                                 src={`/images/weapons/${weapon.id}.png`}
@@ -155,7 +156,7 @@ const ExtraMovementCard: React.FC<ExtraMovementCardProps> = ({
                                 </span>
                             )}
                         </div>
-                    </div>
+                    </CommonTooltipCard>
                 </div>,
                 document.body,
             )}

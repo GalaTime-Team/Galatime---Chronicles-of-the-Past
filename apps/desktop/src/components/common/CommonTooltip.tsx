@@ -1,6 +1,8 @@
 import React, { cloneElement, useId, useState } from 'react';
 import { createPortal } from 'react-dom';
 import { autoUpdate, flip, offset, shift, useFloating, type Rect } from '@floating-ui/react';
+import CommonTooltipCard from './CommonTooltipCard';
+import type { TooltipVariant } from './commonTooltipStyles';
 
 /** Props the anchor element must accept so the tooltip can hook into it. */
 type CommonTooltipAnchorProps = React.HTMLAttributes<HTMLElement> & React.RefAttributes<HTMLElement>;
@@ -32,10 +34,19 @@ interface CommonTooltipProps {
     gap?: number;
     /** Extra classes for the bubble (background, border, padding, ...). */
     tooltipClassName?: string;
-    /** Extra classes for the text inside the bubble. */
+    /** Extra classes for the text wrapper in the default `text` variant. */
     textClassName?: string;
-    /** Maximum width utility class for the bubble. Defaults to `max-w-xs`. */
+    /**
+     * Maximum width utility class for the bubble. Defaults to `max-w-xs` in the
+     * `text` variant and to no cap in the free-form `panel` variant.
+     */
     maxWidthClassName?: string;
+    /**
+     * Visual density. `text` (default) keeps the settings-description bubble;
+     * `panel` removes the forced text wrapper and compact typography so the
+     * content can lay itself out freely.
+     */
+    variant?: TooltipVariant;
     /** Keep the anchor rendered but never open the tooltip. */
     disabled?: boolean;
 }
@@ -76,6 +87,10 @@ const VIEWPORT_PADDING = 8;
  * Because the bubble lives outside the component tree, it is never clipped by
  * scroll containers (`overflow-*`) or by narrow parents (e.g. a switch icon),
  * and it always floats above the rest of the interface.
+ *
+ * The surface palette (background, border, text colour and shadow) comes from
+ * `CommonTooltipCard`; this component only supplies placement and the compact
+ * text layout. Every tooltip therefore looks the same by default.
  */
 const CommonTooltip: React.FC<CommonTooltipProps> = ({
     content,
@@ -84,11 +99,14 @@ const CommonTooltip: React.FC<CommonTooltipProps> = ({
     gap = 10,
     tooltipClassName = '',
     textClassName = '',
-    maxWidthClassName = 'max-w-xs',
+    maxWidthClassName,
+    variant = 'text',
     disabled = false,
 }) => {
     const [isOpen, setIsOpen] = useState(false);
     const tooltipId = useId();
+
+    const resolvedMaxWidthClassName = maxWidthClassName ?? (variant === 'text' ? 'max-w-xs' : '');
 
     const hasContent = content !== undefined && content !== null && content !== '';
     const canOpen = hasContent && !disabled;
@@ -162,15 +180,19 @@ const CommonTooltip: React.FC<CommonTooltipProps> = ({
 
             {isOpen &&
                 createPortal(
-                    <div
+                    <CommonTooltipCard
                         ref={refs.setFloating}
                         id={tooltipId}
                         role="tooltip"
                         style={floatingStyles}
-                        className={`pointer-events-none z-9999 select-none border-game border-white/20 bg-galatime-dark px-3 py-2 text-center text-xs text-galatime-accent shadow-lg shadow-black/50 ${maxWidthClassName} ${tooltipClassName}`}
+                        variant={variant}
+                        maxWidthClassName={resolvedMaxWidthClassName}
+                        className={`z-9999 ${tooltipClassName}`}
                     >
-                        <span className={`block ${textClassName}`}>{content}</span>
-                    </div>,
+                        {variant === 'text'
+                            ? <div className={textClassName}>{content}</div>
+                            : content}
+                    </CommonTooltipCard>,
                     document.body
                 )}
         </>
