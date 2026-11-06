@@ -4,6 +4,7 @@ import { autoUpdate, flip, offset, shift, useFloating } from '@floating-ui/react
 import { useTranslation } from 'react-i18next';
 import { AddIcon, ElementIcon, FitIcon, RemoveIcon, UNKNOWN_ELEMENT_ICON } from '../../../assets/GalatimeIcon';
 import CommonImage from '../../../components/common/CommonImage';
+import CommonButton from '../../../components/common/CommonButton';
 import { fetchAttacks } from '../../../controllers/attackController';
 import { getAllElementsDataService } from '../../../services/elementService';
 import type { ElementData } from '../../../types/ElementDataType';
@@ -129,22 +130,23 @@ export function TestSkillTreePanel() {
                     const isSelected = selectedElementIds.includes(element.id);
                     const isDisabled = !isSelected && selectedElementIds.length >= 2;
                     return (
-                        <button
+                        <CommonButton
                             key={element.id}
-                            type="button"
+                            variant="ghost"
+                            size="sm"
                             aria-pressed={isSelected}
                             disabled={isDisabled}
-                            onClick={() => toggleElement(element.id)}
-                            className={`inline-flex items-center gap-1.5 border px-2 py-1 text-xs transition-colors ${isSelected
-                                ? 'border-white/70 bg-white text-galatime-dark'
+                            onPress={() => toggleElement(element.id)}
+                            className={`disabled:opacity-100 normal-case tracking-normal gap-1.5 px-2 py-1 ${isSelected
+                                ? 'border border-white/70 bg-white text-galatime-dark'
                                 : isDisabled
-                                    ? 'cursor-not-allowed border-white/5 bg-white/2 text-white/25'
-                                    : 'border-white/10 bg-white/3 text-white/60 hover:border-white/30 hover:text-white'
+                                    ? 'cursor-not-allowed border border-white/5 bg-white/2 text-white/25'
+                                    : 'border border-white/10 opacity-60'
                                 }`}
                         >
                             <ElementIcon id={element.id} className="h-5 w-5" />
-                            <span>{element.name}</span>
-                        </button>
+                            <span className="normal-case">{element.name}</span>
+                        </CommonButton>
                     );
                 })}
             </div>
@@ -341,33 +343,30 @@ function SkillTreeMap({ layout }: { layout: SkillTreeLayout }) {
                 className="absolute bottom-3 right-3 z-10 flex items-center gap-1 border border-white/10 bg-black/50 p-1"
                 onPointerDown={(event) => event.stopPropagation()}
             >
-                <button
-                    type="button"
+                <CommonButton
+                    variant="ghost"
+                    icon={<RemoveIcon className="h-4 w-4 opacity-70" />}
+                    className="h-6 w-6"
                     aria-label={t('playground.skillTree.zoomOut')}
                     title={t('playground.skillTree.zoomOut')}
-                    onClick={() => zoomByStep(1 / ZOOM_BUTTON_STEP)}
-                    className="flex h-6 w-6 items-center justify-center text-white/70 transition-colors hover:text-white"
-                >
-                    <RemoveIcon className="h-4! w-4!" />
-                </button>
-                <button
-                    type="button"
+                    onPress={() => zoomByStep(1 / ZOOM_BUTTON_STEP)}
+                />
+                <CommonButton
+                    variant="ghost"
+                    icon={<FitIcon className="h-4 w-4 opacity-70" />}
+                    className="h-6 w-6"
                     aria-label={t('playground.skillTree.fitView')}
                     title={t('playground.skillTree.fitView')}
-                    onClick={fitToView}
-                    className="flex h-6 w-6 items-center justify-center text-white/70 transition-colors hover:text-white"
-                >
-                    <FitIcon className="h-4! w-4!" />
-                </button>
-                <button
-                    type="button"
+                    onPress={fitToView}
+                />
+                <CommonButton
+                    variant="ghost"
+                    icon={<AddIcon className="h-4 w-4 opacity-70" />}
+                    className="h-6 w-6"
                     aria-label={t('playground.skillTree.zoomIn')}
                     title={t('playground.skillTree.zoomIn')}
-                    onClick={() => zoomByStep(ZOOM_BUTTON_STEP)}
-                    className="flex h-6 w-6 items-center justify-center text-white/70 transition-colors hover:text-white"
-                >
-                    <AddIcon className="h-4! w-4!" />
-                </button>
+                    onPress={() => zoomByStep(ZOOM_BUTTON_STEP)}
+                />
             </div>
         </div>
     );

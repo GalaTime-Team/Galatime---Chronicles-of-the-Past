@@ -232,14 +232,14 @@ const CombatStatsBar = forwardRef<CombatStatsBarRef, CombatStatsBarProps>(
         const trackDimensionClass = isHorizontal ? 'w-full h-1.5' : 'w-1.5 h-full';
 
         return (
-            <div className={`w-full ${className} ${!isHorizontal ? 'h-full' : ''}`}>
-                <div className={`flex ${outerFlexClass} ${!isHorizontal ? 'flex-col h-full' : 'flex-row'} justify-center items-center`}>
+            <div className={`w-full ${className} ${isHorizontal ? 'h-full' : ''}`}>
+                <div className={`flex ${outerFlexClass} ${isHorizontal ? 'flex-col h-full' : 'flex-row'} justify-center items-center`}>
                     {showTitle && (
                         <div className={`text-white/40 text-sm whitespace-nowrap ${titleClass}`}>
                             {title}
                         </div>
                     )}
-                    <div className={`flex-1 relative ${!isHorizontal ? 'w-full h-full' : ''} flex justify-center items-center`}>
+                    <div className={`flex-1 relative ${isHorizontal ? 'w-full h-full' : ''} flex justify-center items-center`}>
                         <div className={`${trackDimensionClass} relative overflow-hidden ${trackClass}`}>
                             {/* Current health fill */}
                             <div className={`absolute ${healthClass}`} style={healthStyle} />

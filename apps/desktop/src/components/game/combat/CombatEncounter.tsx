@@ -33,6 +33,7 @@ import { previewCombatAttack } from '../../../controllers/damageController';
 import { chooseCombatAction } from '../../../services/combat/combatAi';
 import { CloseIcon, UNKNOWN_ELEMENT_ICON } from '../../../assets/GalatimeIcon';
 import CommonImage from '../../common/CommonImage';
+import CommonButton from '../../common/CommonButton';
 import type {
     CombatAction,
     CombatActionImpact,
@@ -774,14 +775,13 @@ export function CombatEncounter({
                         whether the bag holds one potion or a page of them. */}
                     <div className="absolute inset-x-2 bottom-2 z-30 flex h-[55%] flex-col border-2 border-white/70 bg-galatime-dark p-3 backdrop-blur-sm">
                         <div className="mb-2 flex shrink-0 items-center justify-end gap-2">
-                            <button
-                                type="button"
+                            <CommonButton
+                                variant="ghost"
+                                icon={<CloseIcon className="h-5 w-5 opacity-50" />}
+                                className="p-1"
                                 aria-label={t('combat.inventoryCancel')}
-                                onClick={() => setInventoryChoices(null)}
-                                className="p-1 text-white/50 transition-colors hover:text-white"
-                            >
-                                <CloseIcon className="h-5 w-5" />
-                            </button>
+                                onPress={() => setInventoryChoices(null)}
+                            />
                         </div>
 
                         <div className="flex min-h-0 flex-1 gap-2">

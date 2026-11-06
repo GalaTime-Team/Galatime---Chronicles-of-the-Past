@@ -98,7 +98,7 @@ const ExtraMovementCard: React.FC<ExtraMovementCardProps> = ({
             title={disabled ? disabledReason : undefined}
             className={`relative w-auto flex items-center group transition-[opacity,filter] duration-200 ${disabled ? 'cursor-not-allowed opacity-25 grayscale' : dimmed ? 'cursor-pointer opacity-40 grayscale' : 'cursor-pointer'} ${className}`}
         >
-            <div className={`flex flex-row w-full border-2 overflow-hidden items-center p-1 transition-colors ${aboutToBreak && !disabled ? 'border-galatime-error bg-galatime-dark text-galatime-error shadow-[0_0_14px_rgba(255,80,80,0.55)] animate-pulse motion-reduce:animate-none' : selected ? 'border-white bg-galatime-darkHover text-white shadow-[0_0_14px_rgba(255,255,255,0.45)]' : disabled ? 'border-white/30 bg-black/70 text-white/60' : 'border-white/70 bg-galatime-dark text-white/70 group-hover:text-white hover:bg-galatime-darkHover group-hover:border-white'}`}>
+            <div className={`flex flex-row w-full border-2 overflow-hidden items-center p-1 transition-colors ${aboutToBreak && disabled ? 'border-galatime-error bg-galatime-dark text-galatime-error shadow-[0_0_14px_rgba(255,80,80,0.55)] animate-pulse motion-reduce:animate-none' : selected ? 'border-white bg-galatime-darkHover text-white shadow-[0_0_14px_rgba(255,255,255,0.45)]' : disabled ? 'border-white/30 bg-black/70 text-white/60' : 'border-white/70 bg-galatime-dark text-white/70 group-hover:text-white hover:bg-galatime-darkHover group-hover:border-white'}`}>
 
                 <div className="shrink-0 flex items-center justify-center mr-1">
                     <IconComponent className="w-3 h-3" />

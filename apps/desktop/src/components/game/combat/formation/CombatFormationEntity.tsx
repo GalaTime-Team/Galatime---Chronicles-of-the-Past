@@ -419,7 +419,7 @@ export function CombatFormationEntity({
                 <div style={lungeStyle} className="relative">
                     <div style={hitStyle} className="relative">
                         <div
-                            className={`pointer-events-none relative flex flex-col items-center transition-[transform,opacity,filter] duration-200 motion-reduce:transition-none motion-reduce:translate-y-0 motion-reduce:scale-100 ${isDefeated ? 'motion-reduce:translate-y-0' : isFocused ? `-translate-y-1 scale-110 ${isPinned ? 'drop-shadow-[0_6px_14px_rgba(255,255,255,0.75)]' : 'drop-shadow-[0_5px_9px_rgba(255,255,255,0.2)]'}` : hasFocus ? 'opacity-40 grayscale' : 'group-hover:-translate-y-0.5 motion-reduce:group-hover:translate-y-0'} ${isRearLine && !isFocused ? 'brightness-70 saturate-75' : ''}`}
+                            className={`pointer-events-none relative flex flex-col items-center transition-[transform,opacity,filter] duration-200 motion-reduce:transition-none motion-reduce:translate-y-0 motion-reduce:scale-100 ${isDefeated ? 'motion-reduce:translate-y-0' : isFocused ? `-translate-y-1 scale-110 ${isPinned ? 'drop-shadow-[0_6px_14px_rgba(255,255,255,0.75)]' : 'drop-shadow-[0_5px_9px_rgba(255,255,255,0.2)]'}` : hasFocus ? 'opacity-40 grayscale' : 'group-hover:-translate-y-0.5 motion-reduce:group-hover:translate-y-0'} ${isRearLine && isFocused ? 'brightness-70 saturate-75' : ''}`}
                         >
                             {/* The patch of ground the unit stands on. It rides the same
                                 layer that scales and dims the sprite, so a deeper line

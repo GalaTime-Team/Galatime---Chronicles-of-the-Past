@@ -92,22 +92,19 @@ function RequirementEditor({
 
                 <div className="mt-1 flex flex-wrap gap-1">
                     {OBJECTIVE_STATUSES.map((status) => (
-                        <button
+                        <CommonButton
                             key={status}
-                            type="button"
+                            variant="ghost"
+                            size="sm"
                             aria-pressed={value === status}
-                            onMouseEnter={() => void playSfx('hover')}
-                            onClick={() => {
-                                void playSfx('click');
-                                onChange(status);
-                            }}
-                            className={`px-2 py-1 text-xs uppercase tracking-[0.15em] transition-colors duration-300 ease-out ${value === status
+                            onPress={() => onChange(status)}
+                            className={`px-2 py-1 border-0 tracking-[0.15em] ${value === status
                                 ? 'bg-white font-semibold text-galatime-dark'
-                                : 'text-white/60 hover:bg-white/10 hover:text-white'
+                                : 'opacity-60'
                                 }`}
                         >
                             {status}
-                        </button>
+                        </CommonButton>
                     ))}
                 </div>
 

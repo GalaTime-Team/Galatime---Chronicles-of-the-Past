@@ -7,10 +7,10 @@ import type { PublicAttack } from '../../../../types/AttackDataType';
 import { fetchResolvedAttack } from '../../../../controllers/attackController';
 import { ChevronLeft, ChevronRight, ElementIcon, UnknownIcon } from '../../../../assets/GalatimeIcon';
 import CommonHoverElement from '../../../../components/common/CommonHoverElement';
+import CommonButton from '../../../../components/common/CommonButton';
 import CommonImage from '../../../../components/common/CommonImage';
 import StatBar from '../../../../components/common/StatBar';
 import { playSfx } from '../../../../controllers/audioController';
-import { BUTTON_SFX_ID } from '../../../../constants/AudioConstants';
 import { useGame } from '../../../../context/GameContext';
 import { getEntityImages } from '../../../../services/entityImageService';
 import type { EntityItem } from '../types';
@@ -359,18 +359,16 @@ function GalleryChevron({ direction, disabled, onClick }: {
     const Chevron = direction === 'left' ? ChevronLeft : ChevronRight;
 
     return (
-        <button
-            type="button"
-            onClick={onClick}
-            onMouseEnter={() => playSfx(BUTTON_SFX_ID)}
+        <CommonButton
+            variant="ghost"
+            icon={<Chevron className="h-[0.80em] w-auto block" />}
             disabled={disabled}
             aria-label={direction === 'left' ? 'Previous image' : 'Next image'}
-            className={`shrink-0 transition-colors duration-200 ${disabled
-                ? 'cursor-not-allowed text-white/15'
-                : 'cursor-pointer text-white/70 hover:text-white'
+            className={`shrink-0 ${disabled
+                ? 'cursor-not-allowed disabled:bg-transparent disabled:text-white/40'
+                : 'opacity-70'
                 }`}
-        >
-            <Chevron className="h-[0.80em] w-auto block" />
-        </button>
+            onPress={onClick}
+        />
     );
 }

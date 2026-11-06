@@ -508,14 +508,13 @@ export function CommonPopup({
                                         </h2>
                                     )}
                                     {showCloseButton && (
-                                        <button
-                                            type="button"
-                                            className="ml-auto flex h-8 w-8 shrink-0 items-center justify-center text-white/55 transition-colors duration-200 hover:text-white"
+                                        <CommonButton
+                                            variant="ghost"
+                                            icon={<CloseIcon className="h-3 w-3 opacity-55" />}
+                                            className="ml-auto h-8 w-8 shrink-0"
                                             aria-label={t('close')}
-                                            onClick={() => onDismiss?.()}
-                                        >
-                                            <CloseIcon className="h-3! w-3!" />
-                                        </button>
+                                            onPress={() => onDismiss?.()}
+                                        />
                                     )}
                                 </div>
                             )}

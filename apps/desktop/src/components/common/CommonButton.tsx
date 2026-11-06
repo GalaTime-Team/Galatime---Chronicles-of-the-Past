@@ -2,18 +2,14 @@ import React, { useEffect, useId, useMemo, useRef } from 'react';
 import { MoveDirection, OutMode, type Container, type ISourceOptions } from '@tsparticles/engine';
 import { createParticleLayer } from '../../utils/particlesEngine';
 import { playSfx } from '../../controllers/audioController';
-
-type ButtonVariant = 'primary' | 'danger' | 'success' | 'outline' | 'ghost' | 'warning';
-type ButtonSize = 'sm' | 'md' | 'lg';
-/** Where the icon is rendered relative to the label. */
-type ButtonIconPosition = 'left' | 'right';
+import { PARTICLE_COLORS, resolveButtonClasses, type ButtonIconPosition, type ButtonSize, type ButtonVariant } from './commonButtonStyles';
 
 interface CommonButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
     variant?: ButtonVariant;
     size?: ButtonSize;
     onPress?: () => void;
     className?: string;
-    /** Optional icon rendered alongside the label. */
+    /** Optional icon rendered alongside the label. Renders icon-only when there is no label at all. */
     icon?: React.ReactNode;
     /** Icon placement. Default: `left`. */
     iconPosition?: ButtonIconPosition;
@@ -26,21 +22,6 @@ interface CommonButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement
 
 /** How many square particles each click spawns. */
 const PARTICLE_COUNT = 24;
-
-/**
- * Burst colour per variant: the lighter tone of the button's own fill, so the squares
- * stay readable on top of it. `outline`/`ghost` have no fill and turn white on hover,
- * so they use the primary tone — the only choice that reads on both the dark page and
- * the white hover background.
- */
-const PARTICLE_COLORS: Record<ButtonVariant, string> = {
-    primary: '#C3C6F2',
-    danger: '#E8556B',
-    success: '#4FBF9F',
-    warning: '#FFE580',
-    outline: '#6D72CA',
-    ghost: '#6D72CA',
-};
 
 const CommonButton: React.FC<CommonButtonProps> = ({
     variant = 'primary',
@@ -197,25 +178,6 @@ const CommonButton: React.FC<CommonButtonProps> = ({
     const handleMouseEnter = () => {
         playSfx('hover');
     };
-    // Base styles — color-based transitions on hover/active
-    const baseStyles = "relative inline-flex items-center justify-center gap-2 whitespace-nowrap uppercase tracking-widest transition-colors duration-300 ease-out disabled:opacity-50 disabled:cursor-not-allowed select-none rounded-none border-4";
-
-    // Variant styles — colors transition with hover for smoothness
-    const variants: Record<ButtonVariant, string> = {
-        primary: "bg-galatime-primary border-galatime-primary text-white hover:bg-galatime-primaryHover hover:border-galatime-primaryHover",
-        outline: "bg-transparent border-white/30 text-white/70 hover:bg-white hover:border-white hover:text-galatime-dark",
-        danger: "bg-galatime-error border-galatime-error text-white hover:bg-galatime-errorHover hover:border-galatime-errorHover",
-        success: "bg-galatime-success border-galatime-success text-white hover:bg-galatime-successHover hover:border-galatime-successHover",
-        warning: "bg-galatime-warning border-galatime-warning text-galatime-dark hover:bg-galatime-warningHover hover:border-galatime-warningHover",
-        ghost: "bg-transparent border-transparent text-white/60 hover:bg-white hover:border-white hover:text-galatime-dark",
-    };
-
-    // Size styles — tighter vertical padding
-    const sizes: Record<ButtonSize, string> = {
-        sm: "px-2 py-0 text-xs",
-        md: "px-3 py-0.5 text-sm",
-        lg: "px-5 py-1 text-base",
-    };
 
     return (
         <button
@@ -224,7 +186,7 @@ const CommonButton: React.FC<CommonButtonProps> = ({
             onPointerDown={handlePointerDown}
             onMouseEnter={handleMouseEnter}
             disabled={disabled}
-            className={`${baseStyles} ${variants[variant]} ${sizes[size]} ${className}`}
+            className={resolveButtonClasses({ variant, size, className, icon, children })}
             {...props}
         >
             {particles && (

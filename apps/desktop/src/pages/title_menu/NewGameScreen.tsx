@@ -142,8 +142,8 @@ export function NewGameScreen({ onBack }: { onBack: () => void }) {
                                                 aria-label={t('newGame.edit')}
                                                 title={t('newGame.edit')}
                                                 onPress={() => undefined}
-                                                className="h-7! w-7! border-2! p-0! text-white/55 hover:text-galatime-dark"
-                                                icon={<EditIcon className="h-3.5! w-3.5!" />}
+                                                className="h-7 w-7 border-2 p-0"
+                                                icon={<EditIcon className="h-3.5 w-3.5 opacity-55" />}
                                             />
                                             <CommonButton
                                                 variant="ghost"
@@ -151,21 +151,21 @@ export function NewGameScreen({ onBack }: { onBack: () => void }) {
                                                 aria-label={t('newGame.remove')}
                                                 title={t('newGame.remove')}
                                                 onPress={() => setDeleteSlot(slot)}
-                                                className="h-7! w-7! border-2! p-0! text-galatime-error hover:text-galatime-dark"
-                                                icon={<TrashIcon className="h-3.5! w-3.5!" />}
+                                                className="h-7 w-7 border-2 p-0"
+                                                icon={<TrashIcon className="h-3.5 w-3.5 text-galatime-error" />}
                                             />
                                         </div>
                                     </>
                                 ) : (
-                                    <button
-                                        type="button"
+                                    <CommonButton
+                                        variant="ghost"
+                                        icon={<AddIcon className="h-7 w-7 text-galatime-primary" />}
+                                        className="group min-h-16 w-full flex-1 flex-row gap-3 border-0 bg-transparent"
                                         aria-label={t('newGame.create', { slot })}
-                                        onClick={() => void makeSave(slot)}
-                                        className="group flex min-h-16 flex-1 flex-row items-center justify-center gap-3 text-white/45 transition-colors duration-300 hover:text-white"
+                                        onPress={() => void makeSave(slot)}
                                     >
-                                        <AddIcon className="h-7! w-7! text-galatime-primary transition-colors duration-300 group-hover:text-white" />
                                         <span className="text-xs uppercase tracking-[0.22em]">{t('newGame.emptySlot', { slot })}</span>
-                                    </button>
+                                    </CommonButton>
                                 )}
                             </motion.article>
                         ))}

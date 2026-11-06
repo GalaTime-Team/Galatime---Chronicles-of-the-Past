@@ -1,6 +1,7 @@
 import { useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import CommonInput from '../../../../components/common/CommonInput';
+import CommonButton from '../../../../components/common/CommonButton';
 import type { CharacterData, MobData } from '../../../../types/EntityDataType';
 import type { EntityItem } from '../types';
 
@@ -53,16 +54,18 @@ export function TestEntitiesSidebar({ characters, mobs, selected, onSelect }: Te
                 <h3 className="mb-2 text-xs uppercase tracking-[0.15em] text-white/40">{t('playground.entities.characters')}</h3>
                 <div className="flex flex-col gap-1">
                     {filteredCharacters.map((c) => (
-                        <button
+                        <CommonButton
                             key={c.id}
+                            variant="ghost"
+                            size="md"
                             onClick={() => onSelect({ id: c.id, name: `${c.name} ${c.surname}`, type: 'character', data: c })}
-                            className={`px-3 py-2 text-left text-sm transition-colors ${selected?.id === c.id && selected?.type === 'character'
+                            className={`justify-start px-3 py-2 normal-case tracking-normal text-left border-0 ${selected?.id === c.id && selected?.type === 'character'
                                     ? 'bg-white font-semibold text-galatime-dark'
-                                    : 'text-white/70 hover:bg-white/10 hover:text-white'
+                                    : 'opacity-70'
                                 }`}
                         >
                             {c.name} {c.surname}
-                        </button>
+                        </CommonButton>
                     ))}
                 </div>
             </div>
@@ -70,16 +73,18 @@ export function TestEntitiesSidebar({ characters, mobs, selected, onSelect }: Te
                 <h3 className="mb-2 text-xs uppercase tracking-[0.15em] text-white/40">{t('playground.entities.mobs')}</h3>
                 <div className="flex flex-col gap-1">
                     {filteredMobs.map((m) => (
-                        <button
+                        <CommonButton
                             key={m.id}
+                            variant="ghost"
+                            size="md"
                             onClick={() => onSelect({ id: m.id, name: m.name, type: 'mob', data: m })}
-                            className={`px-3 py-2 text-left text-sm transition-colors ${selected?.id === m.id && selected?.type === 'mob'
+                            className={`justify-start px-3 py-2 normal-case tracking-normal text-left border-0 ${selected?.id === m.id && selected?.type === 'mob'
                                     ? 'bg-white font-semibold text-galatime-dark'
-                                    : 'text-white/70 hover:bg-white/10 hover:text-white'
+                                    : 'opacity-70'
                                 }`}
                         >
                             {m.name}
-                        </button>
+                        </CommonButton>
                     ))}
                 </div>
             </div>

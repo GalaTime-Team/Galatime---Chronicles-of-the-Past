@@ -10,3 +10,5 @@ apps/desktop/src-tauri/Cargo.lock
 .env.*
 __tests__/
 docs/
+/.opencode
+/.superpowers

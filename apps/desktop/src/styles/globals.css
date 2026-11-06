@@ -364,6 +364,65 @@ img {
   image-rendering: var(--image-rendering);
 }
 
+/*
+ * CommonButton layered defaults.
+ *
+ * These rules live in the `components` cascade layer, which Tailwind always emits
+ * BEFORE the `utilities` layer, so any utility a call site passes in `className`
+ * (positioning, padding, tracking, hover colours, …) wins deterministically —
+ * callers never need the `!` important suffix.
+ */
+@layer components {
+  /* Shared structure: positioned anchor (the click-burst overlay relies on it),
+     centring, transitions and disabled state. */
+  .common-button {
+    @apply relative inline-flex items-center justify-center whitespace-nowrap transition-colors duration-300 ease-out select-none rounded-none disabled:opacity-50 disabled:cursor-not-allowed;
+  }
+
+  /* Label-bearing content only (text | icon+text). Icon-only buttons skip this
+     class and stay a plain centred square. */
+  .common-button-label {
+    @apply gap-2 uppercase tracking-widest border-4;
+  }
+
+  .common-button-primary {
+    @apply bg-galatime-primary border-galatime-primary text-white hover:bg-galatime-primaryHover hover:border-galatime-primaryHover;
+  }
+
+  .common-button-outline {
+    @apply bg-transparent border-white/30 text-white/70 hover:bg-white hover:border-white hover:text-galatime-dark;
+  }
+
+  .common-button-danger {
+    @apply bg-galatime-error border-galatime-error text-white hover:bg-galatime-errorHover hover:border-galatime-errorHover;
+  }
+
+  .common-button-success {
+    @apply bg-galatime-success border-galatime-success text-white hover:bg-galatime-successHover hover:border-galatime-successHover;
+  }
+
+  .common-button-warning {
+    @apply bg-galatime-warning border-galatime-warning text-galatime-dark hover:bg-galatime-warningHover hover:border-galatime-warningHover;
+  }
+
+  .common-button-ghost {
+    @apply bg-transparent border-transparent text-white/60 hover:bg-white hover:border-transparent hover:text-galatime-dark;
+  }
+
+  /* Size only applies around a label; icon-only buttons are sized by the call site. */
+  .common-button-sm {
+    @apply px-2 py-0 text-xs;
+  }
+
+  .common-button-md {
+    @apply px-3 py-0.5 text-sm;
+  }
+
+  .common-button-lg {
+    @apply px-5 py-1 text-base;
+  }
+}
+
 /* Click-burst particle overlays sit on top of buttons; they must never swallow
    the button's own clicks. `!important` also beats the engine's inline style. */
 .common-button-particles canvas {

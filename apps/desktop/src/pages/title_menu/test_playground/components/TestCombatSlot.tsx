@@ -1,7 +1,7 @@
 import { useTranslation } from 'react-i18next';
 import { AddIcon, CloseIcon, ControlIcon, InventoryIcon } from '../../../../assets/GalatimeIcon';
 import CommonImage from '../../../../components/common/CommonImage';
-import { playSfx } from '../../../../controllers/audioController';
+import CommonButton from '../../../../components/common/CommonButton';
 import type { CatalogueEntity, SetupSlot } from '../combatSetupModel';
 
 const UNKNOWN_SPRITE = '/images/ui/misc/unknown.png';
@@ -41,19 +41,14 @@ export function TestCombatSlot({
 
     if (!slot) {
         return (
-            <button
-                type="button"
-                aria-label={`${label}: ${t('playground.combat.slotEmpty')}`}
+            <CommonButton
+                variant="ghost"
+                icon={<AddIcon className="h-4 w-4 opacity-40" />}
+                className="h-20 w-20 shrink-0 border-2 border-dashed border-white/15"
                 title={t('playground.combat.slotEmpty')}
-                onMouseEnter={() => playSfx('hover')}
-                onClick={() => {
-                    playSfx('click');
-                    onAdd();
-                }}
-                className="flex h-20 w-20 shrink-0 items-center justify-center border-2 border-dashed border-white/15 text-white/30 transition-colors duration-300 ease-out hover:border-white/40 hover:text-white/75"
-            >
-                <AddIcon className="h-4 w-4" />
-            </button>
+                aria-label={`${label}: ${t('playground.combat.slotEmpty')}`}
+                onPress={onAdd}
+            />
         );
     }
 
@@ -68,19 +63,14 @@ export function TestCombatSlot({
                 : 'border-white/20 bg-white/5'
                 }`}
         >
-            <button
-                type="button"
-                aria-label={`${label}: ${t('playground.combat.remove')}`}
+            <CommonButton
+                variant="ghost"
+                icon={<CloseIcon className="h-3 w-3" />}
+                className="absolute -right-1.5 -top-1.5 h-5 w-5"
                 title={t('playground.combat.remove')}
-                onMouseEnter={() => playSfx('hover')}
-                onClick={() => {
-                    playSfx('click');
-                    onRemove();
-                }}
-                className="absolute -right-1.5 -top-1.5 flex h-5 w-5 items-center justify-center bg-galatime-dark text-white/70 opacity-0 transition-opacity duration-300 ease-out hover:text-white focus-visible:opacity-100 group-hover:opacity-100"
-            >
-                <CloseIcon className="h-3 w-3" />
-            </button>
+                aria-label={`${label}: ${t('playground.combat.remove')}`}
+                onPress={onRemove}
+            />
 
             <CommonImage
                 src={entity?.spriteUrl ?? UNKNOWN_SPRITE}
@@ -94,47 +84,37 @@ export function TestCombatSlot({
             </p>
 
             <div className="flex items-center gap-1">
-                <button
-                    type="button"
-                    aria-pressed={slot.controlled}
-                    aria-label={`${label}: ${t(slot.controlled ? 'playground.combat.controlOn' : 'playground.combat.controlOff')}`}
-                    title={t(slot.controlled ? 'playground.combat.controlOn' : 'playground.combat.controlOff')}
-                    onMouseEnter={() => playSfx('hover')}
-                    onClick={() => {
-                        playSfx('click');
-                        onToggleControl();
-                    }}
-                    className={`flex h-5 w-5 items-center justify-center transition-colors duration-300 ease-out ${slot.controlled
+                <CommonButton
+                    variant="ghost"
+                    icon={<ControlIcon className="h-3 w-3" />}
+                    className={`h-5 w-5 ${slot.controlled
                         ? 'bg-white text-galatime-dark'
-                        : 'text-white/40 hover:bg-white/15 hover:text-white'
+                        : 'opacity-50'
                         }`}
-                >
-                    <ControlIcon className="h-3 w-3" />
-                </button>
+                    aria-pressed={slot.controlled}
+                    title={t(slot.controlled ? 'playground.combat.controlOn' : 'playground.combat.controlOff')}
+                    aria-label={`${label}: ${t(slot.controlled ? 'playground.combat.controlOn' : 'playground.combat.controlOff')}`}
+                    onPress={onToggleControl}
+                />
 
-                <button
-                    type="button"
-                    aria-label={`${label}: ${t('playground.combat.inventoryOpen')}`}
+                <CommonButton
+                    variant="ghost"
+                    icon={<>
+                        <InventoryIcon className="h-3 w-3" />
+                        {carriedKinds > 0 && (
+                            <span className="absolute -right-1 -top-1 flex h-3 min-w-3 items-center justify-center bg-galatime-accent px-0.5 font-pixel text-[0.5rem] text-galatime-dark">
+                                {carriedKinds}
+                            </span>
+                        )}
+                    </>}
+                    className={`relative h-5 w-5 ${carriedKinds > 0
+                            ? 'bg-white text-galatime-dark'
+                            : 'opacity-50'
+                        }`}
                     title={t('playground.combat.inventoryOpen')}
-                    onMouseEnter={() => playSfx('hover')}
-                    onClick={() => {
-                        playSfx('click');
-                        onOpenInventory();
-                    }}
-                    className={`relative flex h-5 w-5 items-center justify-center transition-colors duration-300 ease-out ${
-                        carriedKinds > 0
-                            ? 'text-galatime-accent hover:bg-white/15'
-                            : 'text-white/40 hover:bg-white/15 hover:text-white'
-                    }`}
-                >
-                    <InventoryIcon className="h-3 w-3" />
-
-                    {carriedKinds > 0 && (
-                        <span className="absolute -right-1 -top-1 flex h-3 min-w-3 items-center justify-center bg-galatime-accent px-0.5 font-pixel text-[0.5rem] text-galatime-dark">
-                            {carriedKinds}
-                        </span>
-                    )}
-                </button>
+                    aria-label={`${label}: ${t('playground.combat.inventoryOpen')}`}
+                    onPress={onOpenInventory}
+                />
             </div>
         </div>
     );

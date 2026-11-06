@@ -1,6 +1,7 @@
 import { useEffect, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import CommonImage from '../../../../components/common/CommonImage';
+import CommonButton from '../../../../components/common/CommonButton';
 import CommonInput from '../../../../components/common/CommonInput';
 import CommonPopup from '../../../../components/common/CommonPopup';
 import { playSfx } from '../../../../controllers/audioController';
@@ -72,11 +73,10 @@ export function TestCombatPickerPopup({ open, catalogue, onDismiss, onPick }: Te
             <ul className="mt-2 max-h-64 overflow-y-auto border-t border-white/10">
                 {suggestions.map((entry) => (
                     <li key={`${entry.entityType}:${entry.entityId}`}>
-                        <button
-                            type="button"
-                            onMouseEnter={() => playSfx('hover')}
-                            onClick={() => pick(entry)}
-                            className="flex w-full items-center gap-3 px-2 py-1.5 text-left transition-colors duration-200 ease-out hover:bg-white/10"
+                        <CommonButton
+                            variant="ghost"
+                            onPress={() => pick(entry)}
+                            className="w-full justify-start gap-3 tracking-normal px-2 py-1.5 text-left border-0"
                         >
                             <CommonImage
                                 src={entry.spriteUrl ?? UNKNOWN_SPRITE}
@@ -84,12 +84,12 @@ export function TestCombatPickerPopup({ open, catalogue, onDismiss, onPick }: Te
                                 alt=""
                                 className="h-7 w-7 shrink-0"
                             />
-                            <span className="min-w-0 flex-1 truncate text-sm text-white/85">{entry.name}</span>
-                            <span className="shrink-0 font-pixel text-xs text-white/35">{entry.entityId}</span>
-                            <span className="shrink-0 border border-white/15 px-1.5 py-0.5 text-[0.6rem] uppercase tracking-[0.12em] text-white/45">
+                            <span className="min-w-0 flex-1 truncate normal-case text-sm opacity-90">{entry.name}</span>
+                            <span className="shrink-0 font-pixel text-xs opacity-50 normal-case">{entry.entityId}</span>
+                            <span className="shrink-0 border border-white/15 px-1.5 py-0.5 text-[0.6rem] uppercase tracking-[0.12em] opacity-70">
                                 {entry.entityType}
                             </span>
-                        </button>
+                        </CommonButton>
                     </li>
                 ))}
 

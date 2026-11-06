@@ -7,6 +7,7 @@ import {
     type ControlId,
 } from '../../../constants/ControlConstants';
 import { useControls, useGamepadListener } from '../../../context/GameContext';
+import CommonButton from '../../../components/common/CommonButton';
 import { formatControlKey, isInputShared, normalizeControlKeys } from '../../../utils/controlUtils';
 import { getGamepadButtonLabel } from '../../../utils/gamepadUtils';
 import type { SettingsPanelProps } from './types';
@@ -14,13 +15,13 @@ import type { SettingsPanelProps } from './types';
 /** Device a pending rebinding is waiting for. */
 type RebindingDevice = 'keyboard' | 'gamepad';
 
-/** Badge shaped like a key cap; the `group-hover` tone comes from the button wrapping it. */
+/** Badge shaped like a key cap. */
 function KeyCap({ variant = 'default', children }: { variant?: 'default' | 'listening' | 'empty' | 'conflict'; children: ReactNode }) {
     const variantStyles = {
-        default: 'border-2 border-galatime-primary/50 text-galatime-accent group-hover:border-galatime-accent',
+        default: 'border-2 border-galatime-primary/50 text-galatime-accent',
         listening: 'animate-pulse border-2 border-galatime-accent bg-galatime-primary/20 text-galatime-accent',
         empty: 'border-2 border-dashed border-white/30 text-white/40',
-        conflict: 'border-2 border-galatime-error/70 text-galatime-error group-hover:border-galatime-error',
+        conflict: 'border-2 border-galatime-error/70 text-galatime-error',
     } as const;
 
     return <kbd className={`min-w-16 px-3 py-1 text-center ${variantStyles[variant]}`}>{children}</kbd>;
@@ -107,23 +108,24 @@ export function SettingsControlsPanel({ settings }: SettingsPanelProps) {
 
                         <span className="flex flex-wrap items-center justify-end gap-x-4 gap-y-2">
                             {isCustom && (
-                                <button
-                                    type="button"
-                                    onClick={() => setControlBinding(definition.id, defaults)}
-                                    className="cursor-pointer text-xs uppercase tracking-widest text-white/40 transition-colors hover:text-white"
+                                <CommonButton
+                                    variant="ghost"
+                                    size="sm"
+                                    className="px-0 border-0 opacity-40"
+                                    onPress={() => setControlBinding(definition.id, defaults)}
                                 >
                                     {t('settings.controls.reset')}
-                                </button>
+                                </CommonButton>
                             )}
 
                             {gamepad ? (
                                 /* Gamepad connected — show only the controller binding. */
                                 <span className="flex items-center gap-2">
-                                    <button
-                                        type="button"
-                                        onClick={() => toggle('gamepad')}
+                                    <CommonButton
+                                        variant="ghost"
+                                        onPress={() => toggle('gamepad')}
                                         aria-label={t('settings.controls.changeButton', { label: t(definition.label) })}
-                                        className="group flex cursor-pointer items-center gap-2"
+                                        className="group gap-2 px-0 border-0 normal-case tracking-normal"
                                     >
                                         {isListening('gamepad') ? (
                                             <KeyCap variant="listening">{t('settings.controls.listeningGamepad')}</KeyCap>
@@ -139,16 +141,16 @@ export function SettingsControlsPanel({ settings }: SettingsPanelProps) {
                                         ) : (
                                             <KeyCap variant="empty">{t('settings.controls.unbound')}</KeyCap>
                                         )}
-                                    </button>
+                                    </CommonButton>
                                 </span>
                             ) : (
                                 /* No gamepad — show only the keyboard binding. */
                                 <span className="flex items-center gap-2">
-                                    <button
-                                        type="button"
-                                        onClick={() => toggle('keyboard')}
+                                    <CommonButton
+                                        variant="ghost"
+                                        onPress={() => toggle('keyboard')}
                                         aria-label={t('settings.controls.changeKey', { label: t(definition.label) })}
-                                        className="group flex cursor-pointer items-center gap-2"
+                                        className="group gap-2 px-0 border-0 normal-case tracking-normal"
                                     >
                                         {isListening('keyboard') ? (
                                             <KeyCap variant="listening">{t('settings.controls.listening')}</KeyCap>
@@ -164,7 +166,7 @@ export function SettingsControlsPanel({ settings }: SettingsPanelProps) {
                                         ) : (
                                             <KeyCap variant="empty">{t('settings.controls.unbound')}</KeyCap>
                                         )}
-                                    </button>
+                                    </CommonButton>
                                 </span>
                             )}
                         </span>

@@ -1,4 +1,4 @@
-import { playSfx } from '../../../controllers/audioController';
+import CommonButton from '../../../components/common/CommonButton';
 
 export type SettingsTab = 'game' | 'controls' | 'display' | 'sound' | 'language';
 
@@ -16,23 +16,23 @@ export function SettingsSidebar({ activeTab, onChange, labels }: SettingsSidebar
             {tabs.map((tab) => {
                 const isActive = activeTab === tab;
 
+                // Active tab keeps the established look (white fill, dark text). Resting
+                // tabs express their tone through opacity so the standard ghost hover
+                // (white fill, dark text) applies, like every other button in the app.
                 return (
-                    <button
-                        type="button"
+                    <CommonButton
                         key={tab}
-                        onMouseEnter={() => playSfx('hover')}
-                        onClick={() => {
-                            playSfx('click');
-                            onChange(tab);
-                        }}
+                        variant="ghost"
+                        size="sm"
+                        onPress={() => onChange(tab)}
                         aria-current={isActive ? 'page' : undefined}
-                        className={`whitespace-nowrap px-3 py-1.5 text-left text-xs uppercase tracking-[0.15em] transition-colors duration-300 ease-out md:w-full ${isActive
+                        className={`justify-start w-full px-3 py-1.5 tracking-[0.15em] border-0 ${isActive
                                 ? 'bg-white font-semibold text-galatime-dark'
-                                : 'text-white/60 hover:bg-white/10 hover:text-white'
+                                : 'opacity-60'
                             }`}
                     >
                         {labels[tab]}
-                    </button>
+                    </CommonButton>
                 );
             })}
         </nav>

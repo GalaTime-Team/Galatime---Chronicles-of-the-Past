@@ -1,5 +1,6 @@
 import { useEffect, useMemo, useRef } from 'react';
 import { useTranslation } from 'react-i18next';
+import CommonButton from '../../../../components/common/CommonButton';
 import type { CombatEvent, CombatUnit } from '../../../../types/CombatType';
 
 interface TestCombatLogProps {
@@ -276,13 +277,14 @@ export function TestCombatLog({ events, units, onClear, className = '' }: TestCo
                 </h3>
 
                 {onClear && lines.length > 0 && (
-                    <button
-                        type="button"
-                        onClick={onClear}
-                        className="text-[10px] uppercase tracking-[0.12em] text-white/40 transition-colors hover:text-white"
+                    <CommonButton
+                        variant="ghost"
+                        size="sm"
+                        className="text-[10px] tracking-[0.12em] border-0 opacity-40"
+                        onPress={onClear}
                     >
                         {t('playground.combat.logClear')}
-                    </button>
+                    </CommonButton>
                 )}
             </header>
 

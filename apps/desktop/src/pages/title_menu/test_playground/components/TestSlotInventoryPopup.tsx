@@ -3,6 +3,7 @@ import { useTranslation } from 'react-i18next';
 import { AddIcon, RemoveIcon } from '../../../../assets/GalatimeIcon';
 import CommonInput from '../../../../components/common/CommonInput';
 import CommonPopup from '../../../../components/common/CommonPopup';
+import CommonButton from '../../../../components/common/CommonButton';
 import { MAX_CARRIED_WEAPONS } from '../../../../constants/CombatConstants';
 import { playSfx } from '../../../../controllers/audioController';
 import { fetchItemCatalogue } from '../../../../controllers/inventoryController';
@@ -62,37 +63,27 @@ function StockRow({
             </div>
 
             <div className="flex shrink-0 items-center gap-1">
-                <button
-                    type="button"
-                    aria-label={`${name}: ${removeLabel}`}
+                <CommonButton
+                    variant="ghost"
+                    icon={<RemoveIcon className="h-3 w-3 opacity-50" />}
+                    className="h-6 w-6 disabled:opacity-30"
                     disabled={!canRemove}
-                    onMouseEnter={() => playSfx('hover')}
-                    onClick={() => {
-                        playSfx('click');
-                        onRemove();
-                    }}
-                    className="flex h-6 w-6 items-center justify-center text-white/50 transition-colors duration-200 ease-out enabled:hover:bg-white/15 enabled:hover:text-white disabled:opacity-30"
-                >
-                    <RemoveIcon className="h-3 w-3" />
-                </button>
+                    aria-label={`${name}: ${removeLabel}`}
+                    onPress={onRemove}
+                />
 
                 <span className="w-8 text-center text-sm tabular-nums text-white/90">
                     {quantity}
                 </span>
 
-                <button
-                    type="button"
-                    aria-label={`${name}: ${addLabel}`}
+                <CommonButton
+                    variant="ghost"
+                    icon={<AddIcon className="h-3 w-3 opacity-50" />}
+                    className="h-6 w-6 disabled:opacity-30"
                     disabled={!canAdd}
-                    onMouseEnter={() => playSfx('hover')}
-                    onClick={() => {
-                        playSfx('click');
-                        onAdd();
-                    }}
-                    className="flex h-6 w-6 items-center justify-center text-white/50 transition-colors duration-200 ease-out enabled:hover:bg-white/15 enabled:hover:text-white disabled:opacity-30"
-                >
-                    <AddIcon className="h-3 w-3" />
-                </button>
+                    aria-label={`${name}: ${addLabel}`}
+                    onPress={onAdd}
+                />
             </div>
         </li>
     );
@@ -231,10 +222,6 @@ export function TestSlotInventoryPopup({
         onConfirm(draft, weaponDraft);
     };
 
-    const tabClass = (active: boolean) => `px-3 py-1 text-xs uppercase tracking-[0.15em] transition-colors duration-200 ${
-        active ? 'bg-white text-galatime-dark' : 'text-white/50 hover:bg-white/10 hover:text-white'
-    }`;
-
     const weaponsFull = weaponDraft.length >= MAX_CARRIED_WEAPONS;
 
     return (
@@ -250,32 +237,32 @@ export function TestSlotInventoryPopup({
             cancelAction={{ label: t('playground.combat.cancel'), variant: 'ghost' }}
         >
             <div role="tablist" className="flex gap-1 border-b border-white/10 pb-2">
-                <button
-                    type="button"
+                <CommonButton
+                    variant="ghost"
+                    size="sm"
                     role="tab"
                     aria-selected={tab === 'items'}
-                    onMouseEnter={() => playSfx('hover')}
-                    onClick={() => {
-                        playSfx('click');
-                        setTab('items');
-                    }}
-                    className={tabClass(tab === 'items')}
+                    onPress={() => setTab('items')}
+                    className={`px-3 py-1 border-0 tracking-[0.15em] ${tab === 'items'
+                        ? 'bg-white font-semibold text-galatime-dark'
+                        : 'opacity-50'
+                        }`}
                 >
                     {t('playground.combat.tabItems')}
-                </button>
-                <button
-                    type="button"
+                </CommonButton>
+                <CommonButton
+                    variant="ghost"
+                    size="sm"
                     role="tab"
                     aria-selected={tab === 'weapons'}
-                    onMouseEnter={() => playSfx('hover')}
-                    onClick={() => {
-                        playSfx('click');
-                        setTab('weapons');
-                    }}
-                    className={tabClass(tab === 'weapons')}
+                    onPress={() => setTab('weapons')}
+                    className={`px-3 py-1 border-0 tracking-[0.15em] ${tab === 'weapons'
+                        ? 'bg-white font-semibold text-galatime-dark'
+                        : 'opacity-50'
+                        }`}
                 >
                     {t('playground.combat.tabWeapons')}
-                </button>
+                </CommonButton>
             </div>
 
             {tab === 'items' && (

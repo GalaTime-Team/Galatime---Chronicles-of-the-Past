@@ -135,7 +135,7 @@ const CommonInput: React.FC<CommonInputProps> = ({
             )}
 
             <div
-                className={`relative flex flex-col items-center justify-center ${showTitle && !isTitleLeft ? 'mt-1' : ''} ${stretchClassName}`}
+                className={`relative flex flex-col items-center justify-center ${showTitle && isTitleLeft ? 'mt-1' : ''} ${stretchClassName}`}
             >
                 {/* Description floats above the layout so it is never clipped by the tab panel */}
                 <CommonTooltip
