@@ -32,7 +32,7 @@ export function TestMusicPanel() {
 
         return MUSIC_TRACKS.filter(
             (track) =>
-                track.title.toLowerCase().includes(needle) || track.id.toLowerCase().includes(needle),
+                (track.title ?? '').toLowerCase().includes(needle) || track.id.toLowerCase().includes(needle),
         );
     }, [query]);
 

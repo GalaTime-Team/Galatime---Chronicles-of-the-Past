@@ -107,7 +107,7 @@ const CommonSwitch: React.FC<CommonSwitchProps> = ({
 
                 {/* Description Section — vertical layouts keep the text inline */}
                 {!isHorizontal && showDescription && description && (
-                    <div className={`mt-1 text-galatime-accent text-xs text-center max-w-md leading-2.5 ${descriptionClassName}`}>
+                    <div className={`mt-1 text-galatime-accent text-xs text-center max-w-md ${descriptionClassName}`}>
                         {description}
                     </div>
                 )}

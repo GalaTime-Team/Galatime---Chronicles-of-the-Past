@@ -118,10 +118,10 @@ export function DialogueChoiceList({
                         }`}
                     >
                         <span className="flex flex-col items-end">
-                            <span className="text-sm leading-2.5 font-custom">{choice.text}</span>
+                            <span className="text-sm font-custom">{choice.text}</span>
 
                             {showReason && (
-                                <span className="text-xs leading-2.5 text-white/40">
+                                <span className="text-xs text-white/40">
                                     {choice.disabled_reason}
                                 </span>
                             )}

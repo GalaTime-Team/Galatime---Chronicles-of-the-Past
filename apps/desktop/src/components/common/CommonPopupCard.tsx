@@ -187,7 +187,7 @@ const CommonPopupCard: React.FC<CommonPopupCardProps> = ({
                             </span>
                         )}
 
-                        <div className="flex min-w-0 flex-col leading-tight">
+                        <div className="flex min-w-0 flex-col">
                             {title && (
                                 <span className={`text-xs uppercase tracking-[0.2em] ${styles.accent}`}>{title}</span>
                             )}

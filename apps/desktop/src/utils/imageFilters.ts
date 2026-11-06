@@ -21,7 +21,7 @@
 export interface Raster {
   width: number;
   height: number;
-  data: Uint8ClampedArray;
+  data: Uint8ClampedArray<ArrayBuffer>;
 }
 
 export function createRaster(width: number, height: number): Raster {

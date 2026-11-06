@@ -36,6 +36,27 @@ export const ARENA_TOTAL_MS = ARENA_IMPACT_MS + ARENA_SETTLE_MS;
  */
 export const ARENA_QUIET_TOTAL_MS = ARENA_IMPACT_MS + ARENA_LUNGE_MS;
 
+/** How long one unit takes to enter the field: a fade plus a drop onto the ground. */
+export const ARENA_ENTER_MS = 480;
+
+/** Extra delay between consecutive entering units of the same event. */
+export const ARENA_ENTER_STAGGER_MS = 130;
+
+/** How long a unit takes to re-place itself after its battle line changed. */
+export const ARENA_STEP_MS = 460;
+
+/** Extra delay between consecutive line-changed units of the same event. */
+export const ARENA_STEP_STAGGER_MS = 110;
+
+/**
+ * Scale of the rear line on the two-row ground plane.
+ *
+ * Documentation only: the live value is the CSS var `--arena-row-scale` in
+ * `styles/globals.css`, so the drawn rows and the step-forward entrance read the
+ * same depth out of one number.
+ */
+export const ARENA_ROW_SCALE_REAR = 0.9;
+
 /** Square particles thrown off by a landed hit. */
 export const ARENA_HIT_PARTICLES = 20;
 

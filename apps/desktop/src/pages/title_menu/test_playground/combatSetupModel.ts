@@ -25,6 +25,7 @@ import type {
     CombatSide,
     CombatUnit,
 } from '../../../types/CombatType';
+import type { CombatSpriteSelection } from '../../../components/game/combat/battle/combatBattleView';
 
 /** Sides of a fight, in the order the setup lays them out. */
 export const SETUP_SIDES: readonly CombatSide[] = ['allies', 'enemies'];
@@ -237,20 +238,27 @@ export function filterCatalogue(
 /**
  * Sprite a combat unit is drawn with, resolved from the bundled sprite index.
  *
- * The sprite is chosen based on the unit's side: allies (left) face right, enemies (right)
- * face left. Characters use sprites from their `combat/` subfolder, mobs use sprites from
- * their root folder. Falls back to any sprite in the `combat` folder when the exact
- * facing sprite doesn't exist, and finally to the first available sprite (usually
- * `tsp/neutral.png`) when the entity has no combat sprites at all.
+ * The battle is drawn side-view with the party standing on the left and the enemies
+ * on the right, so the party faces right and the enemies face left. Characters use
+ * sprites from their `combat/` subfolder, mobs use sprites from their root folder.
+ * When the entity ships only the *opposite*-facing combat sprite, it is handed back
+ * `mirrored` and the formation draws it flipped rather than walking backwards.
+ * Front-facing fallback art (usually `tsp/neutral.png`) is neutral: it is never
+ * mirrored, and is the last resort when the entity has no combat sprites at all.
  */
-export function resolveUnitSprite(unit: CombatUnit): string | undefined {
+export function resolveUnitSprite(unit: CombatUnit): CombatSpriteSelection | undefined {
     const images = getEntityImages({ type: unit.entityType, id: unit.entityId, name: unit.name });
-    const facing = unit.side === 'allies' ? 'right' : 'left';
+    const wanted = unit.side === 'allies' ? 'right' : 'left';
+    const opposite = unit.side === 'allies' ? 'left' : 'right';
 
-    const byFacing = images.find((image) => image.name.includes(facing));
-    if (byFacing) return byFacing.url;
+    const byFacing = images.find((image) => image.name.includes(wanted));
+    if (byFacing) return { url: byFacing.url };
 
-    return images.find((image) => image.url.includes('/combat/'))?.url ?? images[0]?.url;
+    const byOppositeFacing = images.find((image) => image.name.includes(opposite));
+    if (byOppositeFacing) return { url: byOppositeFacing.url, mirrored: true };
+
+    const fallback = images.find((image) => image.url.includes('/combat/'))?.url ?? images[0]?.url;
+    return fallback ? { url: fallback } : undefined;
 }
 
 /** Reads the whole entity catalogue — characters and mobs — ready for the picker. */

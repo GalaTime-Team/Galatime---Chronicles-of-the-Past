@@ -102,7 +102,8 @@ export const DIALOGUE_SPRITE_HEIGHT_TO_WIDTH = 6 / 5;
 /**
  * Room the dialogue box takes at the bottom of a dialogue surface, in layout px.
  *
- * The name plate (`text-2xl` at `leading-none`), two rows of `--dialogue-text-size`
+ * The name plate (`text-2xl`, compact under the root's small leading), two rows of
+ * `--dialogue-text-size`
  * at the bottom of its clamp, the `>>` strip's `pb-6` and the wrapper's `pb-4` come
  * to roughly this. An allowance rather than a measurement: the box's real height
  * follows the window's typography, and this is only ever used to size a floor, so

@@ -85,7 +85,7 @@ export function TestCombatPickerPopup({ open, catalogue, onDismiss, onPick }: Te
                                 className="h-7 w-7 shrink-0"
                             />
                             <span className="min-w-0 flex-1 truncate text-sm text-white/85">{entry.name}</span>
-                            <span className="shrink-0 font-mono text-xs text-white/35">{entry.entityId}</span>
+                            <span className="shrink-0 font-pixel text-xs text-white/35">{entry.entityId}</span>
                             <span className="shrink-0 border border-white/15 px-1.5 py-0.5 text-[0.6rem] uppercase tracking-[0.12em] text-white/45">
                                 {entry.entityType}
                             </span>

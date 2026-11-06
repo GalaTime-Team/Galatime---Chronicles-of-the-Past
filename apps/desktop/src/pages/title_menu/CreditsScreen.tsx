@@ -3,6 +3,7 @@ import { motion } from 'framer-motion';
 import { useTranslation } from 'react-i18next';
 import { PAGE_ENTER_TRANSITION, PAGE_FADE_TRANSITION } from '../../constants/AnimationConstants';
 import { BackButton } from '../../components/common/BackButton';
+import { gtStudioLogoUrl } from '../../assets/GalatimeIcon';
 import CommonImage from '../../components/common/CommonImage';
 
 interface CreditEntry {
@@ -34,7 +35,7 @@ function CreditSection({ group, className = '' }: { group: CreditGroup; classNam
                 {group.entries.map((entry) => (
                     <li key={entry.role ?? entry.names.join(', ')} className="flex flex-col items-center gap-0.5">
                         {entry.role && <span className="text-xs tracking-wide text-white/40">{entry.role}</span>}
-                        <span className="flex flex-wrap items-center justify-center gap-x-2.5 text-[15px] leading-snug text-white/90 sm:text-base">
+                        <span className="flex flex-wrap items-center justify-center gap-x-2.5 text-[15px] text-white/90 sm:text-base">
                             {entry.names.map((name, i) => (
                                 <Fragment key={name}>
                                     {i > 0 && (
@@ -139,7 +140,7 @@ export function CreditsScreen({ onBack }: CreditsScreenProps) {
 
                 <footer className="shrink-0 border-t border-white/10 pt-4 text-center">
                     <CommonImage
-                        src="/GT_Team_logo.png"
+                        src={gtStudioLogoUrl}
                         alt={t('splash.teamAlt')}
                         className="mx-auto h-14 w-auto max-w-[70vw] sm:h-16"
                     />

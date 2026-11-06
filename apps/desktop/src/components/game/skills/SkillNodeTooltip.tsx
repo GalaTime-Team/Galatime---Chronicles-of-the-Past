@@ -29,11 +29,11 @@ export function SkillNodeTooltip({ skill, open, floatingRef, floatingStyles }: S
         >
             <div className="flex items-center gap-2 px-3 pb-2 pt-2.5">
                 <ElementIcon id={skill.element_id} className="h-6 w-6 shrink-0" />
-                <h2 className="text-lg font-bold uppercase leading-tight tracking-wide">{skill.name}</h2>
+                <h2 className="text-lg font-bold uppercase tracking-wide">{skill.name}</h2>
             </div>
 
             {skill.description?.trim() ? (
-                <p className="px-3 pb-2 text-sm leading-relaxed text-white/70">{skill.description.trim()}</p>
+                <p className="px-3 pb-2 text-sm text-white/70">{skill.description.trim()}</p>
             ) : null}
 
             <dl className="flex flex-wrap items-center justify-between gap-x-4 gap-y-1 px-3 pb-2.5 text-base">

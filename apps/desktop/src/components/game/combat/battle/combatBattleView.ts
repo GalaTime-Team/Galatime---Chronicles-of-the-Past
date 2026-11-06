@@ -39,7 +39,19 @@ export const MAX_ATTACK_SLOTS = 4;
  * Supplied by the app, which owns the sprite index (`entityImageService`), so
  * the adapters stay free of I/O.
  */
-export type CombatSpriteResolver = (unit: CombatUnit) => string | undefined;
+export interface CombatSpriteSelection {
+    url: string;
+    /**
+     * The sprite faces away from the unit's battlefield side and is drawn flipped.
+     *
+     * Entities ship combat sprites for one facing only; when the opposite one is
+     * all there is, the resolver hands it back with this flag and the formation
+     * mirrors it in CSS rather than playing a character walking backwards.
+     */
+    mirrored?: boolean;
+}
+
+export type CombatSpriteResolver = (unit: CombatUnit) => CombatSpriteSelection | undefined;
 
 /** Both sides of the battlefield, split into their two lanes. */
 export interface CombatFormationSides {
@@ -151,6 +163,8 @@ export function toFormationEntity(
     unit: CombatUnit,
     resolveSpriteUrl?: CombatSpriteResolver,
 ): CombatFormationEntity {
+    const sprite = resolveSpriteUrl?.(unit);
+
     return {
         id: unit.id,
         name: unit.name,
@@ -171,7 +185,8 @@ export function toFormationEntity(
         status: unit.status,
         modifiers: toStatModifiers(unit),
         statusBadges: toStatusBadges(unit),
-        spriteUrl: resolveSpriteUrl?.(unit),
+        spriteUrl: sprite?.url,
+        spriteMirrored: sprite?.mirrored === true,
         currentHp: unit.currentHp,
         maxHp: unit.stats.maxHp,
     };

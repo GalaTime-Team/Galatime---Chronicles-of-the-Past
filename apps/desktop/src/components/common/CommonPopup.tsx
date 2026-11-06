@@ -521,7 +521,7 @@ export function CommonPopup({
                             )}
 
                             {message && (
-                                <div id={messageId} className={`mt-4 text-base leading-2.5 text-white/65 ${messageClassName}`}>{message}</div>
+                                <div id={messageId} className={`mt-4 text-base text-white/65 ${messageClassName}`}>{message}</div>
                             )}
 
                             {children && <div className="mt-4">{children}</div>}

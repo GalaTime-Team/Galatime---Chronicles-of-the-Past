@@ -89,7 +89,7 @@ export function TestCombatSlot({
                 className="h-7 w-7 shrink-0"
             />
 
-            <p className="w-full truncate text-center text-[0.65rem] leading-tight text-white/85" title={name}>
+            <p className="w-full truncate text-center text-[0.65rem] text-white/85" title={name}>
                 {name}
             </p>
 
@@ -130,7 +130,7 @@ export function TestCombatSlot({
                     <InventoryIcon className="h-3 w-3" />
 
                     {carriedKinds > 0 && (
-                        <span className="absolute -right-1 -top-1 flex h-3 min-w-3 items-center justify-center bg-galatime-accent px-0.5 font-mono text-[0.5rem] leading-none text-galatime-dark">
+                        <span className="absolute -right-1 -top-1 flex h-3 min-w-3 items-center justify-center bg-galatime-accent px-0.5 font-pixel text-[0.5rem] text-galatime-dark">
                             {carriedKinds}
                         </span>
                     )}

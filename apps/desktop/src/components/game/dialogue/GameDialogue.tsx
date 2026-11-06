@@ -191,13 +191,14 @@ export const GameDialogue = forwardRef<GameDialogueHandle, GameDialogueProps>(fu
                   who is talking from what they say without a divider to draw.
                 */}
                 {/*
-                  `leading-none` keeps the plate to the glyphs' own height: with the font's
-                  default line box the name carried half a line of leading above and below,
-                  which is most of the space that used to sit between it and the line.
+                  The compact leading of the root keeps the plate to the glyphs'
+                  own height: with roomier leading the name would carry half a
+                  line of space above and below, most of the room that once sat
+                  between it and the line.
                 */}
                 <div className="w-full px-4 pt-1 pb-0">
                     <span
-                        className={`text-2xl font-bold uppercase leading-none tracking-widest text-white/60 ${nameClassName}`}
+                        className={`text-2xl font-bold uppercase tracking-widest text-white/60 ${nameClassName}`}
                     >
                         {speakerName}
                     </span>
@@ -252,7 +253,7 @@ export const GameDialogue = forwardRef<GameDialogueHandle, GameDialogueProps>(fu
                     initial={false}
                     animate={{ opacity: isIndicatorVisible ? 1 : 0 }}
                     transition={{ duration: 0.3 }}
-                    className="pointer-events-none absolute bottom-2 right-4 text-lg font-bold leading-2.5 text-white"
+                    className="pointer-events-none absolute bottom-2 right-4 text-lg font-bold text-white"
                 >
                     &gt;&gt;
                 </motion.div>

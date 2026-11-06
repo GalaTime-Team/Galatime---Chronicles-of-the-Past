@@ -1,7 +1,7 @@
 {
 	"splash": {
 		"skip": "Skip",
-		"teamAlt": "GT Team Logo"
+		"teamAlt": "GT Studio Logo"
 	},
 	"loading": {
 		"text": "Loading...",
@@ -22,7 +22,7 @@
 	},
 	"buildInfo": {
 		"version": "v{{version}}",
-		"developedBy": "Developed by GT Team"
+		"developedBy": "Developed by GT Studio"
 	},
 	"back": "Back",
 	"apply": "Apply",

@@ -16,6 +16,14 @@ nodes:
     position: center_left
     animation_id: step_in_from_left
     emotion: neutral
+    next: entra_2_acao
+
+  entra_2_acao:
+    type: character_action
+    character_id: pacci
+    pose: sit
+    depth: back
+    animation_id: sit_down
     next: entra_3
 
   entra_3:

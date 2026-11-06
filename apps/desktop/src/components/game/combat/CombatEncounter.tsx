@@ -170,10 +170,10 @@ function InventoryChoiceButton({
             />
 
             <div className="min-w-0 flex-1 flex items-baseline justify-between gap-2">
-                <span className="truncate text-lg uppercase leading-2.5 tracking-wide -translate-y-0.5">
+                <span className="truncate text-lg uppercase tracking-wide -translate-y-0.5">
                     {entry.name}
                 </span>
-                <span className="shrink-0 text-sm leading-2.5 text-white/40">
+                <span className="shrink-0 text-sm text-white/40">
                     ×<span className="tabular-nums text-white">{entry.quantity}</span>
                 </span>
             </div>
@@ -192,14 +192,14 @@ function InventoryChoiceButton({
                             className="h-16 w-16 shrink-0 object-contain"
                         />
                         <div className="flex min-w-0 flex-col gap-y-0.5">
-                            <span className="font-pixel text-sm uppercase leading-2.5 tracking-[0.08em] sm:text-lg">
+                            <span className="font-pixel text-sm uppercase tracking-[0.08em] sm:text-lg">
                                 {entry.name}
                             </span>
-                            <span className="font-pixel text-xs leading-2.5 text-white/75 sm:text-sm">
+                            <span className="font-pixel text-xs text-white/75 sm:text-sm">
                                 ×{entry.quantity}
                             </span>
                             {entry.description && (
-                                <span className="font-pixel text-[10px] leading-2.5 text-white/55 sm:text-xs">
+                                <span className="font-pixel text-[10px] text-white/55 sm:text-xs">
                                     {entry.description}
                                 </span>
                             )}
@@ -272,11 +272,11 @@ function WeaponChoiceButton({
             />
 
             <div className="min-w-0 flex-1 flex flex-col">
-                <span className="truncate text-base uppercase leading-2.5 tracking-wide">
+                <span className="truncate text-base uppercase tracking-wide">
                     {entry.name}
                 </span>
                 {(broken || aboutToBreak) && (
-                    <span className={`font-pixel text-[10px] leading-2.5 ${entry.equipped ? '' : 'text-galatime-error'}`}>
+                    <span className={`font-pixel text-[10px] ${entry.equipped ? '' : 'text-galatime-error'}`}>
                         {broken ? t('combat.weaponBroken') : t('combat.weaponAboutToBreak')}
                     </span>
                 )}
@@ -289,10 +289,10 @@ function WeaponChoiceButton({
                     className="pointer-events-none z-50"
                 >
                     <div className="flex max-w-[min(20rem,calc(100vw-2rem))] flex-col gap-y-1 border-2 border-white bg-galatime-dark px-3 py-2.5 text-white shadow-[0_8px_26px_rgba(0,0,0,0.6)]">
-                        <span className="font-pixel text-sm uppercase leading-2.5 tracking-[0.08em] sm:text-lg">
+                        <span className="font-pixel text-sm uppercase tracking-[0.08em] sm:text-lg">
                             {entry.name}
                         </span>
-                        <div className="flex gap-3 text-sm leading-2.5 text-white/40">
+                        <div className="flex gap-3 text-sm text-white/40">
                             <div className="flex gap-1">
                                 <span>PW</span>
                                 <span className="text-white">{entry.power}</span>
@@ -752,7 +752,7 @@ export function CombatEncounter({
                         title={t('combat.cancelSelection')}
                         className="flex items-center gap-2 border-2 border-white/70 bg-black/60 px-2 py-1 text-[11px] uppercase tracking-[0.15em] text-white/80 backdrop-blur-sm transition-colors hover:border-white hover:text-white"
                     >
-                        <kbd className="border border-white/60 px-1 font-pixel text-[10px] leading-2.5">{t('combat.escKey')}</kbd>
+                        <kbd className="border border-white/60 px-1 font-pixel text-[10px]">{t('combat.escKey')}</kbd>
                         {t('combat.cancelSelection')}
                     </button>
                 </div>

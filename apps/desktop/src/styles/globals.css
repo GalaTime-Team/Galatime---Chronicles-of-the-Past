@@ -96,19 +96,75 @@
   }
 }
 
-/* A unit brought onto the field (summoned or transformed) pops into place. */
-@keyframes combat-pop {
+/* A unit entering the field (a summon, a transformation): it fades in and drops
+   from above onto the ground, overshooting a hair to kiss it. Driven with a fill
+   on the unit's own layer, which carries no styling of its own to override. */
+@keyframes combat-enter {
   0% {
     opacity: 0;
-    scale: 0.4;
+    translate: 0 -0.9rem;
+    scale: 0.85;
   }
-  55% {
+  60% {
     opacity: 1;
-    scale: 1.15;
+    translate: 0 0.12rem;
+    scale: 1.04;
   }
   100% {
     opacity: 1;
+    translate: 0 0;
     scale: 1;
+  }
+}
+
+/* The ground shadow of a unit entering the field: it needs not exist until the
+   unit has almost landed. Filled with `backwards` (not `both`) on purpose, so an
+   entered unit can still be dimmed or faded by its own classes afterwards. */
+@keyframes combat-enter-shadow {
+  0%,
+  45% {
+    opacity: 0;
+  }
+  100% {
+    opacity: 1;
+  }
+}
+
+/* A rear unit taking over an emptied front slot starts exactly where the rear wall
+   draws its equal (behind, lifted, smaller) and settles onto the front ground.
+   The node remounts into the front row when the state swaps, so the animation
+   plays on mount and visually continues the journey. The start offsets arrive as
+   inline vars — the row measures them off the ground plane, since they depend on
+   the side facing and on the row lift. */
+@keyframes combat-step-forward {
+  0% {
+    opacity: 0.3;
+    translate: var(--arena-step-dx, -0.5rem) var(--arena-step-dy, -1.5rem);
+    scale: var(--arena-row-scale, 0.9);
+  }
+  30% {
+    opacity: 1;
+  }
+  60% {
+    scale: 1.06;
+  }
+  100% {
+    opacity: 1;
+    translate: 0 0;
+    scale: 1;
+  }
+}
+
+/* A unit re-placed into the rear line lands straight into its raised, smaller
+   spot. A shorter move than the forward step, so a fade carries it. */
+@keyframes combat-step-back {
+  0% {
+    opacity: 0.4;
+    translate: 0 -0.6rem;
+  }
+  100% {
+    opacity: 1;
+    translate: 0 0;
   }
 }
 
@@ -151,6 +207,42 @@
   }
 }
 
+/* The arena's ground plane. Each side deploys as two diagonal walls climbing at
+   45° into the field: the front wall's low end stands on the shared ground line,
+   and the rear wall is a parallel wall lifted behind it (the same lift doubles as
+   the walls' horizontal separation, applied per unit by the row). The numbers are
+   vars on the board itself, so both sides always march in step, and
+   `--arena-row-scale` doubles as the rear entry point of `combat-step-forward`. */
+.combat-arena-board {
+  --arena-ground-inset: 1.75rem;
+  --arena-row-lift: 1.5rem;
+  --arena-row-scale: 0.9;
+}
+
+@media (min-width: 640px) {
+  .combat-arena-board {
+    --arena-ground-inset: 2.5rem;
+    --arena-row-lift: 2.25rem;
+  }
+}
+
+/* One wall of the ground plane. Absolutely placed (the rear one higher up), so the
+   walls never need transforms or z-indexes of their own — the unit buttons keep
+   comparing their z-indexes directly across walls. The unit buttons are placed in
+   inline styles, measured by the row. */
+.combat-arena-row {
+  position: absolute;
+  inset-inline: 0.5rem;
+}
+
+.combat-arena-row--front {
+  bottom: var(--arena-ground-inset);
+}
+
+.combat-arena-row--rear {
+  bottom: calc(var(--arena-ground-inset) + var(--arena-row-lift));
+}
+
 @font-face {
   font-family: 'm5x7';
   src: url('/fonts/m5x7.ttf') format('truetype');
@@ -191,6 +283,12 @@
    without touching spacing, paddings or layout. These rules are unlayered, so they always win
    over Tailwind's `@layer theme` defaults. */
 :root {
+  /* One small leading for the whole game. Drive it from a single value: the `--text-*--line-height`
+     pairs below point every `text-*` utility at it, and `body` inherits the same value, so no
+     component needs its own `leading-*` exception any more.
+     1 = stacked solid, 1.15 = compact (current), 1.6 = roomy, etc. */
+  --font-leading: 1.15;
+
   --text-xs: calc(0.75rem * var(--font-scale));
   --text-sm: calc(0.875rem * var(--font-scale));
   --text-base: calc(1rem * var(--font-scale));
@@ -204,6 +302,22 @@
   --text-7xl: calc(4.5rem * var(--font-scale));
   --text-8xl: calc(6rem * var(--font-scale));
   --text-9xl: calc(8rem * var(--font-scale));
+
+  /* The line-height every `text-*` utility carries. Overriding the whole ladder (rather than
+     only the sizes actually in use) keeps future text sizes reading with the same lead. */
+  --text-xs--line-height: var(--font-leading);
+  --text-sm--line-height: var(--font-leading);
+  --text-base--line-height: var(--font-leading);
+  --text-lg--line-height: var(--font-leading);
+  --text-xl--line-height: var(--font-leading);
+  --text-2xl--line-height: var(--font-leading);
+  --text-3xl--line-height: var(--font-leading);
+  --text-4xl--line-height: var(--font-leading);
+  --text-5xl--line-height: var(--font-leading);
+  --text-6xl--line-height: var(--font-leading);
+  --text-7xl--line-height: var(--font-leading);
+  --text-8xl--line-height: var(--font-leading);
+  --text-9xl--line-height: var(--font-leading);
 }
 
 html,
@@ -235,7 +349,7 @@ body,
 body {
   margin: 0;
   font-family: 'm5x7', "Trebuchet MS", "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
-  line-height: 1.1;
+  line-height: var(--font-leading, 1.15);
   overflow-y: auto;
   overflow-x: hidden;
   -webkit-user-select: none;

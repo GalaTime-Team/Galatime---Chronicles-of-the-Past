@@ -104,12 +104,12 @@ const ExtraMovementCard: React.FC<ExtraMovementCardProps> = ({
                     <IconComponent className="w-3 h-3" />
                 </div>
 
-                <div className="flex-1 flex items-center text-lg leading-2.5 text-left -translate-y-0.5">
+                <div className="flex-1 flex items-center text-lg text-left -translate-y-0.5">
                     {title}
                 </div>
 
                 {aboutToBreak && !disabled && (
-                    <span className="shrink-0 font-pixel text-xs leading-2.5 tabular-nums text-galatime-error -translate-y-0.5">
+                    <span className="shrink-0 font-pixel text-xs tabular-nums text-galatime-error -translate-y-0.5">
                         {weapon?.durability}
                     </span>
                 )}
@@ -135,22 +135,22 @@ const ExtraMovementCard: React.FC<ExtraMovementCardProps> = ({
                             />
                         )}
                         <div className="flex min-w-0 flex-col gap-y-0.5">
-                            <span className="font-pixel text-sm uppercase leading-2.5 tracking-[0.08em] sm:text-lg">
+                            <span className="font-pixel text-sm uppercase tracking-[0.08em] sm:text-lg">
                                 {weapon?.name ?? title}
                             </span>
                             {aboutToBreak && (
-                                <span className="font-pixel text-[10px] uppercase leading-2.5 tracking-[0.08em] text-galatime-error sm:text-xs">
+                                <span className="font-pixel text-[10px] uppercase tracking-[0.08em] text-galatime-error sm:text-xs">
                                     About to break · Durability {weapon?.durability}
                                 </span>
                             )}
                             {weapon && (
-                                <span className="flex items-center gap-1 font-pixel text-xs leading-2.5 text-white/75 sm:text-sm">
+                                <span className="flex items-center gap-1 font-pixel text-xs text-white/75 sm:text-sm">
                                     <ElementIcon id={weapon.elementId} className="h-3.5 w-3.5 sm:h-4 sm:w-4" />
                                     {displayElementName(weapon.elementId)}
                                 </span>
                             )}
                             {description && (
-                                <span className="font-pixel text-[10px] leading-2.5 text-white/55 sm:text-xs">
+                                <span className="font-pixel text-[10px] text-white/55 sm:text-xs">
                                     {description}
                                 </span>
                             )}

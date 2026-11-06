@@ -93,7 +93,7 @@ export function TestCombatSetup({
                                 <h3 className="text-sm uppercase tracking-[0.15em] text-white/80">
                                     {t(`playground.combat.${side}`)}
                                 </h3>
-                                <span className="font-mono text-xs text-white/35">
+                                <span className="font-pixel text-xl text-white/75">
                                     {countSide(setup, side)}
                                 </span>
                             </div>
@@ -169,7 +169,7 @@ export function TestCombatSetup({
                         onChange={(event) => onHourChange(Number(event.target.value))}
                         className="w-32 accent-white"
                     />
-                    <span className="font-mono tabular-nums text-white/80">
+                    <span className="font-pixel tabular-nums text-white/80">
                         {String(hour).padStart(2, '0')}:00
                     </span>
                     <span className="text-white/40">

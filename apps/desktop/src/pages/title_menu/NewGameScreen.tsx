@@ -111,7 +111,7 @@ export function NewGameScreen({ onBack }: { onBack: () => void }) {
                                 initial={{ opacity: 0, y: 10 }}
                                 animate={{ opacity: 1, y: 0 }}
                                 transition={{ delay: slot * 0.04, duration: 0.25 }}
-                                className="flex w-full flex-col border-2 border-white/15 bg-galatime-dark/60 py-2.5 px-4 leading-2.5 transition-colors duration-300 hover:border-galatime-primary/70 sm:flex-row sm:items-center sm:gap-3"
+                                className="flex w-full flex-col border-2 border-white/15 bg-galatime-dark/60 py-2.5 px-4 transition-colors duration-300 hover:border-galatime-primary/70 sm:flex-row sm:items-center sm:gap-3"
                             >
                                 {occupied[slot] ? (
                                     <>

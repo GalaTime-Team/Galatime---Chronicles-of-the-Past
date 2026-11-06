@@ -67,6 +67,8 @@ export interface CombatFormationEntity {
     /** Live status effects, drawn as chips on the sprite. */
     statusBadges: CombatStatusBadge[];
     spriteUrl?: string;
+    /** The resolved sprite faces away from the unit's side and is drawn CSS-mirrored. */
+    spriteMirrored?: boolean;
     currentHp?: number;
     maxHp?: number;
 }
@@ -121,6 +123,14 @@ export interface CombatFormationHUDProps {
     hour?: number;
     /** Whether the sun is up. */
     timePhase?: CombatTimePhase;
+    /**
+     * Whether a skill has forced the opposite phase on the battlefield.
+     *
+     * A compelled phase comes without its own celestial body — a forced day has
+     * no sun and a forced night no moon — so the hour chip draws the matching
+     * `*_no_*` icon instead of the plain one.
+     */
+    phaseOverridden?: boolean;
     /** Selection is visual-only; clearing a pin reports `null`. */
     onEntitySelect?: (entity: CombatFormationEntity | null) => void;
     className?: string;

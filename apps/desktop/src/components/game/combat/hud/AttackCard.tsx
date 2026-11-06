@@ -164,7 +164,7 @@ const AttackCard: React.FC<AttackCardProps> = ({
                 {/* Bottom Half */}
                 <div className="flex flex-1 w-full">
                     {/* Bottom Left: Relevant stats */}
-                    <div className="flex-1 flex items-center pl-14 pb-1 gap-2 text-sm text-white/40 leading-2.5">
+                    <div className="flex-1 flex items-center pl-14 pb-1 gap-2 text-sm text-white/40">
                         <div className="flex gap-1">
                             <span>PW</span>
                             <span className="text-white">{power}</span>
@@ -187,7 +187,7 @@ const AttackCard: React.FC<AttackCardProps> = ({
                     {traits && traits.length > 0 && (
                         <div className="flex flex-wrap items-center gap-1 pl-14 text-[10px] uppercase tracking-[0.12em] text-white/50">
                             {traits.map((trait) => (
-                                <span key={trait} className="border border-white/25 px-1 leading-4">
+                                <span key={trait} className="border border-white/25 px-1">
                                     {trait}
                                 </span>
                             ))}

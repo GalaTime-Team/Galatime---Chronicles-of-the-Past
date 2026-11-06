@@ -198,7 +198,7 @@ const CommonButton: React.FC<CommonButtonProps> = ({
         playSfx('hover');
     };
     // Base styles — color-based transitions on hover/active
-    const baseStyles = "relative inline-flex items-center justify-center gap-2 whitespace-nowrap uppercase tracking-widest transition-colors duration-300 ease-out disabled:opacity-50 disabled:cursor-not-allowed select-none rounded-none border-4 leading-2.5";
+    const baseStyles = "relative inline-flex items-center justify-center gap-2 whitespace-nowrap uppercase tracking-widest transition-colors duration-300 ease-out disabled:opacity-50 disabled:cursor-not-allowed select-none rounded-none border-4";
 
     // Variant styles — colors transition with hover for smoothness
     const variants: Record<ButtonVariant, string> = {

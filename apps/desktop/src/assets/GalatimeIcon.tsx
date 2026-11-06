@@ -17,6 +17,7 @@ import fitUrl from './images/ui/misc/fit.svg';
 import removeUrl from './images/ui/misc/remove.svg';
 import selectorUrl from './images/ui/misc/selector.svg';
 import trashUrl from './images/ui/misc/trash.svg';
+import gtStudioSvgUrl from './images/gt-studio.svg';
 import defendUrl from './images/combat/extra/defend.svg';
 import restUrl from './images/combat/extra/rest.svg';
 import weaponUrl from './images/combat/extra/weapon.svg';
@@ -54,6 +55,12 @@ function combatElementResource(elementId: string): string | undefined {
  * old `/images/elements/unknown.png` string constant pointed at, now hashed by Vite.
  */
 export const UNKNOWN_ELEMENT_ICON: string = elementUnknownUrl;
+
+/**
+ * URL of the GT Studio logo (`src/assets/images/gt-studio.svg`), hashed by Vite. It replaced the
+ * `public/GT_Team_logo.png`, which was the same square art rasterised at 3100×3100.
+ */
+export const gtStudioLogoUrl: string = gtStudioSvgUrl;
 import loading0Url from './images/ui/loading/loading_0.svg';
 import loading1Url from './images/ui/loading/loading_1.svg';
 import loading2Url from './images/ui/loading/loading_2.svg';
@@ -127,8 +134,12 @@ const MaskIcon: React.FC<MaskIconProps & { src: string }> = ({ src, sizeClass = 
     aria-hidden="true"
     className={`block ${sizeClass} bg-current ${className}`}
     style={{
-      maskImage: `url(${src})`,
-      WebkitMaskImage: `url(${src})`,
+      // The URL must stay quoted: inlined SVG assets arrive as data URIs containing raw
+      // `'` characters (the inline derives from the file, where `"` was swapped for `'`),
+      // and an unquoted `url(…)` token rejects them — the browser would drop the whole
+      // declaration and the icon would render as a plain block of `bg-current`.
+      maskImage: `url("${src}")`,
+      WebkitMaskImage: `url("${src}")`,
       maskRepeat: 'no-repeat',
       WebkitMaskRepeat: 'no-repeat',
       maskPosition: 'center',

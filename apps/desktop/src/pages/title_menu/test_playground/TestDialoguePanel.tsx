@@ -111,7 +111,7 @@ function RequirementEditor({
                     ))}
                 </div>
 
-                <p className="mt-1 text-xs leading-2.5 text-white/40">{usage}</p>
+                <p className="mt-1 text-xs text-white/40">{usage}</p>
             </div>
         );
     }
@@ -406,7 +406,7 @@ export function TestDialoguePanel() {
                             {/* The explanation is the first thing to go when the halves
                                 stack: on a short screen it is worth more as stage. */}
                             {!isStacked && (
-                                <p className="mt-1 max-w-lg text-xs leading-2.5 text-white/40">
+                                <p className="mt-1 max-w-lg text-xs text-white/40">
                                     {t('playground.dialogue.variablesDescription')}
                                 </p>
                             )}
@@ -447,7 +447,7 @@ export function TestDialoguePanel() {
                                 }`}
                         >
                             {loaded.requirements.length === 0 ? (
-                                <p className="text-xs leading-2.5 text-white/40">
+                                <p className="text-xs text-white/40">
                                     {t('playground.dialogue.noVariables')}
                                 </p>
                             ) : (
@@ -498,7 +498,7 @@ export function TestDialoguePanel() {
                                 stageClassName="min-h-0"
                                 idleContent={(
                                     <div className="absolute inset-0 flex items-center justify-center px-6">
-                                        <p className="text-center text-sm leading-2.5 text-white/40">
+                                        <p className="text-center text-sm text-white/40">
                                             {t('playground.dialogue.idle')}
                                         </p>
                                     </div>
@@ -513,7 +513,7 @@ export function TestDialoguePanel() {
                             {t('dialogue.debug.title')}
                         </summary>
 
-                        <dl className="mt-2 flex flex-col gap-1 font-mono text-xs leading-2.5">
+                        <dl className="mt-2 flex flex-col gap-1 font-mono text-xs">
                             <DebugRow label={t('dialogue.debug.node')} value={node ? `${node.id} (${node.type})` : t('dialogue.debug.none')} />
                             <DebugRow label={t('dialogue.debug.waitingFor')} value={node?.next_action ?? t('dialogue.debug.none')} />
                             <DebugRow label="auto_advance" value={String(node?.auto_advance ?? false)} />

@@ -290,7 +290,7 @@ export function TestCombatLog({ events, units, onClear, className = '' }: TestCo
                 {lines.length === 0 ? (
                     <p className="text-[11px] text-white/35">{t('playground.combat.logEmpty')}</p>
                 ) : (
-                    <ol className="flex flex-col gap-1.5 font-mono text-[11px] leading-4">
+                    <ol className="flex flex-col gap-1.5 font-mono text-[11px]">
                         {lines.map((line) => (
                             <li key={line.key} className="flex flex-col">
                                 <span className={TONE_CLASSES[line.tone]}>{line.text}</span>

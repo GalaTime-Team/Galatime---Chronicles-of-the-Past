@@ -136,7 +136,7 @@ export function SettingsSoundPanel({ settings, updateSettings }: SettingsPanelPr
                     showLoading={false}
                     position="bottom-right"
                     autoCloseTime={3000}
-                    messageClassName="whitespace-normal leading-snug"
+                    messageClassName="whitespace-normal"
                     onClose={() => setHintOpen(false)}
                 />
             )}

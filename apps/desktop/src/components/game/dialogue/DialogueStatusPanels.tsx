@@ -21,7 +21,7 @@ export function DialogueLoadingPanel() {
 
     return (
         <div className={PANEL_FRAME}>
-            <p className="text-sm leading-2.5 text-white/60">{t('dialogue.loading')}</p>
+            <p className="text-sm text-white/60">{t('dialogue.loading')}</p>
         </div>
     );
 }
@@ -51,9 +51,9 @@ export function DialogueErrorPanel({ error, onDismiss }: DialogueErrorPanelProps
                 {t('dialogue.error.title')}
             </p>
 
-            <p className="mt-2 text-sm leading-2.5 text-white">{message}</p>
+            <p className="mt-2 text-sm text-white">{message}</p>
 
-            <p className="mt-1 text-xs leading-2.5 text-white/40">{error.code}</p>
+            <p className="mt-1 text-xs text-white/40">{error.code}</p>
 
             <div className="mt-3 flex justify-end">
                 <CommonButton variant="ghost" size="sm" onPress={onDismiss}>
@@ -120,7 +120,7 @@ export function DialogueResultPanel({ result, changes, onClose }: DialogueResult
                         {changes.map((change, index) => (
                             <li
                                 key={`${change.kind}-${change.target}-${index}`}
-                                className="flex items-baseline justify-between gap-4 text-sm leading-2.5"
+                                className="flex items-baseline justify-between gap-4 text-sm"
                             >
                                 <span className="text-white/60">{lastSegment(change.target)}</span>
                                 <span className="text-galatime-accent">{formatValue(change)}</span>

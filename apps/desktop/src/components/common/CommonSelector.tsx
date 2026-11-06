@@ -146,7 +146,7 @@ const CommonSelector: React.FC<CommonSelectorProps> = ({
 
                 {/* Description Section — vertical layouts keep the text inline */}
                 {!isHorizontal && descriptionText && (
-                    <div className={`mt-1 text-galatime-accent text-xs text-center max-w-md leading-2.5 ${descriptionClassName}`}>
+                    <div className={`mt-1 text-galatime-accent text-xs text-center max-w-md ${descriptionClassName}`}>
                         {descriptionText}
                     </div>
                 )}

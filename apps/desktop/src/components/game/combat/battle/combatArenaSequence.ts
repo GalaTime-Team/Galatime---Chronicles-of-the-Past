@@ -9,9 +9,13 @@
  */
 
 import {
+    ARENA_ENTER_MS,
+    ARENA_ENTER_STAGGER_MS,
     ARENA_IMPACT_MS,
     ARENA_QUIET_TOTAL_MS,
     ARENA_SHAKE_RATIO,
+    ARENA_STEP_MS,
+    ARENA_STEP_STAGGER_MS,
     ARENA_TOTAL_MS,
 } from '../../../../constants/CombatAnimationConstants';
 import type { CombatEvent, CombatState, CombatUnit } from '../../../../types/CombatType';
@@ -61,6 +65,14 @@ export interface ArenaSequence {
     reflected: ArenaReflectBeat[];
     summoned: string[];
     transformed: string[];
+    /**
+     * Units whose battle line changed this step.
+     *
+     * The rear line steps up into an emptied front slot when the front one is wiped, and
+     * a movement effect can re-place a unit outright. The node remounts into its new row
+     * when the state swaps, so the row hands the entrance animation its part.
+     */
+    stepped: string[];
     /** The board should jolt: a fatal blow, or one that took a huge share of a health pool. */
     shake: boolean;
 }
@@ -94,6 +106,7 @@ export function buildArenaSequence(
     const reflected: ArenaReflectBeat[] = [];
     const summoned: string[] = [];
     const transformed: string[] = [];
+    const stepped: string[] = [];
     let shake = false;
 
     for (const event of events) {
@@ -147,6 +160,9 @@ export function buildArenaSequence(
             case 'unit_transformed':
                 if (!transformed.includes(event.unitId)) transformed.push(event.unitId);
                 break;
+            case 'unit_line_changed':
+                if (!stepped.includes(event.unitId)) stepped.push(event.unitId);
+                break;
             default:
                 break;
         }
@@ -163,7 +179,8 @@ export function buildArenaSequence(
         || defeated.length > 0
         || reflected.length > 0
         || summoned.length > 0
-        || transformed.length > 0;
+        || transformed.length > 0
+        || stepped.length > 0;
 
     if (!worthShowing) return null;
 
@@ -173,7 +190,23 @@ export function buildArenaSequence(
         && defeated.length === 0
         && reflected.length === 0
         && summoned.length === 0
-        && transformed.length === 0;
+        && transformed.length === 0
+        && stepped.length === 0;
+
+    // Entrances and line changes mount at the impact and can run longer than the
+    // settle that follows a blow, so they extend the whole beat when they need to —
+    // staggered per extra unit, since they wait for each other to land.
+    const enterBursts = Math.max(summoned.length, transformed.length);
+    const stepBursts = stepped.length;
+    const totalMs = Math.max(
+        quiet ? ARENA_QUIET_TOTAL_MS : ARENA_TOTAL_MS,
+        enterBursts > 0
+            ? ARENA_IMPACT_MS + ARENA_ENTER_MS + Math.max(0, enterBursts - 1) * ARENA_ENTER_STAGGER_MS
+            : 0,
+        stepBursts > 0
+            ? ARENA_IMPACT_MS + ARENA_STEP_MS + Math.max(0, stepBursts - 1) * ARENA_STEP_STAGGER_MS
+            : 0,
+    );
 
     return {
         id,
@@ -181,13 +214,14 @@ export function buildArenaSequence(
         actorName,
         actionName: actionUsed?.actionName ?? null,
         impactAtMs: ARENA_IMPACT_MS,
-        totalMs: quiet ? ARENA_QUIET_TOTAL_MS : ARENA_TOTAL_MS,
+        totalMs,
         hits,
         statuses,
         defeated,
         reflected,
         summoned,
         transformed,
+        stepped,
         shake,
     };
 }

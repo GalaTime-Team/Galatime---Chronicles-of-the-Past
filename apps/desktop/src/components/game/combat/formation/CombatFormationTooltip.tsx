@@ -74,7 +74,7 @@ function FormationModifiers({ modifiers }: { modifiers: readonly CombatStatModif
                 return (
                     <span
                         key={modifier.stat}
-                        className={`flex items-center gap-0.5 whitespace-nowrap font-pixel text-[10px] leading-2.5 sm:text-xs ${raised ? 'text-galatime-success' : 'text-galatime-error'}`}
+                        className={`flex items-center gap-0.5 whitespace-nowrap font-pixel text-[10px] sm:text-xs ${raised ? 'text-galatime-success' : 'text-galatime-error'}`}
                     >
                         {raised ? <ArrowUp /> : <ArrowDown />}
                         {STAT_LABELS[modifier.stat]}
@@ -124,7 +124,7 @@ function FormationElements({ elementIds: combinationIds, showWeaknesses }: Forma
                 {combinationIds.map((elementId) => (
                     <span
                         key={elementId}
-                        className="flex items-center gap-1 whitespace-nowrap font-pixel text-xs leading-2.5 text-white/75 sm:text-sm"
+                        className="flex items-center gap-1 whitespace-nowrap font-pixel text-xs text-white/75 sm:text-sm"
                     >
                         <ElementIcon id={elementId} className="h-3.5 w-3.5 sm:h-4 sm:w-4" />
                         {displayElementName(elementId)}
@@ -206,14 +206,14 @@ export function CombatFormationTooltip({
             className="z-100 w-max max-w-[min(15rem,calc(100vw-3rem))] border-2 border-white bg-galatime-dark px-2 py-1.5 text-white shadow-[0_8px_26px_rgba(0,0,0,0.6)] sm:max-w-[min(21rem,calc(100vw-1.5rem))] sm:px-3 sm:py-2.5"
         >
             <div className="flex flex-wrap items-center gap-x-2 gap-y-0.5">
-                <p className="font-pixel text-sm uppercase leading-2.5 tracking-[0.08em] sm:text-lg">{entity.name}</p>
+                <p className="font-pixel text-sm uppercase tracking-[0.08em] sm:text-lg">{entity.name}</p>
                 <FormationModifiers modifiers={modifiers} />
             </div>
 
             {elementIds.length > 0 ? (
                 <FormationElements elementIds={elementIds} showWeaknesses={showDetails} />
             ) : (
-                <p className="mt-1 font-pixel text-xs leading-2.5 text-white/45">No known elements</p>
+                <p className="mt-1 font-pixel text-xs text-white/45">No known elements</p>
             )}
 
             {/* The equipped weapon: what is in this unit's hands right now, with
@@ -221,15 +221,15 @@ export function CombatFormationTooltip({
                 the detail view on. */}
             {showDetails && weapon && (
                 <div className="mt-4 flex flex-col gap-y-0.5 border-t border-white/20 pt-3 sm:mt-5 sm:pt-4">
-                    <span className="flex items-baseline gap-1.5 font-pixel text-xs leading-2.5 text-white/90 sm:text-sm">
+                    <span className="flex items-baseline gap-1.5 font-pixel text-xs text-white/90 sm:text-sm">
                         {weapon.name}
                         <span className="text-[10px] uppercase tracking-[0.08em] text-white/40 sm:text-xs">{weapon.type}</span>
                     </span>
                     {weapon.summary && (
-                        <span className="font-pixel text-[10px] leading-2.5 text-white/55 sm:text-xs">{weapon.summary}</span>
+                        <span className="font-pixel text-[10px] text-white/55 sm:text-xs">{weapon.summary}</span>
                     )}
                     {weaponStateLine(weapon) && (
-                        <span className="font-pixel text-[10px] leading-2.5 text-white/45 sm:text-xs">{weaponStateLine(weapon)}</span>
+                        <span className="font-pixel text-[10px] text-white/45 sm:text-xs">{weaponStateLine(weapon)}</span>
                     )}
                 </div>
             )}
@@ -240,11 +240,11 @@ export function CombatFormationTooltip({
                 <div className="mt-4 flex flex-col gap-y-1.5 border-t border-white/20 pt-3 sm:mt-5 sm:gap-y-2 sm:pt-4">
                     {abilities.map((ability) => (
                         <div key={ability.id} className="flex flex-col gap-y-0.5">
-                            <span className="font-pixel text-xs leading-2.5 text-white/90 sm:text-sm">
+                            <span className="font-pixel text-xs text-white/90 sm:text-sm">
                                 {ability.name}
                             </span>
                             {ability.description && (
-                                <span className="font-pixel text-[10px] leading-2.5 text-white/55 sm:text-xs">
+                                <span className="font-pixel text-[10px] text-white/55 sm:text-xs">
                                     {ability.description}
                                 </span>
                             )}
@@ -254,14 +254,14 @@ export function CombatFormationTooltip({
             )}
 
             {showDetails && (skills === null ? (
-                <p className="mt-4 font-pixel text-xs leading-2.5 text-white/35 sm:mt-5">Loading skills…</p>
+                <p className="mt-4 font-pixel text-xs text-white/35 sm:mt-5">Loading skills…</p>
             ) : skills.length > 0 ? (
                 <div className="mt-4 flex flex-col gap-y-1 border-t border-white/20 pt-3 sm:mt-5 sm:gap-y-1.5 sm:pt-4">
                     {skills.map((skill) => (
                         <span
                             key={skill.id}
                             title={skill.isKnown ? undefined : `Unknown skill: ${skill.id}`}
-                            className="flex items-center gap-1 whitespace-nowrap font-pixel text-xs leading-2.5 text-white/80"
+                            className="flex items-center gap-1 whitespace-nowrap font-pixel text-xs text-white/80"
                         >
                             <ElementIcon id={skill.elementId} className="h-3.5 w-3.5 sm:h-4 sm:w-4" />
                             {skill.name}

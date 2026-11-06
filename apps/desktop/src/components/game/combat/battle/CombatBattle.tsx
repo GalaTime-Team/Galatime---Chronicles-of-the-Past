@@ -140,6 +140,7 @@ export function CombatBattle({
                     animationsEnabled={animationsEnabled}
                     hour={state.hour}
                     timePhase={effectiveTimePhase(state)}
+                    phaseOverridden={state.phaseOverride !== null}
                     onEntitySelect={(entity) => {
                         if (entity) onEntitySelect?.(entity.id);
                     }}

@@ -3,6 +3,10 @@ import { useGame } from '../../../../context/GameContext';
 import { ARENA_IMPACT_MS } from '../../../../constants/CombatAnimationConstants';
 import { CombatArenaParticles } from '../battle/CombatArenaParticles';
 import { CombatFormationSide } from './CombatFormationSide';
+import dayPhaseIcon from '../../../../assets/images/combat/time/day.svg';
+import daytimeNoSunIcon from '../../../../assets/images/combat/time/day_no_solar.svg';
+import nightPhaseIcon from '../../../../assets/images/combat/time/night.svg';
+import nightNoMoonIcon from '../../../../assets/images/combat/time/night_no_lunar.svg';
 import type { CombatFormationEntity, CombatFormationHUDProps } from './CombatFormationHUD.types';
 
 export type {
@@ -27,6 +31,7 @@ export function CombatFormationHUD({
     tooltipVisible,
     hour,
     timePhase,
+    phaseOverridden,
 }: CombatFormationHUDProps) {
     const { gameState } = useGame();
     const [hoveredEntity, setHoveredEntity] = useState<FocusedEntity>(null);
@@ -120,25 +125,43 @@ export function CombatFormationHUD({
             ref={boardRef}
             aria-label="Combat formation"
             style={sequence?.shake ? { animation: `combat-board-shake 320ms ease-out ${ARENA_IMPACT_MS}ms both` } : undefined}
-            className={`relative isolate flex h-full min-h-56 w-full items-center justify-center bg-galatime-background text-white ${className}`}
+            className={`combat-arena-board relative isolate flex h-full min-h-56 w-full items-center justify-center bg-galatime-background text-white ${className}`}
             onClick={clearPin}
         >
             {/* Sparks and dust for the whole board, in one pair of canvases. */}
             <CombatArenaParticles sequence={sequence ?? null} boardRef={boardRef} />
 
+            {/* Depth vignette: the arena darkens toward its edges, so the two rows read
+                as standing on a lit ground instead of floating on flat colour. z-0 puts
+                it under every sprite (they all carry a z-index of their own) and under
+                the hour chip, but above the board's background colour. */}
+            <div
+                aria-hidden="true"
+                className="pointer-events-none absolute inset-0 z-0"
+                style={{ background: 'radial-gradient(115% 90% at 50% 32%, transparent 55%, rgba(0,0,0,0.5) 100%)' }}
+            />
+
             {/* The hour of the day: a solar skill bites harder by day and a
                 lunar one at night, so the player can see which side of the
-                fight they are on. */}
+                fight they are on. A phase override (a skill forcing the other
+                phase) hides that phase's own celestial body — a compelled
+                phase comes without its sun or moon, so the icons say which
+                side of the sky the fight is really happening under. */}
             {timePhase && (
-                <div className="pointer-events-none absolute left-2 top-2 z-10 flex items-center gap-2 border border-white/40 bg-black/50 px-2 py-1 backdrop-blur-sm">
-                    <span aria-hidden="true" className="text-sm leading-none text-white/80">
-                        {timePhase === 'day' ? '☀' : '☾'}
-                    </span>
-                    <span className="text-[11px] uppercase tracking-[0.15em] text-white/70">
+                <div className="pointer-events-none absolute left-2 top-2 z-10 flex items-center gap-2 border-2 border-white/70 bg-black/60 px-2 py-1 backdrop-blur-sm">
+                    <img
+                        aria-hidden="true"
+                        src={phaseOverridden
+                            ? (timePhase === 'day' ? daytimeNoSunIcon : nightNoMoonIcon)
+                            : (timePhase === 'day' ? dayPhaseIcon : nightPhaseIcon)}
+                        alt=""
+                        className="h-4 w-4"
+                    />
+                    <span className="text-[11px] uppercase tracking-[0.15em] text-white/80">
                         {timePhase === 'day' ? 'Day' : 'Night'}
                     </span>
                     {hour !== undefined && (
-                        <span className="text-[11px] tabular-nums tracking-[0.15em] text-white/50">
+                        <span className="text-[11px] tabular-nums tracking-[0.15em] text-white/60">
                             {String(hour).padStart(2, '0')}:00
                         </span>
                     )}
@@ -146,6 +169,9 @@ export function CombatFormationHUD({
             )}
 
             <div className="mx-auto grid h-full min-h-56 w-full max-w-5xl grid-cols-[minmax(0,1fr)_3rem_minmax(0,1fr)] items-center sm:grid-cols-[minmax(0,1fr)_5rem_minmax(0,1fr)]">
+                {/* The battle is drawn side-view: the player's party stands on the left of
+                    the field, the enemies on the right, both leaning into the central gap
+                    with their walls climbing at 45° into their own side. */}
                 <CombatFormationSide
                     side="allies"
                     lanes={allies}

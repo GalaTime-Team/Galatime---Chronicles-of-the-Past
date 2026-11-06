@@ -167,7 +167,7 @@ const CommonTooltip: React.FC<CommonTooltipProps> = ({
                         id={tooltipId}
                         role="tooltip"
                         style={floatingStyles}
-                        className={`pointer-events-none z-9999 select-none border border-white/20 bg-galatime-dark px-3 py-2 text-center text-xs leading-2.5 text-galatime-accent shadow-lg shadow-black/50 ${maxWidthClassName} ${tooltipClassName}`}
+                        className={`pointer-events-none z-9999 select-none border border-white/20 bg-galatime-dark px-3 py-2 text-center text-xs text-galatime-accent shadow-lg shadow-black/50 ${maxWidthClassName} ${tooltipClassName}`}
                     >
                         <span className={`block ${textClassName}`}>{content}</span>
                     </div>,
