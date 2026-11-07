@@ -1,0 +1,28 @@
+﻿name: Cave Crab
+rarity: common
+height: "?? cm"
+weight: "?? kg"
+description: >+
+  Cave crabs are often waiting in the ceiling, disguising as stalagmites using their shells until they notice something bellow them and then they drop. These things are not helping my fear of caves.
+    
+elements:
+- lapis
+
+base_stats:
+  hp: 200
+  mana: 21
+  stamina: 22
+  physical_attack: 43
+  magical_attack: 42
+  physical_defense: 70
+  magical_defense: 52
+  speed: 20
+
+skills:
+
+weapon:
+
+loot:
+- item_id: gold_coin
+  quantity: 1
+  chance: 0.4

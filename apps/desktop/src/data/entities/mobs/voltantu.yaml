@@ -1,0 +1,32 @@
+﻿name: Voltantu
+rarity: uncommon
+height: "?? cm"
+weight: "?? kg"
+description: >
+  Voltantu blood is so hot it releases steam when they are cut. They're seen as a delicacy by the locals, but killing them is hard due to their shell and how much they roll around.
+  
+elements:
+- ignis
+- lapis
+
+base_stats:
+  hp: 305
+  mana: 20
+  stamina: 13
+  physical_attack: 47
+  magical_attack: 47
+  physical_defense: 88
+  magical_defense: 51
+  speed: 18
+
+skills:
+
+weapon:
+
+loot:
+- item_id: gold_coin
+  quantity: 1
+  chance: 0.4
+- item_id: shell_shard
+  quantity: 1
+  chance: 0.6

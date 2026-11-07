@@ -1,4 +1,3 @@
-﻿id: elder_snowver
 name: Elder Snowver
 rarity: rare
 height: "145 cm"
@@ -36,5 +35,3 @@ loot:
 
 ai:
   style: caster
-
-

@@ -1,0 +1,31 @@
+﻿name: Shadow
+rarity: rare
+height: "?? cm"
+weight: "?? kg"
+description: >
+  When shades grow, they get much less annoying but much more aggressive and strong. Fortunately, they won't bother you much if you stay in the light.
+
+elements:
+- umbra
+
+base_stats:
+  hp: 200
+  mana: 35
+  stamina: 48
+  physical_attack: 30
+  magical_attack: 41
+  physical_defense: 37
+  magical_defense: 41
+  speed: 70
+
+skills:
+
+weapon:
+
+loot:
+- item_id: gold_coin
+  quantity: 1
+  chance: 0.4
+
+ai:
+  style: coward

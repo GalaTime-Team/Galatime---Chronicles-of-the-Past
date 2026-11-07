@@ -1,38 +1,33 @@
-﻿id: snowver
-name: Snowver
+name: Shade
 rarity: common
-height: "95 cm"
-weight: "42 kg"
+height: "?? cm"
+weight: "?? kg"
 description: >
-  Due to people constantly hunting them for their meat and fur,
-  Snowvers have gained deep hatred towards humnas. They say,
-  however, that if you gain their trust, they'll guide you around
-  the snowy mountains.
+  These things are so annoying. They sneak up on you, take your stuff, and then run back to the shadows. Good thing they're cowards and their big red eye is easy to see.
 
 elements:
-  - corporis
-  - aqua
+- umbra
 
 base_stats:
-  hp: 340
-  mana: 6
-  stamina: 88
-  physical_attack: 69
-  magical_attack: 9
-  physical_defense: 58
+  hp: 90
+  mana: 22
+  stamina: 29
+  physical_attack: 12
+  magical_attack: 21
+  physical_defense: 8
   magical_defense: 24
-  speed: 35
+  speed: 45
 
 skills:
-  - ice_cube
-  - roll
+- ice_cube
+- roll
 
 weapon:
 
 loot:
-  - item_id: gold_coin
-    quantity: 1
-    chance: 0.4
+- item_id: gold_coin
+  quantity: 1
+  chance: 0.4
 
 ai:
-  style: brute
+  style: coward

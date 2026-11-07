@@ -44,10 +44,12 @@ export async function getCharacterData(characterId: string): Promise<CharacterDa
 
         const module = await loaderFn();
         const content = module.default as string;
-        const parsed = yaml.load(content) as unknown as CharacterData;
+        // The file name is the entity id; YAML files do not declare one.
+        const parsed = yaml.load(content) as unknown as Omit<CharacterData, "id">;
+        const character: CharacterData = { ...parsed, id: characterId };
 
-        characterCache.set(characterId, parsed);
-        return parsed;
+        characterCache.set(characterId, character);
+        return character;
     } catch (error) {
         console.error(`Error loading character data for ${characterId}:`, error);
         return null;
@@ -87,10 +89,12 @@ export async function getMobData(mobId: string): Promise<MobData | null> {
 
         const module = await loaderFn();
         const content = module.default as string;
-        const parsed = yaml.load(content) as unknown as MobData;
+        // The file name is the entity id; YAML files do not declare one.
+        const parsed = yaml.load(content) as unknown as Omit<MobData, "id">;
+        const mob: MobData = { ...parsed, id: mobId };
 
-        mobCache.set(mobId, parsed);
-        return parsed;
+        mobCache.set(mobId, mob);
+        return mob;
     } catch (error) {
         console.error(`Error loading mob data for ${mobId}:`, error);
         return null;
