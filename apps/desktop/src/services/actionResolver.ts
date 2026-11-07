@@ -58,6 +58,7 @@ import {
 } from './combat/effectMechanics';
 import { reachableTargets, scatterCandidates } from './combat/targetResolver';
 import { effectiveTimePhase, setPhaseOverride } from './combat/phaseOverride';
+import { moveUnitToLine } from './combat/positionRules';
 import { fleeChanceFor } from './combat/fleeRules';
 import { weaponStackMultiplier, effectPowerMultiplier } from './combat/weaponEffects';
 import { applyWeaponActionHooks } from './combat/weaponActionHooks';
@@ -215,19 +216,9 @@ function resolveSwitchLine(context: ActionResolutionContext): CombatEvent[] {
     const { state, actor } = context;
     const targetLine = actor.line === 'front' ? 'rear' : 'front';
 
-    const sameLineUnits = state.units.filter(
-        (unit) => unit.side === actor.side && unit.line === targetLine,
-    );
-    const maxUnitsPerLine = 10;
+    if (!moveUnitToLine(state.units, actor, targetLine)) return [];
 
-    if (sameLineUnits.length >= maxUnitsPerLine) {
-        return [];
-    }
-
-    actor.line = targetLine;
-    actor.slot = sameLineUnits.length;
-
-    return [];
+    return [{ type: 'unit_line_changed', unitId: actor.id, line: actor.line, slot: actor.slot }];
 }
 
 function resolveRest(context: ActionResolutionContext): CombatEvent[] {

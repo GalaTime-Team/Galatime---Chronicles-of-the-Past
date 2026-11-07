@@ -67,14 +67,44 @@ function compactLine(units: readonly CombatUnit[], side: CombatSide, line: Comba
 }
 
 /**
+ * Whether the move would leave a side with nobody alive in its front line.
+ *
+ * A unit never counts as its own company: the mover and the fallen are
+ * ignored. A living swap partner is not — the swap puts it in the mover's
+ * place, so it can hold the line on its own.
+ */
+export function wouldLeaveFrontLineEmpty(
+    units: readonly CombatUnit[],
+    unit: CombatUnit,
+    line: CombatLine,
+    swapWith: CombatUnit | null = null,
+): boolean {
+    if (unit.status !== 'alive' || unit.line !== 'front' || line !== 'rear') return false;
+
+    const anotherAliveFrontUnit = units.some((candidate) =>
+        candidate.id !== unit.id
+        && candidate.id !== swapWith?.id
+        && candidate.side === unit.side
+        && candidate.line === 'front'
+        && candidate.status === 'alive',
+    );
+    if (anotherAliveFrontUnit) return false;
+
+    return !(swapWith
+        && swapWith.side === unit.side
+        && swapWith.status === 'alive');
+}
+
+/**
  * Moves a unit to another battle line.
  *
  * The slot numbers of both lines are closed up afterwards, so the formation
  * board never draws a gap where the unit used to stand. A swap trades places
  * with another unit instead of just stepping across.
  *
- * Returns `false` when the move cannot happen — the destination line is full —
- * so the caller can leave the unit where it is.
+ * Returns `false` when the move cannot happen — the destination line is full,
+ * or the move would leave the front line with no living unit — so the caller
+ * can leave the unit where it is.
  */
 export function moveUnitToLine(
     units: readonly CombatUnit[],
@@ -83,6 +113,8 @@ export function moveUnitToLine(
     swapWith: CombatUnit | null = null,
 ): boolean {
     if (swapWith && swapWith.id !== unit.id) {
+        if (wouldLeaveFrontLineEmpty(units, unit, swapWith.line, swapWith)) return false;
+
         const unitLine = unit.line;
         const unitSlot = unit.slot;
         unit.line = swapWith.line;
@@ -97,6 +129,7 @@ export function moveUnitToLine(
     if (unit.line === line) return true;
 
     if (!canPlaceInLine(units, unit.side, line)) return false;
+    if (wouldLeaveFrontLineEmpty(units, unit, line)) return false;
 
     const origin = unit.line;
     unit.line = line;

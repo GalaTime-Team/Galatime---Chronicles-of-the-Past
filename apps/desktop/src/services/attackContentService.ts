@@ -7,6 +7,7 @@ import type {
     PublicSkillTree,
     SkillCatalog,
 } from '../types/AttackDataType';
+import type { EntitySkillReference } from '../types/EntityDataType';
 import {
     attackRequirements,
     buildAttackDependents,
@@ -161,6 +162,40 @@ export async function resolveAttack(attackId: string): Promise<ResolvedAttack | 
     if (!base) return null;
 
     return { attack: applySkillLevel(toPublicAttack(base), level), level, baseId };
+}
+
+/**
+ * Resolves a skill reference authored on an entity.
+ *
+ * A string is a catalogue id, upgrade tiers included. An inline object is the
+ * entity's own definition; when it carries nothing but `id`, the author
+ * omitted everything else and it is read as a catalogue reference instead.
+ */
+export async function resolveEntitySkill(
+    reference: EntitySkillReference,
+): Promise<ResolvedAttack | null> {
+    if (typeof reference === 'string') return resolveAttack(reference);
+
+    const id = typeof reference?.id === 'string' ? reference.id.trim() : '';
+    if (!id) return null;
+
+    const authoredFields = Object.entries(reference)
+        .filter(([, value]) => value !== undefined)
+        .map(([key]) => key);
+    if (authoredFields.every((key) => key === 'id')) return resolveAttack(id);
+
+    // An inline skill still has to name itself and carry an element; anything
+    // less could not be turned into a combat action.
+    if (typeof reference.name !== 'string' || !reference.name.trim()
+        || typeof reference.element_id !== 'string' || !reference.element_id.trim()) {
+        return null;
+    }
+
+    return {
+        attack: toPublicAttack({ ...reference, id } as AttackSkill),
+        level: 1,
+        baseId: id,
+    };
 }
 
 export async function getAttackRequirementsData(attackId: string, includeDependencies = false) {

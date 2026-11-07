@@ -1,5 +1,6 @@
 import type { AbilityDefinition } from './AbilityType';
 import type { AiProfileDefinition } from './AiType';
+import type { AttackSkill } from './AttackDataType';
 import type { EntityInventoryState } from './InventoryType';
 import type { WeaponDefinition, WeaponReference } from './WeaponType';
 
@@ -29,17 +30,31 @@ export interface LootEntry {
  */
 export type AbilityEntry = AbilityDefinition;
 
+/**
+ * A skill authored on an entity.
+ *
+ * A string is a catalogue id (`freeze`); an object is the entity's own
+ * definition. An object that only carries `id` is a catalogue reference too —
+ * the missing fields are exactly what makes it "omitted".
+ */
+export type EntitySkillReference = string | (Partial<AttackSkill> & { id: string });
+
 /** Fields shared by characters and mobs (both are "entities"). */
 export interface EntitiesData {
+    /** Injected by `entityService` from the file name; YAML files do not declare it. */
     id: string;
     height: string;
     weight: string;
     description: string;
     elements: string[];
     base_stats: BaseStats;
-    /** Skill ids only — the full definitions live in the shared catalogue
-     *  (`data/combat/skills/skills.yaml`) and are read through `attackController`. */
-    skills: string[];
+    /**
+     * The entity's skills. A string points at the shared catalogue
+     * (`data/combat/skills/*.yaml`); an inline object defines a unique skill
+     * on the entity itself. An object with only an `id` falls back to the
+     * catalogue, so the omitted fields are what opt into the pool.
+     */
+    skills: EntitySkillReference[];
     /** Not every entity defines loot. */
     loot?: LootEntry[];
     /**

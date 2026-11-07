@@ -59,7 +59,11 @@ import { resolveFightHour, timePhaseForHour } from './state/worldClock';
 import { tickResourceRegen } from './combat/resourceRegen';
 import { getEncounter, getAllEncounters } from './combat/encounterLoader';
 import { lootChanceMultiplier, rollCombatLoot } from './combat/lootService';
-import { isRangeAllowedFromLine } from './combat/positionRules';
+import {
+    canPlaceInLine,
+    isRangeAllowedFromLine,
+    wouldLeaveFrontLineEmpty,
+} from './combat/positionRules';
 import { legalTargetIds, validateTargetRule } from './combat/targetResolver';
 import { advanceTurnIndex, planTurnOrder } from './combat/turnOrderService';
 import { effectiveActionCost } from './combat/weaponEffects';
@@ -226,16 +230,10 @@ function actionAvailability(state: CombatState, actor: CombatUnit, action: Comba
 
     if (action.kind === 'switch_line') {
         const targetLine = actor.line === 'front' ? 'rear' : 'front';
-        const targetLineCount = state.units.filter(
-            (unit) => unit.side === actor.side && unit.line === targetLine,
-        ).length;
-        if (targetLineCount >= MAX_UNITS_PER_LINE) return 'action_unavailable';
-        if (actor.line === 'front') {
-            const frontCount = state.units.filter(
-                (unit) => unit.side === actor.side && unit.line === 'front',
-            ).length;
-            if (frontCount <= 1) return 'action_unavailable';
-        }
+        if (!canPlaceInLine(state.units, actor.side, targetLine)) return 'action_unavailable';
+        // The moving unit does not count as the living front-line company it
+        // leaves behind; neither do the fallen.
+        if (wouldLeaveFrontLineEmpty(state.units, actor, targetLine)) return 'action_unavailable';
     }
 
     const needsTarget = action.targeting === 'any_one'

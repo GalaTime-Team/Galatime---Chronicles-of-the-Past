@@ -1,10 +1,17 @@
 import { useEffect, useState } from 'react';
 import { useFloating, autoUpdate, offset, flip, shift } from '@floating-ui/react';
 import { createPortal } from 'react-dom';
-import type { AbilityEntry, BaseStats, CharacterData, LootEntry, MobData } from '../../../../types/EntityDataType';
+import type {
+    AbilityEntry,
+    BaseStats,
+    CharacterData,
+    EntitySkillReference,
+    LootEntry,
+    MobData,
+} from '../../../../types/EntityDataType';
 import type { EntityImage } from '../../../../types/EntityImageType';
 import type { PublicAttack } from '../../../../types/AttackDataType';
-import { fetchResolvedAttack } from '../../../../controllers/attackController';
+import { fetchResolvedEntitySkill } from '../../../../controllers/attackController';
 import { ChevronLeft, ChevronRight, ElementIcon, UnknownIcon } from '../../../../assets/GalatimeIcon';
 import CommonHoverElement from '../../../../components/common/CommonHoverElement';
 import CommonButton from '../../../../components/common/CommonButton';
@@ -61,9 +68,11 @@ function EntityDetail({ item }: { item: EntityItem }) {
         (el): el is string => typeof el === 'string'
     );
     const baseStats = (data.base_stats ?? {}) as BaseStats;
-    // Entities reference skills by id only; the definitions are resolved through attackController.
+    // A skill is either a catalogue id or an inline definition on the entity.
     const skills = (Array.isArray(data.skills) ? data.skills : []).filter(
-        (id): id is string => typeof id === 'string'
+        (skill): skill is EntitySkillReference =>
+            typeof skill === 'string'
+            || (typeof skill === 'object' && skill !== null && typeof skill.id === 'string')
     );
     const abilities: AbilityEntry[] = Array.isArray(data.abilities) ? data.abilities : [];
     const loot: LootEntry[] = Array.isArray(data.loot) ? data.loot : [];
@@ -90,24 +99,23 @@ function EntityDetail({ item }: { item: EntityItem }) {
         middleware: [offset(8), flip(), shift()],
     });
 
-    // Resolve skill ids against the shared attack catalogue (skills.yaml).
-    // Upgrade tiers (`freeze_ii`) resolve through the same call, so a variant
-    // id shows the base skill with its level applied instead of "not in catalogue".
-    const [attacksById, setAttacksById] = useState<Map<string, PublicAttack>>(new Map());
-    const skillsKey = skills.join(',');
+    // Resolve every reference the same way combat does: catalogue ids (including
+    // upgrade tiers such as `freeze_ii`) and inline definitions on the entity.
+    const [attacksByIndex, setAttacksByIndex] = useState<Map<number, PublicAttack>>(new Map());
+    const skillsKey = JSON.stringify(skills);
     useEffect(() => {
-        if (skillsKey === '') return;
+        if (skills.length === 0) return;
         let cancelled = false;
-        Promise.all(skills.map(async (id) => {
-            const resolved = await fetchResolvedAttack(id);
-            return [id, resolved?.attack ?? null] as const;
+        Promise.all(skills.map(async (skill, index) => {
+            const resolved = await fetchResolvedEntitySkill(skill);
+            return [index, resolved?.attack ?? null] as const;
         }))
             .then((entries) => {
                 if (cancelled) return;
                 const found = entries.filter(
-                    (entry): entry is readonly [string, PublicAttack] => entry[1] !== null
+                    (entry): entry is readonly [number, PublicAttack] => entry[1] !== null
                 );
-                setAttacksById(new Map(found));
+                setAttacksByIndex(new Map(found));
             })
             .catch((error) => console.error('Failed to resolve entity skills:', error));
         return () => {
@@ -221,11 +229,14 @@ function EntityDetail({ item }: { item: EntityItem }) {
                 <div className="space-y-2">
                     <h3 className="text-xs uppercase tracking-[0.15em] text-white/40">Skills</h3>
                     <div className="flex flex-col gap-1">
-                        {skills.map((id) => {
-                            const attack = attacksById.get(id);
+                        {skills.map((skill, index) => {
+                            const id = typeof skill === 'string' ? skill : skill.id;
+                            const attack = attacksByIndex.get(index) ?? null;
+                            const name = attack?.name
+                                ?? (typeof skill === 'string' ? id : skill.name ?? id);
                             return (
-                                <div key={id} className="flex justify-between text-sm">
-                                    <span className="text-white">{attack ? attack.name : id}</span>
+                                <div key={`${id}-${index}`} className="flex justify-between text-sm">
+                                    <span className="text-white">{name}</span>
                                     <span className="text-white/40">
                                         {attack ? id : 'not in catalogue'}
                                     </span>

@@ -12,6 +12,7 @@ import {
     getLearningTree,
     getLearningTrees,
     resolveAttack,
+    resolveEntitySkill,
 } from '../services/attackContentService';
 import type {
     AttackEffect,
@@ -19,6 +20,7 @@ import type {
     PublicAttack,
     PublicSkillTree,
 } from '../types/AttackDataType';
+import type { EntitySkillReference } from '../types/EntityDataType';
 import type { ResolvedAttack } from '../services/attackContentService';
 
 /** Read-only gameplay content controller. A missing id maps to `null` (HTTP 404 at an API adapter). */
@@ -36,6 +38,16 @@ export function fetchAttack(attackId: string): Promise<PublicAttack | null> {
  */
 export function fetchResolvedAttack(attackId: string): Promise<ResolvedAttack | null> {
     return resolveAttack(attackId);
+}
+
+/**
+ * Resolves a skill authored on an entity: a catalogue id, an inline definition,
+ * or an inline object that only names a catalogue skill.
+ */
+export function fetchResolvedEntitySkill(
+    reference: EntitySkillReference,
+): Promise<ResolvedAttack | null> {
+    return resolveEntitySkill(reference);
 }
 
 export function fetchAttackRequirements(attackId: string, includeDependencies = false) {

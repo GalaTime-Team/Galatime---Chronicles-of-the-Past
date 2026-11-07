@@ -20,7 +20,7 @@ import type {
     CombatUnit,
 } from '../../types/CombatType';
 import type { CombatAbilityInstance } from '../../types/AbilityType';
-import { resolveAttack } from '../attackContentService';
+import { resolveEntitySkill } from '../attackContentService';
 import type { ResolvedAttack } from '../attackContentService';
 import { getCharacterData, getMobData } from '../entityService';
 import { createAbilityInstances, readAbilityEntityTarget } from './abilityFactory';
@@ -78,8 +78,8 @@ function blueprintKey(entityId: string, entityType: CombatEntityType): string {
 /** Resolves an entity's skills (highest tier per base id). */
 async function resolveSkillActions(entity: CombatEntitySource): Promise<CombatAction[]> {
     const skillTiers = new Map<string, ResolvedAttack>();
-    for (const skillId of Array.isArray(entity.skills) ? entity.skills : []) {
-        const resolved = await resolveAttack(skillId);
+    for (const skill of Array.isArray(entity.skills) ? entity.skills : []) {
+        const resolved = await resolveEntitySkill(skill);
         if (!resolved) continue;
         const current = skillTiers.get(resolved.baseId);
         if (!current || resolved.level > current.level) skillTiers.set(resolved.baseId, resolved);
