@@ -199,12 +199,11 @@ export const DEFAULT_SKILL_RANGE: CombatRange = 'medium';
 /** A weapon is a swing or a shot from the front, unless it says otherwise. */
 export const DEFAULT_WEAPON_RANGE: CombatRange = 'short';
 
-/** Multiplier applied to incoming damage while the target is defending. */
-export const DEFEND_DAMAGE_REDUCTION = 0.5;
+/** Fraction of incoming damage removed while the target is defending. */
+export const DEFEND_DAMAGE_REDUCTION = 0.4;
 
-/** Fraction of the maximum restored by the `rest` action. */
-export const REST_MANA_RESTORE_FRACTION = 0.3;
-export const REST_STAMINA_RESTORE_FRACTION = 0.3;
+/** Evasion points granted while bracing (`defend`) until the next turn. */
+export const DEFEND_EVASION_BONUS = 8;
 
 /**
  * Idle-regen payout floor: a resource left unspent regenerates at least this

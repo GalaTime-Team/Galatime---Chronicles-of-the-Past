@@ -1,8 +1,9 @@
 /**
  * `defend` — the worth of bracing.
  *
- * The engine halves incoming damage while bracing, so this scores the half of
- * next round's threat the brace would save, as a fraction of the unit's health.
+ * The engine removes `DEFEND_DAMAGE_REDUCTION` of incoming damage while bracing,
+ * so this scores the avoided portion of next round's threat as a fraction of the
+ * unit's health. The evasion bonus is ignored, which keeps the estimate conservative.
  * It is also the decider's floor: `defend` is always a legal, cheap candidate, so
  * a unit with nothing better to do still moves the fight on.
  */

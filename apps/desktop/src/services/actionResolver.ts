@@ -14,11 +14,7 @@
  * resolution can list the effects it landed.
  */
 
-import {
-    COUNTER_REFLECT_FRACTION,
-    REST_MANA_RESTORE_FRACTION,
-    REST_STAMINA_RESTORE_FRACTION,
-} from '../constants/CombatConstants';
+import { COUNTER_REFLECT_FRACTION } from '../constants/CombatConstants';
 import type { AttackEffect } from '../types/AttackDataType';
 import type {
     AttackResolution,
@@ -36,6 +32,7 @@ import { foldAttackModifiers } from './combat/abilityModifiers';
 import { resolveAbilityEvent } from './combat/abilityTriggers';
 import { phaseEffectMultiplier, resolveDamage } from './combat/damageCalculator';
 import { reapDefeated, promoteRearLines } from './combat/defeatResolver';
+import { idleRegenAmount } from './combat/resourceRegen';
 import {
     applyEffectResources,
     applyEffectToUnit,
@@ -222,14 +219,24 @@ function resolveSwitchLine(context: ActionResolutionContext): CombatEvent[] {
 }
 
 function resolveRest(context: ActionResolutionContext): CombatEvent[] {
-    const stats = effectiveStats(context.actor);
-    const mana = Math.round(stats.maxMana * REST_MANA_RESTORE_FRACTION);
-    const stamina = Math.round(stats.maxStamina * REST_STAMINA_RESTORE_FRACTION);
+    const { actor } = context;
+    const stats = effectiveStats(actor);
+    const events: CombatEvent[] = [];
 
-    return [
-        ...changeResource(context.actor, 'mana', mana),
-        ...changeResource(context.actor, 'stamina', stamina),
-    ];
+    for (const resource of ['mana', 'stamina'] as const) {
+        // Rest is one extra idle step: advance the Fibonacci streak and pay the
+        // step it reaches. Spending still resets the streak on the next tick,
+        // so resting never undoes the cost of a previous turn.
+        actor.resourceIdleTurns[resource] += 1;
+        const max = resource === 'mana' ? stats.maxMana : stats.maxStamina;
+        if (max <= 0) continue;
+
+        events.push(
+            ...changeResource(actor, resource, idleRegenAmount(max, actor.resourceIdleTurns[resource])),
+        );
+    }
+
+    return events;
 }
 
 /**

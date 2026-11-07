@@ -6,10 +6,10 @@
  * a bonus, so a caster tops its mana back up instead of throwing a weak spell.
  */
 
-import { REST_MANA_RESTORE_FRACTION, REST_STAMINA_RESTORE_FRACTION } from '../../../../constants/CombatConstants';
 import type { AiConsideration } from '../../../../types/AiType';
 import { clamp } from '../../../../utils/combatUtils';
 import { effectiveStats } from '../../effectResolver';
+import { idleRegenAmount } from '../../resourceRegen';
 import { effectiveActionCost } from '../../weaponEffects';
 
 /** Bonus when the rest unlocks a skill the unit cannot afford right now. */
@@ -35,8 +35,13 @@ export const restValue: AiConsideration = {
         }
         if (score <= 0) return 0;
 
-        const manaRestore = stats.maxMana * REST_MANA_RESTORE_FRACTION;
-        const staminaRestore = stats.maxStamina * REST_STAMINA_RESTORE_FRACTION;
+        // The resolver advances the streak by one and pays the step it reaches.
+        const manaRestore = stats.maxMana > 0
+            ? idleRegenAmount(stats.maxMana, actor.resourceIdleTurns.mana + 1)
+            : 0;
+        const staminaRestore = stats.maxStamina > 0
+            ? idleRegenAmount(stats.maxStamina, actor.resourceIdleTurns.stamina + 1)
+            : 0;
 
         const unlocks = actor.actions.some((action) => {
             if (action.kind !== 'skill' || !action.dealsDamage) return false;

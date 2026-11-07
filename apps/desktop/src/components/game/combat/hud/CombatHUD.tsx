@@ -44,10 +44,10 @@ export interface CombatExtraMovement {
 
 /** What the HUD shows when the caller does not supply its own list. */
 export const DEFAULT_EXTRA_MOVEMENTS: CombatExtraMovement[] = [
-    { id: 'defend', title: 'Defend', iconKind: 'defend', kind: 'defend', staminaCost: 0, manaCost: 0, description: 'Brace: halve incoming damage until your next turn.' },
+    { id: 'defend', title: 'Defend', iconKind: 'defend', kind: 'defend', staminaCost: 0, manaCost: 0, description: 'Reduce incoming damage and gain evasion until your next turn.' },
     { id: 'weapon', title: 'Weapon', iconKind: 'weapon', kind: 'weapon', staminaCost: 0, manaCost: 0, description: 'Strike with the equipped weapon.' },
-    { id: 'rest', title: 'Rest', iconKind: 'rest', kind: 'rest', staminaCost: 0, manaCost: 0, description: 'Recover a portion of mana and stamina.' },
-    { id: 'inventory', title: 'Inventory', iconKind: 'inventory', kind: 'inventory', staminaCost: 0, manaCost: 0, description: 'Spend the turn using an item from your inventory.' },
+    { id: 'rest', title: 'Rest', iconKind: 'rest', kind: 'rest', staminaCost: 0, manaCost: 0, description: 'Recover mana and stamina exponentially.' },
+    { id: 'inventory', title: 'Inventory', iconKind: 'inventory', kind: 'inventory', staminaCost: 0, manaCost: 0, description: 'Open your backpack and use an item or switch weapons.' },
     { id: 'flee', title: 'Flee', iconKind: 'flee', kind: 'flee', staminaCost: 0, manaCost: 0, description: 'Try to escape the fight. Only possible when badly wounded.' },
 ];
 

@@ -31,6 +31,7 @@ import {
     readString,
     readVariance,
 } from '../../utils/combatUtils';
+import { DEFEND_EVASION_BONUS } from '../../constants/CombatConstants';
 import { rollVariance } from './damageCalculator';
 
 /**
@@ -172,6 +173,9 @@ export function effectiveStats(unit: CombatUnit): CombatStats {
         applyStatDelta(stats, effect.debuff, -1);
         applyStatMultipliers(stats, effect.statMultipliers);
     }
+    // Bracing is a stance, not a status: fold its evasion here so previews and
+    // real hits both see the same number.
+    if (unit.defending) stats.evasion += DEFEND_EVASION_BONUS;
     return stats;
 }
 

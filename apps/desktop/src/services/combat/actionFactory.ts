@@ -357,9 +357,19 @@ function universalAction(
  */
 export function createUniversalActions(): CombatAction[] {
     return [
-        universalAction('defend', 'Defend', 'defend', 'Brace: halve incoming damage until your next turn.'),
-        universalAction('rest', 'Rest', 'rest', 'Recover a portion of mana and stamina.'),
-        universalAction('inventory', 'Inventory', 'inventory', 'Spend the turn using an item from your inventory.'),
+        universalAction(
+            'defend',
+            'Defend',
+            'defend',
+            'Reduce incoming damage and gain evasion until your next turn.',
+        ),
+        universalAction(
+            'rest',
+            'Rest',
+            'rest',
+            'Recover mana and stamina exponentially.',
+        ),
+        universalAction('inventory', 'Inventory', 'inventory', 'Open your backpack and use an item or switch weapons.'),
         universalAction('switch_line', 'Switch Line', 'switch_line', 'Move to the other battle line, if there is room.'),
     ];
 }

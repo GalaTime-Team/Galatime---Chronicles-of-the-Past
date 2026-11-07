@@ -268,7 +268,7 @@ export interface CombatUnit {
     /** Whether each resource was paid out of since this unit's last turn began. */
     resourceSpentSinceTurnStart: Record<Exclude<CombatResourceId, 'hp'>, boolean>;
     cooldowns: CombatCooldowns;
-    /** Set by the `defend` action; halves incoming damage until the next turn. */
+    /** Set by the `defend` action; reduces incoming damage and adds evasion until the next turn. */
     defending: boolean;
     /**
      * The unit a `locks_target` status nailed down, once a hit shows who.
